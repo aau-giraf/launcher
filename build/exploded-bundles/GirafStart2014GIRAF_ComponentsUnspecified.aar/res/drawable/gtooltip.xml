@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>        
+        <shape>
+            <solid android:color="#AA4D4D4D"/>
+            <corners android:radius="15dp" 
+            />
+            <padding
+			android:left="15dp"
+			android:top="15dp"
+			android:right="15dp"
+			android:bottom="15dp"
+     	   />
+        </shape>
+    </item>
+</selector><!-- From: file:/D:/Windows%207/Dokumenter/SVN/P6%20-%20SW615F14/Temp%20Workspace/GirafStart2014/GIRAF_Components/res/drawable/gtooltip.xml -->

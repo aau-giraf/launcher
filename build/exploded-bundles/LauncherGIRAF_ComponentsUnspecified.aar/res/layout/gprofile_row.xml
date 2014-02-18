@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/glistitem"
+    android:orientation="horizontal"
+    android:padding="15dip"
+     >
+    
+     <!--  Profile pic -->
+    <LinearLayout android:id="@+id/profile_pic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="6dip"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/gprofile_pic_box"
+        android:layout_marginRight="5dip">
+ 
+        <ImageView
+            android:id="@+id/imageview_profilepic"
+            android:layout_width="100dip"
+            android:layout_height="130dip"
+            android:src="@drawable/no_profile_pic"/>
+ 
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/profile_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="46dp"
+        android:layout_toRightOf="@id/profile_pic"
+        android:text="Mr. Banjak"
+        android:textColor="#596A79"
+        android:textSize="60dp"
+        android:textStyle="bold"
+        android:typeface="sans" />
+
+</RelativeLayout><!-- From: file:/D:/Windows%207/Dokumenter/SVN/P6%20-%20SW615F14/Temp%20Git/Launcher/GIRAF_Components/res/layout/gprofile_row.xml -->

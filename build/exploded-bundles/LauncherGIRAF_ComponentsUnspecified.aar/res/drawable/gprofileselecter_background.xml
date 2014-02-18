@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+     android:state_selected="false"
+        android:state_pressed="false">
+        <shape>
+            <gradient 
+    		android:startColor="#FFFFBB55"
+    		android:endColor="#FFDD9639"
+    		android:angle="-90"
+    		/>
+            <stroke android:width="3px" android:color="#FFDD9639" 
+            />
+            <corners android:radius="15dp" 
+            />
+        </shape>
+    </item>
+</selector><!-- From: file:/D:/Windows%207/Dokumenter/SVN/P6%20-%20SW615F14/Temp%20Git/Launcher/GIRAF_Components/res/drawable/gprofileselecter_background.xml -->

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/gbackground"
+    android:orientation="vertical" >
+
+
+    <ImageView
+        android:id="@+id/giraf_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:contentDescription="Logo"
+        android:src="@drawable/icon_giraf" 
+        android:layout_marginLeft="30dp"
+        />
+    
+    <TextView 
+        android:id="@+id/profileselect_headline"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="@string/profileselect_headline"
+        android:textSize="30dp"
+        android:layout_toRightOf="@id/giraf_logo"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="30dp"
+        android:textColor="@color/gBrowncolor"
+        />
+    
+    <ListView
+        android:id="@+id/profilesList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="30dp"
+        android:layout_toRightOf="@+id/giraf_logo"
+        android:divider="#00000000"
+        android:dividerHeight="25dp" 
+        android:background="@drawable/gprofileselecter_background"
+        android:cacheColorHint="@android:color/transparent"
+        android:layout_below="@+id/profileselect_headline"
+        />
+
+</RelativeLayout>

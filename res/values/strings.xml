@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="application_name">GIRAF</string>
+    <string name="authentication_headline">Sådan logger du ind:</string>
+    <string name="authentication_step1">Scan dit GIRAF-kort, ved at holde det ca. 25cm foran kameraet.</string>
+    <string name="authentication_step2">Verificer den overnstående identitet, og tryk derefter på login-knappen. </string>
+    <string name="authentication_name">Firstname Middlename Lastname</string>
+    <string name="saadan">Sådan! Klik på "Log in" for at bekræfte.</string>
+    <string name="barnameview">Firstname Middlename Lastname</string>
+    <string name="profileselect_headline">Vælg en profil:</string>
+    <string name="Log_out">Log ud</string>
+    <string name="Log_out_description">Du er på vej til at logge ud.</string>
+
+</resources>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:background="@drawable/gbackground" >
+
+    
+    <RelativeLayout
+    android:id="@+id/camerafeed"
+    android:layout_width="480dip" 
+    android:layout_height="640dip" 
+    android:layout_gravity="center_horizontal"
+    android:padding="10dp"
+    android:background="@drawable/cameraborder"
+	android:layout_alignParentRight="true"
+	android:layout_marginRight="0dp"
+	android:layout_centerVertical="true">
+	    <include layout="@layout/capture"/>
+	    
+	    <ImageView
+    	    android:id="@+id/scanicon"
+    	    android:layout_width="250dp"
+    	    android:layout_height="250dp"
+    	    android:layout_centerHorizontal="true"
+    	    android:layout_centerVertical="true"
+    	    android:alpha="0.5"
+    	    android:src="@drawable/scanicon" />
+	    
+	</RelativeLayout>
+	
+    <ImageView android:contentDescription="Logo"
+        android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_centerHorizontal="true"
+    	android:layout_marginTop="75dp"
+    	android:src="@drawable/icon_giraf"/>
+    
+    <TextView 
+        	android:id="@+id/headline"
+        	android:text="@string/authentication_headline"
+        	android:textColor="#FFFFFFFF"
+        	android:layout_height="wrap_content"
+        	android:layout_width="wrap_content"
+        	android:textSize="30dp"
+        	android:layout_marginTop="400dp"
+        	android:layout_marginLeft="15dp"
+        	/>
+    <ImageView android:id="@+id/animation"
+        android:contentDescription="Instructions"
+		android:layout_width="wrap_content"
+   		android:layout_height="wrap_content"
+   		android:scaleX="0.8"
+   		android:scaleY="0.8"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="0dp"/>
+    
+    <TextView 
+        	android:id="@+id/authentication_step1"
+        	android:text="@string/authentication_step1"
+        	android:textColor="#FFFFFFFF"
+        	android:layout_height="wrap_content"
+        	android:layout_width="300dp"
+        	android:textSize="30dp"
+        	android:layout_marginTop="770dp"
+        	android:layout_marginLeft="15dp"
+        	/>
+    
+    <dk.aau.cs.giraf.gui.GVerifyButton
+    	    android:visibility="invisible"
+        	android:id="@+id/loginGButton"
+       		android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:layout_alignParentRight="true"
+    	    android:layout_alignParentBottom="true"
+    	    android:layout_marginBottom="115dp"
+    	    android:layout_marginRight="20dp"
+    	    android:textSize="40dp"
+    	    android:text="Log ind"
+    	    />
+    
+    <TextView
+    	    android:visibility="invisible"
+        	android:text="@string/authentication_name"
+        	android:id="@+id/loginname"
+        	android:textColor="#FFFFFFFF"
+        	android:layout_height="wrap_content"
+        	android:layout_width="480dp"
+        	android:textSize="60dp"
+        	android:layout_alignParentTop="true"
+    	    android:layout_alignParentBottom="true"
+    	    android:layout_marginTop="1030dp"
+    	    android:layout_marginLeft="30dp"
+        	/>
+    
+</RelativeLayout>

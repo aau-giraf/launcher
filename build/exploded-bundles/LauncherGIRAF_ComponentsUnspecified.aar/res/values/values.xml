@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- From: file:/D:/Windows%207/Dokumenter/SVN/P6%20-%20SW615F14/Temp%20Git/Launcher/GIRAF_Components/res/values/integers.xml -->
+    <eat-comment />
+
+    <integer-array name="appcolors">
+        <item>0xFFFFDC4A</item>
+        <item>0xFFA47AE2</item>
+        <item>0xFF4986E7</item>
+        <item>0xFF16A765</item>
+        <item>0xFFFA573C</item>
+        <item>0xFFAC725E</item>
+        <item>0xFFFF99BE</item>
+        <item>0xFFFF7F4D</item>
+        <item>0xFFB3DC6C</item>
+        <item>0xFF9FC6E7</item>
+    </integer-array>
+    <!-- From: file:/D:/Windows%207/Dokumenter/SVN/P6%20-%20SW615F14/Temp%20Git/Launcher/GIRAF_Components/res/values/strings.xml -->
+    <eat-comment />
+
+    <string-array name="months">
+        <item>Januar</item>
+        <item>Februar</item>
+        <item>Marts</item>
+        <item>April</item>
+        <item>Maj</item>
+        <item>Juni</item>
+        <item>Juli</item>
+        <item>August</item>
+        <item>September</item>
+        <item>Oktober</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
+    <string-array name="week_days">
+        <item>Søndag</item>
+        <item>Mandag</item>
+        <item>Tirsdag</item>
+        <item>Onsdag</item>
+        <item>Torsdag</item>
+        <item>Fredag</item>
+        <item>Lørdag</item>
+    </string-array>
+
+    <color name="gBrowncolor">#FF9E6435</color>
+
+    <string name="mOfflineString">ikke i forbindelse med Savannah-serveren, indholdet i GIRAF er derfor muligvis ikke det nyeste.</string>
+    <string name="mOnlineString">fuldt opdateret med det nyeste indhold.</string>
+    <string name="mPreString">GIRAF er </string>
+    <string name="mSyncingString">i ved at synkronisere indhold med Savannah-serveren.</string>
+
+</resources>

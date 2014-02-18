@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger>
+
+    <dataSet config="LauncherOasisLibUnspecified.aar" >
+        <source path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Launcher\build\exploded-bundles\LauncherOasisLibUnspecified.aar\assets" />
+    </dataSet>
+    <dataSet config="LauncherGIRAF_ComponentsUnspecified.aar" >
+        <source path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Launcher\build\exploded-bundles\LauncherGIRAF_ComponentsUnspecified.aar\assets" />
+    </dataSet>
+    <dataSet config="LauncherAndroidUnspecified.aar" >
+        <source path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Launcher\build\exploded-bundles\LauncherAndroidUnspecified.aar\assets" >
+            <file
+                name="html-en/about1d.html"
+                path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Launcher\build\exploded-bundles\LauncherAndroidUnspecified.aar\assets\html-en\about1d.html" />
+            <file
+                name="html-en/about2d.html"
+                path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Launcher\build\exploded-bundles\LauncherAndroidUnspecified.aar\assets\html-en\about2d.html" />
+            <file
+                name="html-en/index.html"
+                path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Launcher\build\exploded-bundles\LauncherAndroidUnspecified.aar\assets\html-en\index.html" />
+            <file
+                name="html-en/scanning.html"
+                path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Launcher\build\exploded-bundles\LauncherAndroidUnspecified.aar\assets\html-en\scanning.html" />
+            <file
+                name="html-en/sharing.html"
+                path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Launcher\build\exploded-bundles\LauncherAndroidUnspecified.aar\assets\html-en\sharing.html" />
+            <file
+                name="html-en/whatsnew.html"
+                path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Launcher\build\exploded-bundles\LauncherAndroidUnspecified.aar\assets\html-en\whatsnew.html" />
+            <file
+                name="images/big-1d.png"
+                path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Launcher\build\exploded-bundles\LauncherAndroidUnspecified.aar\assets\images\big-1d.png" />
+            <file
+                name="images/big-datamatrix.png"
+                path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Launcher\build\exploded-bundles\LauncherAndroidUnspecified.aar\assets\images\big-datamatrix.png" />
+            <file
+                name="images/big-qr.png"
+                path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Launcher\build\exploded-bundles\LauncherAndroidUnspecified.aar\assets\images\big-qr.png" />
+            <file
+                name="images/contact-results-screen.jpg"
+                path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Launcher\build\exploded-bundles\LauncherAndroidUnspecified.aar\assets\images\contact-results-screen.jpg" />
+            <file
+                name="images/demo-no.png"
+                path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Launcher\build\exploded-bundles\LauncherAndroidUnspecified.aar\assets\images\demo-no.png" />
+            <file
+                name="images/demo-yes.png"
+                path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Launcher\build\exploded-bundles\LauncherAndroidUnspecified.aar\assets\images\demo-yes.png" />
+            <file
+                name="images/scan-example.png"
+                path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Launcher\build\exploded-bundles\LauncherAndroidUnspecified.aar\assets\images\scan-example.png" />
+            <file
+                name="images/scan-from-phone.png"
+                path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Launcher\build\exploded-bundles\LauncherAndroidUnspecified.aar\assets\images\scan-from-phone.png" />
+            <file
+                name="images/search-book-contents.jpg"
+                path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Launcher\build\exploded-bundles\LauncherAndroidUnspecified.aar\assets\images\search-book-contents.jpg" />
+            <file
+                name="style.css"
+                path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Launcher\build\exploded-bundles\LauncherAndroidUnspecified.aar\assets\style.css" />
+        </source>
+    </dataSet>
+    <dataSet config="main" >
+        <source path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Launcher\assets" >
+            <file
+                name="extendedOJ.jar"
+                path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Launcher\assets\extendedOJ.jar" />
+            <file
+                name="OasisLib_dev.jar"
+                path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Launcher\assets\OasisLib_dev.jar" />
+            <file
+                name="OasisLib_dev_AuthTest.jar"
+                path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Launcher\assets\OasisLib_dev_AuthTest.jar" />
+            <file
+                name="robotium-solo-3.2.1.jar"
+                path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Launcher\assets\robotium-solo-3.2.1.jar" />
+        </source>
+    </dataSet>
+    <dataSet config="debug" >
+        <source path="D:\Windows 7\Dokumenter\SVN\P6 - SW615F14\Temp Git\Launcher\build-types\debug\assets" />
+    </dataSet>
+
+</merger>

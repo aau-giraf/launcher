@@ -1,0 +1,14 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/colorpicker"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+   	>
+	<ImageView
+        android:id="@+id/color_bg"
+        android:layout_height="70dp"
+        android:layout_width="70dp"
+    	android:gravity="center"
+    	android:orientation="vertical"
+    	android:background="@drawable/colorborder"    	
+       />
+</RelativeLayout><!-- From: file:/D:/Windows%207/Dokumenter/SVN/P6%20-%20SW615F14/Temp%20Git/Launcher/GIRAF_Components/res/layout/colorpicker.xml --><!-- From: file:/D:/Windows%207/Dokumenter/SVN/P6%20-%20SW615F14/Temp%20Git/Launcher/build/exploded-bundles/LauncherGIRAF_ComponentsUnspecified.aar/res/layout/colorpicker.xml -->

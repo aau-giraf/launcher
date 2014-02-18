@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>        
+        <shape>
+            <gradient 
+    		android:startColor="#FFF3F5F8"
+    		android:endColor="#FFE9EDF2"
+    		android:angle="-90"
+    		/>
+        </shape>
+    </item>
+</selector><!-- From: file:/D:/Windows%207/Dokumenter/SVN/P6%20-%20SW615F14/Temp%20Git/Launcher/GIRAF_Components/res/drawable/gbackgroundlight.xml -->
