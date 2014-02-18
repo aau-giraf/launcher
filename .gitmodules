@@ -1,0 +1,6 @@
+[submodule "android"]
+	path = android
+	url = http://cs-cust06-int.cs.aau.dk/git/android-lib.git
+[submodule "GIRAF_Components"]
+	path = GIRAF_Components
+	url = http://cs-cust06-int.cs.aau.dk/git/giraf-component.git
