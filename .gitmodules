@@ -1,9 +1,9 @@
 [submodule "android"]
 	path = android
-	url = http://cs-cust06-int.cs.aau.dk/git/android-lib.git
+	url = http://cs-cust06-int.cs.aau.dk/git-ro/android-lib.git
 [submodule "GIRAF_Components"]
 	path = GIRAF_Components
-	url = http://cs-cust06-int.cs.aau.dk/git/giraf-component.git
+	url = http://cs-cust06-int.cs.aau.dk/git-ro/giraf-component.git
 [submodule "OasisLib"]
 	path = OasisLib
-	url = http://cs-cust06-int.cs.aau.dk/git/oasis-lib
+	url = http://cs-cust06-int.cs.aau.dk/git-ro/oasis-lib.git
