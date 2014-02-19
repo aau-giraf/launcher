@@ -1,9 +1,0 @@
-<!-- From: file:/D:/Windows%207/Dokumenter/SVN/P6%20-%20SW615F14/Temp%20Git/Launcher/GIRAF_Components/AndroidManifest.xml -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="dk.aau.cs.giraf.gui">
-
-    <uses-sdk android:minSdkVersion="17" android:targetSdkVersion="19"/>
-
-    <application>
-    </application>
-
-</manifest>
