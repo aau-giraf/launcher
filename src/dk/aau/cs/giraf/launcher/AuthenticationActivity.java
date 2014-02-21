@@ -91,8 +91,8 @@ public class AuthenticationActivity extends CaptureActivity {
 	/**
 	 * Method which is ran every time the QR scanner scans a valid QR code.
 	 * SuppressWarnings("unused") is used here, as eclipse cannot figure out by itself that this method is actually used.
-	 * @param Result which the scanned string is saved in.
-	 * @param A greyscale bitmap of the camera data which was decoded.
+	 * @param rawResult Result which the scanned string is saved in.
+	 * @param barcode A greyscale bitmap of the camera data which was decoded.
 	 */
 	@SuppressWarnings("unused")
 	@Override
