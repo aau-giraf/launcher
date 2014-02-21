@@ -33,7 +33,7 @@ public class LogoActivity extends Activity {
 	        public void run() {
 	            try {
 	            	synchronized(this) {
-	            		wait(Data.TIME_TO_DISPLAY_LOGO);
+	            		wait(Constants.TIME_TO_DISPLAY_LOGO);
 	            	}
 	            } catch(InterruptedException e) {}
 	            finally {
@@ -44,13 +44,13 @@ public class LogoActivity extends Activity {
 	            	} else {
 	            		intent = new Intent(mContext, HomeActivity.class);
 	            		
-	            		SharedPreferences sharedPreferences = getSharedPreferences(Data.TIMERKEY, 0);
-	            		long guardianID = sharedPreferences.getLong(Data.GUARDIANID, -1);
+	            		SharedPreferences sharedPreferences = getSharedPreferences(Constants.TIMER_KEY, 0);
+	            		long guardianID = sharedPreferences.getLong(Constants.GUARDIAN_ID, -1);
 	            		
 	            		/* Following did we not have time to test due to errors in the Oasislib */
 	            		
 	            		//if ((new Helper(mContext)).profilesHelper.getProfileById(guardianID) != null) {
-	            			intent.putExtra(Data.GUARDIANID, guardianID);
+	            			intent.putExtra(Constants.GUARDIAN_ID, guardianID);
 	            		//} else {
 	            			//intent = new Intent(mContext, AuthenticationActivity.class);
 	            		//}

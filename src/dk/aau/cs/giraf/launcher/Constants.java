@@ -1,16 +1,16 @@
 package dk.aau.cs.giraf.launcher;
 
-public final class Data {
+public final class Constants {
 	
 	// SharedPreferences keys for log in data
-	public static final String TIMERKEY = "TIMING";
-	public static final String DATEKEY = "DATE";
+	public static final String TIMER_KEY = "TIMING";
+	public static final String DATE_KEY = "DATE";
 	
 	// Keys for inserting and retrieving data in Intents
-	public static final String GUARDIANID = "currentGuardianID";
-	public static final String CHILDID = "currentChildID";
-	public static final String APP_PACKAGENAME = "appPackageName";
-	public static final String APP_ACTIVITYNAME = "appActivityName";
+	public static final String GUARDIAN_ID = "currentGuardianID";
+	public static final String CHILD_ID = "currentChildID";
+	public static final String APP_PACKAGE_NAME = "appPackageName";
+	public static final String APP_ACTIVITY_NAME = "appActivityName";
 	public static final String APP_COLOR = "appBackgroundColor";
 
 	// Keys for settings
@@ -33,7 +33,7 @@ public final class Data {
 	public static final int APPS_PER_PAGE = 9;
 	public static final int MAX_ROWS_PER_PAGE = 3;
 	public static final int MAX_COLUMNS_PER_PAGE = 4;
-	public static final int DRAWER_SNAPLENGTH = 40;
+	public static final int DRAWER_SNAP_LENGTH = 40;
 	
 	// Home activity graphics values
 	public static final int HOMEBAR_LANDSCAPE_WIDTH = 200;
@@ -41,11 +41,11 @@ public final class Data {
 	public static final int HOMEBAR_PORTRAIT_WIDTH = 100;
 	public static final int HOMEBAR_PORTRAIT_HEIGHT = 200;
 	
-	public static final int PROFILEPIC_LANDSCAPE_WIDTH = 70;
-	public static final int PROFILEPIC_LANDSCAPE_HEIGHT = 91;
+	public static final int PROFILE_PIC_LANDSCAPE_WIDTH = 70;
+	public static final int PROFIL_EPIC_LANDSCAPE_HEIGHT = 91;
 	
-	public static final int PROFILEPIC_PORTRAIT_WIDTH = 100;
-	public static final int PROFILEPIC_PORTRAIT_HEIGHT = 130;
+	public static final int PROFILE_PIC_PORTRAIT_WIDTH = 100;
+	public static final int PROFILE_PIC_PORTRAIT_HEIGHT = 130;
 	
 	public static final int HOMEBAR_LANDSCAPE_PADDING = 15;
 	public static final int HOMEBAR_PORTRAIT_PADDING = 15;
@@ -81,12 +81,12 @@ public final class Data {
 	public static final int WIDGET_LOGOUT_MARGIN_PORTRAIT_BOTTOM = 0;
 	
 	// Error logging
-	public static final String ERRORTAG = "launcher";
+	public static final String ERROR_TAG = "launcher";
 
     /**
      * The duration each image of the instruction animation should be displayed. Unit is milliseconds.
      */
-    public static final int INSTRUCTTION_FRAME_DURATION = 30;
+    public static final int INSTRUCTION_FRAME_DURATION = 30;
 
     /**
      * Array with images for the instruction animation

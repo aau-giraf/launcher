@@ -11,10 +11,10 @@ import android.widget.AdapterView;
             AppInfo app = (AppInfo) parent.getItemAtPosition(position);
             
             Intent profileSelectIntent = new Intent(v.getContext(),ProfileSelectActivity.class);
-            profileSelectIntent.putExtra(Data.APP_PACKAGENAME, app.getaPackage());
-            profileSelectIntent.putExtra(Data.APP_ACTIVITYNAME, app.getActivity());
-            profileSelectIntent.putExtra(Data.GUARDIANID, app.getGuardianID());
-            profileSelectIntent.putExtra(Data.APP_COLOR, app.getBgColor());
+            profileSelectIntent.putExtra(Constants.APP_PACKAGE_NAME, app.getaPackage());
+            profileSelectIntent.putExtra(Constants.APP_ACTIVITY_NAME, app.getActivity());
+            profileSelectIntent.putExtra(Constants.GUARDIAN_ID, app.getGuardianID());
+            profileSelectIntent.putExtra(Constants.APP_COLOR, app.getBgColor());
             
 			v.getContext().startActivity(profileSelectIntent);
     }  

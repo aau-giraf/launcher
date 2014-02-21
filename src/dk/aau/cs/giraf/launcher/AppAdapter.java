@@ -93,8 +93,8 @@ public class AppAdapter extends ArrayAdapter<AppInfo> {
 		
 		HashMap<String, String> appSettings = launchSetting.get(String.valueOf(appID));
 
-		appSettings.remove(Data.COLOR_BG);
-		appSettings.put(Data.COLOR_BG, String.valueOf(color));
+		appSettings.remove(Constants.COLOR_BG);
+		appSettings.put(Constants.COLOR_BG, String.valueOf(color));
 		
 		launcher.setSettings(launchSetting);
 		helper.appsHelper.modifyAppByProfile(launcher, currentUser);

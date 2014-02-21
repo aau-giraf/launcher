@@ -35,11 +35,11 @@ public class ProfileSelectActivity extends Activity {
 
 		mContext = getApplicationContext();
 		
-		mPackageName = getIntent().getExtras().getString(Data.APP_PACKAGENAME);
-		mActivityName = getIntent().getExtras().getString(Data.APP_ACTIVITYNAME);
-		mAppColor = getIntent().getExtras().getInt(Data.APP_COLOR);
+		mPackageName = getIntent().getExtras().getString(Constants.APP_PACKAGE_NAME);
+		mActivityName = getIntent().getExtras().getString(Constants.APP_ACTIVITY_NAME);
+		mAppColor = getIntent().getExtras().getInt(Constants.APP_COLOR);
 		
-		mGuardianID = getIntent().getExtras().getLong(Data.GUARDIANID);
+		mGuardianID = getIntent().getExtras().getLong(Constants.GUARDIAN_ID);
 
 		loadProfiles();
 	}
@@ -96,9 +96,9 @@ public class ProfileSelectActivity extends Activity {
 				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
 						| Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 
-				intent.putExtra(Data.CHILDID, childID);
-				intent.putExtra(Data.GUARDIANID, mGuardianID);
-				intent.putExtra(Data.APP_COLOR, mAppColor);
+				intent.putExtra(Constants.CHILD_ID, childID);
+				intent.putExtra(Constants.GUARDIAN_ID, mGuardianID);
+				intent.putExtra(Constants.APP_COLOR, mAppColor);
 
 				startActivity(intent);
 			}

@@ -58,7 +58,7 @@ public class AuthenticationActivity extends CaptureActivity {
 
         // Simulate the AnimationDrawable class
         final ImageView instructImageView = (ImageView) findViewById(R.id.animation);
-        new SimulateAnimationDrawable(instructImageView, Data.INSTRUCTION_ANIMATION, Data.INSTRUCTTION_FRAME_DURATION);
+        new SimulateAnimationDrawable(instructImageView, Constants.INSTRUCTION_ANIMATION, Constants.INSTRUCTION_FRAME_DURATION);
 	}
 
 	/**
@@ -103,7 +103,7 @@ public class AuthenticationActivity extends CaptureActivity {
 			mInfoView.setText(R.string.saadan);
 			
 			mHomeIntent = new Intent(AuthenticationActivity.this, HomeActivity.class);
-			mHomeIntent.putExtra(Data.GUARDIANID, profile.getId());
+			mHomeIntent.putExtra(Constants.GUARDIAN_ID, profile.getId());
 		} else {
 			this.changeCameraFeedBorderColor(0xFFFF0000);
 			mGLoginButton.setVisibility(View.INVISIBLE);

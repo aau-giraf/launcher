@@ -26,12 +26,12 @@ public class LauncherUtility {
 	 * @param id ID of the guardian logging in.
 	 */
 	public static void saveLogInData(Context context, Long id) {
-		SharedPreferences sp = context.getSharedPreferences(Data.TIMERKEY, 0);
+		SharedPreferences sp = context.getSharedPreferences(Constants.TIMER_KEY, 0);
 		SharedPreferences.Editor editor = sp.edit();
 		Date d = new Date();
 
-		editor.putLong(Data.DATEKEY, d.getTime());
-		editor.putLong(Data.GUARDIANID, id);
+		editor.putLong(Constants.DATE_KEY, d.getTime());
+		editor.putLong(Constants.GUARDIAN_ID, id);
 
 		editor.commit();
 	}
@@ -59,8 +59,8 @@ public class LauncherUtility {
 	 * @return ID of the currently logged in user.
 	 */
 	public static long findCurrentUserID(Context context) {
-		SharedPreferences sharedPreferences = context.getSharedPreferences(Data.TIMERKEY, 0);
-		return sharedPreferences.getLong(Data.GUARDIANID, -1);
+		SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.TIMER_KEY, 0);
+		return sharedPreferences.getLong(Constants.GUARDIAN_ID, -1);
 	}
 
 	/**
@@ -79,11 +79,11 @@ public class LauncherUtility {
 	 * @param context Context of the current activity.
 	 */
 	public static void clearAuthData(Context context) {
-		SharedPreferences sp = context.getSharedPreferences(Data.TIMERKEY, 0);
+		SharedPreferences sp = context.getSharedPreferences(Constants.TIMER_KEY, 0);
 		SharedPreferences.Editor editor = sp.edit();
 
-		editor.putLong(Data.DATEKEY, 1);
-		editor.putLong(Data.GUARDIANID, -1);
+		editor.putLong(Constants.DATE_KEY, 1);
+		editor.putLong(Constants.GUARDIAN_ID, -1);
 
 		editor.commit();
 	}
@@ -94,11 +94,11 @@ public class LauncherUtility {
 	 * @return True if a log in is required; otherwise false.
 	 */
 	public static boolean sessionExpired(Context context) {
-		SharedPreferences sp = context.getSharedPreferences(Data.TIMERKEY, 0);
-		Long lastAuthTime = sp.getLong(Data.DATEKEY, 1);
+		SharedPreferences sp = context.getSharedPreferences(Constants.TIMER_KEY, 0);
+		Long lastAuthTime = sp.getLong(Constants.DATE_KEY, 1);
 		Date d = new Date();
 
-		return d.getTime() > lastAuthTime + Data.TIME_TO_STAY_LOGGED_IN;
+		return d.getTime() > lastAuthTime + Constants.TIME_TO_STAY_LOGGED_IN;
 	}
 
 	/**
@@ -481,7 +481,7 @@ public class LauncherUtility {
 		if (currentUser != null) {
 			helper.appsHelper.attachAppToProfile(helper.appsHelper.getAppByPackageName(), currentUser);
 		} else {
-			Log.e(Data.ERRORTAG, "Could not get current user!");
+			Log.e(Constants.ERROR_TAG, "Could not get current user!");
 		}
 	}
 	
