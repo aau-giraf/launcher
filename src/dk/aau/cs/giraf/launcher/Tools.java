@@ -128,7 +128,7 @@ public class Tools {
 	/**
 	 * Gets the GIRAF apps that are usable by the given user, relative to their settings and the system they're logged in on.
 	 * @param context Context of the current activity.
-	 * @param currentUser The user to find apps for.
+	 * @param user The user to find apps for.
 	 * @return List of apps that are usable by this user on this device.
 	 */
 	public static List<App> getVisibleGirafApps(Context context, Profile user) {
@@ -155,7 +155,7 @@ public class Tools {
 	/**
 	 * Gets the Android apps that are usable by the given user, relative to their settings and the system they're logged in on.
 	 * @param context Context of the current activity.
-	 * @param currentUser The user to find apps for.
+	 * @param user The user to find apps for.
 	 * @return List of apps that are usable by this user on this device.
 	 */
 	public static List<App> getVisibleAndroidApps(Context context, Profile user) {
@@ -182,7 +182,7 @@ public class Tools {
 	/**
 	 * Gets the apps that are usable by the given user, relative to their settings and the system they're logged in on.
 	 * @param context Context of the current activity.
-	 * @param currentUser The user to find apps for.
+	 * @param user The user to find apps for.
 	 * @return List of apps that are usable by this user on this device.
 	 */
 	public static List<App> getVisibleApps(Context context, Profile user) {
@@ -203,9 +203,9 @@ public class Tools {
 	
 	/**
 	 * Subtracts the apps lists: a, b.
-	 * @param List<App> a, the list to be substracted from. 
-	 * @param List<App> b, the list to subtract.
-	 * @return The substract of a - b.
+	 * @param a, the list to be substracted from.
+	 * @param b, the list to subtract.
+	 * @return The subtract of a - b.
 	 */
 	private static List<App> subtractAppLists(List<App> a, List<App> b){
 		for (int i = 0; i < a.size(); i++) {
@@ -221,7 +221,7 @@ public class Tools {
 	/**
 	 * Finds all GIRAF apps not attached to a given profile.
 	 * @param context Context of the current activity.
-	 * @param currentUser Profile to find apps for.
+	 * @param user Profile to find apps for.
 	 * @return List of apps not attached to the given profile.
 	 */
 	public static List<App> getHiddenGirafApps(Context context, Profile user) {
@@ -242,7 +242,7 @@ public class Tools {
 	/**
 	 * Finds all Android apps not attached to a given profile.
 	 * @param context Context of the current activity.
-	 * @param currentUser Profile to find apps for.
+	 * @param user Profile to find apps for.
 	 * @return List of apps not attached to the given profile.
 	 */
 	public static List<App> getHiddenAndroidApps(Context context, Profile user) {
@@ -263,7 +263,7 @@ public class Tools {
 	/**
 	 * Finds all apps not attached to a given profile.
 	 * @param context Context of the current activity.
-	 * @param currentUser Profile to find apps for.
+	 * @param user Profile to find apps for.
 	 * @return List of apps not attached to the given profile.
 	 */
 	public static List<App> getHiddenApps(Context context, Profile user) {
@@ -464,7 +464,7 @@ public class Tools {
 	}
 	
 	/**
-	 * Attach the launcher to the current user.
+	 * Attach the launcher to the current user, taken from {@code context}.
 	 * @param context Context of the current activity.
 	 */
 	public static void attachLauncher(Context context) {
@@ -479,9 +479,8 @@ public class Tools {
 	}
 	
 	/**
-	 * Attaches all GIRAF apps currently available on a device to a given user.
+	 * Attaches all GIRAF apps currently available on a device to the current user, taken from {@code context}.
 	 * @param context Context of the current activity.
-	 * @param currentUser The user to attach apps to.
 	 */
 	public static void attachAvailableGirafAppsToUser(Context context) {
 		Helper helper = new Helper(context);
@@ -495,9 +494,8 @@ public class Tools {
 	}
 	
 	/**
-	 * Attaches all Android apps currently available on a device to a given user.
+	 * Attaches all Android apps currently available on a device to the current user, taken from {@code context}.
 	 * @param context Context of the current activity.
-	 * @param currentUser The user to attach apps to.
 	 */
 	public static void attachAvailableAndroidAppsToUser(Context context) {
 		Helper helper = new Helper(context);
@@ -511,9 +509,8 @@ public class Tools {
 	}
 	
 	/**
-	 * Attaches all apps currently available on a device to a given user.
+	 * Attaches all apps currently available on a device to the current user, taken from {@code context}.
 	 * @param context Context of the current activity.
-	 * @param currentUser The user to attach apps to.
 	 */
 	public static void attachAvailableAppsToUser(Context context) {
 		Helper helper = new Helper(context);
