@@ -420,6 +420,7 @@ public class Tools {
 	 * Is run every time the launcher starts, so any GIRAF app on the device will be in the database.
 	 * @param context Context of the current activity.
 	 */
+    //TODO: Eliminate unused method?
 	public static void updateGirafApps_DB(Context context) {
 		Helper helper = new Helper(context);
 
@@ -451,6 +452,7 @@ public class Tools {
 	 * Inserts all installed Android apps (not GIRAF apps) on the device in the database, but does not attach them to any profile.
 	 * @param context Context of the current activity.
 	 */
+    //TODO: Eliminate unused method?
 	public static void updateAndroidApps_DB(Context context) {
 		Helper helper = new Helper(context);
 
@@ -482,6 +484,7 @@ public class Tools {
 	 * Attaches all GIRAF apps currently available on a device to the current user, taken from {@code context}.
 	 * @param context Context of the current activity.
 	 */
+    //TODO: Eliminate unused method?
 	public static void attachAvailableGirafAppsToUser(Context context) {
 		Helper helper = new Helper(context);
 		Profile currentUser = findCurrentUser(context);
@@ -497,6 +500,7 @@ public class Tools {
 	 * Attaches all Android apps currently available on a device to the current user, taken from {@code context}.
 	 * @param context Context of the current activity.
 	 */
+    //TODO: Eliminate unused method?
 	public static void attachAvailableAndroidAppsToUser(Context context) {
 		Helper helper = new Helper(context);
 		Profile currentUser = findCurrentUser(context);
@@ -512,6 +516,7 @@ public class Tools {
 	 * Attaches all apps currently available on a device to the current user, taken from {@code context}.
 	 * @param context Context of the current activity.
 	 */
+    //TODO: Eliminate unused method?
 	public static void attachAvailableAppsToUser(Context context) {
 		Helper helper = new Helper(context);
 		Profile currentUser = findCurrentUser(context);
@@ -551,6 +556,7 @@ public class Tools {
 	 * @param app The app to check for.
 	 * @return True if the app is contained in the list; otherwise false.
 	 */
+    //TODO: Eliminate unused method?
 	public static boolean appsContain_RI(List<ResolveInfo> systemApps, ResolveInfo app) {
 		return appsContain_RI(systemApps, app.activityInfo.packageName);
 	}
@@ -587,6 +593,7 @@ public class Tools {
 	 * @param app The app to check for.
 	 * @return True if the app is contained in the list; otherwise false.
 	 */
+    //TODO: Eliminate unused method?
 	public static boolean appsContain_A(List<App> systemApps, ResolveInfo app) {
 		return appsContain_A(systemApps, app.activityInfo.packageName);
 	}
@@ -641,6 +648,7 @@ public class Tools {
 	 * @param app App to check for.
 	 * @return True if the app exists in the database already; otherwise false.
 	 */
+    //TODO: Eliminate unused method?
 	public static boolean appRegistered(Helper helper, App app) {
 		return packageRegistered(helper, app.getaPackage());
 	}
