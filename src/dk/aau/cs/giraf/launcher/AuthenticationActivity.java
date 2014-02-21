@@ -20,6 +20,11 @@ import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
+/**
+ * This activity controls the camera based authentication,
+ * used when logging in to launcher. Specifically is sets up
+ * QR code scanning, and authenticates valid QR codes.
+ */
 public class AuthenticationActivity extends CaptureActivity {
 	
 	private Intent mHomeIntent;

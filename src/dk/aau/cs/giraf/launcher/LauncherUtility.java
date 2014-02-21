@@ -205,7 +205,7 @@ public class LauncherUtility {
 	
 	/**
 	 * Subtracts the apps lists: a, b.
-	 * @param a, the list to be substracted from.
+	 * @param a, the list to be subtracted from.
 	 * @param b, the list to subtract.
 	 * @return The subtract of a - b.
 	 */

@@ -22,8 +22,8 @@ class AppInfo extends App {
 	private Drawable mIcon;
 
 	/**
-	 * 
-	 * @return The icon for the app.
+	 * Get the icon image of the app.
+	 * @return The icon image.
 	 */
 	public Drawable getIconImage() {
 		return this.mIcon;
@@ -63,24 +63,24 @@ class AppInfo extends App {
 	private int mBgColor;
 	
 	/**
-	 * Set the backgroud color
-	 * @param color
+	 * Set the background color.
+	 * @param color The new background color.
 	 */
 	public void setBgColor(int color) {
 		this.mBgColor = color;
 	}
 
 	/**
-	 * 
-	 * @return The background color of the app.
+	 * Get the color of the app icon background.
+	 * @return The background color.
 	 */
 	public int getBgColor() {
 		return this.mBgColor;
 	}
 
 	/**
-	 * 
-	 * @return ID of the guardian logged into the system.
+	 * Get the ID of the currently logged in guardian.
+	 * @return The guardian ID.
 	 */
 	public Long getGuardianID() {
 		return mGuardian.getId();
