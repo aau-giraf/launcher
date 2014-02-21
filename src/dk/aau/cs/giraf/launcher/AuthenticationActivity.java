@@ -57,20 +57,9 @@ public class AuthenticationActivity extends CaptureActivity {
 			}
 		});
 
-
-
-		/*
-		final ImageView instructImageView = (ImageView) findViewById(R.id.animation);
-		instructImageView.setBackgroundResource(R.animator.instruct_ani);
-		
-		instructImageView.post(new Runnable(){
-			@Override
-			public void run(){
-				AnimationDrawable anim = (AnimationDrawable) instructImageView.getBackground();
-				anim.start();
-			}
-		});
-		*/
+        // Simulate the AnimationDrawable class
+        final ImageView instructImageView = (ImageView) findViewById(R.id.animation);
+        new SimulateAnimationDrawable(instructImageView, Data.INSTRUCTION_ANIMATION, Data.INSTRUCTTION_FRAME_DURATION);
 	}
 
 	/**
