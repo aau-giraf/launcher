@@ -18,7 +18,7 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
 /**
  * Class for holding static methods and fields, to minimize code duplication.
  */
-public class Tools {
+public class LauncherUtility {
 
 	/**
 	 * Saves data for the currently authorized log in.
@@ -158,6 +158,7 @@ public class Tools {
 	 * @param user The user to find apps for.
 	 * @return List of apps that are usable by this user on this device.
 	 */
+    //TODO: Eliminate unused method?
 	public static List<App> getVisibleAndroidApps(Context context, Profile user) {
 		Helper helper = new Helper(context);
 
@@ -185,6 +186,7 @@ public class Tools {
 	 * @param user The user to find apps for.
 	 * @return List of apps that are usable by this user on this device.
 	 */
+    //TODO: Eliminate unused method?
 	public static List<App> getVisibleApps(Context context, Profile user) {
 		Helper helper = new Helper(context);
 
@@ -224,6 +226,7 @@ public class Tools {
 	 * @param user Profile to find apps for.
 	 * @return List of apps not attached to the given profile.
 	 */
+    //TODO: Eliminate unused method?
 	public static List<App> getHiddenGirafApps(Context context, Profile user) {
 		Helper helper = new Helper(context);
 
@@ -245,6 +248,7 @@ public class Tools {
 	 * @param user Profile to find apps for.
 	 * @return List of apps not attached to the given profile.
 	 */
+    //TODO: Eliminate unused method?
 	public static List<App> getHiddenAndroidApps(Context context, Profile user) {
 		Helper helper = new Helper(context);
 
@@ -266,6 +270,7 @@ public class Tools {
 	 * @param user Profile to find apps for.
 	 * @return List of apps not attached to the given profile.
 	 */
+    //TODO: Eliminate unused method?
 	public static List<App> getHiddenApps(Context context, Profile user) {
 		Helper helper = new Helper(context);
 
@@ -471,7 +476,7 @@ public class Tools {
 	 */
 	public static void attachLauncher(Context context) {
 		Helper helper = new Helper(context);
-		Profile currentUser = Tools.findCurrentUser(context);
+		Profile currentUser = LauncherUtility.findCurrentUser(context);
 		
 		if (currentUser != null) {
 			helper.appsHelper.attachAppToProfile(helper.appsHelper.getAppByPackageName(), currentUser);

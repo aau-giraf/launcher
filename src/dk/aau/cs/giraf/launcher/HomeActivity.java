@@ -70,7 +70,7 @@ public class HomeActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
 
-		mLandscapeBarWidth = Tools.intToDP(this, Data.HOMEBAR_LANDSCAPE_WIDTH);
+		mLandscapeBarWidth = LauncherUtility.intToDP(this, Data.HOMEBAR_LANDSCAPE_WIDTH);
 
 		HomeActivity.mContext = this;
 		mHelper = new Helper(mContext);
@@ -86,10 +86,10 @@ public class HomeActivity extends Activity {
 		mProfilePictureView = (ImageView)this.findViewById(R.id.imageview_profilepic);
 		mHomeBarLayout = (RelativeLayout)this.findViewById(R.id.HomeBarLayout);
 
-		mProfilePictureWidthLandscape = Tools.intToDP(mContext, 100);
-		mProfilePictureHeightLandscape = Tools.intToDP(mContext, 100);
-		mProfilePictureWidthPortrait = Tools.intToDP(mContext, 100);
-		mProfilePictureHeightPortrait = Tools.intToDP(mContext, 100);
+		mProfilePictureWidthLandscape = LauncherUtility.intToDP(mContext, 100);
+		mProfilePictureHeightLandscape = LauncherUtility.intToDP(mContext, 100);
+		mProfilePictureWidthPortrait = LauncherUtility.intToDP(mContext, 100);
+		mProfilePictureHeightPortrait = LauncherUtility.intToDP(mContext, 100);
 
 		loadDrawer();
 		loadWidgets();
@@ -128,7 +128,7 @@ public class HomeActivity extends Activity {
 	 * Repaint the Grid View
 	 */
 	private void drawGridView() {
-		if (Tools.isLandscape(mContext)) {
+		if (LauncherUtility.isLandscape(mContext)) {
 			int columns = calculateNumOfColumns();
 			int gridWidth = columns * Data.GRID_CELL_WIDTH;
 
@@ -165,8 +165,8 @@ public class HomeActivity extends Activity {
 		LayoutParams paramsGrid = (RelativeLayout.LayoutParams)gridView.getLayoutParams();
 		RelativeLayout.LayoutParams homebarLayoutParams = (RelativeLayout.LayoutParams)homebarLayout.getLayoutParams();
 
-		int barHeightLandscape = Tools.intToDP(mContext, Data.HOMEBAR_LANDSCAPE_HEIGHT);
-		int barHeightPortrait = Tools.intToDP(mContext, Data.HOMEBAR_PORTRAIT_HEIGHT);
+		int barHeightLandscape = LauncherUtility.intToDP(mContext, Data.HOMEBAR_LANDSCAPE_HEIGHT);
+		int barHeightPortrait = LauncherUtility.intToDP(mContext, Data.HOMEBAR_PORTRAIT_HEIGHT);
 
 		/* Get the size of the screen */
 		Display display = getWindowManager().getDefaultDisplay();
@@ -175,15 +175,15 @@ public class HomeActivity extends Activity {
 		int screenWidth = size.x;
 		int screenHeight = size.y;
 
-		if (Tools.isLandscape(mContext)) {
-			homebarLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.homebar_back_land));
+		if (LauncherUtility.isLandscape(mContext)) {
+			homebarLayout.setBackground(getResources().getDrawable(R.drawable.homebar_back_land));
 			homebarLayoutParams.height = android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 			homebarLayoutParams.width = barHeightLandscape;
 
 			paramsGrid.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 			paramsGrid.width = screenWidth - barHeightLandscape;
 		} else {
-			homebarLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.homebar_back_port));
+			homebarLayout.setBackground(getResources().getDrawable(R.drawable.homebar_back_port));
 			homebarLayoutParams.height = barHeightPortrait;
 			homebarLayoutParams.width = android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
@@ -206,33 +206,33 @@ public class HomeActivity extends Activity {
 		RelativeLayout.LayoutParams calendarWidgetParams = (LayoutParams) mCalendarWidget.getLayoutParams();
 		RelativeLayout.LayoutParams logoutWidgetParams = (LayoutParams) mLogoutWidget.getLayoutParams();
 
-		if (Tools.isLandscape(mContext)) {
+		if (LauncherUtility.isLandscape(mContext)) {
 			mNameView.setVisibility(View.INVISIBLE);
 
-			profilePictureViewParams.width = Tools.intToDP(mContext, Data.PROFILEPIC_LANDSCAPE_WIDTH);
-			profilePictureViewParams.height = Tools.intToDP(mContext, Data.PROFILEPIC_LANDSCAPE_HEIGHT);
-			mHomeBarLayout.setPadding(Tools.intToDP(mContext, Data.HOMEBAR_LANDSCAPE_PADDING),
-					Tools.intToDP(mContext, Data.HOMEBAR_LANDSCAPE_PADDING),
-					Tools.intToDP(mContext, Data.HOMEBAR_LANDSCAPE_PADDING),
-					Tools.intToDP(mContext, Data.HOMEBAR_LANDSCAPE_PADDING));
+			profilePictureViewParams.width = LauncherUtility.intToDP(mContext, Data.PROFILEPIC_LANDSCAPE_WIDTH);
+			profilePictureViewParams.height = LauncherUtility.intToDP(mContext, Data.PROFILEPIC_LANDSCAPE_HEIGHT);
+			mHomeBarLayout.setPadding(LauncherUtility.intToDP(mContext, Data.HOMEBAR_LANDSCAPE_PADDING),
+					LauncherUtility.intToDP(mContext, Data.HOMEBAR_LANDSCAPE_PADDING),
+					LauncherUtility.intToDP(mContext, Data.HOMEBAR_LANDSCAPE_PADDING),
+					LauncherUtility.intToDP(mContext, Data.HOMEBAR_LANDSCAPE_PADDING));
 
-			connectivityWidgetParams.setMargins(Tools.intToDP(mContext, Data.WIDGET_CONNECTIVITY_MARGIN_LANDSCAPE_LEFT),
-					Tools.intToDP(mContext, Data.WIDGET_CONNECTIVITY_MARGIN_LANDSCAPE_TOP),
-					Tools.intToDP(mContext, Data.WIDGET_CONNECTIVITY_MARGIN_LANDSCAPE_RIGHT),
-					Tools.intToDP(mContext, Data.WIDGET_CONNECTIVITY_MARGIN_LANDSCAPE_BOTTOM));
+			connectivityWidgetParams.setMargins(LauncherUtility.intToDP(mContext, Data.WIDGET_CONNECTIVITY_MARGIN_LANDSCAPE_LEFT),
+					LauncherUtility.intToDP(mContext, Data.WIDGET_CONNECTIVITY_MARGIN_LANDSCAPE_TOP),
+					LauncherUtility.intToDP(mContext, Data.WIDGET_CONNECTIVITY_MARGIN_LANDSCAPE_RIGHT),
+					LauncherUtility.intToDP(mContext, Data.WIDGET_CONNECTIVITY_MARGIN_LANDSCAPE_BOTTOM));
 
-			calendarWidgetParams.setMargins(Tools.intToDP(mContext, Data.WIDGET_CALENDAR_MARGIN_LANDSCAPE_LEFT),
-					Tools.intToDP(mContext, Data.WIDGET_CALENDAR_MARGIN_LANDSCAPE_TOP),
-					Tools.intToDP(mContext, Data.WIDGET_CALENDAR_MARGIN_LANDSCAPE_RIGHT),
-					Tools.intToDP(mContext, Data.WIDGET_CALENDAR_MARGIN_LANDSCAPE_BOTTOM));
+			calendarWidgetParams.setMargins(LauncherUtility.intToDP(mContext, Data.WIDGET_CALENDAR_MARGIN_LANDSCAPE_LEFT),
+					LauncherUtility.intToDP(mContext, Data.WIDGET_CALENDAR_MARGIN_LANDSCAPE_TOP),
+					LauncherUtility.intToDP(mContext, Data.WIDGET_CALENDAR_MARGIN_LANDSCAPE_RIGHT),
+					LauncherUtility.intToDP(mContext, Data.WIDGET_CALENDAR_MARGIN_LANDSCAPE_BOTTOM));
 			calendarWidgetParams.addRule(RelativeLayout.BELOW, mConnectivityWidget.getId());
 
 			calendarWidgetParams.addRule(RelativeLayout.LEFT_OF, 0);
 
-			logoutWidgetParams.setMargins(Tools.intToDP(mContext, Data.WIDGET_LOGOUT_MARGIN_LANDSCAPE_LEFT),
-					Tools.intToDP(mContext, Data.WIDGET_LOGOUT_MARGIN_LANDSCAPE_TOP),
-					Tools.intToDP(mContext, Data.WIDGET_LOGOUT_MARGIN_LANDSCAPE_RIGHT),
-					Tools.intToDP(mContext, Data.WIDGET_LOGOUT_MARGIN_LANDSCAPE_BOTTOM));
+			logoutWidgetParams.setMargins(LauncherUtility.intToDP(mContext, Data.WIDGET_LOGOUT_MARGIN_LANDSCAPE_LEFT),
+					LauncherUtility.intToDP(mContext, Data.WIDGET_LOGOUT_MARGIN_LANDSCAPE_TOP),
+					LauncherUtility.intToDP(mContext, Data.WIDGET_LOGOUT_MARGIN_LANDSCAPE_RIGHT),
+					LauncherUtility.intToDP(mContext, Data.WIDGET_LOGOUT_MARGIN_LANDSCAPE_BOTTOM));
 
 			logoutWidgetParams.addRule(RelativeLayout.BELOW, mCalendarWidget.getId());
 			logoutWidgetParams.addRule(RelativeLayout.LEFT_OF, 0);
@@ -240,34 +240,34 @@ public class HomeActivity extends Activity {
 			/**
 			 * future todo: implement portrait mode and fix the below code
 			 */
-			connectivityWidgetParams.setMargins(Tools.intToDP(mContext, Data.WIDGET_CONNECTIVITY_MARGIN_PORTRAIT_LEFT),
-					Tools.intToDP(mContext, Data.WIDGET_CONNECTIVITY_MARGIN_PORTRAIT_TOP),
-					Tools.intToDP(mContext, Data.WIDGET_CONNECTIVITY_MARGIN_PORTRAIT_RIGHT),
-					Tools.intToDP(mContext, Data.WIDGET_CONNECTIVITY_MARGIN_PORTRAIT_BOTTOM));
+			connectivityWidgetParams.setMargins(LauncherUtility.intToDP(mContext, Data.WIDGET_CONNECTIVITY_MARGIN_PORTRAIT_LEFT),
+					LauncherUtility.intToDP(mContext, Data.WIDGET_CONNECTIVITY_MARGIN_PORTRAIT_TOP),
+					LauncherUtility.intToDP(mContext, Data.WIDGET_CONNECTIVITY_MARGIN_PORTRAIT_RIGHT),
+					LauncherUtility.intToDP(mContext, Data.WIDGET_CONNECTIVITY_MARGIN_PORTRAIT_BOTTOM));
 
-			calendarWidgetParams.setMargins(Tools.intToDP(mContext, Data.WIDGET_CALENDAR_MARGIN_PORTRAIT_LEFT),
-					Tools.intToDP(mContext, Data.WIDGET_CALENDAR_MARGIN_PORTRAIT_TOP),
-					Tools.intToDP(mContext, Data.WIDGET_CALENDAR_MARGIN_PORTRAIT_RIGHT),
-					Tools.intToDP(mContext, Data.WIDGET_CALENDAR_MARGIN_PORTRAIT_BOTTOM));
+			calendarWidgetParams.setMargins(LauncherUtility.intToDP(mContext, Data.WIDGET_CALENDAR_MARGIN_PORTRAIT_LEFT),
+					LauncherUtility.intToDP(mContext, Data.WIDGET_CALENDAR_MARGIN_PORTRAIT_TOP),
+					LauncherUtility.intToDP(mContext, Data.WIDGET_CALENDAR_MARGIN_PORTRAIT_RIGHT),
+					LauncherUtility.intToDP(mContext, Data.WIDGET_CALENDAR_MARGIN_PORTRAIT_BOTTOM));
 
 			calendarWidgetParams.addRule(RelativeLayout.BELOW, 0);
 			calendarWidgetParams.addRule(RelativeLayout.LEFT_OF, mConnectivityWidget.getId());
 
-			logoutWidgetParams.setMargins(Tools.intToDP(mContext, Data.WIDGET_LOGOUT_MARGIN_PORTRAIT_LEFT),
-					Tools.intToDP(mContext, Data.WIDGET_LOGOUT_MARGIN_PORTRAIT_TOP),
-					Tools.intToDP(mContext, Data.WIDGET_LOGOUT_MARGIN_PORTRAIT_RIGHT),
-					Tools.intToDP(mContext, Data.WIDGET_LOGOUT_MARGIN_PORTRAIT_BOTTOM));
+			logoutWidgetParams.setMargins(LauncherUtility.intToDP(mContext, Data.WIDGET_LOGOUT_MARGIN_PORTRAIT_LEFT),
+					LauncherUtility.intToDP(mContext, Data.WIDGET_LOGOUT_MARGIN_PORTRAIT_TOP),
+					LauncherUtility.intToDP(mContext, Data.WIDGET_LOGOUT_MARGIN_PORTRAIT_RIGHT),
+					LauncherUtility.intToDP(mContext, Data.WIDGET_LOGOUT_MARGIN_PORTRAIT_BOTTOM));
 
 			logoutWidgetParams.addRule(RelativeLayout.BELOW, 0);
 			logoutWidgetParams.addRule(RelativeLayout.LEFT_OF, mCalendarWidget.getId());
 
-			profilePictureViewParams.width = Tools.intToDP(mContext, Data.PROFILEPIC_PORTRAIT_WIDTH);
-			profilePictureViewParams.height = Tools.intToDP(mContext, Data.PROFILEPIC_PORTRAIT_HEIGHT);
+			profilePictureViewParams.width = LauncherUtility.intToDP(mContext, Data.PROFILEPIC_PORTRAIT_WIDTH);
+			profilePictureViewParams.height = LauncherUtility.intToDP(mContext, Data.PROFILEPIC_PORTRAIT_HEIGHT);
 
-			mHomeBarLayout.setPadding(Tools.intToDP(mContext, Data.HOMEBAR_PORTRAIT_PADDING),
-					Tools.intToDP(mContext, Data.HOMEBAR_PORTRAIT_PADDING),
-					Tools.intToDP(mContext, Data.HOMEBAR_PORTRAIT_PADDING),
-					Tools.intToDP(mContext, Data.HOMEBAR_PORTRAIT_PADDING));
+			mHomeBarLayout.setPadding(LauncherUtility.intToDP(mContext, Data.HOMEBAR_PORTRAIT_PADDING),
+					LauncherUtility.intToDP(mContext, Data.HOMEBAR_PORTRAIT_PADDING),
+					LauncherUtility.intToDP(mContext, Data.HOMEBAR_PORTRAIT_PADDING),
+					LauncherUtility.intToDP(mContext, Data.HOMEBAR_PORTRAIT_PADDING));
 
 			mNameView.setVisibility(View.VISIBLE);
 		}
@@ -281,7 +281,7 @@ public class HomeActivity extends Activity {
 	 * Load the user's applications into the grid.
 	 */
 	private void loadApplications() {		
-		List<App> girafAppsList = Tools.getVisibleGirafApps(mContext, mCurrentUser);
+		List<App> girafAppsList = LauncherUtility.getVisibleGirafApps(mContext, mCurrentUser);
 
 		if (girafAppsList != null) {
 			ArrayList<AppInfo> appInfos = new ArrayList<AppInfo>();
@@ -392,7 +392,7 @@ public class HomeActivity extends Activity {
 				View.OnClickListener task = new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						startActivity(Tools.logOutIntent(mContext));
+						startActivity(LauncherUtility.logOutIntent(mContext));
 						((Activity) mContext).finish();
 					}
 				};

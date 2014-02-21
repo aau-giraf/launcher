@@ -47,8 +47,8 @@ public class AuthenticationActivity extends CaptureActivity {
 			public void onClick(View v) {
 				// If the authentication activity was not launched by the launcher...
 				if (!getIntent().hasCategory("dk.aau.cs.giraf.launcher.GIRAF")) {
-					Tools.attachLauncher(mContext); // should not be called
-					Tools.saveLogInData(mContext, mPreviousProfile.getId());
+					LauncherUtility.attachLauncher(mContext); // should not be called
+					LauncherUtility.saveLogInData(mContext, mPreviousProfile.getId());
 					startActivity(mHomeIntent);
 				} else {
 					finish();

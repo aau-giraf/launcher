@@ -78,7 +78,6 @@ public class AppAdapter extends ArrayAdapter<AppInfo> {
 	/**
 	 * Sets the background color of a given app and saves the color.
 	 * @param context Context of the current activity.
-	 * @param currentUser User currently logged into the system.
 	 * @param convertView View to change color for.
 	 * @param color Color to change to.
 	 * @param appID ID of the app to change for.
@@ -87,7 +86,7 @@ public class AppAdapter extends ArrayAdapter<AppInfo> {
 		setAppBackground(convertView, color);
 		
 		final Helper helper = new Helper(context);
-		final Profile currentUser = Tools.findCurrentUser(context);
+		final Profile currentUser = LauncherUtility.findCurrentUser(context);
 		
 		App launcher = helper.appsHelper.getAppByPackageNameAndProfileId(currentUser.getId());
 		Setting<String, String, String> launchSetting = launcher.getSettings();

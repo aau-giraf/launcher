@@ -2,10 +2,11 @@ package dk.aau.cs.giraf.launcher.test;
 
 import android.content.Context;
 import android.test.AndroidTestCase;
-import dk.aau.cs.giraf.launcher.Tools;
+
+import dk.aau.cs.giraf.launcher.LauncherUtility;
 //import android.test.mock.MockContext;
 
-public class ToolsTest extends AndroidTestCase {
+public class LauncherUtilityTest extends AndroidTestCase {
 	
 	@Override
 	public void setUp() {
@@ -14,7 +15,7 @@ public class ToolsTest extends AndroidTestCase {
 	
 	public void testisLandscape() {
 		Context context = getContext();
-		assertEquals(true, Tools.isLandscape(context));
+		assertEquals(true, LauncherUtility.isLandscape(context));
 	}
 	
 	public void testintToDP() {
@@ -25,12 +26,12 @@ public class ToolsTest extends AndroidTestCase {
 		
 		input = 100;
 		expectedOutput = 100;
-		actualOutput = Tools.intToDP(context, input);
+		actualOutput = LauncherUtility.intToDP(context, input);
 		assertEquals(expectedOutput, actualOutput);
 		
 		input = 30;
 		expectedOutput = 30;
-		actualOutput = Tools.intToDP(context, input);
+		actualOutput = LauncherUtility.intToDP(context, input);
 		assertEquals(expectedOutput, actualOutput);
 	}
 

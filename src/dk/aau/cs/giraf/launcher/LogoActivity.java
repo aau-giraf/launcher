@@ -39,7 +39,7 @@ public class LogoActivity extends Activity {
 	            finally {
 	            	Intent intent;
 
-	            	if (Tools.sessionExpired(mContext)) {
+	            	if (LauncherUtility.sessionExpired(mContext)) {
 	            		intent = new Intent(mContext, AuthenticationActivity.class);
 	            	} else {
 	            		intent = new Intent(mContext, HomeActivity.class);
@@ -83,7 +83,7 @@ public class LogoActivity extends Activity {
 	 * This is make the flow more consistent with the screens which the user will be greeted with later. (homescreen = landscape, authentication = portrait)
 	 */
 	private void setOrientation() {
-		if (Tools.sessionExpired(mContext)) {
+		if (LauncherUtility.sessionExpired(mContext)) {
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		} else {
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);

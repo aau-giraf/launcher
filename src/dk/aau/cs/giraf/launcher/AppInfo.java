@@ -116,7 +116,7 @@ class AppInfo extends App {
 	private void loadIcon(Context context) {
 		// Is supposed to allow for custom icons, but does not currently support this.
 
-		List<ResolveInfo> systemApps = Tools.getDeviceApps(context);
+		List<ResolveInfo> systemApps = LauncherUtility.getDeviceApps(context);
 
 		for (ResolveInfo app : systemApps) {
 			if (app.activityInfo.packageName.equals(this.aPackage)) {
