@@ -56,7 +56,10 @@ public class AuthenticationActivity extends CaptureActivity {
 				}
 			}
 		});
-		
+
+
+
+		/*
 		final ImageView instructImageView = (ImageView) findViewById(R.id.animation);
 		instructImageView.setBackgroundResource(R.animator.instruct_ani);
 		
@@ -67,6 +70,7 @@ public class AuthenticationActivity extends CaptureActivity {
 				anim.start();
 			}
 		});
+		*/
 	}
 
 	/**
