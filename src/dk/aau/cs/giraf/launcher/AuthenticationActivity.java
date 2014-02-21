@@ -77,22 +77,19 @@ public class AuthenticationActivity extends CaptureActivity {
 	}
 
 	/**
-	 * Method which is ran every time the QR scanner scans a valid QR code.
-	 * SuppressWarnings("unused") is used here, as eclipse cannot figure out by itself that this method is actually used.
+	 * Checks whether the string from a scanned QR code is a valid GIRAF certificate.
+     * If the certificate is valid, the certificate-holder's name is shown, and the login button
+     * is displayed.
 	 * @param rawResult Result which the scanned string is saved in.
 	 * @param barcode A greyscale bitmap of the camera data which was decoded.
 	 */
-	@SuppressWarnings("unused")
 	@Override
 	public void handleDecode(Result rawResult, Bitmap barcode)
 	{
 		Helper helper = new Helper(this);
 		Profile profile = helper.profilesHelper.authenticateProfile(rawResult.getText());
 
-		/* If the scanned code is not a valid certificate which is
-		 * attached to a profile, authenticateProfile() will return null,
-		 * hence the null check here.
-		 */
+		// If the certificate was not valid, profile is set to null.
 		if (profile != null) {	
 			if (mPreviousProfile == null || !profile.toString().equals(mPreviousProfile.toString())) {
 				mVibrator.vibrate(400);
