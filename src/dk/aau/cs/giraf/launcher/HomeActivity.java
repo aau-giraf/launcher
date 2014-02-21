@@ -128,24 +128,18 @@ public class HomeActivity extends Activity {
 	 * Repaint the Grid View
 	 */
 	private void drawGridView() {
-		if (LauncherUtility.isLandscape(mContext)) {
-			int columns = calculateNumOfColumns();
-			int gridWidth = columns * Constants.GRID_CELL_WIDTH;
+        int columns = calculateNumOfColumns();
+        int gridWidth = columns * Constants.GRID_CELL_WIDTH;
 
-			mGrid.setNumColumns(columns);
-			LayoutParams gridParams = (LayoutParams) mGrid.getLayoutParams();
-			gridParams.width = gridWidth;
-			mGrid.setLayoutParams(gridParams);
-		} else {
-			/*
-			 * Future todo: implement portrait mode
-			 */
-		}
+        mGrid.setNumColumns(columns);
+        LayoutParams gridParams = (LayoutParams) mGrid.getLayoutParams();
+        gridParams.width = gridWidth;
+        mGrid.setLayoutParams(gridParams);
 	}
 
 	/**
-	 * Calculate the current number of columns to use, based on the current number of apps.
-	 * @return number of columns to use, based on the current number of apps
+	 * Calculates the current number of columns to use, based on the current number of apps.
+	 * @return Number of columns to use, based on the current number of apps
 	 */
 	private int calculateNumOfColumns() {
 		if (mNumberOfApps > Constants.APPS_PER_PAGE) {
