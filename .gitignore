@@ -1,6 +1,7 @@
 ﻿#Ignore the build directory
 /build
 /.gradle
+/.idea
 
 local.properties
 *.iml
