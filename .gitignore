@@ -33,5 +33,4 @@ proguard/
 *.iml
 *.ipr
 *.iws
-.idea/
 .idea/gradle.xml
