@@ -57,6 +57,8 @@ public class HomeActivity extends Activity {
 	private GWidgetConnectivity mConnectivityWidget;
 	private GWidgetLogout mLogoutWidget;
 
+    private GDialog mLogoutDialog;
+
 	private RelativeLayout mHomeDrawer;
 	private RelativeLayout mHomeBarLayout;
 	private LinearLayout mPictureLayout;	
@@ -85,6 +87,18 @@ public class HomeActivity extends Activity {
 		mPictureLayout = (LinearLayout)this.findViewById(R.id.profile_pic);
 		mProfilePictureView = (ImageView)this.findViewById(R.id.imageview_profilepic);
 		mHomeBarLayout = (RelativeLayout)this.findViewById(R.id.HomeBarLayout);
+
+        String logoutHeadline = mContext.getResources().getString(R.string.Log_out);
+        String logoutDescription = mContext.getResources().getString(R.string.Log_out_description);
+        mLogoutDialog = new GDialog(mContext, R.drawable.large_switch_profile, logoutHeadline, logoutDescription, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(LauncherUtility.logOutIntent(mContext));
+                mLogoutDialog.dismiss();
+                ((Activity) mContext).finish();
+            }
+        });
+        mLogoutDialog.setOwnerActivity((Activity)mContext);
 
 		mProfilePictureWidthLandscape = LauncherUtility.intToDP(mContext, 100);
 		mProfilePictureHeightLandscape = LauncherUtility.intToDP(mContext, 100);
@@ -383,23 +397,11 @@ public class HomeActivity extends Activity {
 		mLogoutWidget.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				View.OnClickListener task = new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						startActivity(LauncherUtility.logOutIntent(mContext));
-						((Activity) mContext).finish();
-					}
-				};
-				
-				if (!mWidgetRunning) {
+                if (!mWidgetRunning) {
 					mWidgetRunning = true;
-					String headline = mContext.getResources().getString(R.string.Log_out);
-					String description = mContext.getResources().getString(R.string.Log_out_description);
-					GDialog g = new GDialog(mContext, R.drawable.large_switch_profile, headline, description, task);
-					g.setOwnerActivity((Activity)mContext);
-					g.show();
+					mLogoutDialog.show();
 					mWidgetRunning = false;
-				};
+				}
 			}
 		});
 	}
