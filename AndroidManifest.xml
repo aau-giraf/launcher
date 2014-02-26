@@ -29,8 +29,8 @@
         <activity
             android:name="dk.aau.cs.giraf.launcher.LogoActivity"
             android:label="@string/application_name"
+            android:screenOrientation="landscape"
             android:noHistory="true"
-            
             android:theme="@android:style/Theme.NoTitleBar" 
             >
             <intent-filter>

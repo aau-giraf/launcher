@@ -28,6 +28,13 @@ public class LogoActivity extends Activity {
 	    }
 	    
 	    // Thread used to display the logo for a set amount of time.
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
 	    mLogoThread = new Thread() {
 	        @Override
 	        public void run() {
@@ -43,27 +50,25 @@ public class LogoActivity extends Activity {
 	            		intent = new Intent(mContext, AuthenticationActivity.class);
 	            	} else {
 	            		intent = new Intent(mContext, HomeActivity.class);
-	            		
+
 	            		SharedPreferences sharedPreferences = getSharedPreferences(Constants.TIMER_KEY, 0);
 	            		long guardianID = sharedPreferences.getLong(Constants.GUARDIAN_ID, -1);
-	            		
+
 	            		/* Following did we not have time to test due to errors in the Oasislib */
-	            		
+
 	            		//if ((new Helper(mContext)).profilesHelper.getProfileById(guardianID) != null) {
 	            			intent.putExtra(Constants.GUARDIAN_ID, guardianID);
 	            		//} else {
 	            			//intent = new Intent(mContext, AuthenticationActivity.class);
 	            		//}
 	            	}
-	            	
+
 	                startActivity(intent);
 //	                stop();
 	                finish();
 	            }
 	        }
 	    };
-	    
-	    this.setOrientation();
 	    
 	    mLogoThread.start();
 	}
@@ -76,18 +81,6 @@ public class LogoActivity extends Activity {
 	    	}
 	    }
 	    return true;
-	}
-	
-	/**
-	 * Sets the orientation based on current session information. If session has expired, then switch to portrait, else go to landscape.
-	 * This is make the flow more consistent with the screens which the user will be greeted with later. (homescreen = landscape, authentication = portrait)
-	 */
-	private void setOrientation() {
-		if (LauncherUtility.sessionExpired(mContext)) {
-			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		} else {
-			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-		}
 	}
 
     @Override
