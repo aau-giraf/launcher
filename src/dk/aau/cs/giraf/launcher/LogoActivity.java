@@ -89,4 +89,9 @@ public class LogoActivity extends Activity {
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		}
 	}
+
+    @Override
+    public void onBackPressed() {
+        //Do nothing, as the user should be able to back out of this activity
+    }
 }

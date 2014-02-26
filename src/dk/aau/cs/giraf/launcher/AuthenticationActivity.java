@@ -122,4 +122,9 @@ public class AuthenticationActivity extends CaptureActivity {
 		 */
 		this.getHandler().sendEmptyMessageDelayed(R.id.restart_preview, 500);
 	}
+
+    @Override
+    public void onBackPressed() {
+        //Do nothing, as the user should be able to back out of this activity
+    }
 }

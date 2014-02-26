@@ -111,14 +111,6 @@ public class HomeActivity extends Activity {
 		loadApplications();
 	}
 
-	/**
-	 * Catch all clicks on the back key and do nothing, since we dont want people to be able to "log out" with the back key
-	 */
-	@Override
-	public void onBackPressed() {
-
-	}
-
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
@@ -137,6 +129,11 @@ public class HomeActivity extends Activity {
 		super.onResume();
 		mWidgetTimer.sendEmptyMessage(GWidgetUpdater.MSG_START);
 	}
+
+    @Override
+    public void onBackPressed() {
+        //Do nothing, as the user should be able to back out of this activity
+    }
 
 	/**
 	 * Repaint the Grid View
