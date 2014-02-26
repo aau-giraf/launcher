@@ -5,7 +5,7 @@
       <GradleProjectSettings>
         <option name="distributionType" value="LOCAL" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleHome" value="$APPLICATION_HOME_DIR$/gradle-1.9" />
+        <option name="gradleHome" value="$PROJECT_DIR$/../../../../../Overførsler/Google Chrome Downloads/gradle-1.9-all/gradle-1.9" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
