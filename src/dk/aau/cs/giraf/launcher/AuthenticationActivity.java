@@ -38,7 +38,7 @@ public class AuthenticationActivity extends CaptureActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.authentication);
+		setContentView(R.layout.authentication1);
 		
 		mContext = this;
 		mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);		

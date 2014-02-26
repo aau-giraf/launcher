@@ -43,7 +43,7 @@
         <activity
             android:name="dk.aau.cs.giraf.launcher.AuthenticationActivity"
             android:label="@string/application_name"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.NoTitleBar"
             android:noHistory="true" >
             <intent-filter>
