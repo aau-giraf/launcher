@@ -73,9 +73,6 @@ final class CameraConfigurationManager {
 
   void setDesiredCameraParameters(Camera camera) {
     Camera.Parameters parameters = camera.getParameters();
-    //GIRAF MOD !!!!
-    camera.setDisplayOrientation(90);
-    //GIRAF MOD OFF !!!
     
     if (parameters == null) {
       Log.w(TAG, "Device error: no camera parameters are available. Proceeding without configuration.");
