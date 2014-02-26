@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.MotionEvent;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 
@@ -26,15 +28,17 @@ public class LogoActivity extends Activity {
 	    if (size <= 0) {
 	    	helper.CreateDummyData();
 	    }
-	    
-	    // Thread used to display the logo for a set amount of time.
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-
+                Animation rotate1 = AnimationUtils.loadAnimation(mContext, R.animator.rotatelogo);
+                rotate1.setDuration(Constants.TIME_TO_DISPLAY_LOGO);
+                findViewById(R.id.giraf_logo).startAnimation(rotate1);
             }
         });
+
+	    // Thread used to display the logo for a set amount of time.
 	    mLogoThread = new Thread() {
 	        @Override
 	        public void run() {
