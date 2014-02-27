@@ -79,7 +79,7 @@ public class AuthenticationActivity extends CaptureActivity {
 		ShapeDrawable shapeDrawable = new ShapeDrawable(rect);
 		
 		shapeDrawable.getPaint().setColor(color);
-		cameraFeedView.setBackground(shapeDrawable);
+		cameraFeedView.setBackgroundDrawable(shapeDrawable);
 	}
 
 	/**

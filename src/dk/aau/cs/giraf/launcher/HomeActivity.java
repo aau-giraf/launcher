@@ -173,11 +173,11 @@ public class HomeActivity extends Activity {
 		int screenHeight = size.y;
 
 		if (LauncherUtility.isLandscape(mContext)) {
-			homebarLayout.setBackground(getResources().getDrawable(R.drawable.homebar_back_land));
+			homebarLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.homebar_back_land));
 			homebarLayoutParams.height = android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 			homebarLayoutParams.width = barHeightLandscape;
 		} else {
-			homebarLayout.setBackground(getResources().getDrawable(R.drawable.homebar_back_port));
+			homebarLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.homebar_back_port));
 			homebarLayoutParams.height = barHeightPortrait;
 			homebarLayoutParams.width = android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 		}
@@ -482,7 +482,7 @@ public class HomeActivity extends Activity {
 
         shapeDrawable.getPaint().setColor(backgroundColor);
 
-        appViewLayout.setBackground(shapeDrawable);
+        appViewLayout.setBackgroundDrawable(shapeDrawable);
     }
 
     public static AppInfo getAppInfo(String id) {
