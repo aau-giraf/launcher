@@ -3,9 +3,6 @@
 /.gradle
 /.idea
 
-local.properties
-*.iml
-
 # built application files
 *.apk
 *.ap_
@@ -34,4 +31,3 @@ proguard/
 *.iml
 *.ipr
 *.iws
-.idea/*
