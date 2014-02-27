@@ -11,7 +11,7 @@ import android.view.animation.AnimationUtils;
 import android.view.MotionEvent;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 
-public class LogoActivity extends Activity {
+public class LogoActivity extends Activity{
 
 	private Thread mLogoThread;
 	private Context mContext;
@@ -33,7 +33,7 @@ public class LogoActivity extends Activity {
             @Override
             public void run() {
                 Animation rotate1 = AnimationUtils.loadAnimation(mContext, R.animator.rotatelogo);
-                rotate1.setDuration(Constants.TIME_TO_DISPLAY_LOGO);
+                rotate1.setDuration(Constants.SPEED_OF_LOGO_ANIMATION);
                 findViewById(R.id.giraf_logo).startAnimation(rotate1);
             }
         });
