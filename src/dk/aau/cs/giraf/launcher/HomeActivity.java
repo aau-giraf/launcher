@@ -20,12 +20,14 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.GridView;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import dk.aau.cs.giraf.gui.GColorAdapter;
 import dk.aau.cs.giraf.gui.GDialog;
@@ -58,6 +60,7 @@ public class HomeActivity extends Activity {
 
     private static HashMap<String,AppInfo> appInfos;
 
+    private boolean appsAdded = false;
     private boolean mWidgetRunning = false;
 
 	private GWidgetUpdater mWidgetTimer;
@@ -113,16 +116,30 @@ public class HomeActivity extends Activity {
 		mProfilePictureWidthPortrait = LauncherUtility.intToDP(mContext, 100);
 		mProfilePictureHeightPortrait = LauncherUtility.intToDP(mContext, 100);
 
+        appContainer = (LinearLayout)this.findViewById(R.id.appContainer);
+
 		loadDrawer();
 		loadWidgets();
 		loadPaintGrid();
-		loadApplications();
 	}
 
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 		this.drawBar();
+
+        if (!appsAdded) {
+            appContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+                @Override
+                public void onGlobalLayout() {
+                    // Ensure you call it only once :
+                    appContainer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+
+                    loadApplications();
+                }
+            });
+        }
 	}
 
 	@Override
@@ -285,13 +302,35 @@ public class HomeActivity extends Activity {
 				appInfos.put(String.valueOf(appInfo.getId()), appInfo);
 			}
 
-            appContainer = (LinearLayout)this.findViewById(R.id.appContainer);
+            mNumberOfApps = appInfos.size();
+
+            int containerWidth = ((ScrollView)appContainer.getParent()).getWidth();
+            int appsPrRow = containerWidth / Constants.APP_ICON_DIMENSION;
+            int paddingWidth = (containerWidth % Constants.APP_ICON_DIMENSION) / appsPrRow;
+
+            int containerHeight = ((ScrollView)appContainer.getParent()).getHeight();
+            int appsPrColumn = containerHeight / Constants.APP_ICON_DIMENSION;
+            int paddingHeight = (containerWidth % Constants.APP_ICON_DIMENSION) / appsPrColumn;
+
+            LinearLayout currentAppRow = new LinearLayout(mContext);
+            currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
+            appContainer.addView(currentAppRow);
+
 
             for (Map.Entry<String,AppInfo> entry : appInfos.entrySet()) {
-                appContainer.addView(createAppView(entry.getValue()));
+                View newAppView = createAppView(entry.getValue());
+                newAppView.setPadding(paddingWidth/2, paddingHeight/2, paddingWidth/2, paddingHeight/2);
+                currentAppRow.addView(newAppView);
+
+                if (currentAppRow.getChildCount() == appsPrRow) {
+                    currentAppRow = new LinearLayout(mContext);
+                    currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
+                    appContainer.addView(currentAppRow);
+                }
             }
 
-			mNumberOfApps = appInfos.size();
+            appsAdded = true;
+
 		} else {
 			Log.e(Constants.ERROR_TAG, "App list is null");
 		}
