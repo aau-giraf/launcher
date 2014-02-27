@@ -364,46 +364,62 @@ public class HomeActivity extends Activity {
 						result = true;
 						break;
 					case MotionEvent.ACTION_MOVE:
-						mHomeBarParams = (RelativeLayout.LayoutParams) v.getLayoutParams();
-						margin = mHomeBarParams.leftMargin + ((int) e.getX() - offset);
-
-						if (margin < Constants.DRAWER_SNAP_LENGTH) {
-							margin = 0;
-						} else if (margin > (Constants.DRAWER_WIDTH - Constants.DRAWER_SNAP_LENGTH)) {
-							margin = Constants.DRAWER_WIDTH;
-						} else if (margin > Constants.DRAWER_WIDTH) {
-							margin = Constants.DRAWER_WIDTH;
-						}
-
-						mHomeBarParams.setMargins(margin, 0, 0, 0);
-						v.setLayoutParams(mHomeBarParams);
-
-						View homeDrawerView = findViewById(R.id.HomeDrawer);
-						RelativeLayout.LayoutParams homeDrawerLayoutParams = (RelativeLayout.LayoutParams) homeDrawerView.getLayoutParams();
-						homeDrawerLayoutParams.setMargins((margin-(Constants.DRAWER_WIDTH*2)), 0, 0, 0);
-						homeDrawerView.setLayoutParams(homeDrawerLayoutParams);
-						result = true;
-
-						/* Setting width of the horizontalscrollview */
-						HorizontalScrollView hScrollView = (HorizontalScrollView)findViewById(R.id.horizontalScrollView);
-						LayoutParams scrollParams = (LayoutParams) hScrollView.getLayoutParams();
-						Display display = getWindowManager().getDefaultDisplay();
-						Point size = new Point();
-						display.getSize(size);
-						
-						/* removing 100 additional here to accomodate for "4 columns behaviour"
-						 * which occure when there are <= 9 apps on the screen and we dont want to be able to scroll
-						 */
-						scrollParams.width = (size.x - (margin + 100));
-						hScrollView.setLayoutParams(scrollParams);
+                        placeDrawer(margin, offset, result, e, v);
 						break;
 					case MotionEvent.ACTION_UP:
+                        placeDrawer(margin, offset, result, e, v);
 						break;
 				}
 				return result;
 			}
 		});
 	}
+
+    // this function places the drawer correctly, depending on if it is still being dragged (ACTION_MOVE) or not (ACTION_UP)
+    private void placeDrawer(int margin, int offset, boolean result, MotionEvent e, View v)
+    {
+        mHomeBarParams = (RelativeLayout.LayoutParams) v.getLayoutParams();
+        margin = mHomeBarParams.leftMargin + ((int) e.getX() - offset);
+
+        if(e.getActionMasked() == MotionEvent.ACTION_MOVE){
+            if (margin < Constants.DRAWER_SNAP_LENGTH) {
+                margin = 0;
+            } else if (margin > (Constants.DRAWER_WIDTH - Constants.DRAWER_SNAP_LENGTH)) {
+                margin = Constants.DRAWER_WIDTH;
+            } else if (margin > Constants.DRAWER_WIDTH) {
+                margin = Constants.DRAWER_WIDTH;
+            }
+        }
+        else{
+            if (margin < Constants.DRAWER_WIDTH/2) {
+                margin = 0;
+            } else {
+                margin = Constants.DRAWER_WIDTH;
+            }
+        }
+
+        mHomeBarParams.setMargins(margin, 0, 0, 0);
+        v.setLayoutParams(mHomeBarParams);
+
+        View homeDrawerView = findViewById(R.id.HomeDrawer);
+        RelativeLayout.LayoutParams homeDrawerLayoutParams = (RelativeLayout.LayoutParams) homeDrawerView.getLayoutParams();
+        homeDrawerLayoutParams.setMargins((margin-(Constants.DRAWER_WIDTH*2)), 0, 0, 0);
+        homeDrawerView.setLayoutParams(homeDrawerLayoutParams);
+        result = true;
+
+						/* Setting width of the horizontalscrollview */
+        HorizontalScrollView hScrollView = (HorizontalScrollView)findViewById(R.id.horizontalScrollView);
+        LayoutParams scrollParams = (LayoutParams) hScrollView.getLayoutParams();
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+
+						/* removing 100 additional here to accomodate for "4 columns behaviour"
+						 * which occure when there are <= 9 apps on the screen and we dont want to be able to scroll
+						 */
+        scrollParams.width = (size.x - (margin + 100));
+        hScrollView.setLayoutParams(scrollParams);
+    }
 
 	/**
 	 * Load the widgets placed on the drawer.
