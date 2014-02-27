@@ -408,7 +408,7 @@ public class HomeActivity extends Activity {
         result = true;
 
 						/* Setting width of the horizontalscrollview */
-        HorizontalScrollView hScrollView = (HorizontalScrollView)findViewById(R.id.horizontalScrollView);
+        ScrollView hScrollView = (ScrollView)findViewById(R.id.horizontalScrollView);
         LayoutParams scrollParams = (LayoutParams) hScrollView.getLayoutParams();
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
