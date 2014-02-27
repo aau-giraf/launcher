@@ -21,7 +21,8 @@ public final class Constants {
 	public static final long ROLE_CHILD = 3L;
 	
 	// Logo activity
-	public static final int TIME_TO_DISPLAY_LOGO = 2000;
+	public static final int TIME_TO_DISPLAY_LOGO = 4000;
+    public static final int SPEED_OF_LOGO_ANIMATION = 2000;
 
 	// Authentication activity
 	// Eight hours.
