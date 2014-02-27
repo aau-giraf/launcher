@@ -2,15 +2,21 @@ package dk.aau.cs.giraf.launcher;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
+import android.graphics.RectF;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +45,7 @@ public class HomeActivity extends Activity {
 	private Profile mCurrentUser; 
 	private Helper mHelper;
 	private App mLauncher;
-	private GridView mGrid;
+	private LinearLayout appContainer;
 	private TextView mNameView;
 	private ImageView mProfilePictureView;
 
@@ -50,7 +56,9 @@ public class HomeActivity extends Activity {
 	private int mLandscapeBarWidth;
 	private int mNumberOfApps;
 
-	private boolean mWidgetRunning = false;
+    private static HashMap<String,AppInfo> appInfos;
+
+    private boolean mWidgetRunning = false;
 
 	private GWidgetUpdater mWidgetTimer;
 	private GWidgetCalendar mCalendarWidget;
@@ -115,7 +123,6 @@ public class HomeActivity extends Activity {
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 		this.drawBar();
-		this.drawGridView();
 	}
 
 	@Override
@@ -136,19 +143,6 @@ public class HomeActivity extends Activity {
     }
 
 	/**
-	 * Repaint the Grid View
-	 */
-	private void drawGridView() {
-        int columns = calculateNumOfColumns();
-        int gridWidth = columns * Constants.GRID_CELL_WIDTH;
-
-        mGrid.setNumColumns(columns);
-        LayoutParams gridParams = (LayoutParams) mGrid.getLayoutParams();
-        gridParams.width = gridWidth;
-        mGrid.setLayoutParams(gridParams);
-	}
-
-	/**
 	 * Calculates the current number of columns to use, based on the current number of apps.
 	 * @return Number of columns to use, based on the current number of apps
 	 */
@@ -164,10 +158,8 @@ public class HomeActivity extends Activity {
 	 * Repaints the bar
 	 */
 	private void drawBar() {
-		GridView gridView = (GridView)this.findViewById(R.id.GridViewHome);
 		RelativeLayout homebarLayout = (RelativeLayout)this.findViewById(R.id.HomeBarLayout);
 
-		LayoutParams paramsGrid = (RelativeLayout.LayoutParams)gridView.getLayoutParams();
 		RelativeLayout.LayoutParams homebarLayoutParams = (RelativeLayout.LayoutParams)homebarLayout.getLayoutParams();
 
 		int barHeightLandscape = LauncherUtility.intToDP(mContext, Constants.HOMEBAR_LANDSCAPE_HEIGHT);
@@ -184,19 +176,12 @@ public class HomeActivity extends Activity {
 			homebarLayout.setBackground(getResources().getDrawable(R.drawable.homebar_back_land));
 			homebarLayoutParams.height = android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 			homebarLayoutParams.width = barHeightLandscape;
-
-			paramsGrid.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-			paramsGrid.width = screenWidth - barHeightLandscape;
 		} else {
 			homebarLayout.setBackground(getResources().getDrawable(R.drawable.homebar_back_port));
 			homebarLayoutParams.height = barHeightPortrait;
 			homebarLayoutParams.width = android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-
-			paramsGrid.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-			paramsGrid.height = screenHeight - barHeightPortrait;
 		}
 
-		gridView.setLayoutParams(paramsGrid);
 		homebarLayout.setLayoutParams(homebarLayoutParams);
 
 		this.drawWidgets();
@@ -283,13 +268,13 @@ public class HomeActivity extends Activity {
 	}
 
 	/**
-	 * Load the user's applications into the grid.
+	 * Load the user's applications into the layout.
 	 */
 	private void loadApplications() {		
 		List<App> girafAppsList = LauncherUtility.getVisibleGirafApps(mContext, mCurrentUser);
 
 		if (girafAppsList != null) {
-			ArrayList<AppInfo> appInfos = new ArrayList<AppInfo>();
+			appInfos = new HashMap<String,AppInfo>();
 
 			for (App app : girafAppsList) {
 				AppInfo appInfo = new AppInfo(app);
@@ -297,12 +282,15 @@ public class HomeActivity extends Activity {
 				appInfo.load(mContext, mCurrentUser);
 				appInfo.setBgColor(appBgColor(appInfo.getId()));
 				
-				appInfos.add(appInfo);
+				appInfos.put(String.valueOf(appInfo.getId()), appInfo);
 			}
-			
-			mGrid = (GridView)this.findViewById(R.id.GridViewHome);
-			mGrid.setAdapter(new AppAdapter(this, appInfos));
-			mGrid.setOnItemClickListener(new ProfileLauncher());
+
+            appContainer = (LinearLayout)this.findViewById(R.id.appContainer);
+
+            for (Map.Entry<String,AppInfo> entry : appInfos.entrySet()) {
+                appContainer.addView(createAppView(entry.getValue()));
+            }
+
 			mNumberOfApps = appInfos.size();
 		} else {
 			Log.e(Constants.ERROR_TAG, "App list is null");
@@ -454,4 +442,50 @@ public class HomeActivity extends Activity {
 		mLauncher.setSettings(launcherSettings);
 		mHelper.appsHelper.modifyAppByProfile(mLauncher, mCurrentUser);
 	}
+
+    /**
+      
+     * @param appInfo
+     * @return
+     */
+    private View createAppView(AppInfo appInfo) {
+        View appView;
+
+        final LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        appView = inflater.inflate(R.layout.apps, appContainer, false);
+
+        ImageView appIconView = (ImageView) appView.findViewById(R.id.app_icon);
+        TextView appTextView = (TextView) appView.findViewById(R.id.app_text);
+
+        appTextView.setText(appInfo.getShortenedName());
+        appIconView.setImageDrawable(appInfo.getIconImage());
+        setAppBackground(appView, appInfo.getBgColor());
+
+        appView.setTag(String.valueOf(appInfo.getId()));
+        appView.setOnDragListener(new GAppDragger());
+
+        appView.setOnClickListener(new ProfileLauncher());
+
+        return appView;
+    }
+
+    /**
+     * Sets the background of the app.
+     * @param wrapperView The view the app is located inside.
+     * @param backgroundColor The color to use for the background.
+     */
+    private void setAppBackground(View wrapperView, int backgroundColor) {
+        LinearLayout appViewLayout = (LinearLayout) wrapperView.findViewById(R.id.app_bg);
+
+        RoundRectShape roundRect = new RoundRectShape( new float[] {15,15, 15,15, 15,15, 15,15}, new RectF(), null);
+        ShapeDrawable shapeDrawable = new ShapeDrawable(roundRect);
+
+        shapeDrawable.getPaint().setColor(backgroundColor);
+
+        appViewLayout.setBackground(shapeDrawable);
+    }
+
+    public static AppInfo getAppInfo(String id) {
+        return appInfos.get(id);
+    }
 }

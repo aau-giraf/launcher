@@ -5,10 +5,10 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.AdapterView;
 
-	class ProfileLauncher extends Activity implements AdapterView.OnItemClickListener{
+	class ProfileLauncher extends Activity implements AdapterView.OnClickListener{
         @Override
-        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-            AppInfo app = (AppInfo) parent.getItemAtPosition(position);
+        public void onClick(View v) {
+            AppInfo app = HomeActivity.getAppInfo((String)v.getTag());
             
             Intent profileSelectIntent = new Intent(v.getContext(),ProfileSelectActivity.class);
             profileSelectIntent.putExtra(Constants.APP_PACKAGE_NAME, app.getaPackage());

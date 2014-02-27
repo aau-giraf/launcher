@@ -50,17 +50,17 @@ public class LogoActivity extends Activity implements Animation.AnimationListene
 	    setContentView(R.layout.logo);
 	    
 	    mContext = this.getApplicationContext();
-	    
-	    Helper helper = new Helper(mContext);
-	    int size = helper.profilesHelper.getProfiles().size();
-	    if (size <= 0) {
-	    	helper.CreateDummyData();
-	    }
 
         Animation logoAnimation = AnimationUtils.loadAnimation(mContext, R.animator.rotatelogo);
         logoAnimation.setDuration(Constants.SPEED_OF_LOGO_ANIMATION);
-        findViewById(R.id.giraf_logo).startAnimation(logoAnimation);
+        findViewById(R.id.giraficon).startAnimation(logoAnimation);
         logoAnimation.setAnimationListener(this);
+
+        Helper helper = new Helper(mContext);
+        int size = helper.profilesHelper.getProfiles().size();
+        if (size <= 0) {
+            helper.CreateDummyData();
+        }
 	}
 
     // Necessary for the AnimationListener interface, We use this to check for when the animation ends.
