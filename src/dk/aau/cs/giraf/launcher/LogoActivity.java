@@ -23,38 +23,29 @@ public class LogoActivity extends Activity implements Animation.AnimationListene
     public void CheckSessionAndGoToActivity(){
         Intent intent;
 
-        if (!skipAuthentication){
-            if (LauncherUtility.sessionExpired(mContext)) {
-                intent = new Intent(mContext, AuthenticationActivity.class);
-            } else {
-                intent = new Intent(mContext, HomeActivity.class);
-
-                SharedPreferences sharedPreferences = getSharedPreferences(Constants.TIMER_KEY, 0);
-                long guardianID = sharedPreferences.getLong(Constants.GUARDIAN_ID, -1);
-
-                            /* Following did we not have time to test due to errors in the Oasislib */
-
-                //if ((new Helper(mContext)).profilesHelper.getProfileById(guardianID) != null) {
-                intent.putExtra(Constants.GUARDIAN_ID, guardianID);
-                //} else {
-                //intent = new Intent(mContext, AuthenticationActivity.class);
-                //}
-            }
+        if (skipAuthentication){
+            intent = skipAuthentication();
+        } else if (LauncherUtility.sessionExpired(mContext)) {
+            intent = new Intent(mContext, AuthenticationActivity.class);
         } else {
-            skipAuthentication();
-        }
+            intent = new Intent(mContext, HomeActivity.class);
 
-//	                stop();
+            SharedPreferences sharedPreferences = getSharedPreferences(Constants.TIMER_KEY, 0);
+            long guardianID = sharedPreferences.getLong(Constants.GUARDIAN_ID, -1);
+
+            intent.putExtra(Constants.GUARDIAN_ID, guardianID);
+        }
+        startActivity(intent);
         finish();
     }
 
-    private void skipAuthentication(){
+    private Intent skipAuthentication(){
         Helper helper = new Helper(this);
         Profile profile = helper.profilesHelper.authenticateProfile("jkkxlagqyrztlrexhzofekyzrnppajeobqxcmunkqhsbrgpxdtqgygnmbhrgnpphaxsjshlpupgakmirhpyfaivvtpynqarxsghhilhkqvpelpreevykxurtppcggkzfaepihlodgznrmbrzgqucstflhmndibuymmvwauvdlyqnnlxkurinuypmqypspmkqavuhfwsh");
 
         Intent intent = new Intent(mContext, HomeActivity.class);
         intent.putExtra(Constants.GUARDIAN_ID, profile.getId());
-        startActivity(intent);
+        return intent;
     }
 
 	@Override
