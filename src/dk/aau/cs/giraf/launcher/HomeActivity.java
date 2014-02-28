@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.DragEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -154,7 +155,7 @@ public class HomeActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        //Do nothing, as the user should be able to back out of this activity
+        //Do nothing, as the user should not be able to back out of this activity
     }
 
 	/**
@@ -366,12 +367,33 @@ public class HomeActivity extends Activity {
 						break;
 					case MotionEvent.ACTION_MOVE:
 					case MotionEvent.ACTION_UP:
-                        placeDrawer( offset, e, v);
+                        placeDrawer(offset, e, v);
 						break;
 				}
 				return result;
 			}
-		});
+        });
+
+        findViewById(R.id.HomeBarLayout).setOnDragListener(new View.OnDragListener() {
+            int offset = 0;
+
+            @Override
+            public boolean onDrag(View v, DragEvent e) {
+                boolean result = true;
+
+                switch (e.getAction()) {
+                    case DragEvent.ACTION_DRAG_STARTED:
+                        offset = (int) e.getX();
+                        popBackDrawer(e, v, true);
+                        break;
+                    case DragEvent.ACTION_DRAG_ENDED:
+                        offset = (int) e.getX();
+                        popBackDrawer(e, v, false);
+                        break;
+                }
+                return result;
+            }
+        });
 	}
 
     /**
@@ -394,13 +416,45 @@ public class HomeActivity extends Activity {
                 margin = Constants.DRAWER_WIDTH;
             }
         }
-        else{
+        else if(e.getActionMasked() == MotionEvent.ACTION_UP){
             if (margin < Constants.DRAWER_WIDTH/2) {
                 margin = 0;
             } else {
                 margin = Constants.DRAWER_WIDTH;
             }
         }
+
+        mHomeBarParams.setMargins(margin, 0, 0, 0);
+        v.setLayoutParams(mHomeBarParams);
+
+        View homeDrawerView = findViewById(R.id.HomeDrawer);
+        RelativeLayout.LayoutParams homeDrawerLayoutParams = (RelativeLayout.LayoutParams) homeDrawerView.getLayoutParams();
+        homeDrawerLayoutParams.setMargins((margin - (Constants.DRAWER_WIDTH * 2)), 0, 0, 0);
+        homeDrawerView.setLayoutParams(homeDrawerLayoutParams);
+
+        /* Setting width of the scrollview */
+        ScrollView hScrollView = (ScrollView)findViewById(R.id.horizontalScrollView);
+        LayoutParams scrollParams = (LayoutParams) hScrollView.getLayoutParams();
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+
+        /* removing 100 additional here to accomodate for "4 columns behaviour"
+         * which occure when there are <= 9 apps on the screen and we dont want to be able to scroll
+         */
+        scrollParams.width = (size.x - (margin + 100));
+        hScrollView.setLayoutParams(scrollParams);
+    }
+
+    private void popBackDrawer(DragEvent e, View v, boolean startedDragging)
+    {
+        mHomeBarParams = (RelativeLayout.LayoutParams) v.getLayoutParams();
+        int margin;
+
+        if(!startedDragging)
+            margin = Constants.DRAWER_WIDTH;
+        else
+            margin = 0;
 
         mHomeBarParams.setMargins(margin, 0, 0, 0);
         v.setLayoutParams(mHomeBarParams);
