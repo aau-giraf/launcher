@@ -2,7 +2,6 @@ package dk.aau.cs.giraf.launcher;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -22,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.GridView;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -72,7 +70,7 @@ public class HomeActivity extends Activity {
 
 	private RelativeLayout mHomeDrawer;
 	private RelativeLayout mHomeBarLayout;
-	private LinearLayout mPictureLayout;	
+	private LinearLayout mPictureLayout;
 
 	private RelativeLayout.LayoutParams mHomeBarParams;
 
@@ -158,18 +156,6 @@ public class HomeActivity extends Activity {
     public void onBackPressed() {
         //Do nothing, as the user should be able to back out of this activity
     }
-
-	/**
-	 * Calculates the current number of columns to use, based on the current number of apps.
-	 * @return Number of columns to use, based on the current number of apps
-	 */
-	private int calculateNumOfColumns() {
-		if (mNumberOfApps > Constants.APPS_PER_PAGE) {
-			return (int) Math.ceil((mNumberOfApps) / (Constants.MAX_ROWS_PER_PAGE));
-		} else {
-			return Constants.MAX_COLUMNS_PER_PAGE;
-		}
-	}
 
 	/**
 	 * Repaints the bar
@@ -285,56 +271,73 @@ public class HomeActivity extends Activity {
 	}
 
 	/**
-	 * Load the user's applications into the layout.
+	 * Load the user's applications into the app container.
 	 */
-	private void loadApplications() {		
+	private void loadApplications() {
+        //Get the list of apps to show in the container
 		List<App> girafAppsList = LauncherUtility.getVisibleGirafApps(mContext, mCurrentUser);
 
 		if (girafAppsList != null) {
 			appInfos = new HashMap<String,AppInfo>();
 
-			for (App app : girafAppsList) {
-				AppInfo appInfo = new AppInfo(app);
+            //Fill AppInfo hashmap with AppInfo objects for each app
+			loadAppInfos(girafAppsList);
 
-				appInfo.load(mContext, mCurrentUser);
-				appInfo.setBgColor(appBgColor(appInfo.getId()));
-				
-				appInfos.put(String.valueOf(appInfo.getId()), appInfo);
-			}
-
-            mNumberOfApps = appInfos.size();
-
+            //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
             int containerWidth = ((ScrollView)appContainer.getParent()).getWidth();
             int appsPrRow = containerWidth / Constants.APP_ICON_DIMENSION;
-            int paddingWidth = (containerWidth % Constants.APP_ICON_DIMENSION) / appsPrRow;
+            int paddingWidth = (containerWidth % Constants.APP_ICON_DIMENSION) / (appsPrRow + 1);
 
+            //Calculate how many apps the screen can fit vertically on a single screen, and how much space is available for vertical padding
             int containerHeight = ((ScrollView)appContainer.getParent()).getHeight();
             int appsPrColumn = containerHeight / Constants.APP_ICON_DIMENSION;
-            int paddingHeight = (containerWidth % Constants.APP_ICON_DIMENSION) / appsPrColumn;
+            int paddingHeight = (containerHeight % Constants.APP_ICON_DIMENSION) / (appsPrColumn + 1);
 
+            //Add the first row to the container
             LinearLayout currentAppRow = new LinearLayout(mContext);
             currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
+            currentAppRow.setPadding(0, paddingHeight, 0, paddingHeight);
             appContainer.addView(currentAppRow);
 
-
+            //Insert apps into the container, and add new rows as needed
             for (Map.Entry<String,AppInfo> entry : appInfos.entrySet()) {
                 View newAppView = createAppView(entry.getValue());
-                newAppView.setPadding(paddingWidth/2, paddingHeight/2, paddingWidth/2, paddingHeight/2);
+                newAppView.setPadding(paddingWidth, 0, 0, 0);
                 currentAppRow.addView(newAppView);
 
                 if (currentAppRow.getChildCount() == appsPrRow) {
                     currentAppRow = new LinearLayout(mContext);
                     currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
+                    currentAppRow.setPadding(0, 0, 0, paddingHeight);
                     appContainer.addView(currentAppRow);
                 }
             }
 
+            //Remember that the apps have been added, so they are not added again by the listener
             appsAdded = true;
 
 		} else {
 			Log.e(Constants.ERROR_TAG, "App list is null");
 		}
 	}
+
+    /**
+     * Loads the AppInfo object of app from the list, into the {@code appInfos} hashmap, making
+     * them accesible with only the ID string of the app.
+     * @param appsList The list of accessible apps
+     */
+    private void loadAppInfos(List<App> appsList) {
+        appInfos = new HashMap<String,AppInfo>();
+
+        for (App app : appsList) {
+            AppInfo appInfo = new AppInfo(app);
+
+            appInfo.load(mContext, mCurrentUser);
+            appInfo.setBgColor(appBgColor(appInfo.getId()));
+
+            appInfos.put(String.valueOf(appInfo.getId()), appInfo);
+        }
+    }
 
 	/**
 	 * Load the user's paintgrid in the drawer.
@@ -355,19 +358,15 @@ public class HomeActivity extends Activity {
 			int offset = 0;
 			@Override
 			public boolean onTouch(View v, MotionEvent e) {
-				int margin = 0;
 				boolean result = true;
 
 				switch (e.getActionMasked()) {
 					case MotionEvent.ACTION_DOWN:
 						offset = (int) e.getX();
-						result = true;
 						break;
 					case MotionEvent.ACTION_MOVE:
-                        placeDrawer(margin, offset, result, e, v);
-						break;
 					case MotionEvent.ACTION_UP:
-                        placeDrawer(margin, offset, result, e, v);
+                        placeDrawer( offset, e, v);
 						break;
 				}
 				return result;
@@ -375,11 +374,16 @@ public class HomeActivity extends Activity {
 		});
 	}
 
-    // this function places the drawer correctly, depending on if it is still being dragged (ACTION_MOVE) or not (ACTION_UP)
-    private void placeDrawer(int margin, int offset, boolean result, MotionEvent e, View v)
+    /**
+     * this function places the drawer correctly, depending on if it is still being dragged (ACTION_MOVE) or not (ACTION_UP)
+     * @param offset The offset of the screen to the right. This depends on how far it has been dragged
+     * @param e The MotionEvent that called the function. This will either be ACTION_MOVE or ACTION_UP
+     * @param v The view that the function is called in. This is be the current view.
+     */
+    private void placeDrawer( int offset, MotionEvent e, View v)
     {
         mHomeBarParams = (RelativeLayout.LayoutParams) v.getLayoutParams();
-        margin = mHomeBarParams.leftMargin + ((int) e.getX() - offset);
+        int margin = mHomeBarParams.leftMargin + ((int) e.getX() - offset);
 
         if(e.getActionMasked() == MotionEvent.ACTION_MOVE){
             if (margin < Constants.DRAWER_SNAP_LENGTH) {
@@ -403,20 +407,19 @@ public class HomeActivity extends Activity {
 
         View homeDrawerView = findViewById(R.id.HomeDrawer);
         RelativeLayout.LayoutParams homeDrawerLayoutParams = (RelativeLayout.LayoutParams) homeDrawerView.getLayoutParams();
-        homeDrawerLayoutParams.setMargins((margin-(Constants.DRAWER_WIDTH*2)), 0, 0, 0);
+        homeDrawerLayoutParams.setMargins((margin - (Constants.DRAWER_WIDTH * 2)), 0, 0, 0);
         homeDrawerView.setLayoutParams(homeDrawerLayoutParams);
-        result = true;
 
-						/* Setting width of the horizontalscrollview */
+        /* Setting width of the scrollview */
         ScrollView hScrollView = (ScrollView)findViewById(R.id.horizontalScrollView);
         LayoutParams scrollParams = (LayoutParams) hScrollView.getLayoutParams();
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
 
-						/* removing 100 additional here to accomodate for "4 columns behaviour"
-						 * which occure when there are <= 9 apps on the screen and we dont want to be able to scroll
-						 */
+        /* removing 100 additional here to accomodate for "4 columns behaviour"
+         * which occure when there are <= 9 apps on the screen and we dont want to be able to scroll
+         */
         scrollParams.width = (size.x - (margin + 100));
         hScrollView.setLayoutParams(scrollParams);
     }
@@ -499,7 +502,6 @@ public class HomeActivity extends Activity {
 	}
 
     /**
-      
      * @param appInfo
      * @return
      */
