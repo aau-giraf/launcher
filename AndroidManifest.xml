@@ -64,7 +64,12 @@
             android:name="dk.aau.cs.giraf.launcher.ProfileSelectActivity"
             android:label="@string/application_name"
             android:noHistory="true"
-            android:theme="@android:style/Theme.NoTitleBar" >
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
         </activity>
     </application>
 
