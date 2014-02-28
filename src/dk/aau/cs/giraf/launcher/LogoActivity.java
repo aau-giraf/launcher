@@ -4,15 +4,16 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.MotionEvent;
+
 import dk.aau.cs.giraf.oasis.lib.Helper;
+import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 public class LogoActivity extends Activity implements Animation.AnimationListener{
 
+    private boolean skipAuthentication = true;
 	private Context mContext;
 
     /* This function is run after the logo animation is finished.
@@ -22,26 +23,38 @@ public class LogoActivity extends Activity implements Animation.AnimationListene
     public void CheckSessionAndGoToActivity(){
         Intent intent;
 
-        if (LauncherUtility.sessionExpired(mContext)) {
-            intent = new Intent(mContext, AuthenticationActivity.class);
+        if (!skipAuthentication){
+            if (LauncherUtility.sessionExpired(mContext)) {
+                intent = new Intent(mContext, AuthenticationActivity.class);
+            } else {
+                intent = new Intent(mContext, HomeActivity.class);
+
+                SharedPreferences sharedPreferences = getSharedPreferences(Constants.TIMER_KEY, 0);
+                long guardianID = sharedPreferences.getLong(Constants.GUARDIAN_ID, -1);
+
+                            /* Following did we not have time to test due to errors in the Oasislib */
+
+                //if ((new Helper(mContext)).profilesHelper.getProfileById(guardianID) != null) {
+                intent.putExtra(Constants.GUARDIAN_ID, guardianID);
+                //} else {
+                //intent = new Intent(mContext, AuthenticationActivity.class);
+                //}
+            }
         } else {
-            intent = new Intent(mContext, HomeActivity.class);
-
-            SharedPreferences sharedPreferences = getSharedPreferences(Constants.TIMER_KEY, 0);
-            long guardianID = sharedPreferences.getLong(Constants.GUARDIAN_ID, -1);
-
-	            		/* Following did we not have time to test due to errors in the Oasislib */
-
-            //if ((new Helper(mContext)).profilesHelper.getProfileById(guardianID) != null) {
-            intent.putExtra(Constants.GUARDIAN_ID, guardianID);
-            //} else {
-            //intent = new Intent(mContext, AuthenticationActivity.class);
-            //}
+            skipAuthentication();
         }
 
-        startActivity(intent);
 //	                stop();
         finish();
+    }
+
+    private void skipAuthentication(){
+        Helper helper = new Helper(this);
+        Profile profile = helper.profilesHelper.authenticateProfile("jkkxlagqyrztlrexhzofekyzrnppajeobqxcmunkqhsbrgpxdtqgygnmbhrgnpphaxsjshlpupgakmirhpyfaivvtpynqarxsghhilhkqvpelpreevykxurtppcggkzfaepihlodgznrmbrzgqucstflhmndibuymmvwauvdlyqnnlxkurinuypmqypspmkqavuhfwsh");
+
+        Intent intent = new Intent(mContext, HomeActivity.class);
+        intent.putExtra(Constants.GUARDIAN_ID, profile.getId());
+        startActivity(intent);
     }
 
 	@Override
