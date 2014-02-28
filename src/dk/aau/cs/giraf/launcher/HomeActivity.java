@@ -20,12 +20,14 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.GridView;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import dk.aau.cs.giraf.gui.GColorAdapter;
 import dk.aau.cs.giraf.gui.GDialog;
@@ -58,6 +60,7 @@ public class HomeActivity extends Activity {
 
     private static HashMap<String,AppInfo> appInfos;
 
+    private boolean appsAdded = false;
     private boolean mWidgetRunning = false;
 
 	private GWidgetUpdater mWidgetTimer;
@@ -113,16 +116,30 @@ public class HomeActivity extends Activity {
 		mProfilePictureWidthPortrait = LauncherUtility.intToDP(mContext, 100);
 		mProfilePictureHeightPortrait = LauncherUtility.intToDP(mContext, 100);
 
+        appContainer = (LinearLayout)this.findViewById(R.id.appContainer);
+
 		loadDrawer();
 		loadWidgets();
 		loadPaintGrid();
-		loadApplications();
 	}
 
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 		this.drawBar();
+
+        if (!appsAdded) {
+            appContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+                @Override
+                public void onGlobalLayout() {
+                    // Ensure you call it only once :
+                    appContainer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+
+                    loadApplications();
+                }
+            });
+        }
 	}
 
 	@Override
@@ -285,13 +302,35 @@ public class HomeActivity extends Activity {
 				appInfos.put(String.valueOf(appInfo.getId()), appInfo);
 			}
 
-            appContainer = (LinearLayout)this.findViewById(R.id.appContainer);
+            mNumberOfApps = appInfos.size();
+
+            int containerWidth = ((ScrollView)appContainer.getParent()).getWidth();
+            int appsPrRow = containerWidth / Constants.APP_ICON_DIMENSION;
+            int paddingWidth = (containerWidth % Constants.APP_ICON_DIMENSION) / appsPrRow;
+
+            int containerHeight = ((ScrollView)appContainer.getParent()).getHeight();
+            int appsPrColumn = containerHeight / Constants.APP_ICON_DIMENSION;
+            int paddingHeight = (containerWidth % Constants.APP_ICON_DIMENSION) / appsPrColumn;
+
+            LinearLayout currentAppRow = new LinearLayout(mContext);
+            currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
+            appContainer.addView(currentAppRow);
+
 
             for (Map.Entry<String,AppInfo> entry : appInfos.entrySet()) {
-                appContainer.addView(createAppView(entry.getValue()));
+                View newAppView = createAppView(entry.getValue());
+                newAppView.setPadding(paddingWidth/2, paddingHeight/2, paddingWidth/2, paddingHeight/2);
+                currentAppRow.addView(newAppView);
+
+                if (currentAppRow.getChildCount() == appsPrRow) {
+                    currentAppRow = new LinearLayout(mContext);
+                    currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
+                    appContainer.addView(currentAppRow);
+                }
             }
 
-			mNumberOfApps = appInfos.size();
+            appsAdded = true;
+
 		} else {
 			Log.e(Constants.ERROR_TAG, "App list is null");
 		}
@@ -325,46 +364,62 @@ public class HomeActivity extends Activity {
 						result = true;
 						break;
 					case MotionEvent.ACTION_MOVE:
-						mHomeBarParams = (RelativeLayout.LayoutParams) v.getLayoutParams();
-						margin = mHomeBarParams.leftMargin + ((int) e.getX() - offset);
-
-						if (margin < Constants.DRAWER_SNAP_LENGTH) {
-							margin = 0;
-						} else if (margin > (Constants.DRAWER_WIDTH - Constants.DRAWER_SNAP_LENGTH)) {
-							margin = Constants.DRAWER_WIDTH;
-						} else if (margin > Constants.DRAWER_WIDTH) {
-							margin = Constants.DRAWER_WIDTH;
-						}
-
-						mHomeBarParams.setMargins(margin, 0, 0, 0);
-						v.setLayoutParams(mHomeBarParams);
-
-						View homeDrawerView = findViewById(R.id.HomeDrawer);
-						RelativeLayout.LayoutParams homeDrawerLayoutParams = (RelativeLayout.LayoutParams) homeDrawerView.getLayoutParams();
-						homeDrawerLayoutParams.setMargins((margin-(Constants.DRAWER_WIDTH*2)), 0, 0, 0);
-						homeDrawerView.setLayoutParams(homeDrawerLayoutParams);
-						result = true;
-
-						/* Setting width of the horizontalscrollview */
-						HorizontalScrollView hScrollView = (HorizontalScrollView)findViewById(R.id.horizontalScrollView);
-						LayoutParams scrollParams = (LayoutParams) hScrollView.getLayoutParams();
-						Display display = getWindowManager().getDefaultDisplay();
-						Point size = new Point();
-						display.getSize(size);
-						
-						/* removing 100 additional here to accomodate for "4 columns behaviour"
-						 * which occure when there are <= 9 apps on the screen and we dont want to be able to scroll
-						 */
-						scrollParams.width = (size.x - (margin + 100));
-						hScrollView.setLayoutParams(scrollParams);
+                        placeDrawer(margin, offset, result, e, v);
 						break;
 					case MotionEvent.ACTION_UP:
+                        placeDrawer(margin, offset, result, e, v);
 						break;
 				}
 				return result;
 			}
 		});
 	}
+
+    // this function places the drawer correctly, depending on if it is still being dragged (ACTION_MOVE) or not (ACTION_UP)
+    private void placeDrawer(int margin, int offset, boolean result, MotionEvent e, View v)
+    {
+        mHomeBarParams = (RelativeLayout.LayoutParams) v.getLayoutParams();
+        margin = mHomeBarParams.leftMargin + ((int) e.getX() - offset);
+
+        if(e.getActionMasked() == MotionEvent.ACTION_MOVE){
+            if (margin < Constants.DRAWER_SNAP_LENGTH) {
+                margin = 0;
+            } else if (margin > (Constants.DRAWER_WIDTH - Constants.DRAWER_SNAP_LENGTH)) {
+                margin = Constants.DRAWER_WIDTH;
+            } else if (margin > Constants.DRAWER_WIDTH) {
+                margin = Constants.DRAWER_WIDTH;
+            }
+        }
+        else{
+            if (margin < Constants.DRAWER_WIDTH/2) {
+                margin = 0;
+            } else {
+                margin = Constants.DRAWER_WIDTH;
+            }
+        }
+
+        mHomeBarParams.setMargins(margin, 0, 0, 0);
+        v.setLayoutParams(mHomeBarParams);
+
+        View homeDrawerView = findViewById(R.id.HomeDrawer);
+        RelativeLayout.LayoutParams homeDrawerLayoutParams = (RelativeLayout.LayoutParams) homeDrawerView.getLayoutParams();
+        homeDrawerLayoutParams.setMargins((margin-(Constants.DRAWER_WIDTH*2)), 0, 0, 0);
+        homeDrawerView.setLayoutParams(homeDrawerLayoutParams);
+        result = true;
+
+						/* Setting width of the horizontalscrollview */
+        ScrollView hScrollView = (ScrollView)findViewById(R.id.horizontalScrollView);
+        LayoutParams scrollParams = (LayoutParams) hScrollView.getLayoutParams();
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+
+						/* removing 100 additional here to accomodate for "4 columns behaviour"
+						 * which occure when there are <= 9 apps on the screen and we dont want to be able to scroll
+						 */
+        scrollParams.width = (size.x - (margin + 100));
+        hScrollView.setLayoutParams(scrollParams);
+    }
 
 	/**
 	 * Load the widgets placed on the drawer.

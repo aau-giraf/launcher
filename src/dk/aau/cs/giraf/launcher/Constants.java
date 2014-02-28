@@ -21,7 +21,6 @@ public final class Constants {
 	public static final long ROLE_CHILD = 3L;
 	
 	// Logo activity
-	public static final int TIME_TO_DISPLAY_LOGO = 4000;
     public static final int SPEED_OF_LOGO_ANIMATION = 2000;
 
 	// Authentication activity
@@ -30,7 +29,7 @@ public final class Constants {
 	
 	// Home activity values.
 	public static final int DRAWER_WIDTH = 400;
-	public static final int GRID_CELL_WIDTH = 290;
+	public static final int APP_ICON_DIMENSION = 200;
 	public static final int APPS_PER_PAGE = 9;
 	public static final int MAX_ROWS_PER_PAGE = 3;
 	public static final int MAX_COLUMNS_PER_PAGE = 4;
