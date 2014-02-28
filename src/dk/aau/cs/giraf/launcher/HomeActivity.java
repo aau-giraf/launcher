@@ -154,7 +154,7 @@ public class HomeActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        //Do nothing, as the user should be able to back out of this activity
+        //Do nothing, as the user should not be able to back out of this activity
     }
 
 	/**
