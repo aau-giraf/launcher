@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.app.Activity;
 import android.content.Context;
@@ -374,6 +376,8 @@ public class HomeActivity extends Activity {
 			}
         });
 
+        // This closes the drawer after starting to drag a color and
+        // opens it again once you stop dragging.
         findViewById(R.id.HomeBarLayout).setOnDragListener(new View.OnDragListener() {
             int offset = 0;
 
@@ -384,11 +388,11 @@ public class HomeActivity extends Activity {
                 switch (e.getAction()) {
                     case DragEvent.ACTION_DRAG_STARTED:
                         offset = (int) e.getX();
-                        popBackDrawer(e, v, true);
+                        popBackDrawer(offset, e, v, true);
                         break;
                     case DragEvent.ACTION_DRAG_ENDED:
                         offset = (int) e.getX();
-                        popBackDrawer(e, v, false);
+                        popBackDrawer(offset, e, v, false);
                         break;
                 }
                 return result;
@@ -446,37 +450,51 @@ public class HomeActivity extends Activity {
         hScrollView.setLayoutParams(scrollParams);
     }
 
-    private void popBackDrawer(DragEvent e, View v, boolean startedDragging)
+    private void popBackDrawer(int offset, DragEvent e, View v, boolean startedDragging)
     {
         mHomeBarParams = (RelativeLayout.LayoutParams) v.getLayoutParams();
-        int margin;
+        Integer margin;
+        Integer current = offset;
 
         if(!startedDragging)
             margin = Constants.DRAWER_WIDTH;
         else
             margin = 0;
 
-        mHomeBarParams.setMargins(margin, 0, 0, 0);
-        v.setLayoutParams(mHomeBarParams);
+        while(margin != current){
 
-        View homeDrawerView = findViewById(R.id.HomeDrawer);
-        RelativeLayout.LayoutParams homeDrawerLayoutParams = (RelativeLayout.LayoutParams) homeDrawerView.getLayoutParams();
-        homeDrawerLayoutParams.setMargins((margin - (Constants.DRAWER_WIDTH * 2)), 0, 0, 0);
-        homeDrawerView.setLayoutParams(homeDrawerLayoutParams);
+            mHomeBarParams.setMargins(margin, 0, 0, 0);
+            v.setLayoutParams(mHomeBarParams);
 
-        /* Setting width of the scrollview */
-        ScrollView hScrollView = (ScrollView)findViewById(R.id.horizontalScrollView);
-        LayoutParams scrollParams = (LayoutParams) hScrollView.getLayoutParams();
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
+            View homeDrawerView = findViewById(R.id.HomeDrawer);
+            RelativeLayout.LayoutParams homeDrawerLayoutParams = (RelativeLayout.LayoutParams) homeDrawerView.getLayoutParams();
+            homeDrawerLayoutParams.setMargins((margin - (Constants.DRAWER_WIDTH * 2)), 0, 0, 0);
+            homeDrawerView.setLayoutParams(homeDrawerLayoutParams);
 
-        /* removing 100 additional here to accomodate for "4 columns behaviour"
-         * which occure when there are <= 9 apps on the screen and we dont want to be able to scroll
-         */
-        scrollParams.width = (size.x - (margin + 100));
-        hScrollView.setLayoutParams(scrollParams);
+            /* Setting width of the scrollview */
+            ScrollView hScrollView = (ScrollView)findViewById(R.id.horizontalScrollView);
+            LayoutParams scrollParams = (LayoutParams) hScrollView.getLayoutParams();
+            Display display = getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+
+            /* removing 100 additional here to accomodate for "4 columns behaviour"
+             * which occure when there are <= 9 apps on the screen and we dont want to be able to scroll
+             */
+            scrollParams.width = (size.x - (margin + 100));
+            hScrollView.setLayoutParams(scrollParams);
+
+            //v.animate().translationX(margin-current).setDuration(1000);
+
+            if(margin < current)
+                current--;
+            else
+                current++;
+            ;
+
+        }
     }
+
 
 	/**
 	 * Load the widgets placed on the drawer.
