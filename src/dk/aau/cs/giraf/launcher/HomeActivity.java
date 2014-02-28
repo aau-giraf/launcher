@@ -271,39 +271,35 @@ public class HomeActivity extends Activity {
 	}
 
 	/**
-	 * Load the user's applications into the layout.
+	 * Load the user's applications into the app container.
 	 */
-	private void loadApplications() {		
+	private void loadApplications() {
+        //Get the list of apps to show in the container
 		List<App> girafAppsList = LauncherUtility.getVisibleGirafApps(mContext, mCurrentUser);
 
 		if (girafAppsList != null) {
 			appInfos = new HashMap<String,AppInfo>();
 
-			for (App app : girafAppsList) {
-				AppInfo appInfo = new AppInfo(app);
+            //Fill AppInfo hashmap with AppInfo objects for each app
+			loadAppInfos(girafAppsList);
 
-				appInfo.load(mContext, mCurrentUser);
-				appInfo.setBgColor(appBgColor(appInfo.getId()));
-				
-				appInfos.put(String.valueOf(appInfo.getId()), appInfo);
-			}
-
-            mNumberOfApps = appInfos.size();
-
+            //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
             int containerWidth = ((ScrollView)appContainer.getParent()).getWidth();
             int appsPrRow = containerWidth / Constants.APP_ICON_DIMENSION;
             int paddingWidth = (containerWidth % Constants.APP_ICON_DIMENSION) / (appsPrRow + 1);
 
+            //Calculate how many apps the screen can fit vertically on a single screen, and how much space is available for vertical padding
             int containerHeight = ((ScrollView)appContainer.getParent()).getHeight();
             int appsPrColumn = containerHeight / Constants.APP_ICON_DIMENSION;
             int paddingHeight = (containerHeight % Constants.APP_ICON_DIMENSION) / (appsPrColumn + 1);
 
+            //Add the first row to the container
             LinearLayout currentAppRow = new LinearLayout(mContext);
             currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
             currentAppRow.setPadding(0, paddingHeight, 0, paddingHeight);
             appContainer.addView(currentAppRow);
 
-
+            //Insert apps into the container, and add new rows as needed
             for (Map.Entry<String,AppInfo> entry : appInfos.entrySet()) {
                 View newAppView = createAppView(entry.getValue());
                 newAppView.setPadding(paddingWidth, 0, 0, 0);
@@ -317,12 +313,31 @@ public class HomeActivity extends Activity {
                 }
             }
 
+            //Remember that the apps have been added, so they are not added again by the listener
             appsAdded = true;
 
 		} else {
 			Log.e(Constants.ERROR_TAG, "App list is null");
 		}
 	}
+
+    /**
+     * Loads the AppInfo object of app from the list, into the {@code appInfos} hashmap, making
+     * them accesible with only the ID string of the app.
+     * @param appsList The list of accessible apps
+     */
+    private void loadAppInfos(List<App> appsList) {
+        appInfos = new HashMap<String,AppInfo>();
+
+        for (App app : appsList) {
+            AppInfo appInfo = new AppInfo(app);
+
+            appInfo.load(mContext, mCurrentUser);
+            appInfo.setBgColor(appBgColor(appInfo.getId()));
+
+            appInfos.put(String.valueOf(appInfo.getId()), appInfo);
+        }
+    }
 
 	/**
 	 * Load the user's paintgrid in the drawer.
