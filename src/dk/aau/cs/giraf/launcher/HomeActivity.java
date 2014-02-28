@@ -76,6 +76,7 @@ public class HomeActivity extends Activity {
 
 	private RelativeLayout mHomeDrawer;
     private RelativeLayout mHomeBarLayout;
+    private SideBarLayout SideBarLayout;
 	private LinearLayout mPictureLayout;
 
 	private RelativeLayout.LayoutParams mHomeBarParams;
@@ -102,6 +103,7 @@ public class HomeActivity extends Activity {
 		mPictureLayout = (LinearLayout)this.findViewById(R.id.profile_pic);
 		mProfilePictureView = (ImageView)this.findViewById(R.id.imageview_profilepic);
 		mHomeBarLayout = (RelativeLayout)this.findViewById(R.id.HomeBarLayout);
+        SideBarLayout = (SideBarLayout)this.findViewById(R.id.SideBarLayout);
 
         String logoutHeadline = mContext.getResources().getString(R.string.Log_out);
         String logoutDescription = mContext.getResources().getString(R.string.Log_out_description);
@@ -370,7 +372,7 @@ public class HomeActivity extends Activity {
 					case MotionEvent.ACTION_MOVE:
                         break;
                     case MotionEvent.ACTION_DOWN:
-                        placeDrawer(e, v);
+                        placeDrawer();
 					case MotionEvent.ACTION_UP:
                         //placeDrawer(offset, e, v);
 						break;
@@ -390,10 +392,10 @@ public class HomeActivity extends Activity {
 
                 switch (e.getAction()) {
                     case DragEvent.ACTION_DRAG_STARTED:
-                        offset = (int) e.getX();
+                        placeDrawer();
                         break;
                     case DragEvent.ACTION_DRAG_ENDED:
-                        offset = (int) e.getX();
+                        placeDrawer();
                         break;
                 }
                 return result;
@@ -401,12 +403,11 @@ public class HomeActivity extends Activity {
         });
 	}
 
-    private void placeDrawer(MotionEvent e, View v)
+    private void placeDrawer()
     {
         final int to;
-        final View view = v;
 
-        if(v.getX() == 0)
+        if(SideBarLayout.isSideBarHidden)
             to = Constants.DRAWER_WIDTH;
         else
             to = -Constants.DRAWER_WIDTH;
@@ -414,27 +415,23 @@ public class HomeActivity extends Activity {
         // then animate the view translating from (0, 0)
         TranslateAnimation ta = new TranslateAnimation(0, to, 0, 0);
         ta.setDuration(500);
+        SideBarLayout.startAnimation(ta);
+
         ta.setAnimationListener(new TranslateAnimation.AnimationListener() {
 
             @Override
-            public void onAnimationStart(Animation animation) { }
+            public void onAnimationStart(Animation animation) {
+            }
 
             @Override
-            public void onAnimationRepeat(Animation animation) { }
+            public void onAnimationRepeat(Animation animation) {
+            }
 
             @Override
-            public void onAnimationEnd(Animation animation)
-            {
-                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)view.getLayoutParams();
-                if(view.getX() == 0)
-                    params.leftMargin = Constants.DRAWER_WIDTH;
-                else
-                    params.leftMargin = 0;
+            public void onAnimationEnd(Animation animation) {
 
-                view.setLayoutParams(params);
             }
         });
-        view.startAnimation(ta);
     }
 
 	/**
