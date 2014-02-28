@@ -9,6 +9,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Activity;
+import android.widget.FrameLayout;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.RectF;
@@ -72,7 +75,7 @@ public class HomeActivity extends Activity {
     private GDialog mLogoutDialog;
 
 	private RelativeLayout mHomeDrawer;
-	private RelativeLayout mHomeBarLayout;
+    private RelativeLayout mHomeBarLayout;
 	private LinearLayout mPictureLayout;
 
 	private RelativeLayout.LayoutParams mHomeBarParams;
@@ -364,12 +367,12 @@ public class HomeActivity extends Activity {
 				boolean result = true;
 
 				switch (e.getActionMasked()) {
-					case MotionEvent.ACTION_DOWN:
-						offset = (int) e.getX();
-						break;
 					case MotionEvent.ACTION_MOVE:
+                        break;
+                    case MotionEvent.ACTION_DOWN:
+                        placeDrawer(e, v);
 					case MotionEvent.ACTION_UP:
-                        placeDrawer(offset, e, v);
+                        //placeDrawer(offset, e, v);
 						break;
 				}
 				return result;
@@ -388,11 +391,9 @@ public class HomeActivity extends Activity {
                 switch (e.getAction()) {
                     case DragEvent.ACTION_DRAG_STARTED:
                         offset = (int) e.getX();
-                        popBackDrawer(offset, e, v, true);
                         break;
                     case DragEvent.ACTION_DRAG_ENDED:
                         offset = (int) e.getX();
-                        popBackDrawer(offset, e, v, false);
                         break;
                 }
                 return result;
@@ -400,101 +401,41 @@ public class HomeActivity extends Activity {
         });
 	}
 
-    /**
-     * this function places the drawer correctly, depending on if it is still being dragged (ACTION_MOVE) or not (ACTION_UP)
-     * @param offset The offset of the screen to the right. This depends on how far it has been dragged
-     * @param e The MotionEvent that called the function. This will either be ACTION_MOVE or ACTION_UP
-     * @param v The view that the function is called in. This is be the current view.
-     */
-    private void placeDrawer( int offset, MotionEvent e, View v)
+    private void placeDrawer(MotionEvent e, View v)
     {
-        mHomeBarParams = (RelativeLayout.LayoutParams) v.getLayoutParams();
-        int margin = mHomeBarParams.leftMargin + ((int) e.getX() - offset);
+        final int to;
+        final View view = v;
 
-        if(e.getActionMasked() == MotionEvent.ACTION_MOVE){
-            if (margin < Constants.DRAWER_SNAP_LENGTH) {
-                margin = 0;
-            } else if (margin > (Constants.DRAWER_WIDTH - Constants.DRAWER_SNAP_LENGTH)) {
-                margin = Constants.DRAWER_WIDTH;
-            } else if (margin > Constants.DRAWER_WIDTH) {
-                margin = Constants.DRAWER_WIDTH;
-            }
-        }
-        else if(e.getActionMasked() == MotionEvent.ACTION_UP){
-            if (margin < Constants.DRAWER_WIDTH/2) {
-                margin = 0;
-            } else {
-                margin = Constants.DRAWER_WIDTH;
-            }
-        }
-
-        mHomeBarParams.setMargins(margin, 0, 0, 0);
-        v.setLayoutParams(mHomeBarParams);
-
-        View homeDrawerView = findViewById(R.id.HomeDrawer);
-        RelativeLayout.LayoutParams homeDrawerLayoutParams = (RelativeLayout.LayoutParams) homeDrawerView.getLayoutParams();
-        homeDrawerLayoutParams.setMargins((margin - (Constants.DRAWER_WIDTH * 2)), 0, 0, 0);
-        homeDrawerView.setLayoutParams(homeDrawerLayoutParams);
-
-        /* Setting width of the scrollview */
-        ScrollView hScrollView = (ScrollView)findViewById(R.id.horizontalScrollView);
-        LayoutParams scrollParams = (LayoutParams) hScrollView.getLayoutParams();
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-
-        /* removing 100 additional here to accomodate for "4 columns behaviour"
-         * which occure when there are <= 9 apps on the screen and we dont want to be able to scroll
-         */
-        scrollParams.width = (size.x - (margin + 100));
-        hScrollView.setLayoutParams(scrollParams);
-    }
-
-    private void popBackDrawer(int offset, DragEvent e, View v, boolean startedDragging)
-    {
-        mHomeBarParams = (RelativeLayout.LayoutParams) v.getLayoutParams();
-        Integer margin;
-        Integer current = offset;
-
-        if(!startedDragging)
-            margin = Constants.DRAWER_WIDTH;
+        if(v.getX() == 0)
+            to = Constants.DRAWER_WIDTH;
         else
-            margin = 0;
+            to = -Constants.DRAWER_WIDTH;
 
-        while(margin != current){
+        // then animate the view translating from (0, 0)
+        TranslateAnimation ta = new TranslateAnimation(0, to, 0, 0);
+        ta.setDuration(500);
+        ta.setAnimationListener(new TranslateAnimation.AnimationListener() {
 
-            mHomeBarParams.setMargins(margin, 0, 0, 0);
-            v.setLayoutParams(mHomeBarParams);
+            @Override
+            public void onAnimationStart(Animation animation) { }
 
-            View homeDrawerView = findViewById(R.id.HomeDrawer);
-            RelativeLayout.LayoutParams homeDrawerLayoutParams = (RelativeLayout.LayoutParams) homeDrawerView.getLayoutParams();
-            homeDrawerLayoutParams.setMargins((margin - (Constants.DRAWER_WIDTH * 2)), 0, 0, 0);
-            homeDrawerView.setLayoutParams(homeDrawerLayoutParams);
+            @Override
+            public void onAnimationRepeat(Animation animation) { }
 
-            /* Setting width of the scrollview */
-            ScrollView hScrollView = (ScrollView)findViewById(R.id.horizontalScrollView);
-            LayoutParams scrollParams = (LayoutParams) hScrollView.getLayoutParams();
-            Display display = getWindowManager().getDefaultDisplay();
-            Point size = new Point();
-            display.getSize(size);
+            @Override
+            public void onAnimationEnd(Animation animation)
+            {
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)view.getLayoutParams();
+                if(view.getX() == 0)
+                    params.leftMargin = Constants.DRAWER_WIDTH;
+                else
+                    params.leftMargin = 0;
 
-            /* removing 100 additional here to accomodate for "4 columns behaviour"
-             * which occure when there are <= 9 apps on the screen and we dont want to be able to scroll
-             */
-            scrollParams.width = (size.x - (margin + 100));
-            hScrollView.setLayoutParams(scrollParams);
-
-            //v.animate().translationX(margin-current).setDuration(1000);
-
-            if(margin < current)
-                current--;
-            else
-                current++;
-            ;
-
-        }
+                view.setLayoutParams(params);
+            }
+        });
+        view.startAnimation(ta);
     }
-
 
 	/**
 	 * Load the widgets placed on the drawer.
