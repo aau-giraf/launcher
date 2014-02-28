@@ -309,12 +309,6 @@ public class HomeActivity extends Activity {
                 newAppView.setPadding(paddingWidth, 0, 0, 0);
                 currentAppRow.addView(newAppView);
 
-                if (currentAppRow.getChildCount() < appsPrRow) {
-                    newAppView = createAppView(entry.getValue());
-                    newAppView.setPadding(paddingWidth, 0, 0, 0);
-                    currentAppRow.addView(newAppView);
-                }
-
                 if (currentAppRow.getChildCount() == appsPrRow) {
                     currentAppRow = new LinearLayout(mContext);
                     currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
