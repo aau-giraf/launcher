@@ -147,6 +147,11 @@ public class LauncherUtility {
 				userApps.remove(i);
 				i--;
 			}
+
+            //Exclude the launcher from visible apps
+            if (userApps.get(i).getaPackage().equals("dk.aau.cs.giraf.launcher")) {
+                userApps.remove(i);
+            }
 		}
 
 		return userApps;
