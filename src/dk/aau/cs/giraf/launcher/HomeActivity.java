@@ -306,25 +306,33 @@ public class HomeActivity extends Activity {
 
             int containerWidth = ((ScrollView)appContainer.getParent()).getWidth();
             int appsPrRow = containerWidth / Constants.APP_ICON_DIMENSION;
-            int paddingWidth = (containerWidth % Constants.APP_ICON_DIMENSION) / appsPrRow;
+            int paddingWidth = (containerWidth % Constants.APP_ICON_DIMENSION) / (appsPrRow + 1);
 
             int containerHeight = ((ScrollView)appContainer.getParent()).getHeight();
             int appsPrColumn = containerHeight / Constants.APP_ICON_DIMENSION;
-            int paddingHeight = (containerWidth % Constants.APP_ICON_DIMENSION) / appsPrColumn;
+            int paddingHeight = (containerHeight % Constants.APP_ICON_DIMENSION) / (appsPrColumn + 1);
 
             LinearLayout currentAppRow = new LinearLayout(mContext);
             currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
+            currentAppRow.setPadding(0, paddingHeight, 0, paddingHeight);
             appContainer.addView(currentAppRow);
 
 
             for (Map.Entry<String,AppInfo> entry : appInfos.entrySet()) {
                 View newAppView = createAppView(entry.getValue());
-                newAppView.setPadding(paddingWidth/2, paddingHeight/2, paddingWidth/2, paddingHeight/2);
+                newAppView.setPadding(paddingWidth, 0, 0, 0);
                 currentAppRow.addView(newAppView);
+
+                if (currentAppRow.getChildCount() < appsPrRow) {
+                    newAppView = createAppView(entry.getValue());
+                    newAppView.setPadding(paddingWidth, 0, 0, 0);
+                    currentAppRow.addView(newAppView);
+                }
 
                 if (currentAppRow.getChildCount() == appsPrRow) {
                     currentAppRow = new LinearLayout(mContext);
                     currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
+                    currentAppRow.setPadding(0, 0, 0, paddingHeight);
                     appContainer.addView(currentAppRow);
                 }
             }
@@ -408,7 +416,7 @@ public class HomeActivity extends Activity {
         result = true;
 
 						/* Setting width of the horizontalscrollview */
-        HorizontalScrollView hScrollView = (HorizontalScrollView)findViewById(R.id.horizontalScrollView);
+        ScrollView hScrollView = (ScrollView)findViewById(R.id.horizontalScrollView);
         LayoutParams scrollParams = (LayoutParams) hScrollView.getLayoutParams();
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
