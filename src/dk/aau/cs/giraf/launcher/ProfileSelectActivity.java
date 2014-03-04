@@ -21,6 +21,7 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
 public class ProfileSelectActivity extends Activity {
 
 	private List<Profile> mChildren;
+    private Helper mHelper;
 	private Context mContext;
 	private long mGuardianID;
 	private String mPackageName;
@@ -36,12 +37,14 @@ public class ProfileSelectActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.profileselect);
 
-		mContext = getApplicationContext();
+		mContext = this;
+        mPackageName = Constants.APP_PACKAGE_NAME;
 
         // determine whether to return result or not
         shouldReturnResult = callingActivityIsExpectingResult();
 
         // Only guardian id is required if expecting result returned
+        mHelper = new Helper(mContext);
 		mGuardianID = getIntent().getExtras().getLong(Constants.GUARDIAN_ID);
 
         /* If we should not return a result, it means that we should start a new activity when a profile
@@ -62,22 +65,21 @@ public class ProfileSelectActivity extends Activity {
 	 * and creates the list used to select which child to run an app with. 
 	 */
 	private void loadProfiles() {
-		Helper helper = new Helper(mContext);
 		Profile.setOutput("{1} {2} {3}");
 		
 		mChildren = new ArrayList<Profile>();
 
-		Profile guardianProfile = helper.profilesHelper.getProfileById(mGuardianID);
+		Profile guardianProfile = mHelper.profilesHelper.getProfileById(mGuardianID);
 		
-		List<Profile> guardianChildren = helper.profilesHelper.getChildrenByGuardian(guardianProfile);
+		List<Profile> guardianChildren = mHelper.profilesHelper.getChildrenByGuardian(guardianProfile);
 		
-		List<Department> guardianDepartments = helper.departmentsHelper.getDepartmentsByProfile(guardianProfile);
+		List<Department> guardianDepartments = mHelper.departmentsHelper.getDepartmentsByProfile(guardianProfile);
 		
 		List<Profile> totalChildren = new ArrayList<Profile>();
 		totalChildren.addAll(guardianChildren);
 		
 		for (Department department : guardianDepartments) {
-			List<Profile> childrenFromDepartments = helper.profilesHelper.getChildrenByDepartmentAndSubDepartments(department);
+			List<Profile> childrenFromDepartments = mHelper.profilesHelper.getChildrenByDepartmentAndSubDepartments(department);
 			
 			totalChildren.addAll(childrenFromDepartments);
 		}

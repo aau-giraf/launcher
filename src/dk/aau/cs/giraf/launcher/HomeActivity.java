@@ -72,8 +72,6 @@ public class HomeActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
 
-		mLandscapeBarWidth = LauncherUtility.intToDP(this, Constants.HOMEBAR_LANDSCAPE_WIDTH);
-
 		HomeActivity.mContext = this;
 		mHelper = new Helper(mContext);
 		
@@ -88,13 +86,6 @@ public class HomeActivity extends Activity {
 		mProfilePictureView = (ImageView)this.findViewById(R.id.imageview_profilepic);
 		mHomeBarLayout = (RelativeLayout) this.findViewById(R.id.HomeBarLayout);
         SideBarLayout = (SideBarLayout)this.findViewById(R.id.SideBarLayout);
-
-//        ScrollView scrollView = (ScrollView) this.findViewById(R.id.horizontalScrollView);
-//        RelativeLayout.LayoutParams scrollViewLayoutParams = (RelativeLayout.LayoutParams) scrollView.getLayoutParams();
-//        RelativeLayout.LayoutParams homeBarLayoutParams = (RelativeLayout.LayoutParams) mHomeBarLayout.getLayoutParams();
-//        if (scrollViewLayoutParams != null) {
-//            scrollViewLayoutParams.setMargins(LauncherUtility.intToDP(this, mHomeBarLayout.getWidth()), 0, 0, 0);
-//        }
 
         String logoutHeadline = mContext.getResources().getString(R.string.Log_out);
         String logoutDescription = mContext.getResources().getString(R.string.Log_out_description);
