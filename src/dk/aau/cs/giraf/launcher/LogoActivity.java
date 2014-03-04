@@ -45,6 +45,7 @@ public class LogoActivity extends Activity implements Animation.AnimationListene
 
         Intent intent = new Intent(mContext, HomeActivity.class);
         intent.putExtra(Constants.GUARDIAN_ID, profile.getId());
+        LauncherUtility.saveLogInData(mContext, profile.getId());
         return intent;
     }
 
