@@ -1,9 +1,5 @@
 package dk.aau.cs.giraf.launcher;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,10 +11,32 @@ import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.App;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 /**
  * Class for holding static methods and fields, to minimize code duplication.
  */
 public class LauncherUtility {
+
+    private static boolean DEBUG_MODE = false;
+
+    /**
+     * Decides if GIRAF launcher is running in debug mode
+     * Debug mode can be enabled through enableDebugging() method,
+     * which is typically done on LogoActivity
+     */
+    public static boolean isDebugging() {
+        return DEBUG_MODE;
+    }
+
+    /**
+     * Enable GIRAF launcher debug mode
+     */
+    public static void enableDebugging(boolean debugging) {
+        DEBUG_MODE = debugging;
+    }
 
 	/**
 	 * Saves data for the currently authorized log in.

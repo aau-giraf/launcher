@@ -24,6 +24,7 @@ import java.util.Random;
 
 public class HomeActivity extends Activity {
 
+    private boolean DEBUG_MODE;
 	private static Context mContext;
 
 	private Profile mCurrentUser; 
@@ -56,6 +57,7 @@ public class HomeActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
+
 		HomeActivity.mContext = this;
 		mHelper = new Helper(mContext);
 		
@@ -192,6 +194,12 @@ public class HomeActivity extends Activity {
         mSideBarView = (SideBarLayout)this.findViewById(R.id.SideBarLayout);
         mAppsContainer = (LinearLayout)this.findViewById(R.id.appContainer);
         mAppsScrollView = (ScrollView)this.findViewById(R.id.horizontalScrollView);
+
+        // Show warning if DEBUG_MODE is true
+        if (LauncherUtility.isDebugging()) {
+            LinearLayout debug = (LinearLayout) findViewById(R.id.debug_mode);
+            debug.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
@@ -263,9 +271,9 @@ public class HomeActivity extends Activity {
         final int to;
 
         if(mSideBarView.isSideBarHidden)
-            to = Constants.DRAWER_WIDTH;
+            to = mHomeDrawerView.getWidth();
         else
-            to = -Constants.DRAWER_WIDTH;
+            to = -mHomeDrawerView.getWidth();
 
         // then animate the view translating from (0, 0)
         TranslateAnimation ta = new TranslateAnimation(0, to, 0, 0);
@@ -278,7 +286,7 @@ public class HomeActivity extends Activity {
             public void onAnimationStart(Animation animation) {
                 // Sets the left margin of the scrollview based on the width of the homebar
                 mAppsScrollViewParams = new RelativeLayout.LayoutParams(mAppsScrollView.getLayoutParams());
-                mAppsScrollViewParams.leftMargin = LauncherUtility.intToDP(mContext, mHomeBarLayout.getWidth());
+                mAppsScrollViewParams.leftMargin = mHomeBarLayout.getWidth();
                 mAppsScrollView.setLayoutParams(mAppsScrollViewParams);
             }
 
@@ -308,11 +316,11 @@ public class HomeActivity extends Activity {
 		mLogoutWidget.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-                if (!mWidgetRunning) {
-					mWidgetRunning = true;
-					mLogoutDialog.show();
-					mWidgetRunning = false;
-				}
+            if (!mWidgetRunning) {
+                mWidgetRunning = true;
+                mLogoutDialog.show();
+                mWidgetRunning = false;
+            }
 			}
 		});
 	}

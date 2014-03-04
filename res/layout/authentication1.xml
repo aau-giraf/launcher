@@ -71,6 +71,12 @@
                 android:text="Log ind"
                 android:layout_alignBottom="@+id/loginname" />
         </RelativeLayout>
+
+        <include
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                layout="@layout/debug_mode" />
+
     </FrameLayout>
 
     <FrameLayout

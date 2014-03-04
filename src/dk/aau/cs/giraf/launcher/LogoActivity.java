@@ -5,8 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
@@ -14,8 +16,9 @@ public class LogoActivity extends Activity implements Animation.AnimationListene
 
     /** ****************************************** **/
     // TODO: ONLY USED FOR DEBUGGING PURPOSES!!!
-    private boolean skipAuthentication = true;
-    private boolean showLogoAnimation = false;
+    private final boolean DEBUG_MODE = true;
+    private final boolean showAuthentication = false;
+    private final boolean showLogoAnimation = false;
     /** ****************************************** **/
 
 	private Context mContext;
@@ -27,7 +30,7 @@ public class LogoActivity extends Activity implements Animation.AnimationListene
     public void CheckSessionAndGoToActivity(){
         Intent intent;
 
-        if (skipAuthentication){
+        if (DEBUG_MODE && !showAuthentication){
             intent = skipAuthentication();
         } else if (LauncherUtility.sessionExpired(mContext)) {
             intent = new Intent(mContext, AuthenticationActivity.class);
@@ -39,6 +42,10 @@ public class LogoActivity extends Activity implements Animation.AnimationListene
 
             intent.putExtra(Constants.GUARDIAN_ID, guardianID);
         }
+
+        if(DEBUG_MODE)
+            LauncherUtility.enableDebugging(DEBUG_MODE);
+
         startActivity(intent);
         finish();
     }
@@ -57,16 +64,27 @@ public class LogoActivity extends Activity implements Animation.AnimationListene
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.logo);
-	    
-	    mContext = this.getApplicationContext();
+
+        mContext = this.getApplicationContext();
+
+        // Show warning if DEBUG_MODE is true
+        if (DEBUG_MODE) {
+            LinearLayout debug = (LinearLayout) findViewById(R.id.debug_mode);
+            debug.setVisibility(View.VISIBLE);
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 
         Animation logoAnimation = AnimationUtils.loadAnimation(mContext, R.animator.rotatelogo);
 
         // Opt in/out whether to show animation or not
-        if (showLogoAnimation)
-            logoAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
+        if (DEBUG_MODE && !showLogoAnimation)
+            logoAnimation.setDuration(0);
         else
-           logoAnimation.setDuration(0);
+            logoAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
 
         findViewById(R.id.giraficon).startAnimation(logoAnimation);
         logoAnimation.setAnimationListener(this);
