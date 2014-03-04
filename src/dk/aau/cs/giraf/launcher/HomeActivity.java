@@ -1,38 +1,25 @@
 package dk.aau.cs.giraf.launcher;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import android.app.Activity;
-import android.widget.FrameLayout;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.content.Context;
-import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.DragEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.RelativeLayout.LayoutParams;
-import android.widget.ScrollView;
-import android.widget.TextView;
+import android.widget.*;
 import dk.aau.cs.giraf.gui.GColorAdapter;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GWidgetCalendar;
@@ -79,9 +66,6 @@ public class HomeActivity extends Activity {
     private SideBarLayout SideBarLayout;
 	private LinearLayout mPictureLayout;
 
-	private RelativeLayout.LayoutParams mHomeBarParams;
-
-
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -96,14 +80,21 @@ public class HomeActivity extends Activity {
 		mCurrentUser = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getLong(Constants.GUARDIAN_ID));
 		
 		mLauncher = mHelper.appsHelper.getAppByPackageNameAndProfileId(mCurrentUser.getId());
-
-		mNameView = (TextView)this.findViewById(R.id.nameView);
-		mNameView.setText(mCurrentUser.getFirstname() + " " + mCurrentUser.getSurname());
+// TODO: Find out whether name is required for sidebar
+//		mNameView = (TextView)this.findViewById(R.id.nameView);
+//		mNameView.setText(mCurrentUser.getFirstname() + " " + mCurrentUser.getSurname());
 
 		mPictureLayout = (LinearLayout)this.findViewById(R.id.profile_pic);
 		mProfilePictureView = (ImageView)this.findViewById(R.id.imageview_profilepic);
-		mHomeBarLayout = (RelativeLayout)this.findViewById(R.id.HomeBarLayout);
+		mHomeBarLayout = (RelativeLayout) this.findViewById(R.id.HomeBarLayout);
         SideBarLayout = (SideBarLayout)this.findViewById(R.id.SideBarLayout);
+
+//        ScrollView scrollView = (ScrollView) this.findViewById(R.id.horizontalScrollView);
+//        RelativeLayout.LayoutParams scrollViewLayoutParams = (RelativeLayout.LayoutParams) scrollView.getLayoutParams();
+//        RelativeLayout.LayoutParams homeBarLayoutParams = (RelativeLayout.LayoutParams) mHomeBarLayout.getLayoutParams();
+//        if (scrollViewLayoutParams != null) {
+//            scrollViewLayoutParams.setMargins(LauncherUtility.intToDP(this, mHomeBarLayout.getWidth()), 0, 0, 0);
+//        }
 
         String logoutHeadline = mContext.getResources().getString(R.string.Log_out);
         String logoutDescription = mContext.getResources().getString(R.string.Log_out_description);
@@ -132,7 +123,6 @@ public class HomeActivity extends Activity {
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
-		this.drawBar();
 
         if (!appsAdded) {
             appContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -164,119 +154,6 @@ public class HomeActivity extends Activity {
     public void onBackPressed() {
         //Do nothing, as the user should not be able to back out of this activity
     }
-
-	/**
-	 * Repaints the bar
-	 */
-	private void drawBar() {
-		RelativeLayout homebarLayout = (RelativeLayout)this.findViewById(R.id.HomeBarLayout);
-
-		RelativeLayout.LayoutParams homebarLayoutParams = (RelativeLayout.LayoutParams)homebarLayout.getLayoutParams();
-
-		int barHeightLandscape = LauncherUtility.intToDP(mContext, Constants.HOMEBAR_LANDSCAPE_HEIGHT);
-		int barHeightPortrait = LauncherUtility.intToDP(mContext, Constants.HOMEBAR_PORTRAIT_HEIGHT);
-
-		/* Get the size of the screen */
-		Display display = getWindowManager().getDefaultDisplay();
-		Point size = new Point();
-		display.getSize(size);
-		int screenWidth = size.x;
-		int screenHeight = size.y;
-
-		if (LauncherUtility.isLandscape(mContext)) {
-			homebarLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.homebar_back_land));
-			homebarLayoutParams.height = android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-			homebarLayoutParams.width = barHeightLandscape;
-		} else {
-			homebarLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.homebar_back_port));
-			homebarLayoutParams.height = barHeightPortrait;
-			homebarLayoutParams.width = android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-		}
-
-		homebarLayout.setLayoutParams(homebarLayoutParams);
-
-		this.drawWidgets();
-	}
-
-	/**
-	 * Repaints the widgets
-	 */
-	public void drawWidgets() {
-		ViewGroup.LayoutParams profilePictureViewParams = mProfilePictureView.getLayoutParams();
-		RelativeLayout.LayoutParams connectivityWidgetParams = (LayoutParams) mConnectivityWidget.getLayoutParams();
-		RelativeLayout.LayoutParams calendarWidgetParams = (LayoutParams) mCalendarWidget.getLayoutParams();
-		RelativeLayout.LayoutParams logoutWidgetParams = (LayoutParams) mLogoutWidget.getLayoutParams();
-
-		if (LauncherUtility.isLandscape(mContext)) {
-			mNameView.setVisibility(View.INVISIBLE);
-
-			profilePictureViewParams.width = LauncherUtility.intToDP(mContext, Constants.PROFILE_PIC_LANDSCAPE_WIDTH);
-			profilePictureViewParams.height = LauncherUtility.intToDP(mContext, Constants.PROFIL_EPIC_LANDSCAPE_HEIGHT);
-			mHomeBarLayout.setPadding(LauncherUtility.intToDP(mContext, Constants.HOMEBAR_LANDSCAPE_PADDING),
-					LauncherUtility.intToDP(mContext, Constants.HOMEBAR_LANDSCAPE_PADDING),
-					LauncherUtility.intToDP(mContext, Constants.HOMEBAR_LANDSCAPE_PADDING),
-					LauncherUtility.intToDP(mContext, Constants.HOMEBAR_LANDSCAPE_PADDING));
-
-			connectivityWidgetParams.setMargins(LauncherUtility.intToDP(mContext, Constants.WIDGET_CONNECTIVITY_MARGIN_LANDSCAPE_LEFT),
-					LauncherUtility.intToDP(mContext, Constants.WIDGET_CONNECTIVITY_MARGIN_LANDSCAPE_TOP),
-					LauncherUtility.intToDP(mContext, Constants.WIDGET_CONNECTIVITY_MARGIN_LANDSCAPE_RIGHT),
-					LauncherUtility.intToDP(mContext, Constants.WIDGET_CONNECTIVITY_MARGIN_LANDSCAPE_BOTTOM));
-
-			calendarWidgetParams.setMargins(LauncherUtility.intToDP(mContext, Constants.WIDGET_CALENDAR_MARGIN_LANDSCAPE_LEFT),
-					LauncherUtility.intToDP(mContext, Constants.WIDGET_CALENDAR_MARGIN_LANDSCAPE_TOP),
-					LauncherUtility.intToDP(mContext, Constants.WIDGET_CALENDAR_MARGIN_LANDSCAPE_RIGHT),
-					LauncherUtility.intToDP(mContext, Constants.WIDGET_CALENDAR_MARGIN_LANDSCAPE_BOTTOM));
-			calendarWidgetParams.addRule(RelativeLayout.BELOW, mConnectivityWidget.getId());
-
-			calendarWidgetParams.addRule(RelativeLayout.LEFT_OF, 0);
-
-			logoutWidgetParams.setMargins(LauncherUtility.intToDP(mContext, Constants.WIDGET_LOGOUT_MARGIN_LANDSCAPE_LEFT),
-					LauncherUtility.intToDP(mContext, Constants.WIDGET_LOGOUT_MARGIN_LANDSCAPE_TOP),
-					LauncherUtility.intToDP(mContext, Constants.WIDGET_LOGOUT_MARGIN_LANDSCAPE_RIGHT),
-					LauncherUtility.intToDP(mContext, Constants.WIDGET_LOGOUT_MARGIN_LANDSCAPE_BOTTOM));
-
-			logoutWidgetParams.addRule(RelativeLayout.BELOW, mCalendarWidget.getId());
-			logoutWidgetParams.addRule(RelativeLayout.LEFT_OF, 0);
-		} else {
-			/**
-			 * future todo: implement portrait mode and fix the below code
-			 */
-			connectivityWidgetParams.setMargins(LauncherUtility.intToDP(mContext, Constants.WIDGET_CONNECTIVITY_MARGIN_PORTRAIT_LEFT),
-					LauncherUtility.intToDP(mContext, Constants.WIDGET_CONNECTIVITY_MARGIN_PORTRAIT_TOP),
-					LauncherUtility.intToDP(mContext, Constants.WIDGET_CONNECTIVITY_MARGIN_PORTRAIT_RIGHT),
-					LauncherUtility.intToDP(mContext, Constants.WIDGET_CONNECTIVITY_MARGIN_PORTRAIT_BOTTOM));
-
-			calendarWidgetParams.setMargins(LauncherUtility.intToDP(mContext, Constants.WIDGET_CALENDAR_MARGIN_PORTRAIT_LEFT),
-					LauncherUtility.intToDP(mContext, Constants.WIDGET_CALENDAR_MARGIN_PORTRAIT_TOP),
-					LauncherUtility.intToDP(mContext, Constants.WIDGET_CALENDAR_MARGIN_PORTRAIT_RIGHT),
-					LauncherUtility.intToDP(mContext, Constants.WIDGET_CALENDAR_MARGIN_PORTRAIT_BOTTOM));
-
-			calendarWidgetParams.addRule(RelativeLayout.BELOW, 0);
-			calendarWidgetParams.addRule(RelativeLayout.LEFT_OF, mConnectivityWidget.getId());
-
-			logoutWidgetParams.setMargins(LauncherUtility.intToDP(mContext, Constants.WIDGET_LOGOUT_MARGIN_PORTRAIT_LEFT),
-					LauncherUtility.intToDP(mContext, Constants.WIDGET_LOGOUT_MARGIN_PORTRAIT_TOP),
-					LauncherUtility.intToDP(mContext, Constants.WIDGET_LOGOUT_MARGIN_PORTRAIT_RIGHT),
-					LauncherUtility.intToDP(mContext, Constants.WIDGET_LOGOUT_MARGIN_PORTRAIT_BOTTOM));
-
-			logoutWidgetParams.addRule(RelativeLayout.BELOW, 0);
-			logoutWidgetParams.addRule(RelativeLayout.LEFT_OF, mCalendarWidget.getId());
-
-			profilePictureViewParams.width = LauncherUtility.intToDP(mContext, Constants.PROFILE_PIC_PORTRAIT_WIDTH);
-			profilePictureViewParams.height = LauncherUtility.intToDP(mContext, Constants.PROFILE_PIC_PORTRAIT_HEIGHT);
-
-			mHomeBarLayout.setPadding(LauncherUtility.intToDP(mContext, Constants.HOMEBAR_PORTRAIT_PADDING),
-					LauncherUtility.intToDP(mContext, Constants.HOMEBAR_PORTRAIT_PADDING),
-					LauncherUtility.intToDP(mContext, Constants.HOMEBAR_PORTRAIT_PADDING),
-					LauncherUtility.intToDP(mContext, Constants.HOMEBAR_PORTRAIT_PADDING));
-
-			mNameView.setVisibility(View.VISIBLE);
-		}
-		mProfilePictureView.setLayoutParams(profilePictureViewParams);	
-		mConnectivityWidget.setLayoutParams(connectivityWidgetParams);
-		mCalendarWidget.setLayoutParams(calendarWidgetParams);
-		mLogoutWidget.setLayoutParams(logoutWidgetParams);
-	}
 
 	/**
 	 * Load the user's applications into the app container.
