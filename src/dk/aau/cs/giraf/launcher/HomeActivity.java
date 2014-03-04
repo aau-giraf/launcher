@@ -1,5 +1,13 @@
 package dk.aau.cs.giraf.launcher;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
@@ -9,9 +17,9 @@ import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.DragEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -122,20 +130,9 @@ public class HomeActivity extends Activity {
 		loadDrawer();
 		loadWidgets();
 		loadPaintGrid();
-
-        // Add this activity to google analytics tracking
-        EasyTracker.getInstance(this).activityStart(this);
 	}
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        // Activity is stopping, stop tracking on google analytics
-        EasyTracker.getInstance(this).activityStop(this);
-    }
-
-    @Override
+	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 		this.drawBar();
