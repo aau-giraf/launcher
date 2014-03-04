@@ -1,7 +1,9 @@
 package dk.aau.cs.giraf.launcher;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.RectF;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
@@ -417,8 +419,27 @@ public class HomeActivity extends Activity {
 
         appView.setTag(String.valueOf(appInfo.getId()));
         appView.setOnDragListener(new GAppDragger());
+        if(mCurrentUser.getPRole() == Constants.ROLE_GUARDIAN)
+            appView.setOnClickListener(new GuardianProfileLauncher());
+        else{appView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppInfo app = HomeActivity.getAppInfo((String)v.getTag());
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                intent.setComponent(new ComponentName(app.getaPackage(), app.getActivity()));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 
-        appView.setOnClickListener(new ProfileLauncher());
+                intent.putExtra(Constants.CHILD_ID, mCurrentUser.getId());
+                intent.putExtra(Constants.APP_COLOR, app.getBgColor());
+                intent.putExtra(Constants.APP_PACKAGE_NAME, app.getaPackage());
+                intent.putExtra(Constants.APP_ACTIVITY_NAME, app.getActivity());
+
+                startActivity(intent);
+            }
+            });
+        }
 
         return appView;
     }
