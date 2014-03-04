@@ -10,7 +10,7 @@
         android:id="@+id/horizontalScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="200dp">
+        android:layout_marginLeft="100dp">
         <LinearLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/appContainer"
@@ -29,7 +29,7 @@
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/HomeBarLayout"
         android:layout_width="200dp"
-            android:layout_marginLeft="400dp"
+        android:layout_marginLeft="400dp"
         android:layout_height="fill_parent"
         android:background="@drawable/homebar_back_port"
         android:padding="20dp" >
