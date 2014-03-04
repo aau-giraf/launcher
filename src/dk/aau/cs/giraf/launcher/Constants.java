@@ -38,47 +38,26 @@ public final class Constants {
 	// Home activity graphics values
 	public static final int HOMEBAR_LANDSCAPE_WIDTH = 200;
 	public static final int HOMEBAR_LANDSCAPE_HEIGHT = 100;
-	public static final int HOMEBAR_PORTRAIT_WIDTH = 100;
-	public static final int HOMEBAR_PORTRAIT_HEIGHT = 200;
 	
 	public static final int PROFILE_PIC_LANDSCAPE_WIDTH = 70;
 	public static final int PROFIL_EPIC_LANDSCAPE_HEIGHT = 91;
 	
-	public static final int PROFILE_PIC_PORTRAIT_WIDTH = 100;
-	public static final int PROFILE_PIC_PORTRAIT_HEIGHT = 130;
-	
 	public static final int HOMEBAR_LANDSCAPE_PADDING = 15;
-	public static final int HOMEBAR_PORTRAIT_PADDING = 15;
 
 	public static final int WIDGET_CONNECTIVITY_MARGIN_LANDSCAPE_LEFT = 0;
 	public static final int WIDGET_CONNECTIVITY_MARGIN_LANDSCAPE_TOP = 106;
 	public static final int WIDGET_CONNECTIVITY_MARGIN_LANDSCAPE_RIGHT = 0;
 	public static final int WIDGET_CONNECTIVITY_MARGIN_LANDSCAPE_BOTTOM = 0;
 	
-	public static final int WIDGET_CONNECTIVITY_MARGIN_PORTRAIT_LEFT = 0;
-	public static final int WIDGET_CONNECTIVITY_MARGIN_PORTRAIT_TOP = 0;
-	public static final int WIDGET_CONNECTIVITY_MARGIN_PORTRAIT_RIGHT = 0;
-	public static final int WIDGET_CONNECTIVITY_MARGIN_PORTRAIT_BOTTOM = 0;
-	
 	public static final int WIDGET_CALENDAR_MARGIN_LANDSCAPE_LEFT = 0;
 	public static final int WIDGET_CALENDAR_MARGIN_LANDSCAPE_TOP = 15;
 	public static final int WIDGET_CALENDAR_MARGIN_LANDSCAPE_RIGHT = 0;
 	public static final int WIDGET_CALENDAR_MARGIN_LANDSCAPE_BOTTOM = 0;
 	
-	public static final int WIDGET_CALENDAR_MARGIN_PORTRAIT_LEFT = 0;
-	public static final int WIDGET_CALENDAR_MARGIN_PORTRAIT_TOP = 0;
-	public static final int WIDGET_CALENDAR_MARGIN_PORTRAIT_RIGHT = 25;
-	public static final int WIDGET_CALENDAR_MARGIN_PORTRAIT_BOTTOM = 0;
-	
 	public static final int WIDGET_LOGOUT_MARGIN_LANDSCAPE_LEFT = 0;
 	public static final int WIDGET_LOGOUT_MARGIN_LANDSCAPE_TOP = 390;
 	public static final int WIDGET_LOGOUT_MARGIN_LANDSCAPE_RIGHT = 0;
 	public static final int WIDGET_LOGOUT_MARGIN_LANDSCAPE_BOTTOM = 0;
-	
-	public static final int WIDGET_LOGOUT_MARGIN_PORTRAIT_LEFT = 0;
-	public static final int WIDGET_LOGOUT_MARGIN_PORTRAIT_TOP = 0;
-	public static final int WIDGET_LOGOUT_MARGIN_PORTRAIT_RIGHT = 25;
-	public static final int WIDGET_LOGOUT_MARGIN_PORTRAIT_BOTTOM = 0;
 	
 	// Error logging
 	public static final String ERROR_TAG = "launcher";
