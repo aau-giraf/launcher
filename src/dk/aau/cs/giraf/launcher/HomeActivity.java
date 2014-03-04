@@ -1,25 +1,33 @@
 package dk.aau.cs.giraf.launcher;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
 import android.app.Activity;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.content.Context;
 import android.graphics.RectF;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.view.DragEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.*;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+
+import com.google.analytics.tracking.android.EasyTracker;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
 import dk.aau.cs.giraf.gui.GColorAdapter;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GWidgetCalendar;
@@ -109,9 +117,20 @@ public class HomeActivity extends Activity {
 		loadDrawer();
 		loadWidgets();
 		loadPaintGrid();
+
+        // Start logging this activity
+        EasyTracker.getInstance(this).activityStart(this);
 	}
 
-	@Override
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        // Stop logging this activity
+        EasyTracker.getInstance(this).activityStop(this);
+    }
+
+    @Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 
