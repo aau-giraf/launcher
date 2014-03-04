@@ -7,13 +7,17 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 public class LogoActivity extends Activity implements Animation.AnimationListener{
 
+    /** ****************************************** **/
+    // TODO: ONLY USED FOR DEBUGGING PURPOSES!!!
     private boolean skipAuthentication = true;
+    private boolean showLogoAnimation = false;
+    /** ****************************************** **/
+
 	private Context mContext;
 
     /* This function is run after the logo animation is finished.
@@ -57,7 +61,13 @@ public class LogoActivity extends Activity implements Animation.AnimationListene
 	    mContext = this.getApplicationContext();
 
         Animation logoAnimation = AnimationUtils.loadAnimation(mContext, R.animator.rotatelogo);
-        logoAnimation.setDuration(Constants.SPEED_OF_LOGO_ANIMATION);
+
+        // Opt in/out whether to show animation or not
+        if (showLogoAnimation)
+            logoAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
+        else
+           logoAnimation.setDuration(0);
+
         findViewById(R.id.giraficon).startAnimation(logoAnimation);
         logoAnimation.setAnimationListener(this);
 

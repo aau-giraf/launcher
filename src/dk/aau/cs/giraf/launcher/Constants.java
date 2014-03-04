@@ -21,7 +21,7 @@ public final class Constants {
 	public static final long ROLE_CHILD = 3L;
 	
 	// Logo activity
-    public static final int SPEED_OF_LOGO_ANIMATION = 2000;
+    public static final int LOGO_ANIMATION_DURATION = 2000;
 
 	// Authentication activity
 	// Eight hours.
@@ -30,34 +30,6 @@ public final class Constants {
 	// Home activity values.
 	public static final int DRAWER_WIDTH = 400;
 	public static final int APP_ICON_DIMENSION = 200;
-	public static final int APPS_PER_PAGE = 9;
-	public static final int MAX_ROWS_PER_PAGE = 3;
-	public static final int MAX_COLUMNS_PER_PAGE = 4;
-	public static final int DRAWER_SNAP_LENGTH = 40;
-	
-	// Home activity graphics values
-	public static final int HOMEBAR_LANDSCAPE_WIDTH = 200;
-	public static final int HOMEBAR_LANDSCAPE_HEIGHT = 100;
-	
-	public static final int PROFILE_PIC_LANDSCAPE_WIDTH = 70;
-	public static final int PROFIL_EPIC_LANDSCAPE_HEIGHT = 91;
-	
-	public static final int HOMEBAR_LANDSCAPE_PADDING = 15;
-
-	public static final int WIDGET_CONNECTIVITY_MARGIN_LANDSCAPE_LEFT = 0;
-	public static final int WIDGET_CONNECTIVITY_MARGIN_LANDSCAPE_TOP = 106;
-	public static final int WIDGET_CONNECTIVITY_MARGIN_LANDSCAPE_RIGHT = 0;
-	public static final int WIDGET_CONNECTIVITY_MARGIN_LANDSCAPE_BOTTOM = 0;
-	
-	public static final int WIDGET_CALENDAR_MARGIN_LANDSCAPE_LEFT = 0;
-	public static final int WIDGET_CALENDAR_MARGIN_LANDSCAPE_TOP = 15;
-	public static final int WIDGET_CALENDAR_MARGIN_LANDSCAPE_RIGHT = 0;
-	public static final int WIDGET_CALENDAR_MARGIN_LANDSCAPE_BOTTOM = 0;
-	
-	public static final int WIDGET_LOGOUT_MARGIN_LANDSCAPE_LEFT = 0;
-	public static final int WIDGET_LOGOUT_MARGIN_LANDSCAPE_TOP = 390;
-	public static final int WIDGET_LOGOUT_MARGIN_LANDSCAPE_RIGHT = 0;
-	public static final int WIDGET_LOGOUT_MARGIN_LANDSCAPE_BOTTOM = 0;
 	
 	// Error logging
 	public static final String ERROR_TAG = "launcher";
