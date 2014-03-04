@@ -9,9 +9,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Activity;
-import android.widget.FrameLayout;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.RectF;
@@ -33,6 +30,14 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import com.google.analytics.tracking.android.EasyTracker;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
 import dk.aau.cs.giraf.gui.GColorAdapter;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GWidgetCalendar;
@@ -75,8 +80,7 @@ public class HomeActivity extends Activity {
     private GDialog mLogoutDialog;
 
 	private RelativeLayout mHomeDrawer;
-    private RelativeLayout mHomeBarLayout;
-    private SideBarLayout SideBarLayout;
+	private RelativeLayout mHomeBarLayout;
 	private LinearLayout mPictureLayout;
 
 	private RelativeLayout.LayoutParams mHomeBarParams;
@@ -103,7 +107,6 @@ public class HomeActivity extends Activity {
 		mPictureLayout = (LinearLayout)this.findViewById(R.id.profile_pic);
 		mProfilePictureView = (ImageView)this.findViewById(R.id.imageview_profilepic);
 		mHomeBarLayout = (RelativeLayout)this.findViewById(R.id.HomeBarLayout);
-        SideBarLayout = (SideBarLayout)this.findViewById(R.id.SideBarLayout);
 
         String logoutHeadline = mContext.getResources().getString(R.string.Log_out);
         String logoutDescription = mContext.getResources().getString(R.string.Log_out_description);
@@ -369,20 +372,18 @@ public class HomeActivity extends Activity {
 				boolean result = true;
 
 				switch (e.getActionMasked()) {
+					case MotionEvent.ACTION_DOWN:
+						offset = (int) e.getX();
+						break;
 					case MotionEvent.ACTION_MOVE:
-                        break;
-                    case MotionEvent.ACTION_DOWN:
-                        placeDrawer();
 					case MotionEvent.ACTION_UP:
-                        //placeDrawer(offset, e, v);
+                        placeDrawer(offset, e, v);
 						break;
 				}
 				return result;
 			}
         });
 
-        // This closes the drawer after starting to drag a color and
-        // opens it again once you stop dragging.
         findViewById(R.id.HomeBarLayout).setOnDragListener(new View.OnDragListener() {
             int offset = 0;
 
@@ -392,10 +393,12 @@ public class HomeActivity extends Activity {
 
                 switch (e.getAction()) {
                     case DragEvent.ACTION_DRAG_STARTED:
-                        placeDrawer();
+                        offset = (int) e.getX();
+                        popBackDrawer(e, v, true);
                         break;
                     case DragEvent.ACTION_DRAG_ENDED:
-                        placeDrawer();
+                        offset = (int) e.getX();
+                        popBackDrawer(e, v, false);
                         break;
                 }
                 return result;
@@ -403,35 +406,86 @@ public class HomeActivity extends Activity {
         });
 	}
 
-    private void placeDrawer()
+    /**
+     * this function places the drawer correctly, depending on if it is still being dragged (ACTION_MOVE) or not (ACTION_UP)
+     * @param offset The offset of the screen to the right. This depends on how far it has been dragged
+     * @param e The MotionEvent that called the function. This will either be ACTION_MOVE or ACTION_UP
+     * @param v The view that the function is called in. This is be the current view.
+     */
+    private void placeDrawer( int offset, MotionEvent e, View v)
     {
-        final int to;
+        mHomeBarParams = (RelativeLayout.LayoutParams) v.getLayoutParams();
+        int margin = mHomeBarParams.leftMargin + ((int) e.getX() - offset);
 
-        if(SideBarLayout.isSideBarHidden)
-            to = Constants.DRAWER_WIDTH;
+        if(e.getActionMasked() == MotionEvent.ACTION_MOVE){
+            if (margin < Constants.DRAWER_SNAP_LENGTH) {
+                margin = 0;
+            } else if (margin > (Constants.DRAWER_WIDTH - Constants.DRAWER_SNAP_LENGTH)) {
+                margin = Constants.DRAWER_WIDTH;
+            } else if (margin > Constants.DRAWER_WIDTH) {
+                margin = Constants.DRAWER_WIDTH;
+            }
+        }
+        else if(e.getActionMasked() == MotionEvent.ACTION_UP){
+            if (margin < Constants.DRAWER_WIDTH/2) {
+                margin = 0;
+            } else {
+                margin = Constants.DRAWER_WIDTH;
+            }
+        }
+
+        mHomeBarParams.setMargins(margin, 0, 0, 0);
+        v.setLayoutParams(mHomeBarParams);
+
+        View homeDrawerView = findViewById(R.id.HomeDrawer);
+        RelativeLayout.LayoutParams homeDrawerLayoutParams = (RelativeLayout.LayoutParams) homeDrawerView.getLayoutParams();
+        homeDrawerLayoutParams.setMargins((margin - (Constants.DRAWER_WIDTH * 2)), 0, 0, 0);
+        homeDrawerView.setLayoutParams(homeDrawerLayoutParams);
+
+        /* Setting width of the scrollview */
+        ScrollView hScrollView = (ScrollView)findViewById(R.id.horizontalScrollView);
+        LayoutParams scrollParams = (LayoutParams) hScrollView.getLayoutParams();
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+
+        /* removing 100 additional here to accomodate for "4 columns behaviour"
+         * which occure when there are <= 9 apps on the screen and we dont want to be able to scroll
+         */
+        scrollParams.width = (size.x - (margin + 100));
+        hScrollView.setLayoutParams(scrollParams);
+    }
+
+    private void popBackDrawer(DragEvent e, View v, boolean startedDragging)
+    {
+        mHomeBarParams = (RelativeLayout.LayoutParams) v.getLayoutParams();
+        int margin;
+
+        if(!startedDragging)
+            margin = Constants.DRAWER_WIDTH;
         else
-            to = -Constants.DRAWER_WIDTH;
+            margin = 0;
 
-        // then animate the view translating from (0, 0)
-        TranslateAnimation ta = new TranslateAnimation(0, to, 0, 0);
-        ta.setDuration(500);
-        SideBarLayout.startAnimation(ta);
+        mHomeBarParams.setMargins(margin, 0, 0, 0);
+        v.setLayoutParams(mHomeBarParams);
 
-        ta.setAnimationListener(new TranslateAnimation.AnimationListener() {
+        View homeDrawerView = findViewById(R.id.HomeDrawer);
+        RelativeLayout.LayoutParams homeDrawerLayoutParams = (RelativeLayout.LayoutParams) homeDrawerView.getLayoutParams();
+        homeDrawerLayoutParams.setMargins((margin - (Constants.DRAWER_WIDTH * 2)), 0, 0, 0);
+        homeDrawerView.setLayoutParams(homeDrawerLayoutParams);
 
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
+        /* Setting width of the scrollview */
+        ScrollView hScrollView = (ScrollView)findViewById(R.id.horizontalScrollView);
+        LayoutParams scrollParams = (LayoutParams) hScrollView.getLayoutParams();
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
 
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-            }
-        });
+        /* removing 100 additional here to accomodate for "4 columns behaviour"
+         * which occure when there are <= 9 apps on the screen and we dont want to be able to scroll
+         */
+        scrollParams.width = (size.x - (margin + 100));
+        hScrollView.setLayoutParams(scrollParams);
     }
 
 	/**
