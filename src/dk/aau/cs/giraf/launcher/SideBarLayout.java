@@ -2,7 +2,6 @@ package dk.aau.cs.giraf.launcher;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.animation.Animation;
 import android.widget.RelativeLayout;
 
 /**
@@ -22,6 +21,12 @@ public class SideBarLayout extends RelativeLayout {
     }
     public SideBarLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+    }
+
+    @Override
+    protected void onAnimationStart() {
+        super.onAnimationStart();
+        this.bringToFront();
     }
 
     @Override
