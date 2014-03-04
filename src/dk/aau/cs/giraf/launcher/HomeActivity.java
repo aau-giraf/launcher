@@ -7,10 +7,7 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewTreeObserver;
+import android.view.*;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.*;
@@ -238,6 +235,27 @@ public class HomeActivity extends Activity {
                 return result;
             }
         });
+
+        // This closes the drawer after starting to drag a color and
+        // opens it again once you stop dragging.
+        mHomeBarLayout.setOnDragListener(new View.OnDragListener() {
+            int offset = 0;
+
+            @Override
+            public boolean onDrag(View v, DragEvent e) {
+                boolean result = true;
+
+                switch (e.getAction()) {
+                    case DragEvent.ACTION_DRAG_STARTED:
+                        placeDrawer();
+                        break;
+                    case DragEvent.ACTION_DRAG_ENDED:
+                        placeDrawer();
+                        break;
+                }
+                return result;
+            }
+        });
 	}
 
     private void placeDrawer()
@@ -260,7 +278,7 @@ public class HomeActivity extends Activity {
             public void onAnimationStart(Animation animation) {
                 // Sets the left margin of the scrollview based on the width of the homebar
                 mAppsScrollViewParams = new RelativeLayout.LayoutParams(mAppsScrollView.getLayoutParams());
-                mAppsScrollViewParams.leftMargin = mHomeBarLayout.getWidth();
+                mAppsScrollViewParams.leftMargin = LauncherUtility.intToDP(mContext, mHomeBarLayout.getWidth());
                 mAppsScrollView.setLayoutParams(mAppsScrollViewParams);
             }
 
