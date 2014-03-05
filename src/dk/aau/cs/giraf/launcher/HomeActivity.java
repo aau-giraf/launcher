@@ -420,7 +420,7 @@ public class HomeActivity extends Activity {
         appView.setTag(String.valueOf(appInfo.getId()));
         appView.setOnDragListener(new GAppDragger());
         if(mCurrentUser.getPRole() == Constants.ROLE_GUARDIAN)
-            appView.setOnClickListener(new GuardianProfileLauncher());
+            appView.setOnClickListener(new ProfileLauncher());
         else{appView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
