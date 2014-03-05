@@ -26,7 +26,6 @@ import java.util.Random;
 
 public class HomeActivity extends Activity {
 
-    private boolean DEBUG_MODE;
 	private static Context mContext;
 
 	private Profile mCurrentUser; 
@@ -198,10 +197,7 @@ public class HomeActivity extends Activity {
         mAppsScrollView = (ScrollView)this.findViewById(R.id.horizontalScrollView);
 
         // Show warning if DEBUG_MODE is true
-        if (LauncherUtility.isDebugging()) {
-            LinearLayout debug = (LinearLayout) findViewById(R.id.debug_mode);
-            debug.setVisibility(View.VISIBLE);
-        }
+        LauncherUtility.ShowDebugInformation(this);
     }
 
     /**

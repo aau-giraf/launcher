@@ -1,12 +1,16 @@
 package dk.aau.cs.giraf.launcher;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.App;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -21,6 +25,7 @@ import java.util.List;
 public class LauncherUtility {
 
     private static boolean DEBUG_MODE = false;
+    private static boolean DEBUG_MODE_AS_CHILD = false;
 
     /**
      * Decides if GIRAF launcher is running in debug mode
@@ -30,12 +35,37 @@ public class LauncherUtility {
     public static boolean isDebugging() {
         return DEBUG_MODE;
     }
+    public static boolean isDebuggingAsChild() {
+        return DEBUG_MODE_AS_CHILD;
+    }
 
     /**
      * Enable GIRAF launcher debug mode
      */
-    public static void enableDebugging(boolean debugging) {
+    public static void enableDebugging(boolean debugging, boolean loginAsChild, Activity activity) {
         DEBUG_MODE = debugging;
+        DEBUG_MODE_AS_CHILD = loginAsChild;
+
+        ShowDebugInformation(activity);
+    }
+
+    /**
+     * Show warning if DEBUG_MODE is true
+     */
+    public static void ShowDebugInformation(Activity a) {
+        if (DEBUG_MODE) {
+            LinearLayout debug = (LinearLayout) a.findViewById(R.id.debug_mode);
+            TextView textView = (TextView) a.findViewById(R.id.debug_mode_text);
+            textView.setText(a.getText(R.string.giraf_debug_mode) + " "
+                    + (DEBUG_MODE_AS_CHILD ? a.getText(R.string.giraf_debug_as_child)
+                    : a.getText(R.string.giraf_debug_as_guardian)));
+            debug.setVisibility(View.VISIBLE);
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 	/**

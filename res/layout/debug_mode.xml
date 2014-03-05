@@ -9,6 +9,7 @@
         android:background="#ff0000">
 
     <TextView
+            android:id="@+id/debug_mode_text"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:textColor="#fff"
@@ -16,5 +17,6 @@
             android:gravity="center_horizontal"
             android:text="GIRAF LAUNCHER IS RUNNING IN DEBUG MODE!"
             android:textStyle="bold"
+            android:textAllCaps="true"
             android:padding="5dp"/>
 </LinearLayout>

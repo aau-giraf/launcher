@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
@@ -16,10 +17,10 @@ public class LogoActivity extends Activity implements Animation.AnimationListene
 
     /** ****************************************** **/
     // TODO: ONLY USED FOR DEBUGGING PURPOSES!!!
-    private final boolean DEBUG_MODE = true;
+    private final boolean DEBUG_MODE = false;
     private final boolean showAuthentication = false;
     private final boolean showLogoAnimation = false;
-    private final boolean loginAsChild = false;
+    private final boolean loginAsChild = true;
     /** ****************************************** **/
 
 	private Context mContext;
@@ -45,7 +46,7 @@ public class LogoActivity extends Activity implements Animation.AnimationListene
         }
 
         if(DEBUG_MODE)
-            LauncherUtility.enableDebugging(DEBUG_MODE);
+            LauncherUtility.enableDebugging(DEBUG_MODE, loginAsChild, this);
 
         startActivity(intent);
         finish();
@@ -70,17 +71,6 @@ public class LogoActivity extends Activity implements Animation.AnimationListene
 	    setContentView(R.layout.logo);
 
         mContext = this.getApplicationContext();
-
-        // Show warning if DEBUG_MODE is true
-        if (DEBUG_MODE) {
-            LinearLayout debug = (LinearLayout) findViewById(R.id.debug_mode);
-            debug.setVisibility(View.VISIBLE);
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
 
         Animation logoAnimation = AnimationUtils.loadAnimation(mContext, R.animator.rotatelogo);
 

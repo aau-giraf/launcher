@@ -36,8 +36,6 @@ public class AuthenticationActivity extends CaptureActivity {
 	private Vibrator mVibrator;
 	private Profile mPreviousProfile;
 
-    private boolean DEBUG_MODE;
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,10 +48,7 @@ public class AuthenticationActivity extends CaptureActivity {
 		mInfoView = (TextView)this.findViewById(R.id.authentication_step1);
 
         // Show warning if DEBUG_MODE is true
-        if (LauncherUtility.isDebugging()) {
-            LinearLayout debug = (LinearLayout) findViewById(R.id.debug_mode);
-            debug.setVisibility(View.VISIBLE);
-        }
+        LauncherUtility.ShowDebugInformation(this);
 
 		mGLoginButton.setOnClickListener(new View.OnClickListener() {
 			@Override
