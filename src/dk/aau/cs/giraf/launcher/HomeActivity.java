@@ -22,6 +22,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.GoogleAnalytics;
 
 import java.util.HashMap;
 import java.util.List;
@@ -73,6 +74,7 @@ public class HomeActivity extends Activity {
     private RelativeLayout mHomeBarLayout;
     private SideBarLayout SideBarLayout;
 	private LinearLayout mPictureLayout;
+    private EasyTracker mEasyTracker;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -128,7 +130,8 @@ public class HomeActivity extends Activity {
 		loadPaintGrid();
 
         // Start logging this activity
-        EasyTracker.getInstance(this).activityStart(this);
+        mEasyTracker.getInstance(this).activityStart(this);
+        GoogleAnalytics.getInstance(this).setDryRun(true);
 	}
 
     @Override
@@ -136,7 +139,7 @@ public class HomeActivity extends Activity {
         super.onStop();
 
         // Stop logging this activity
-        EasyTracker.getInstance(this).activityStop(this);
+        mEasyTracker.getInstance(this).activityStop(this);
     }
 
     @Override

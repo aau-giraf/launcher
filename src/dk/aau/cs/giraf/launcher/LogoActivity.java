@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
+import com.google.analytics.tracking.android.EasyTracker;
+
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
@@ -66,8 +68,18 @@ public class LogoActivity extends Activity implements Animation.AnimationListene
         if (size <= 0) {
             helper.CreateDummyData();
         }
-	}
 
+        // Start logging this activity
+        EasyTracker.getInstance(this).activityStart(this);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+
+        // Start logging this activity
+        EasyTracker.getInstance(this).activityStop(this);
+    }
     // Necessary for the AnimationListener interface, We use this to check for when the animation ends.
     @Override
     public void onAnimationEnd(Animation animation) {

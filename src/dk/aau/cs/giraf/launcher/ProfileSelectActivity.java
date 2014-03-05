@@ -10,6 +10,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+import com.google.analytics.tracking.android.EasyTracker;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +29,8 @@ public class ProfileSelectActivity extends Activity {
 	private String mActivityName;
 	private int mAppColor;
     private boolean shouldReturnResult;
+
+    private long childID;
 
 	/**
      * Called when the activity is first created.
@@ -55,7 +59,18 @@ public class ProfileSelectActivity extends Activity {
         }
 
 		loadProfiles();
-	}
+
+        // Start logging this activity
+        EasyTracker.getInstance(this).activityStart(this);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+
+        // Start logging this activity
+        EasyTracker.getInstance(this).activityStop(this);
+    }
 
 	/**
 	 * Finds children attached to the guardian or the institution, 
@@ -121,9 +136,9 @@ public class ProfileSelectActivity extends Activity {
      * @param childID
      */
     private void returnSelectedProfile(final long childID){
-        Intent intentResult = new Intent();
-        intentResult.putExtra(Constants.CHILD_ID, childID);
-        setResult(RESULT_OK, intentResult);
+        Intent data = new Intent("dk.aau.cs.giraf.tortoise.MainActivity");
+        data.putExtra(Constants.CHILD_ID, childID);
+        setResult(Activity.RESULT_OK, data);
     }
 
     /**

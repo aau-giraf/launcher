@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.google.zxing.Result;
 import com.google.zxing.client.android.CaptureActivity;
 
@@ -65,9 +66,20 @@ public class AuthenticationActivity extends CaptureActivity {
         // Simulate the AnimationDrawable class
         final ImageView instructImageView = (ImageView) findViewById(R.id.animation);
         new SimulateAnimationDrawable(instructImageView, Constants.INSTRUCTION_ANIMATION, Constants.INSTRUCTION_FRAME_DURATION);
+
+        // Start logging this activity
+        EasyTracker.getInstance(this).activityStart(this);
 	}
 
-	/**
+    @Override
+    public void finish() {
+        super.finish();
+
+        // Start logging this activity
+        EasyTracker.getInstance(this).activityStop(this);
+    }
+
+    /**
 	 * Changes the color of the border around the camera feed of the QR code scanner.
 	 * @param color The color which the border should have
 	 */
