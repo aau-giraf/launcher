@@ -19,6 +19,7 @@ public class LogoActivity extends Activity implements Animation.AnimationListene
     private final boolean DEBUG_MODE = true;
     private final boolean showAuthentication = false;
     private final boolean showLogoAnimation = false;
+    private final boolean loginAsChild = false;
     /** ****************************************** **/
 
 	private Context mContext;
@@ -31,7 +32,7 @@ public class LogoActivity extends Activity implements Animation.AnimationListene
         Intent intent;
 
         if (DEBUG_MODE && !showAuthentication){
-            intent = skipAuthentication();
+            intent = skipAuthentication(loginAsChild);
         } else if (LauncherUtility.sessionExpired(mContext)) {
             intent = new Intent(mContext, AuthenticationActivity.class);
         } else {
@@ -50,9 +51,12 @@ public class LogoActivity extends Activity implements Animation.AnimationListene
         finish();
     }
 
-    private Intent skipAuthentication(){
+    private Intent skipAuthentication(boolean asChild) {
         Helper helper = new Helper(this);
         Profile profile = helper.profilesHelper.authenticateProfile("jkkxlagqyrztlrexhzofekyzrnppajeobqxcmunkqhsbrgpxdtqgygnmbhrgnpphaxsjshlpupgakmirhpyfaivvtpynqarxsghhilhkqvpelpreevykxurtppcggkzfaepihlodgznrmbrzgqucstflhmndibuymmvwauvdlyqnnlxkurinuypmqypspmkqavuhfwsh");
+
+        if(asChild)
+            profile = helper.profilesHelper.authenticateProfile("childqkxlnftvxquwrwcdloaumdhzkgyglezzsebpvnethrlstvmlorrolymdynjcyonkrtvcuagwigdqqkftsxxhklcnbhznthcqjxnjzzdoqvmfdlxrudcyakvrnfcbohdumawlwmfndjascmvrsoxfjgwzhdvcvqcroxoyjeazmxtrjtlkldoevgdrqvgfbklhtgm");
 
         Intent intent = new Intent(mContext, HomeActivity.class);
         intent.putExtra(Constants.GUARDIAN_ID, profile.getId());

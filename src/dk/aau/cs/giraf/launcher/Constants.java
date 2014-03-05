@@ -17,7 +17,7 @@ public final class Constants {
 	public static final String COLOR_BG = "backgroundColor";
 
 	// Constants denoting user roles
-	public static final long ROLE_GUARDIAN = 1L;
+	public static final long ROLE_GUARDIAN = 2L;
 	public static final long ROLE_CHILD = 3L;
 	
 	// Logo activity
