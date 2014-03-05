@@ -14,6 +14,7 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
 public class LogoActivity extends Activity implements Animation.AnimationListener{
 
     private boolean skipAuthentication = true;
+    private boolean cheatChildMode = true;
 	private Context mContext;
 
     /* This function is run after the logo animation is finished.
@@ -42,6 +43,9 @@ public class LogoActivity extends Activity implements Animation.AnimationListene
     private Intent skipAuthentication(){
         Helper helper = new Helper(this);
         Profile profile = helper.profilesHelper.authenticateProfile("jkkxlagqyrztlrexhzofekyzrnppajeobqxcmunkqhsbrgpxdtqgygnmbhrgnpphaxsjshlpupgakmirhpyfaivvtpynqarxsghhilhkqvpelpreevykxurtppcggkzfaepihlodgznrmbrzgqucstflhmndibuymmvwauvdlyqnnlxkurinuypmqypspmkqavuhfwsh");
+
+        if(cheatChildMode == true)
+            profile = helper.profilesHelper.authenticateProfile("childqkxlnftvxquwrwcdloaumdhzkgyglezzsebpvnethrlstvmlorrolymdynjcyonkrtvcuagwigdqqkftsxxhklcnbhznthcqjxnjzzdoqvmfdlxrudcyakvrnfcbohdumawlwmfndjascmvrsoxfjgwzhdvcvqcroxoyjeazmxtrjtlkldoevgdrqvgfbklhtgm");
 
         Intent intent = new Intent(mContext, HomeActivity.class);
         intent.putExtra(Constants.GUARDIAN_ID, profile.getId());
