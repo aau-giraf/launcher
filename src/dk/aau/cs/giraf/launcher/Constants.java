@@ -28,7 +28,6 @@ public final class Constants {
 	public static final long TIME_TO_STAY_LOGGED_IN = 28800000;
 	
 	// Home activity values.
-	public static final int DRAWER_WIDTH = 400;
 	public static final int APP_ICON_DIMENSION = 200;
 	
 	// Error logging
