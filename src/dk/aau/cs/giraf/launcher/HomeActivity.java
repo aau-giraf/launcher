@@ -266,7 +266,7 @@ public class HomeActivity extends Activity {
 
     private void placeDrawer()
     {
-        final int to;
+        int to;
 
         if(mSideBarView.isSideBarHidden)
             to = mHomeDrawerView.getWidth();

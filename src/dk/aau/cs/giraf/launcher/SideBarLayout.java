@@ -34,12 +34,13 @@ public class SideBarLayout extends RelativeLayout {
         super.onAnimationEnd();
 
         SideBarLayout.LayoutParams params = (SideBarLayout.LayoutParams) this.getLayoutParams();
+        RelativeLayout homeDrawer = (RelativeLayout) findViewById(R.id.HomeDrawer);
 
         if (isSideBarHidden) {
-            params.leftMargin = 0;
+            params.leftMargin = homeDrawer.getLeft();
             isSideBarHidden = false;
         } else {
-            params.leftMargin = -Constants.DRAWER_WIDTH;
+            params.leftMargin -= homeDrawer.getMeasuredWidth();
             isSideBarHidden = true;
         }
         this.setLayoutParams(params);
