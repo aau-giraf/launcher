@@ -1,37 +1,42 @@
 package dk.aau.cs.giraf.launcher;
 
+import android.content.ClipData;
+import android.content.ClipDescription;
 import android.view.DragEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnDragListener;
 
 public class GAppDragger implements OnDragListener {
 
+    private int newColor;
+    private long currentViewId;
+
+
 	@Override
 	public boolean onDrag(View view, DragEvent drawEvent) {
 		switch(drawEvent.getAction()){
 		case DragEvent.ACTION_DRAG_STARTED:
-			
 			break;
 		case DragEvent.ACTION_DRAG_ENTERED:
-			/*
-			 * Future todo: implement highlighting
-			 */
-			break;
+            view.setScaleX(1.0f);
+            view.setScaleY(1.0f);
+            break;
 		case DragEvent.ACTION_DRAG_EXITED:
-			/*
-			 * Future todo: implement dehighlighting
-			 */
+
+            view.setScaleX(0.9f);
+            view.setScaleY(0.9f);
 			break;
+
 		case DragEvent.ACTION_DROP:
-			long id = Long.parseLong((String)view.getTag());
-			int color = Integer.parseInt(drawEvent.getClipData().getItemAt(0).getText().toString());
-			
-			AppAdapter.saveAppBackground(view.getContext(), view, color, id);
+            currentViewId = Long.parseLong((String)view.getTag());
+			newColor = Integer.parseInt(drawEvent.getClipData().getItemAt(0).getText().toString());
+			AppAdapter.saveAppBackground(view.getContext(), view, newColor, currentViewId);
 			break;
+
 		case DragEvent.ACTION_DRAG_ENDED:
-			/*
-			 * Future todo: implement dehighlighting
-			 */
+            view.setScaleX(0.9f);
+            view.setScaleY(0.9f);
 			break;
 		
 		}

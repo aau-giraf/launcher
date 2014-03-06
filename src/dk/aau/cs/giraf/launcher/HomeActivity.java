@@ -140,6 +140,8 @@ public class HomeActivity extends Activity {
             for (Map.Entry<String,AppInfo> entry : mAppInfos.entrySet()) {
                 View newAppView = createAppView(entry.getValue());
                 newAppView.setPadding(paddingWidth, 0, 0, 0);
+                newAppView.setScaleX(0.9f);
+                newAppView.setScaleY(0.9f);
                 currentAppRow.addView(newAppView);
 
                 if (currentAppRow.getChildCount() == appsPrRow) {
