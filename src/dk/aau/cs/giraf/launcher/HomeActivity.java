@@ -9,20 +9,37 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.*;
+import android.view.DragEvent;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
-import android.widget.*;
-import dk.aau.cs.giraf.gui.*;
-import dk.aau.cs.giraf.oasis.lib.Helper;
-import dk.aau.cs.giraf.oasis.lib.models.App;
-import dk.aau.cs.giraf.oasis.lib.models.Profile;
-import dk.aau.cs.giraf.oasis.lib.models.Setting;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+
+import com.google.analytics.tracking.android.EasyTracker;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+import dk.aau.cs.giraf.gui.GColorAdapter;
+import dk.aau.cs.giraf.gui.GDialog;
+import dk.aau.cs.giraf.gui.GWidgetCalendar;
+import dk.aau.cs.giraf.gui.GWidgetConnectivity;
+import dk.aau.cs.giraf.gui.GWidgetLogout;
+import dk.aau.cs.giraf.gui.GWidgetUpdater;
+import dk.aau.cs.giraf.oasis.lib.Helper;
+import dk.aau.cs.giraf.oasis.lib.models.App;
+import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.oasis.lib.models.Setting;
 
 public class HomeActivity extends Activity {
 
@@ -71,7 +88,6 @@ public class HomeActivity extends Activity {
 		loadWidgets();
 		loadHomeDrawerColorGrid();
         setupLogoutDialog();
-		loadPaintGrid();
 
         // Start logging this activity
         mEasyTracker.getInstance(this).activityStart(this);
@@ -85,7 +101,6 @@ public class HomeActivity extends Activity {
         mEasyTracker.getInstance(this).activityStop(this);
     }
 
-    @Override
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
