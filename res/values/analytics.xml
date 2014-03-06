@@ -9,4 +9,7 @@
 
     <!--Enable automatic exception tracking-->
     <bool name="ga_reportUncaughtExceptions">true</bool>
+
+    <!--Enable debug mode - Useful when doing debugging and testing new implementation -->
+    <bool name="ga_dryRun">true</bool>
 </resources>

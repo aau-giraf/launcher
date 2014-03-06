@@ -22,7 +22,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.GoogleAnalytics;
 
 import java.util.HashMap;
 import java.util.List;
@@ -131,7 +130,6 @@ public class HomeActivity extends Activity {
 
         // Start logging this activity
         mEasyTracker.getInstance(this).activityStart(this);
-        GoogleAnalytics.getInstance(this).setDryRun(true);
 	}
 
     @Override
