@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="giraf_debug_mode">GIRAF launcher is debuging, logged in</string>
+    <string name="giraf_debug_as_guardian">as a guardian</string>
+    <string name="giraf_debug_as_child">as a child</string>
+
     <string name="application_name">GIRAF</string>
     <string name="authentication_headline">Sådan logger du ind:</string>
     <string name="authentication_step1">Scan dit GIRAF-kort, ved at holde det ca. 25cm foran kameraet.</string>

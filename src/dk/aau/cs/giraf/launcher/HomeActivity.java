@@ -1,43 +1,28 @@
 package dk.aau.cs.giraf.launcher;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.RectF;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.DragEvent;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewTreeObserver;
+import android.view.*;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
-import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
-
-import com.google.analytics.tracking.android.EasyTracker;
+import android.widget.*;
+import dk.aau.cs.giraf.gui.*;
+import dk.aau.cs.giraf.oasis.lib.Helper;
+import dk.aau.cs.giraf.oasis.lib.models.App;
+import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.oasis.lib.models.Setting;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
-import dk.aau.cs.giraf.gui.GColorAdapter;
-import dk.aau.cs.giraf.gui.GDialog;
-import dk.aau.cs.giraf.gui.GWidgetCalendar;
-import dk.aau.cs.giraf.gui.GWidgetConnectivity;
-import dk.aau.cs.giraf.gui.GWidgetLogout;
-import dk.aau.cs.giraf.gui.GWidgetUpdater;
-import dk.aau.cs.giraf.oasis.lib.Helper;
-import dk.aau.cs.giraf.oasis.lib.models.App;
-import dk.aau.cs.giraf.oasis.lib.models.Profile;
-import dk.aau.cs.giraf.oasis.lib.models.Setting;
 
 public class HomeActivity extends Activity {
 
@@ -46,34 +31,28 @@ public class HomeActivity extends Activity {
 	private Profile mCurrentUser; 
 	private Helper mHelper;
 	private App mLauncher;
-	private LinearLayout appContainer;
-	private TextView mNameView;
-	private ImageView mProfilePictureView;
 
-	private int mProfilePictureWidthLandscape;
-	private int mProfilePictureHeightLandscape;
-	private int mProfilePictureWidthPortrait;
-	private int mProfilePictureHeightPortrait;
-	private int mLandscapeBarWidth;
-	private int mNumberOfApps;
+    private static HashMap<String,AppInfo> mAppInfos;
 
-    private static HashMap<String,AppInfo> appInfos;
-
-    private boolean appsAdded = false;
+    private boolean mAppsAdded = false;
     private boolean mWidgetRunning = false;
 
-	private GWidgetUpdater mWidgetTimer;
+	private GWidgetUpdater mWidgetUpdater;
 	private GWidgetCalendar mCalendarWidget;
 	private GWidgetConnectivity mConnectivityWidget;
 	private GWidgetLogout mLogoutWidget;
 
     private GDialog mLogoutDialog;
 
-	private RelativeLayout mHomeDrawer;
+	private RelativeLayout mHomeDrawerView;
     private RelativeLayout mHomeBarLayout;
-    private SideBarLayout SideBarLayout;
-	private LinearLayout mPictureLayout;
+    private SideBarLayout mSideBarView;
+	private LinearLayout mProfilePictureView;
+    private LinearLayout mAppsContainer;
+    private ScrollView mAppsScrollView;
     private EasyTracker mEasyTracker;
+
+    private RelativeLayout.LayoutParams mAppsScrollViewParams;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -81,51 +60,17 @@ public class HomeActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
 
-		mLandscapeBarWidth = LauncherUtility.intToDP(this, Constants.HOMEBAR_LANDSCAPE_WIDTH);
-
 		HomeActivity.mContext = this;
 		mHelper = new Helper(mContext);
 		
 		mCurrentUser = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getLong(Constants.GUARDIAN_ID));
-		
 		mLauncher = mHelper.appsHelper.getAppByPackageNameAndProfileId(mCurrentUser.getId());
-// TODO: Find out whether name is required for sidebar
-//		mNameView = (TextView)this.findViewById(R.id.nameView);
-//		mNameView.setText(mCurrentUser.getFirstname() + " " + mCurrentUser.getSurname());
 
-		mPictureLayout = (LinearLayout)this.findViewById(R.id.profile_pic);
-		mProfilePictureView = (ImageView)this.findViewById(R.id.imageview_profilepic);
-		mHomeBarLayout = (RelativeLayout) this.findViewById(R.id.HomeBarLayout);
-        SideBarLayout = (SideBarLayout)this.findViewById(R.id.SideBarLayout);
-
-//        ScrollView scrollView = (ScrollView) this.findViewById(R.id.horizontalScrollView);
-//        RelativeLayout.LayoutParams scrollViewLayoutParams = (RelativeLayout.LayoutParams) scrollView.getLayoutParams();
-//        RelativeLayout.LayoutParams homeBarLayoutParams = (RelativeLayout.LayoutParams) mHomeBarLayout.getLayoutParams();
-//        if (scrollViewLayoutParams != null) {
-//            scrollViewLayoutParams.setMargins(LauncherUtility.intToDP(this, mHomeBarLayout.getWidth()), 0, 0, 0);
-//        }
-
-        String logoutHeadline = mContext.getResources().getString(R.string.Log_out);
-        String logoutDescription = mContext.getResources().getString(R.string.Log_out_description);
-        mLogoutDialog = new GDialog(mContext, R.drawable.large_switch_profile, logoutHeadline, logoutDescription, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(LauncherUtility.logOutIntent(mContext));
-                mLogoutDialog.dismiss();
-                ((Activity) mContext).finish();
-            }
-        });
-        mLogoutDialog.setOwnerActivity((Activity)mContext);
-
-		mProfilePictureWidthLandscape = LauncherUtility.intToDP(mContext, 100);
-		mProfilePictureHeightLandscape = LauncherUtility.intToDP(mContext, 100);
-		mProfilePictureWidthPortrait = LauncherUtility.intToDP(mContext, 100);
-		mProfilePictureHeightPortrait = LauncherUtility.intToDP(mContext, 100);
-
-        appContainer = (LinearLayout)this.findViewById(R.id.appContainer);
-
+        loadViews();
 		loadDrawer();
 		loadWidgets();
+		loadHomeDrawerColorGrid();
+        setupLogoutDialog();
 		loadPaintGrid();
 
         // Start logging this activity
@@ -141,16 +86,17 @@ public class HomeActivity extends Activity {
     }
 
     @Override
+	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 
-        if (!appsAdded) {
-            appContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        if (!mAppsAdded) {
+            mAppsContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 
                 @Override
                 public void onGlobalLayout() {
                     // Ensure you call it only once :
-                    appContainer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    mAppsContainer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
 
                     loadApplications();
                 }
@@ -161,13 +107,13 @@ public class HomeActivity extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		mWidgetTimer.sendEmptyMessage(GWidgetUpdater.MSG_STOP);
+		mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_STOP);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mWidgetTimer.sendEmptyMessage(GWidgetUpdater.MSG_START);
+		mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_START);
 	}
 
     @Override
@@ -183,18 +129,18 @@ public class HomeActivity extends Activity {
 		List<App> girafAppsList = LauncherUtility.getVisibleGirafApps(mContext, mCurrentUser);
 
 		if (girafAppsList != null) {
-			appInfos = new HashMap<String,AppInfo>();
+			mAppInfos = new HashMap<String,AppInfo>();
 
             //Fill AppInfo hashmap with AppInfo objects for each app
 			loadAppInfos(girafAppsList);
 
             //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
-            int containerWidth = ((ScrollView)appContainer.getParent()).getWidth();
+            int containerWidth = ((ScrollView) mAppsContainer.getParent()).getWidth();
             int appsPrRow = containerWidth / Constants.APP_ICON_DIMENSION;
             int paddingWidth = (containerWidth % Constants.APP_ICON_DIMENSION) / (appsPrRow + 1);
 
             //Calculate how many apps the screen can fit vertically on a single screen, and how much space is available for vertical padding
-            int containerHeight = ((ScrollView)appContainer.getParent()).getHeight();
+            int containerHeight = ((ScrollView) mAppsContainer.getParent()).getHeight();
             int appsPrColumn = containerHeight / Constants.APP_ICON_DIMENSION;
             int paddingHeight = (containerHeight % Constants.APP_ICON_DIMENSION) / (appsPrColumn + 1);
 
@@ -202,24 +148,26 @@ public class HomeActivity extends Activity {
             LinearLayout currentAppRow = new LinearLayout(mContext);
             currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
             currentAppRow.setPadding(0, paddingHeight, 0, paddingHeight);
-            appContainer.addView(currentAppRow);
+            mAppsContainer.addView(currentAppRow);
 
             //Insert apps into the container, and add new rows as needed
-            for (Map.Entry<String,AppInfo> entry : appInfos.entrySet()) {
+            for (Map.Entry<String,AppInfo> entry : mAppInfos.entrySet()) {
                 View newAppView = createAppView(entry.getValue());
                 newAppView.setPadding(paddingWidth, 0, 0, 0);
+                newAppView.setScaleX(0.9f);
+                newAppView.setScaleY(0.9f);
                 currentAppRow.addView(newAppView);
 
                 if (currentAppRow.getChildCount() == appsPrRow) {
                     currentAppRow = new LinearLayout(mContext);
                     currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
                     currentAppRow.setPadding(0, 0, 0, paddingHeight);
-                    appContainer.addView(currentAppRow);
+                    mAppsContainer.addView(currentAppRow);
                 }
             }
 
             //Remember that the apps have been added, so they are not added again by the listener
-            appsAdded = true;
+            mAppsAdded = true;
 
 		} else {
 			Log.e(Constants.ERROR_TAG, "App list is null");
@@ -227,12 +175,12 @@ public class HomeActivity extends Activity {
 	}
 
     /**
-     * Loads the AppInfo object of app from the list, into the {@code appInfos} hashmap, making
+     * Loads the AppInfo object of app from the list, into the {@code mAppInfos} hashmap, making
      * them accesible with only the ID string of the app.
      * @param appsList The list of accessible apps
      */
     private void loadAppInfos(List<App> appsList) {
-        appInfos = new HashMap<String,AppInfo>();
+        mAppInfos = new HashMap<String,AppInfo>();
 
         for (App app : appsList) {
             AppInfo appInfo = new AppInfo(app);
@@ -240,47 +188,79 @@ public class HomeActivity extends Activity {
             appInfo.load(mContext, mCurrentUser);
             appInfo.setBgColor(appBgColor(appInfo.getId()));
 
-            appInfos.put(String.valueOf(appInfo.getId()), appInfo);
+            mAppInfos.put(String.valueOf(appInfo.getId()), appInfo);
         }
     }
 
 	/**
 	 * Load the user's paintgrid in the drawer.
 	 */
-	private void loadPaintGrid() {
+	private void loadHomeDrawerColorGrid() {
 		GridView AppColors = (GridView) findViewById(R.id.appcolors);
 		// Removes blue highlight and scroll on AppColors grid
 		AppColors.setEnabled(false);
 		AppColors.setAdapter(new GColorAdapter(this));
 	}
 
+    /**
+     * Finds all views used
+     */
+    private void loadViews() {
+        mProfilePictureView = (LinearLayout)this.findViewById(R.id.profile_pic);
+        mHomeBarLayout = (RelativeLayout) this.findViewById(R.id.HomeBarLayout);
+        mSideBarView = (SideBarLayout)this.findViewById(R.id.SideBarLayout);
+        mAppsContainer = (LinearLayout)this.findViewById(R.id.appContainer);
+        mAppsScrollView = (ScrollView)this.findViewById(R.id.horizontalScrollView);
+
+        // Show warning if DEBUG_MODE is true
+        LauncherUtility.ShowDebugInformation(this);
+    }
+
+    /**
+     * Setup the logout dialog
+     */
+    private void setupLogoutDialog() {
+        String logoutHeadline = mContext.getResources().getString(R.string.Log_out);
+        String logoutDescription = mContext.getResources().getString(R.string.Log_out_description);
+        mLogoutDialog = new GDialog(mContext, R.drawable.large_switch_profile, logoutHeadline, logoutDescription, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(LauncherUtility.logOutIntent(mContext));
+                mLogoutDialog.dismiss();
+                ((Activity) mContext).finish();
+            }
+        });
+        mLogoutDialog.setOwnerActivity((Activity)mContext);
+    }
+
 	/**
 	 * Load the drawer and its functionality.
 	 */
 	private void loadDrawer() {
 		// If result = true, the onTouch-function will be run again.
-		findViewById(R.id.HomeBarLayout).setOnTouchListener(new View.OnTouchListener() {
-			int offset = 0;
-			@Override
-			public boolean onTouch(View v, MotionEvent e) {
-				boolean result = true;
+		mHomeBarLayout.setOnTouchListener(new View.OnTouchListener() {
+            int offset = 0;
 
-				switch (e.getActionMasked()) {
-					case MotionEvent.ACTION_MOVE:
+            @Override
+            public boolean onTouch(View v, MotionEvent e) {
+                boolean result = true;
+
+                switch (e.getActionMasked()) {
+                    case MotionEvent.ACTION_MOVE:
                         break;
                     case MotionEvent.ACTION_DOWN:
                         placeDrawer();
-					case MotionEvent.ACTION_UP:
-                        //placeDrawer(offset, e, v);
-						break;
-				}
-				return result;
-			}
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        break;
+                }
+                return result;
+            }
         });
 
         // This closes the drawer after starting to drag a color and
         // opens it again once you stop dragging.
-        findViewById(R.id.HomeBarLayout).setOnDragListener(new View.OnDragListener() {
+        mHomeBarLayout.setOnDragListener(new View.OnDragListener() {
             int offset = 0;
 
             @Override
@@ -302,22 +282,26 @@ public class HomeActivity extends Activity {
 
     private void placeDrawer()
     {
-        final int to;
+        int to;
 
-        if(SideBarLayout.isSideBarHidden)
-            to = Constants.DRAWER_WIDTH;
+        if(mSideBarView.isSideBarHidden)
+            to = mHomeDrawerView.getWidth();
         else
-            to = -Constants.DRAWER_WIDTH;
+            to = -mHomeDrawerView.getWidth();
 
         // then animate the view translating from (0, 0)
         TranslateAnimation ta = new TranslateAnimation(0, to, 0, 0);
         ta.setDuration(500);
-        SideBarLayout.startAnimation(ta);
+        mSideBarView.startAnimation(ta);
 
         ta.setAnimationListener(new TranslateAnimation.AnimationListener() {
 
             @Override
             public void onAnimationStart(Animation animation) {
+                // Sets the left margin of the scrollview based on the width of the homebar
+                mAppsScrollViewParams = new RelativeLayout.LayoutParams(mAppsScrollView.getLayoutParams());
+                mAppsScrollViewParams.leftMargin = mHomeBarLayout.getWidth();
+                mAppsScrollView.setLayoutParams(mAppsScrollViewParams);
             }
 
             @Override
@@ -326,7 +310,6 @@ public class HomeActivity extends Activity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-
             }
         });
     }
@@ -338,20 +321,20 @@ public class HomeActivity extends Activity {
 		mCalendarWidget = (GWidgetCalendar) findViewById(R.id.calendarwidget);
 		mConnectivityWidget = (GWidgetConnectivity) findViewById(R.id.connectivitywidget);
 		mLogoutWidget = (GWidgetLogout) findViewById(R.id.logoutwidget);
-		mHomeDrawer = (RelativeLayout) findViewById(R.id.HomeDrawer);
+		mHomeDrawerView = (RelativeLayout) findViewById(R.id.HomeDrawer);
 
-		mWidgetTimer = new GWidgetUpdater();
-		mWidgetTimer.addWidget(mCalendarWidget);
-		mWidgetTimer.addWidget(mConnectivityWidget);
+		mWidgetUpdater = new GWidgetUpdater();
+		mWidgetUpdater.addWidget(mCalendarWidget);
+		mWidgetUpdater.addWidget(mConnectivityWidget);
 
 		mLogoutWidget.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-                if (!mWidgetRunning) {
-					mWidgetRunning = true;
-					mLogoutDialog.show();
-					mWidgetRunning = false;
-				}
+            if (!mWidgetRunning) {
+                mWidgetRunning = true;
+                mLogoutDialog.show();
+                mWidgetRunning = false;
+            }
 			}
 		});
 	}
@@ -416,7 +399,7 @@ public class HomeActivity extends Activity {
         View appView;
 
         final LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        appView = inflater.inflate(R.layout.apps, appContainer, false);
+        appView = inflater.inflate(R.layout.apps, mAppsContainer, false);
 
         ImageView appIconView = (ImageView) appView.findViewById(R.id.app_icon);
         TextView appTextView = (TextView) appView.findViewById(R.id.app_text);
@@ -427,8 +410,27 @@ public class HomeActivity extends Activity {
 
         appView.setTag(String.valueOf(appInfo.getId()));
         appView.setOnDragListener(new GAppDragger());
+        if(mCurrentUser.getPRole() == Constants.ROLE_GUARDIAN)
+            appView.setOnClickListener(new ProfileLauncher());
+        else{appView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppInfo app = HomeActivity.getAppInfo((String)v.getTag());
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                intent.setComponent(new ComponentName(app.getaPackage(), app.getActivity()));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 
-        appView.setOnClickListener(new ProfileLauncher());
+                intent.putExtra(Constants.CHILD_ID, mCurrentUser.getId());
+                intent.putExtra(Constants.APP_COLOR, app.getBgColor());
+                intent.putExtra(Constants.APP_PACKAGE_NAME, app.getaPackage());
+                intent.putExtra(Constants.APP_ACTIVITY_NAME, app.getActivity());
+
+                startActivity(intent);
+            }
+            });
+        }
 
         return appView;
     }
@@ -450,6 +452,6 @@ public class HomeActivity extends Activity {
     }
 
     public static AppInfo getAppInfo(String id) {
-        return appInfos.get(id);
+        return mAppInfos.get(id);
     }
 }

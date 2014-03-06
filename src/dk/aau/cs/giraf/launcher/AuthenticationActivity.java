@@ -11,6 +11,7 @@ import android.os.Vibrator;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.analytics.tracking.android.EasyTracker;
@@ -40,13 +41,15 @@ public class AuthenticationActivity extends CaptureActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.authentication1);
-		
+
 		mContext = this;
 		mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);		
 		mGLoginButton = (GButton)this.findViewById(R.id.loginGButton);
 		mLoginNameView = (TextView)this.findViewById(R.id.loginname);
 		mInfoView = (TextView)this.findViewById(R.id.authentication_step1);
-		
+
+        // Show warning if DEBUG_MODE is true
+        LauncherUtility.ShowDebugInformation(this);
 
 		mGLoginButton.setOnClickListener(new View.OnClickListener() {
 			@Override

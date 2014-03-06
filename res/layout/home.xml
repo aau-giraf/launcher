@@ -5,22 +5,6 @@
     android:layout_height="match_parent"
     android:background="@drawable/gbackgroundlight" >
 
-    <ScrollView
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/horizontalScrollView"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_marginLeft="150dp">
-
-        <LinearLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/appContainer"
-                android:orientation="vertical"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
-        </LinearLayout>
-    </ScrollView>
-
     <dk.aau.cs.giraf.launcher.SideBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/SideBarLayout"
     android:layout_width="wrap_content"
@@ -66,7 +50,7 @@
                 <ImageView
                         android:id="@+id/imageview_profilepic"
                         android:layout_width="90dp"
-                        android:layout_height="120dp"
+                        android:layout_height="90dp"
                         android:src="@drawable/no_profile_pic"/>
             </LinearLayout>
 
@@ -94,6 +78,28 @@
         </RelativeLayout>
 
     </dk.aau.cs.giraf.launcher.SideBarLayout>
+
+    <ScrollView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/horizontalScrollView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_toRightOf="@id/SideBarLayout">
+
+        <LinearLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/appContainer"
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+            <include
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    layout="@layout/debug_mode" />
+
+        </LinearLayout>
+    </ScrollView>
 
 </RelativeLayout>
 

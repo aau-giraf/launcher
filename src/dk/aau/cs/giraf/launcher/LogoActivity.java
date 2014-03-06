@@ -5,17 +5,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-
-import com.google.analytics.tracking.android.EasyTracker;
-
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 public class LogoActivity extends Activity implements Animation.AnimationListener{
 
-    private boolean skipAuthentication = true;
+    /** ****************************************** **/
+    // TODO: ONLY USED FOR DEBUGGING PURPOSES!!!
+    private final boolean DEBUG_MODE = false;
+    private final boolean showAuthentication = false;
+    private final boolean showLogoAnimation = false;
+    private final boolean loginAsChild = true;
+    /** ****************************************** **/
+
 	private Context mContext;
 
     /* This function is run after the logo animation is finished.
@@ -25,8 +32,8 @@ public class LogoActivity extends Activity implements Animation.AnimationListene
     public void CheckSessionAndGoToActivity(){
         Intent intent;
 
-        if (skipAuthentication){
-            intent = skipAuthentication();
+        if (DEBUG_MODE && !showAuthentication){
+            intent = skipAuthentication(loginAsChild);
         } else if (LauncherUtility.sessionExpired(mContext)) {
             intent = new Intent(mContext, AuthenticationActivity.class);
         } else {
@@ -37,13 +44,20 @@ public class LogoActivity extends Activity implements Animation.AnimationListene
 
             intent.putExtra(Constants.GUARDIAN_ID, guardianID);
         }
+
+        if(DEBUG_MODE)
+            LauncherUtility.enableDebugging(DEBUG_MODE, loginAsChild, this);
+
         startActivity(intent);
         finish();
     }
 
-    private Intent skipAuthentication(){
+    private Intent skipAuthentication(boolean asChild) {
         Helper helper = new Helper(this);
         Profile profile = helper.profilesHelper.authenticateProfile("jkkxlagqyrztlrexhzofekyzrnppajeobqxcmunkqhsbrgpxdtqgygnmbhrgnpphaxsjshlpupgakmirhpyfaivvtpynqarxsghhilhkqvpelpreevykxurtppcggkzfaepihlodgznrmbrzgqucstflhmndibuymmvwauvdlyqnnlxkurinuypmqypspmkqavuhfwsh");
+
+        if(asChild)
+            profile = helper.profilesHelper.authenticateProfile("childqkxlnftvxquwrwcdloaumdhzkgyglezzsebpvnethrlstvmlorrolymdynjcyonkrtvcuagwigdqqkftsxxhklcnbhznthcqjxnjzzdoqvmfdlxrudcyakvrnfcbohdumawlwmfndjascmvrsoxfjgwzhdvcvqcroxoyjeazmxtrjtlkldoevgdrqvgfbklhtgm");
 
         Intent intent = new Intent(mContext, HomeActivity.class);
         intent.putExtra(Constants.GUARDIAN_ID, profile.getId());
@@ -55,11 +69,17 @@ public class LogoActivity extends Activity implements Animation.AnimationListene
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.logo);
-	    
-	    mContext = this.getApplicationContext();
+
+        mContext = this.getApplicationContext();
 
         Animation logoAnimation = AnimationUtils.loadAnimation(mContext, R.animator.rotatelogo);
-        logoAnimation.setDuration(Constants.SPEED_OF_LOGO_ANIMATION);
+
+        // Opt in/out whether to show animation or not
+        if (DEBUG_MODE && !showLogoAnimation)
+            logoAnimation.setDuration(0);
+        else
+            logoAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
+
         findViewById(R.id.giraficon).startAnimation(logoAnimation);
         logoAnimation.setAnimationListener(this);
 
@@ -68,18 +88,8 @@ public class LogoActivity extends Activity implements Animation.AnimationListene
         if (size <= 0) {
             helper.CreateDummyData();
         }
+	}
 
-        // Start logging this activity
-        EasyTracker.getInstance(this).activityStart(this);
-    }
-
-    @Override
-    public void finish() {
-        super.finish();
-
-        // Start logging this activity
-        EasyTracker.getInstance(this).activityStop(this);
-    }
     // Necessary for the AnimationListener interface, We use this to check for when the animation ends.
     @Override
     public void onAnimationEnd(Animation animation) {

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/debug_mode"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:orientation="horizontal"
+        android:background="#ff0000">
+
+    <TextView
+            android:id="@+id/debug_mode_text"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:textColor="#fff"
+            android:textSize="24dp"
+            android:gravity="center_horizontal"
+            android:text="GIRAF LAUNCHER IS RUNNING IN DEBUG MODE!"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:padding="5dp"/>
+</LinearLayout>

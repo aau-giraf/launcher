@@ -5,6 +5,11 @@
     android:orientation="vertical"
     android:background="@drawable/gbackground" >
 
+    <include
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/debug_mode" />
+
     <!-- <dk.aau.cs.giraf.gui.GButton
         android:id="@+id/button1"
         android:layout_width="wrap_content"
