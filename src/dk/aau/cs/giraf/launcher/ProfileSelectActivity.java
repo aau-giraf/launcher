@@ -1,16 +1,21 @@
 package dk.aau.cs.giraf.launcher;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.MapBuilder;
+import com.google.analytics.tracking.android.StandardExceptionParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -148,17 +153,40 @@ public class ProfileSelectActivity extends Activity {
      * @param childID
      */
     private void startSelectedApplication(final long childID) {
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_LAUNCHER);
-        intent.setComponent(new ComponentName(mPackageName, mActivityName));
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+        try {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            intent.setComponent(new ComponentName(mPackageName, mActivityName));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                    | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 
-        intent.putExtra(Constants.CHILD_ID, childID);
-        intent.putExtra(Constants.GUARDIAN_ID, mGuardianID);
-        intent.putExtra(Constants.APP_COLOR, mAppColor);
+            intent.putExtra(Constants.CHILD_ID, childID);
+            intent.putExtra(Constants.GUARDIAN_ID, mGuardianID);
+            intent.putExtra(Constants.APP_COLOR, mAppColor);
 
-        startActivity(intent);
+            startActivity(intent);
+        } catch (ActivityNotFoundException e){
+
+            // Sending the caught exception to Google Analytics
+            // May return null if EasyTracker has not yet been initialized with a
+            // property ID.
+            EasyTracker easyTracker = EasyTracker.getInstance(this);
+
+            // StandardExceptionParser is provided to help get meaningful Exception descriptions.
+            easyTracker.send(MapBuilder
+                    .createException(new StandardExceptionParser(this, null)    // Context and optional collection of package names
+                                                                                // to be used in reporting the exception.
+                    .getDescription(Thread.currentThread().getName(),           // The name of the thread on which the exception occurred.
+                                    e),                                         // The exception.
+                                    false)                                      // False indicates a fatal exception
+                    .build()
+            );
+
+            Toast toast = Toast.makeText(this, "Applikationen kunne ikke startes", 2000);
+            toast.show();
+            Log.e(Constants.ERROR_TAG, e.getMessage());
+            finish();
+        }
     }
 
     /**
