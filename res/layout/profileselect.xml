@@ -29,18 +29,38 @@
         android:layout_marginLeft="30dp"
         android:textColor="@color/gBrowncolor"
         />
-    
-    <ListView
-        android:id="@+id/profilesList"
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="30dp"
+        android:background="@drawable/gbackground"
         android:layout_toRightOf="@+id/giraf_logo"
-        android:divider="#00000000"
-        android:dividerHeight="25dp" 
-        android:background="@drawable/gprofileselecter_background"
-        android:cacheColorHint="@android:color/transparent"
-        android:layout_below="@+id/profileselect_headline"
-        />
+        android:layout_margin="30dp"
+        android:layout_below="@+id/profileselect_headline">
+
+            <ListView
+                android:id="@+id/profilesList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:divider="#00000000"
+                android:dividerHeight="30dp"
+                android:fadeScrollbars="true"
+                android:smoothScrollbar="true"
+                android:scrollbarAlwaysDrawHorizontalTrack="true"
+                android:background="@drawable/gprofileselecter_background"
+                android:cacheColorHint="@android:color/transparent"
+            />
+
+        <ImageView android:layout_height="fill_parent"
+            android:layout_width="fill_parent"
+            android:background="@drawable/profileselecter_corner"
+            android:layout_marginRight="-1dp"
+            android:layout_marginLeft="-1dp"
+            android:layout_marginTop="-2dp"
+            android:layout_marginBottom="-1dp"
+            android:layout_alignTop="@+id/mainLayout"
+            android:layout_alignBottom="@+id/mainLayout" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

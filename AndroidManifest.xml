@@ -65,6 +65,7 @@
             android:label="@string/application_name"
             android:noHistory="true"
             android:theme="@android:style/Theme.NoTitleBar"
+            android:screenOrientation="landscape"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.SEND"/>
