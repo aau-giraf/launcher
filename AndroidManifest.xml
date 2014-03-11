@@ -67,6 +67,7 @@
             android:theme="@android:style/Theme.NoTitleBar"
             android:screenOrientation="landscape"
             android:exported="true">
+            <!-- noHistory should be true.... All applications will return to this activity instead of the launcher - Frederik -->
             <intent-filter>
                 <action android:name="android.intent.action.SEND"/>
                 <category android:name="android.intent.category.DEFAULT"/>
