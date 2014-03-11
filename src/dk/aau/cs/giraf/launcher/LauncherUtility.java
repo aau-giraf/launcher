@@ -1,6 +1,7 @@
 package dk.aau.cs.giraf.launcher;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,13 +12,19 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import dk.aau.cs.giraf.oasis.lib.Helper;
-import dk.aau.cs.giraf.oasis.lib.models.App;
-import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import android.widget.Toast;
+
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.MapBuilder;
+import com.google.analytics.tracking.android.StandardExceptionParser;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import dk.aau.cs.giraf.oasis.lib.Helper;
+import dk.aau.cs.giraf.oasis.lib.models.App;
+import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 /**
  * Class for holding static methods and fields, to minimize code duplication.
@@ -49,6 +56,23 @@ public class LauncherUtility {
         ShowDebugInformation(activity);
     }
 
+    public static void secureStartActivity(Context context, Intent intent) {
+        try {
+            if (intent.resolveActivity(context.getPackageManager()) != null) {
+                context.startActivity(intent);
+            } else {
+                throw new ActivityNotFoundException();
+            }
+        } catch (ActivityNotFoundException e){
+            // Sending the caught exception to Google Analytics
+            LauncherUtility.SendExceptionGoogleAnalytics(context, e);
+
+            Toast toast = Toast.makeText(context, "Applikationen kunne ikke startes", 2000);
+            toast.show();
+            Log.e(Constants.ERROR_TAG, e.getMessage());
+        }
+    }
+
     /**
      * Show warning if DEBUG_MODE is true
      */
@@ -66,6 +90,27 @@ public class LauncherUtility {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Sending the caught exception to Google Analytics.
+     * @param context Context of the current activity.
+     * @param e The caught exception.
+     */
+    public static void SendExceptionGoogleAnalytics(Context context,  ActivityNotFoundException e) {
+        // May return null if EasyTracker has not yet been initialized with a
+        // property ID.
+        EasyTracker easyTracker = EasyTracker.getInstance(context);
+
+        // StandardExceptionParser is provided to help get meaningful Exception descriptions.
+        easyTracker.send(MapBuilder
+                .createException(new StandardExceptionParser(context, null)    // Context and optional collection of package names
+                        // to be used in reporting the exception.
+                        .getDescription(Thread.currentThread().getName(),           // The name of the thread on which the exception occurred.
+                                e),                                         // The exception.
+                        false)                                      // False indicates a fatal exception
+                .build()
+        );
     }
 
 	/**

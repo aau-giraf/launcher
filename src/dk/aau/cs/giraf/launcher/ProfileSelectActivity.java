@@ -1,21 +1,16 @@
 package dk.aau.cs.giraf.launcher;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.MapBuilder;
-import com.google.analytics.tracking.android.StandardExceptionParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,23 +44,12 @@ public class ProfileSelectActivity extends Activity {
 		mContext = this;
         mPackageName = Constants.APP_PACKAGE_NAME;
 
-        // determine whether to return result or not
-        shouldReturnResult = callingActivityIsExpectingResult();
-
         // Only guardian id is required if expecting result returned
         mHelper = new Helper(mContext);
 		mGuardianID = getIntent().getExtras().getLong(Constants.GUARDIAN_ID);
-
-        /* If we should not return a result, it means that we should start a new activity when a profile
-         * has been selected. If this activity was started for result it PackageName and ActivityName
-         * has not been provided
-         */
-        if (!shouldReturnResult){
-            mAppColor = getIntent().getExtras().getInt(Constants.APP_COLOR);
-            mPackageName = getIntent().getExtras().getString(Constants.APP_PACKAGE_NAME);
-            mActivityName = getIntent().getExtras().getString(Constants.APP_ACTIVITY_NAME);
-        }
-
+        mAppColor = getIntent().getExtras().getInt(Constants.APP_COLOR);
+        mPackageName = getIntent().getExtras().getString(Constants.APP_PACKAGE_NAME);
+        mActivityName = getIntent().getExtras().getString(Constants.APP_ACTIVITY_NAME);
 		loadProfiles();
 
         // Start logging this activity
@@ -125,81 +109,26 @@ public class ProfileSelectActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Get selected child id
                 final long childID = ((Profile) parent.getAdapter().getItem(position)).getId();
-
-                if (shouldReturnResult){
-                    returnSelectedProfile(childID);
-                    finish();
-                } else {
-                    startSelectedApplication(childID);
-                }
-
+                startSelectedApplication(childID);
 			}
 		});
 	}
-
-    /**
-     * This function is called when a profile has been selected and it should be returned to the
-     * calling activity.
-     * @param childID
-     */
-    private void returnSelectedProfile(final long childID){
-        Intent data = new Intent("dk.aau.cs.giraf.tortoise.MainActivity");
-        data.putExtra(Constants.CHILD_ID, childID);
-        setResult(Activity.RESULT_OK, data);
-    }
 
     /**
      * This is used when this activity has been started with startIntent()
      * @param childID
      */
     private void startSelectedApplication(final long childID) {
-        try {
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_LAUNCHER);
-            intent.setComponent(new ComponentName(mPackageName, mActivityName));
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                    | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        intent.setComponent(new ComponentName(mPackageName, mActivityName));
+        /*intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);*/
 
-            intent.putExtra(Constants.CHILD_ID, childID);
-            intent.putExtra(Constants.GUARDIAN_ID, mGuardianID);
-            intent.putExtra(Constants.APP_COLOR, mAppColor);
-
-            startActivity(intent);
-        } catch (ActivityNotFoundException e){
-
-            // Sending the caught exception to Google Analytics
-            // May return null if EasyTracker has not yet been initialized with a
-            // property ID.
-            EasyTracker easyTracker = EasyTracker.getInstance(this);
-
-            // StandardExceptionParser is provided to help get meaningful Exception descriptions.
-            easyTracker.send(MapBuilder
-                    .createException(new StandardExceptionParser(this, null)    // Context and optional collection of package names
-                                                                                // to be used in reporting the exception.
-                    .getDescription(Thread.currentThread().getName(),           // The name of the thread on which the exception occurred.
-                                    e),                                         // The exception.
-                                    false)                                      // False indicates a fatal exception
-                    .build()
-            );
-
-            Toast toast = Toast.makeText(this, "Applikationen kunne ikke startes", 2000);
-            toast.show();
-            Log.e(Constants.ERROR_TAG, e.getMessage());
-            finish();
-        }
+        intent.putExtra(Constants.CHILD_ID, childID);
+        intent.putExtra(Constants.GUARDIAN_ID, mGuardianID);
+        intent.putExtra(Constants.APP_COLOR, mAppColor);
+        // Verify the intent will resolve to at least one activity
+        LauncherUtility.secureStartActivity(this, intent);
     }
-
-    /**
-     * Determine whether the calling activity is expecting a result.
-     * Null means that the this activity was started with startIntent and is not expecting a return.
-     * @return Whether  calling activity expects result.
-     */
-    private boolean callingActivityIsExpectingResult(){
-        if (getCallingActivity() == null){
-            return false;
-        }
-
-        return true;
-    }
-
 }
