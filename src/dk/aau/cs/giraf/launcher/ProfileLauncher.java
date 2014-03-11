@@ -1,12 +1,9 @@
 package dk.aau.cs.giraf.launcher;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.widget.AdapterView;
-
-import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 class ProfileLauncher extends Activity implements AdapterView.OnClickListener{
         @Override
@@ -19,7 +16,8 @@ class ProfileLauncher extends Activity implements AdapterView.OnClickListener{
             intent.putExtra(Constants.APP_ACTIVITY_NAME, app.getActivity());
             intent.putExtra(Constants.GUARDIAN_ID, app.getGuardianID());
             intent.putExtra(Constants.APP_COLOR, app.getBgColor());
-            
-			v.getContext().startActivity(intent);
+
+            // Verify the intent will resolve to at least one activity
+            LauncherUtility.secureStartActivity(v.getContext(), intent);
     }  
 }

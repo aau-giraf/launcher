@@ -24,7 +24,7 @@
 
     <application
         android:icon="@drawable/app_icon"
-        android:label="@string/application_name" >
+        android:label="@string/application_name">
         <uses-library android:name="android.test.runner" />
         <activity
             android:name="dk.aau.cs.giraf.launcher.LogoActivity"
@@ -69,7 +69,7 @@
             android:exported="true">
             <!-- noHistory should be true.... All applications will return to this activity instead of the launcher - Frederik -->
             <intent-filter>
-                <action android:name="android.intent.action.SEND"/>
+                <action android:name="dk.aau.cs.giraf.launcher.action.SELECTPROFILE"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>

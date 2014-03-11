@@ -442,7 +442,8 @@ public class HomeActivity extends Activity {
                 intent.putExtra(Constants.APP_PACKAGE_NAME, app.getaPackage());
                 intent.putExtra(Constants.APP_ACTIVITY_NAME, app.getActivity());
 
-                startActivity(intent);
+                // Verify the intent will resolve to at least one activity
+                LauncherUtility.secureStartActivity(v.getContext(), intent);
             }
             });
         }
