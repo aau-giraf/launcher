@@ -90,8 +90,10 @@ public class AppAdapter extends ArrayAdapter<AppInfo> {
 		
 		App launcher = helper.appsHelper.getAppByPackageNameAndProfileId(currentUser.getId());
 		Setting<String, String, String> launchSetting = launcher.getSettings();
-		
-		HashMap<String, String> appSettings = launchSetting.get(String.valueOf(appID));
+        AppInfo appInfo = HomeActivity.getAppInfo(String.valueOf(convertView.getTag()));
+        appInfo.setBgColor(color);
+
+        HashMap<String, String> appSettings = launchSetting.get(String.valueOf(appID));
 
 		appSettings.remove(Constants.COLOR_BG);
 		appSettings.put(Constants.COLOR_BG, String.valueOf(color));
