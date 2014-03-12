@@ -16,9 +16,6 @@
 
 package com.google.zxing.client.android;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -30,6 +27,9 @@ import android.view.View;
 
 import com.google.zxing.ResultPoint;
 import com.google.zxing.client.android.camera.CameraManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This view is overlaid on top of the camera preview. It adds the viewfinder rectangle and partial
@@ -91,11 +91,15 @@ public final class ViewfinderView extends View {
 
     // Draw the exterior (i.e. outside the framing rect) darkened
     //---GIRAF MOD
-    paint.setColor(resultBitmap != null ? resultColor : maskColor);
-    canvas.drawRect(0, 0, width, frame.top, paint);
-    canvas.drawRect(0, frame.top, frame.left, frame.bottom + 1, paint);
-    canvas.drawRect(frame.right + 1, frame.top, width, frame.bottom + 1, paint);
-    canvas.drawRect(0, frame.bottom + 1, width, height, paint);
+      /* THIS WAS A PART OF EARLIER GIRAF VERSIONS - It is not needed since we do not need to show grayed area around the camera view.
+                                                     We use all area of the view.
+      */
+//    paint.setColor(resultBitmap != null ? resultColor : maskColor);
+//    canvas.drawRect(0, 0, width, frame.top, paint);
+//    canvas.drawRect(0, frame.top, frame.left, frame.bottom + 1, paint);
+//    canvas.drawRect(frame.right + 1, frame.top, width, frame.bottom + 1, paint);
+//    canvas.drawRect(0, frame.bottom + 1, width, height, paint);
+      /* END OF EARLIER GIRAF VERSIONS*/
 
     if (resultBitmap != null) {
       // Draw the opaque result bitmap over the scanning rectangle
