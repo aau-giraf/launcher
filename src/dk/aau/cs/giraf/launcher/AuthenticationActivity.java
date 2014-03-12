@@ -11,7 +11,6 @@ import android.os.Vibrator;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.analytics.tracking.android.EasyTracker;
@@ -40,7 +39,7 @@ public class AuthenticationActivity extends CaptureActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.authentication1);
+		setContentView(R.layout.authentication);
 
 		mContext = this;
 		mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);		
