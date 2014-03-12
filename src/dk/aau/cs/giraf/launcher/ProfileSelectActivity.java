@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -30,6 +31,7 @@ public class ProfileSelectActivity extends Activity {
 	private String mActivityName;
 	private int mAppColor;
     private boolean shouldReturnResult;
+    private ListView listView;
 
     private long childID;
 
@@ -40,7 +42,7 @@ public class ProfileSelectActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.profileselect);
-
+        listView = (ListView)findViewById(R.id.profilesList);
 		mContext = this;
         mPackageName = Constants.APP_PACKAGE_NAME;
 
