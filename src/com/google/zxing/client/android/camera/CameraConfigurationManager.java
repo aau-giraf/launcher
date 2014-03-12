@@ -16,19 +16,17 @@
 
 package com.google.zxing.client.android.camera;
 
-import java.util.Collection;
-import java.util.List;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.hardware.Camera;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Display;
-import android.view.WindowManager;
 
 import com.google.zxing.client.android.PreferencesActivity;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * A class which deals with reading, parsing, and setting the camera parameters which are used to
@@ -52,6 +50,7 @@ final class CameraConfigurationManager {
    * Reads, one time, values from the camera that are needed by the app.
    */
   void initFromCameraParameters(Camera camera) {
+    /* Values are not used. - Giraf
     Camera.Parameters parameters = camera.getParameters();
     WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
     Display display = manager.getDefaultDisplay();
@@ -64,7 +63,8 @@ final class CameraConfigurationManager {
       int temp = width;
       width = height;
       height = temp;
-    }
+    }*/
+    // screenResolution and cameraResolution should not be assigned hardcoded Points to support smaller screens that 10.1" - Giraf
     screenResolution = new Point(640, 480);
     Log.i(TAG, "Screen resolution: " + screenResolution);
     cameraResolution = new Point(640, 480);//findBestPreviewSizeValue(parameters, screenResolution);
