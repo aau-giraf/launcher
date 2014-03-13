@@ -1,6 +1,7 @@
 package dk.aau.cs.giraf.launcher.activities;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,7 +16,18 @@ class ProfileLauncher extends Activity implements AdapterView.OnClickListener{
             AppInfo app = HomeActivity.getAppInfo((String) v.getTag());
             Intent intent;
 
-            intent = new Intent(v.getContext(),ProfileSelectActivity.class);
+            // If user chose Admin/OasisApp do not open profile selector
+            if (app.getActivity().toLowerCase().contains("oasis.app"))
+            {
+                intent = new Intent(Intent.ACTION_MAIN);
+                intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                intent.setComponent(new ComponentName(app.getaPackage(), app.getActivity()));
+            }
+            else
+            {
+                intent = new Intent(v.getContext(),ProfileSelectActivity.class);
+            }
+
             intent.putExtra(Constants.APP_PACKAGE_NAME, app.getaPackage());
             intent.putExtra(Constants.APP_ACTIVITY_NAME, app.getActivity());
             intent.putExtra(Constants.GUARDIAN_ID, app.getGuardianID());
