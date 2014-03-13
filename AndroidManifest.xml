@@ -27,7 +27,7 @@
         android:label="@string/application_name">
         <uses-library android:name="android.test.runner" />
         <activity
-            android:name="dk.aau.cs.giraf.launcher.LogoActivity"
+            android:name=".activities.LogoActivity"
             android:label="@string/application_name"
             android:screenOrientation="landscape"
             android:noHistory="true"
@@ -41,7 +41,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="dk.aau.cs.giraf.launcher.AuthenticationActivity"
+            android:name=".activities.AuthenticationActivity"
             android:label="@string/application_name"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.NoTitleBar"
@@ -53,7 +53,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="dk.aau.cs.giraf.launcher.HomeActivity"
+            android:name=".activities.HomeActivity"
             android:label="@string/application_name"
             android:theme="@android:style/Theme.NoTitleBar" 
             android:screenOrientation="landscape"
@@ -61,7 +61,7 @@
             >
         </activity>
         <activity
-            android:name="dk.aau.cs.giraf.launcher.ProfileSelectActivity"
+            android:name=".activities.ProfileSelectActivity"
             android:label="@string/application_name"
             android:noHistory="true"
             android:theme="@android:style/Theme.NoTitleBar"
