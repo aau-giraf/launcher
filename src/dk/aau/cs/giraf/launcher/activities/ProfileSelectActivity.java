@@ -1,4 +1,4 @@
-package dk.aau.cs.giraf.launcher;
+package dk.aau.cs.giraf.launcher.activities;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -17,6 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dk.aau.cs.giraf.gui.GProfileAdapter;
+import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.helper.Constants;
+import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Department;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;

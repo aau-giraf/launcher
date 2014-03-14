@@ -1,7 +1,4 @@
-package dk.aau.cs.giraf.launcher;
-
-import java.util.ArrayList;
-import java.util.HashMap;
+package dk.aau.cs.giraf.launcher.layoutcontroller;
 
 import android.content.Context;
 import android.graphics.RectF;
@@ -14,6 +11,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.activities.HomeActivity;
+import dk.aau.cs.giraf.launcher.helper.Constants;
+import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.App;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;

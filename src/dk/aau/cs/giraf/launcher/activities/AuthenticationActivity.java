@@ -1,4 +1,4 @@
-package dk.aau.cs.giraf.launcher;
+package dk.aau.cs.giraf.launcher.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +11,6 @@ import android.os.Vibrator;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.analytics.tracking.android.EasyTracker;
@@ -19,6 +18,10 @@ import com.google.zxing.Result;
 import com.google.zxing.client.android.CaptureActivity;
 
 import dk.aau.cs.giraf.gui.GButton;
+import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.helper.Constants;
+import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
+import dk.aau.cs.giraf.launcher.layoutcontroller.SimulateAnimationDrawable;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
@@ -40,7 +43,7 @@ public class AuthenticationActivity extends CaptureActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.authentication1);
+		setContentView(R.layout.authentication);
 
 		mContext = this;
 		mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);		

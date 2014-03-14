@@ -1,4 +1,4 @@
-package dk.aau.cs.giraf.launcher;
+package dk.aau.cs.giraf.launcher.layoutcontroller;
 
 import android.widget.ImageView;
 

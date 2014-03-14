@@ -1,4 +1,4 @@
-package dk.aau.cs.giraf.launcher;
+package dk.aau.cs.giraf.launcher.helper;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.activities.AuthenticationActivity;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.App;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;

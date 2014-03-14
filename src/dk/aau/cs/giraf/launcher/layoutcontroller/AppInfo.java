@@ -1,15 +1,17 @@
-package dk.aau.cs.giraf.launcher;
-
-import java.util.List;
+package dk.aau.cs.giraf.launcher.layoutcontroller;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
+
+import java.util.List;
+
+import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.oasis.lib.models.App;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
-class AppInfo extends App {
+public class AppInfo extends App {
 
 	/**
 	 * The intent used to start the application.

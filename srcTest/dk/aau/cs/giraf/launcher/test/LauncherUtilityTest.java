@@ -3,7 +3,7 @@ package dk.aau.cs.giraf.launcher.test;
 import android.content.Context;
 import android.test.AndroidTestCase;
 
-import dk.aau.cs.giraf.launcher.LauncherUtility;
+import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 //import android.test.mock.MockContext;
 
 public class LauncherUtilityTest extends AndroidTestCase {

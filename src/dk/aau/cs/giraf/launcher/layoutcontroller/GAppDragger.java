@@ -1,9 +1,6 @@
-package dk.aau.cs.giraf.launcher;
+package dk.aau.cs.giraf.launcher.layoutcontroller;
 
-import android.content.ClipData;
-import android.content.ClipDescription;
 import android.view.DragEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnDragListener;
 
