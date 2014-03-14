@@ -59,6 +59,7 @@ public class HomeActivity extends Activity {
 
     private boolean mAppsAdded = false;
     private boolean mWidgetRunning = false;
+    private boolean mDrawerAnimationRunning = false;
 
 	private GWidgetUpdater mWidgetUpdater;
 	private GWidgetCalendar mCalendarWidget;
@@ -330,16 +331,20 @@ public class HomeActivity extends Activity {
             // then animate the view translating from (0, 0)
             TranslateAnimation ta = new TranslateAnimation(0, to, 0, 0);
             ta.setDuration(500);
-            mSideBarView.startAnimation(ta);
+
+            if(!mDrawerAnimationRunning){
+                mSideBarView.startAnimation(ta);
+                mDrawerAnimationRunning = true;
+            }
 
             ta.setAnimationListener(new TranslateAnimation.AnimationListener() {
 
                 @Override
                 public void onAnimationStart(Animation animation) {
-                    // Sets the left margin of the scrollview based on the width of the homebar
-                    mAppsScrollViewParams = new RelativeLayout.LayoutParams(mAppsScrollView.getLayoutParams());
-                    mAppsScrollViewParams.leftMargin = mHomeBarLayout.getWidth();
-                    mAppsScrollView.setLayoutParams(mAppsScrollViewParams);
+                        // Sets the left margin of the scrollview based on the width of the homebar
+                        mAppsScrollViewParams = new RelativeLayout.LayoutParams(mAppsScrollView.getLayoutParams());
+                        mAppsScrollViewParams.leftMargin = mHomeBarLayout.getWidth();
+                        mAppsScrollView.setLayoutParams(mAppsScrollViewParams);
                 }
 
                 @Override
@@ -348,6 +353,7 @@ public class HomeActivity extends Activity {
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
+                    mDrawerAnimationRunning = false;
                 }
             });
         }
@@ -365,12 +371,16 @@ public class HomeActivity extends Activity {
         // then animate the view translating from (0, 0)
         TranslateAnimation ta = new TranslateAnimation(0, to, 0, 0);
         ta.setDuration(500);
-        mSideBarView.startAnimation(ta);
+        if(!mDrawerAnimationRunning){
+            mSideBarView.startAnimation(ta);
+            mDrawerAnimationRunning = true;
+        }
 
         ta.setAnimationListener(new TranslateAnimation.AnimationListener() {
 
             @Override
             public void onAnimationStart(Animation animation) {
+
                 // Sets the left margin of the scrollview based on the width of the homebar
                 mAppsScrollViewParams = new RelativeLayout.LayoutParams(mAppsScrollView.getLayoutParams());
                 mAppsScrollViewParams.leftMargin = mHomeBarLayout.getWidth();
@@ -383,6 +393,7 @@ public class HomeActivity extends Activity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
+                mDrawerAnimationRunning = false;
             }
         });
     }
