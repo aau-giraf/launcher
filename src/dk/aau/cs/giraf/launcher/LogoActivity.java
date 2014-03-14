@@ -18,6 +18,7 @@ public class LogoActivity extends Activity implements Animation.AnimationListene
     /** ****************************************** **/
     // TODO: ONLY USED FOR DEBUGGING PURPOSES!!!
     private final boolean DEBUG_MODE = false;
+    /** Below functionality can be disabled simply by setting DEBUG_MODE = false **/
     private final boolean showAuthentication = false;
     private final boolean showLogoAnimation = false;
     private final boolean loginAsChild = true;
