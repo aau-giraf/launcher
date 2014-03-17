@@ -59,6 +59,7 @@ public class HomeActivity extends Activity {
 
     private boolean mAppsAdded = false;
     private boolean mWidgetRunning = false;
+    private boolean mDrawerAnimationRunning = false;
 
 	private GWidgetUpdater mWidgetUpdater;
 	private GWidgetCalendar mCalendarWidget;
@@ -260,7 +261,6 @@ public class HomeActivity extends Activity {
 	private void loadDrawer() {
 		// If result = true, the onTouch-function will be run again.
 		mHomeBarLayout.setOnTouchListener(new View.OnTouchListener() {
-            int offset = 0;
 
             @Override
             public boolean onTouch(View v, MotionEvent e) {
@@ -271,6 +271,25 @@ public class HomeActivity extends Activity {
                         break;
                     case MotionEvent.ACTION_DOWN:
                         placeDrawer();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        break;
+                }
+                return result;
+            }
+        });
+
+        mAppsScrollView.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent e) {
+                boolean result = true;
+
+                switch (e.getActionMasked()) {
+                    case MotionEvent.ACTION_MOVE:
+                        break;
+                    case MotionEvent.ACTION_DOWN:
+                        popBackDrawer();
                         break;
                     case MotionEvent.ACTION_UP:
                         break;
@@ -301,6 +320,45 @@ public class HomeActivity extends Activity {
         });
 	}
 
+    private void popBackDrawer()
+    {
+        int to;
+
+        if(!mSideBarView.isSideBarHidden)
+        {
+            to = -mHomeDrawerView.getWidth();
+
+            // then animate the view translating from (0, 0)
+            TranslateAnimation ta = new TranslateAnimation(0, to, 0, 0);
+            ta.setDuration(500);
+
+            if(!mDrawerAnimationRunning){
+                mSideBarView.startAnimation(ta);
+                mDrawerAnimationRunning = true;
+            }
+
+            ta.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+                @Override
+                public void onAnimationStart(Animation animation) {
+                        // Sets the left margin of the scrollview based on the width of the homebar
+                        mAppsScrollViewParams = new RelativeLayout.LayoutParams(mAppsScrollView.getLayoutParams());
+                        mAppsScrollViewParams.leftMargin = mHomeBarLayout.getWidth();
+                        mAppsScrollView.setLayoutParams(mAppsScrollViewParams);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    mDrawerAnimationRunning = false;
+                }
+            });
+        }
+    }
+
     private void placeDrawer()
     {
         int to;
@@ -313,12 +371,16 @@ public class HomeActivity extends Activity {
         // then animate the view translating from (0, 0)
         TranslateAnimation ta = new TranslateAnimation(0, to, 0, 0);
         ta.setDuration(500);
-        mSideBarView.startAnimation(ta);
+        if(!mDrawerAnimationRunning){
+            mSideBarView.startAnimation(ta);
+            mDrawerAnimationRunning = true;
+        }
 
         ta.setAnimationListener(new TranslateAnimation.AnimationListener() {
 
             @Override
             public void onAnimationStart(Animation animation) {
+
                 // Sets the left margin of the scrollview based on the width of the homebar
                 mAppsScrollViewParams = new RelativeLayout.LayoutParams(mAppsScrollView.getLayoutParams());
                 mAppsScrollViewParams.leftMargin = mHomeBarLayout.getWidth();
@@ -331,6 +393,7 @@ public class HomeActivity extends Activity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
+                mDrawerAnimationRunning = false;
             }
         });
     }
