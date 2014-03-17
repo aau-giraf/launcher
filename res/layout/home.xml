@@ -98,5 +98,17 @@
                 layout="@layout/debug_mode" />
         </LinearLayout>
     </ScrollView>
-</RelativeLayout>
 
+    <TextView
+        android:id="@+id/noAppsMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:paddingLeft="100dp"
+        android:textSize="30dp"
+        android:text="@string/no_apps_available"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:textColor="@android:color/darker_gray"
+        android:visibility="gone" />
+</RelativeLayout>

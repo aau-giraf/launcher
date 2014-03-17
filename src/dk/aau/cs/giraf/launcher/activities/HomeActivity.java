@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
 
@@ -150,25 +151,26 @@ public class HomeActivity extends Activity {
         //Get the list of apps to show in the container
 		List<App> girafAppsList = LauncherUtility.getVisibleGirafApps(mContext, mCurrentUser);
 
+        TextView noAppsMessage = (TextView) findViewById(R.id.noAppsMessage);
         if (girafAppsList != null && !girafAppsList.isEmpty()) {
             mAppInfos = new HashMap<String,AppInfo>();
 
-            // Hide no apps available message - In progress of being implemented
-            //TextView noAppsMessage = (TextView) findViewById(R.id.noAppsMessage);
-            //noAppsMessage.setVisibility(View.GONE);
+            // Tell the user that apps are being loaded
+            Toast toast = Toast.makeText(this, getString(R.string.loading_apps_message), 2000);
+            toast.show();
 
             //Fill AppInfo hashmap with AppInfo objects for each app
 			loadAppInfos(girafAppsList);
 
             //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
             int containerWidth = ((ScrollView) mAppsContainer.getParent()).getWidth();
-            int appsPrRow = containerWidth / Constants.APP_ICON_DIMENSION;
-            int paddingWidth = (containerWidth % Constants.APP_ICON_DIMENSION) / (appsPrRow + 1);
+            int appsPrRow = getAmountOfApps(containerWidth);
+            int paddingWidth = getAppPadding(containerWidth, appsPrRow);
 
             //Calculate how many apps the screen can fit vertically on a single screen, and how much space is available for vertical padding
             int containerHeight = ((ScrollView) mAppsContainer.getParent()).getHeight();
-            int appsPrColumn = containerHeight / Constants.APP_ICON_DIMENSION;
-            int paddingHeight = (containerHeight % Constants.APP_ICON_DIMENSION) / (appsPrColumn + 1);
+            int appsPrColumn = getAmountOfApps(containerHeight);
+            int paddingHeight = getAppPadding(containerHeight, appsPrColumn);
 
             //Add the first row to the container
             LinearLayout currentAppRow = new LinearLayout(mContext);
@@ -195,10 +197,22 @@ public class HomeActivity extends Activity {
             //Remember that the apps have been added, so they are not added again by the listener
             mAppsAdded = true;
 
-		} else {
-			Log.e(Constants.ERROR_TAG, "App list is null");
+            // If apps are loaded and message is still shown. Cancel the toast.
+            toast.cancel();
+        } else {
+            // show no apps available message
+            noAppsMessage.setVisibility(View.VISIBLE);
+            Log.e(Constants.ERROR_TAG, "App list is null");
 		}
 	}
+
+    private int getAmountOfApps(int containerHeight) {
+        return containerHeight / Constants.APP_ICON_DIMENSION;
+    }
+
+    private int getAppPadding(int containerWidth, int appsPrRow) {
+        return (containerWidth % Constants.APP_ICON_DIMENSION) / (appsPrRow + 1);
+    }
 
     /**
      * Loads the AppInfo object of app from the list, into the {@code mAppInfos} hashmap, making
