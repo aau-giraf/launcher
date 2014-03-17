@@ -236,7 +236,7 @@ public class HomeActivity extends Activity {
         mHomeBarLayout = (RelativeLayout) this.findViewById(R.id.HomeBarLayout);
         mSideBarView = (SideBarLayout)this.findViewById(R.id.SideBarLayout);
         mAppsContainer = (LinearLayout)this.findViewById(R.id.appContainer);
-        mAppsScrollView = (ScrollView)this.findViewById(R.id.horizontalScrollView);
+        mAppsScrollView = (ScrollView) this.findViewById(R.id.appScrollView);
 
         // Show warning if DEBUG_MODE is true
         LauncherUtility.ShowDebugInformation(this);
