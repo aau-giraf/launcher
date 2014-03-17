@@ -153,9 +153,9 @@ public class HomeActivity extends Activity {
         if (girafAppsList != null && !girafAppsList.isEmpty()) {
             mAppInfos = new HashMap<String,AppInfo>();
 
-            // Hide no apps available message
-            TextView noAppsMessage = (TextView) findViewById(R.id.noAppsMessage);
-            noAppsMessage.setVisibility(View.GONE);
+            // Hide no apps available message - In progress of being implemented
+            //TextView noAppsMessage = (TextView) findViewById(R.id.noAppsMessage);
+            //noAppsMessage.setVisibility(View.GONE);
 
             //Fill AppInfo hashmap with AppInfo objects for each app
 			loadAppInfos(girafAppsList);
