@@ -63,8 +63,6 @@ public class AuthenticationActivity extends CaptureActivity {
 					//LauncherUtility.attachLauncher(mContext); // should not be called
 					LauncherUtility.saveLogInData(mContext, mPreviousProfile.getId());
 					startActivity(mHomeIntent);
-				} else {
-					finish();
 				}
 			}
 		});

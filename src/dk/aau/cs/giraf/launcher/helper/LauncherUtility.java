@@ -39,7 +39,7 @@ public class LauncherUtility {
     /**
      * Decides if GIRAF launcher is running in debug mode
      * Debug mode can be enabled through enableDebugging() method,
-     * which is typically done on LogoActivity
+     * which is typically done on MainActivity
      */
     public static boolean isDebugging() {
         return DEBUG_MODE;

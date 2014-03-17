@@ -150,8 +150,12 @@ public class HomeActivity extends Activity {
         //Get the list of apps to show in the container
 		List<App> girafAppsList = LauncherUtility.getVisibleGirafApps(mContext, mCurrentUser);
 
-		if (girafAppsList != null) {
-			mAppInfos = new HashMap<String,AppInfo>();
+        if (girafAppsList != null && !girafAppsList.isEmpty()) {
+            mAppInfos = new HashMap<String,AppInfo>();
+
+            // Hide no apps available message
+            TextView noAppsMessage = (TextView) findViewById(R.id.noAppsMessage);
+            noAppsMessage.setVisibility(View.GONE);
 
             //Fill AppInfo hashmap with AppInfo objects for each app
 			loadAppInfos(girafAppsList);
@@ -232,7 +236,7 @@ public class HomeActivity extends Activity {
         mHomeBarLayout = (RelativeLayout) this.findViewById(R.id.HomeBarLayout);
         mSideBarView = (SideBarLayout)this.findViewById(R.id.SideBarLayout);
         mAppsContainer = (LinearLayout)this.findViewById(R.id.appContainer);
-        mAppsScrollView = (ScrollView)this.findViewById(R.id.horizontalScrollView);
+        mAppsScrollView = (ScrollView) this.findViewById(R.id.appScrollView);
 
         // Show warning if DEBUG_MODE is true
         LauncherUtility.ShowDebugInformation(this);

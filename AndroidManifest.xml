@@ -27,7 +27,7 @@
         android:label="@string/application_name">
         <uses-library android:name="android.test.runner" />
         <activity
-            android:name=".activities.LogoActivity"
+            android:name=".activities.MainActivity"
             android:label="@string/application_name"
             android:screenOrientation="landscape"
             android:noHistory="true"
@@ -55,6 +55,8 @@
         <activity
             android:name=".activities.HomeActivity"
             android:label="@string/application_name"
+            android:clearTaskOnLaunch="true"
+            android:launchMode="singleTask"
             android:theme="@android:style/Theme.NoTitleBar" 
             android:screenOrientation="landscape"
             android:configChanges="orientation|screenSize"

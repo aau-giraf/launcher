@@ -14,11 +14,16 @@ import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
-public class LogoActivity extends Activity implements Animation.AnimationListener{
+/**
+ * Handles determination of debug and whether there is a current session or if the user should login again.
+ * Shows a fancy logo animation on start up - Which does nothing.... - CLEVER
+ */
+public class MainActivity extends Activity implements Animation.AnimationListener{
 
     /** ****************************************** **/
     // TODO: ONLY USED FOR DEBUGGING PURPOSES!!!
     private final boolean DEBUG_MODE = false;
+    /** Below functionality can be disabled simply by setting DEBUG_MODE = false **/
     private final boolean showAuthentication = false;
     private final boolean showLogoAnimation = false;
     private final boolean loginAsChild = true;
