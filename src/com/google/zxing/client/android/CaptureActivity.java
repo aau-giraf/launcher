@@ -16,16 +16,6 @@
 
 package com.google.zxing.client.android;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.text.DateFormat;
-import java.util.Collection;
-import java.util.Date;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Set;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -72,6 +62,16 @@ import com.google.zxing.client.android.result.ResultHandler;
 import com.google.zxing.client.android.result.ResultHandlerFactory;
 import com.google.zxing.client.android.result.supplement.SupplementalInfoRetriever;
 import com.google.zxing.client.android.share.ShareActivity;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.util.Collection;
+import java.util.Date;
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This activity opens the camera and does the actual scanning on a background thread. It draws a
@@ -275,6 +275,11 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
       characterSet = intent.getStringExtra(Intents.Scan.CHARACTER_SET);
 
     }
+  }
+
+  public void setFramingRect(int width, int height){
+      cameraManager.setManualFramingRect(width, height);
+      viewfinderView.invalidate();
   }
   
   private static boolean isZXingURL(String dataString) {

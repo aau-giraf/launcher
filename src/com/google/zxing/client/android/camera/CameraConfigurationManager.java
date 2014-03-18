@@ -46,28 +46,19 @@ final class CameraConfigurationManager {
     this.context = context;
   }
 
-  /**
+    public void setScreenResolution(Point screenResolution) {
+        this.screenResolution = screenResolution;
+    }
+
+    /**
    * Reads, one time, values from the camera that are needed by the app.
    */
   void initFromCameraParameters(Camera camera) {
-    /* Values are not used. - Giraf
     Camera.Parameters parameters = camera.getParameters();
-    WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-    Display display = manager.getDefaultDisplay();
-    int width = display.getWidth();
-    int height = display.getHeight();
-    // We're landscape-only, and have apparently seen issues with display thinking it's portrait 
-    // when waking from sleep. If it's not landscape, assume it's mistaken and reverse them:
-    if (width < height) {
-      Log.i(TAG, "Display reports portrait orientation; assuming this is incorrect");
-      int temp = width;
-      width = height;
-      height = temp;
-    }*/
-    // screenResolution and cameraResolution should not be assigned hardcoded Points to support smaller screens that 10.1" - Giraf
-    screenResolution = new Point(640, 480);
+    Camera.Size previewSize = parameters.getPreviewSize();
+    screenResolution = new Point(previewSize.width, previewSize.height);
     Log.i(TAG, "Screen resolution: " + screenResolution);
-    cameraResolution = new Point(640, 480);//findBestPreviewSizeValue(parameters, screenResolution);
+    cameraResolution = new Point(previewSize.width, previewSize.height);
     Log.i(TAG, "Camera resolution: " + cameraResolution);
   }
 

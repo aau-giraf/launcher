@@ -16,8 +16,6 @@
 
 package com.google.zxing.client.android.camera;
 
-import java.io.IOException;
-
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -27,6 +25,8 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 
 import com.google.zxing.client.android.PlanarYUVLuminanceSource;
+
+import java.io.IOException;
 
 /**
  * This object wraps the Camera service object and expects to be the only one talking to it. The
@@ -174,30 +174,34 @@ public final class CameraManager {
    * @return The rectangle to draw on screen in window coordinates.
    */
   public Rect getFramingRect() {
+    int leftOffset = 0;
+    int topOffset = 0;
     if (framingRect == null) {
       if (camera == null) {
         return null;
       }
       //---- GIRAF MOD
-      Point cameraResolution = configManager.getScreenResolution();
-      int width = cameraResolution.y;
-//      if (width < MIN_FRAME_WIDTH) {
-//        width = MIN_FRAME_WIDTH;
-//      } else if (width > MAX_FRAME_WIDTH) {
-//        width = MAX_FRAME_WIDTH;
-//      }
-      int height = cameraResolution.x;
-//      if (height < MIN_FRAME_HEIGHT) {
-//        height = MIN_FRAME_HEIGHT;
-//      } else if (height > MAX_FRAME_HEIGHT) {
-//        height = MAX_FRAME_HEIGHT;
-//      }
-      int leftOffset = 0;
-      int topOffset = 0;
-      //----- GIRAF MOD (OFF)
+      int width;
+      int height;
+      if (requestedFramingRectWidth == 0 || requestedFramingRectHeight == 0){
+        Point cameraResolution = configManager.getScreenResolution();
+        width = cameraResolution.x;
+        height = cameraResolution.y;
+      }
+      else
+      {
+        width = requestedFramingRectWidth;
+        height = requestedFramingRectHeight;
+      }
       framingRect = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + height);
       Log.d(TAG, "Calculated framing rect: " + framingRect);
     }
+    if (requestedFramingRectWidth > 0 && requestedFramingRectHeight > 0){
+      int width = requestedFramingRectWidth;
+      int height = requestedFramingRectHeight;
+      framingRect = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + height);
+    }
+    //----- GIRAF MOD (OFF)
     return framingRect;
   }
 
@@ -240,7 +244,7 @@ public final class CameraManager {
    */
   public void setManualFramingRect(int width, int height) {
     if (initialized) {
-      Point screenResolution = configManager.getScreenResolution();
+      /*Point screenResolution = configManager.getScreenResolution();
       if (width > screenResolution.x) {
         width = screenResolution.x;
       }
@@ -253,6 +257,10 @@ public final class CameraManager {
       Log.d(TAG, "Calculated manual framing rect: " + framingRect);
       framingRectInPreview = null;
     } else {
+      requestedFramingRectWidth = width;
+      requestedFramingRectHeight = height;
+    */
+        configManager.setScreenResolution(new Point(width, height));
       requestedFramingRectWidth = width;
       requestedFramingRectHeight = height;
     }

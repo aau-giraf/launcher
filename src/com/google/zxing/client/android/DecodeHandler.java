@@ -16,8 +16,6 @@
 
 package com.google.zxing.client.android;
 
-import java.util.Map;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -30,6 +28,8 @@ import com.google.zxing.MultiFormatReader;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
+
+import java.util.Map;
 
 final class DecodeHandler extends Handler {
 
@@ -68,19 +68,6 @@ final class DecodeHandler extends Handler {
    */
   private void decode(byte[] data, int width, int height) {
     long start = System.currentTimeMillis();
-    byte[] rotatedData;
-    
-    rotatedData = new byte[data.length];
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++)
-            rotatedData[x * height + height - y - 1] = data[x + y * width];
-    }
-    int tmp = width; // Here we are swapping, that's the difference to #11
-    width = height;
-    height = tmp;
-    
-    data = rotatedData;
-    
     Result rawResult = null;
     
     PlanarYUVLuminanceSource source = activity.getCameraManager().buildLuminanceSource(data, width, height);
