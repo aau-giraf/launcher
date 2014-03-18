@@ -39,6 +39,9 @@ public class AuthenticationActivity extends CaptureActivity {
 	private Context mContext;
 	private Vibrator mVibrator;
 	private Profile mPreviousProfile;
+    private View mCameraFeed;
+
+    private boolean isFrameRedrawn = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -74,6 +77,16 @@ public class AuthenticationActivity extends CaptureActivity {
         // Start logging this activity
         EasyTracker.getInstance(this).activityStart(this);
 	}
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (!isFrameRedrawn){
+            mCameraFeed = this.findViewById(R.id.camerafeed);
+            super.setFramingRect(mCameraFeed.getWidth(), mCameraFeed.getHeight());
+            isFrameRedrawn = true;
+        }
+    }
 
     @Override
     public void finish() {
