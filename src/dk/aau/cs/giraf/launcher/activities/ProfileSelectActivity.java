@@ -126,8 +126,8 @@ public class ProfileSelectActivity extends Activity {
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
         intent.setComponent(new ComponentName(mPackageName, mActivityName));
-        /*intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);*/
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 
         intent.putExtra(Constants.CHILD_ID, childID);
         intent.putExtra(Constants.GUARDIAN_ID, mGuardianID);

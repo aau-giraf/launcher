@@ -20,8 +20,10 @@ class ProfileLauncher extends Activity implements AdapterView.OnClickListener{
             if (app.getActivity().toLowerCase().contains("oasis.app"))
             {
                 intent = new Intent(Intent.ACTION_MAIN);
-                intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                //intent.addCategory(Intent.CATEGORY_LAUNCHER);
                 intent.setComponent(new ComponentName(app.getaPackage(), app.getActivity()));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
             }
             else
             {

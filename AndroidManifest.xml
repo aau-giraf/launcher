@@ -35,8 +35,9 @@
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+
                 <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -57,10 +58,13 @@
             android:label="@string/application_name"
             android:clearTaskOnLaunch="true"
             android:launchMode="singleTask"
+            android:stateNotNeeded="true"
             android:theme="@android:style/Theme.NoTitleBar" 
             android:screenOrientation="landscape"
-            android:configChanges="orientation|screenSize"
-            >
+            android:configChanges="orientation|screenSize">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".activities.ProfileSelectActivity"
@@ -69,7 +73,6 @@
             android:theme="@android:style/Theme.NoTitleBar"
             android:screenOrientation="landscape"
             android:exported="true">
-            <!-- noHistory should be true.... All applications will return to this activity instead of the launcher - Frederik -->
             <intent-filter>
                 <action android:name="dk.aau.cs.giraf.launcher.action.SELECTPROFILE"/>
                 <category android:name="android.intent.category.DEFAULT"/>

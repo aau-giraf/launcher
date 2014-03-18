@@ -26,7 +26,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
     /** Below functionality can be disabled simply by setting DEBUG_MODE = false **/
     private final boolean showAuthentication = false;
     private final boolean showLogoAnimation = false;
-    private final boolean loginAsChild = true;
+    private final boolean loginAsChild = false;
     /** ****************************************** **/
 
 	private Context mContext;
@@ -77,6 +77,18 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 	    setContentView(R.layout.logo);
 
         mContext = this.getApplicationContext();
+
+        // Make sure we do not show animation in case we are already logged in...
+        if (!LauncherUtility.sessionExpired(mContext)) {
+            Intent intent = new Intent(mContext, HomeActivity.class);
+
+            SharedPreferences sharedPreferences = getSharedPreferences(Constants.TIMER_KEY, 0);
+            long guardianID = sharedPreferences.getLong(Constants.GUARDIAN_ID, -1);
+
+            intent.putExtra(Constants.GUARDIAN_ID, guardianID);
+            startActivity(intent);
+            finish();
+        }
 
         Animation logoAnimation = AnimationUtils.loadAnimation(mContext, R.animator.rotatelogo);
 

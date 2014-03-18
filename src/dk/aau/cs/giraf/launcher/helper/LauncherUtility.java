@@ -62,7 +62,7 @@ public class LauncherUtility {
         try {
             if (intent.resolveActivity(context.getPackageManager()) != null) {
                 context.startActivity(intent);
-            } else {
+            } else { // activity was not found. We want to be notified on google analytics
                 throw new ActivityNotFoundException();
             }
         } catch (ActivityNotFoundException e){
