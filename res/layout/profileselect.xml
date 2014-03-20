@@ -15,7 +15,7 @@
         android:contentDescription="Logo"
         android:src="@drawable/icon_giraf" 
         android:layout_marginLeft="30dp"
-        />
+        android:visibility="gone" />
     
     <TextView 
         android:id="@+id/profileselect_headline"

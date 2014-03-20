@@ -70,7 +70,7 @@
             android:name=".activities.ProfileSelectActivity"
             android:label="@string/application_name"
             android:noHistory="true"
-            android:theme="@android:style/Theme.NoTitleBar"
+            android:theme="@android:style/Theme.Holo.Dialog.NoActionBar"
             android:screenOrientation="landscape"
             android:exported="true">
             <intent-filter>

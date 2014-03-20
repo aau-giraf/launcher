@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -22,6 +24,8 @@ import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Department;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
+
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 public class ProfileSelectActivity extends Activity {
 
@@ -58,6 +62,20 @@ public class ProfileSelectActivity extends Activity {
 
         // Start logging this activity
         EasyTracker.getInstance(this).activityStart(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Retrive the screen dimensions
+        Point screenSize = new Point();
+        getWindowManager().getDefaultDisplay().getSize(screenSize);
+        WindowManager.LayoutParams params = getWindow().getAttributes();
+
+        params.height = WRAP_CONTENT;
+        params.width = screenSize.x / 2; // We only want to use half of the screen
+        getWindow().setAttributes(params);
     }
 
     @Override
