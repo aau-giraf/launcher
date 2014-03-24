@@ -28,7 +28,7 @@ public class ProfileSelectActivity extends Activity {
 	private List<Profile> mChildren;
     private Helper mHelper;
 	private Context mContext;
-	private long mGuardianID;
+	private int mGuardianID;
 	private String mPackageName;
 	private String mActivityName;
 	private int mAppColor;
@@ -50,7 +50,7 @@ public class ProfileSelectActivity extends Activity {
 
         // Only guardian id is required if expecting result returned
         mHelper = new Helper(mContext);
-		mGuardianID = getIntent().getExtras().getLong(Constants.GUARDIAN_ID);
+		mGuardianID = getIntent().getExtras().getInt(Constants.GUARDIAN_ID);
         mAppColor = getIntent().getExtras().getInt(Constants.APP_COLOR);
         mPackageName = getIntent().getExtras().getString(Constants.APP_PACKAGE_NAME);
         mActivityName = getIntent().getExtras().getString(Constants.APP_ACTIVITY_NAME);
@@ -73,7 +73,6 @@ public class ProfileSelectActivity extends Activity {
 	 * and creates the list used to select which child to run an app with. 
 	 */
 	private void loadProfiles() {
-		Profile.setOutput("{1} {2} {3}");
 		
 		mChildren = new ArrayList<Profile>();
 

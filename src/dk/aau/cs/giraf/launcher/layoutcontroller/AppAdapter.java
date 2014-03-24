@@ -20,8 +20,9 @@ import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.oasis.lib.Helper;
-import dk.aau.cs.giraf.oasis.lib.models.App;
+import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.oasis.lib.models.ProfileApplication;
 import dk.aau.cs.giraf.oasis.lib.models.Setting;
 
 public class AppAdapter extends ArrayAdapter<AppInfo> {
@@ -58,7 +59,7 @@ public class AppAdapter extends ArrayAdapter<AppInfo> {
 		appIconView.setImageDrawable(appInfo.getIconImage());
 		setAppBackground(convertView, appInfo.getBgColor());
 
-		convertView.setTag(String.valueOf(appInfo.getId()));
+		convertView.setTag(String.valueOf(appInfo.getID()));
 		convertView.setOnDragListener(new GAppDragger());
 		
 		return convertView;
@@ -92,8 +93,9 @@ public class AppAdapter extends ArrayAdapter<AppInfo> {
 		
 		final Helper helper = new Helper(context);
 		final Profile currentUser = LauncherUtility.findCurrentUser(context);
-		
-		App launcher = helper.appsHelper.getAppByPackageNameAndProfileId(currentUser.getId());
+
+        //TODO: The OasisLib group still needs to fix their dataformat
+		Application launcher = helper.applicationHelper.getApplicationById(currentUser.getId());
 		Setting<String, String, String> launchSetting = launcher.getSettings();
         AppInfo appInfo = HomeActivity.getAppInfo(String.valueOf(convertView.getTag()));
         appInfo.setBgColor(color);
@@ -102,8 +104,14 @@ public class AppAdapter extends ArrayAdapter<AppInfo> {
 
 		appSettings.remove(Constants.COLOR_BG);
 		appSettings.put(Constants.COLOR_BG, String.valueOf(color));
-		
+
+        //TODO: Again, this is due to OasisLib group.
 		launcher.setSettings(launchSetting);
-		helper.appsHelper.modifyAppByProfile(launcher, currentUser);
+        //TODO: Once again, it is now not possible to modify an app according to a user.
+        //Update: You are apparently supposed to use helper.profileApplicationHelper, but
+        //dont do anything till we know what settings we're actually saving.
+
+        //PREVIOUS CODE!
+        //helper.applicationHelper.modifyAppByProfile(launcher, currentUser);
 	}
 }

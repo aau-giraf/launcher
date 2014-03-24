@@ -8,10 +8,10 @@ import android.graphics.drawable.Drawable;
 import java.util.List;
 
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
-import dk.aau.cs.giraf.oasis.lib.models.App;
+import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
-public class AppInfo extends App {
+public class AppInfo extends Application {
 
 	/**
 	 * The intent used to start the application.
@@ -22,6 +22,9 @@ public class AppInfo extends App {
 	 * The application icon.
 	 */
 	private Drawable mIcon;
+
+    private Application app;
+    public Application getApp(){return this.app;}
 
 	/**
 	 * Get the icon image of the app.
@@ -40,13 +43,8 @@ public class AppInfo extends App {
 	 * Creates a new AppInfo from a given parent app.
 	 * @param parentApp App to get data from.
 	 */
-	public AppInfo(App parentApp) {
-		super.id = parentApp.getId();
-		super.activity = parentApp.getActivity();
-		super.aPackage = parentApp.getaPackage();
-		super.icon = parentApp.getIcon();
-		super.name = parentApp.getName();
-		super.settings = parentApp.getSettings();
+	public AppInfo(Application parentApp) {
+        this.app = parentApp;
 	}
 
 	/**
@@ -54,7 +52,7 @@ public class AppInfo extends App {
 	 * @param guardian The guardian using the system.
 	 */
 	public void setGuardian(Profile guardian) {
-		if (guardian.getPRole() == Profile.pRoles.GUARDIAN.ordinal()) {
+		if (guardian.getRole() == Profile.Roles.GUARDIAN) {
 			mGuardian = guardian;
 		}
 	}
@@ -84,7 +82,7 @@ public class AppInfo extends App {
 	 * Get the ID of the currently logged in guardian.
 	 * @return The guardian ID.
 	 */
-	public Long getGuardianID() {
+	public int getGuardianID() {
 		return mGuardian.getId();
 	}
 
@@ -94,10 +92,10 @@ public class AppInfo extends App {
 	 * @return shortened name for the app
 	 */
 	public String getShortenedName() {
-		if(name.length() > 6){
-			return name.subSequence(0, 5) + "...";
+		if(app.getName().length() > 6){
+			return app.getName().subSequence(0, 5) + "...";
 		} else {
-			return name;
+			return app.getName();
 		}
 	}
 
@@ -107,7 +105,6 @@ public class AppInfo extends App {
 	 */
 	public void load(Context context, Profile guardian) {
 		setGuardian(guardian);
-		
 		loadIcon(context);
 	}
 
@@ -121,7 +118,7 @@ public class AppInfo extends App {
 		List<ResolveInfo> systemApps = LauncherUtility.getDeviceApps(context);
 
 		for (ResolveInfo app : systemApps) {
-			if (app.activityInfo.packageName.equals(this.aPackage)) {
+			if (app.activityInfo.packageName.equals(this.app.getPack())) {
 				mIcon = app.loadIcon(context.getPackageManager());
 				break;
 			}

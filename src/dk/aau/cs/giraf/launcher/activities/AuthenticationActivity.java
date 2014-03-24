@@ -119,7 +119,7 @@ public class AuthenticationActivity extends CaptureActivity {
 			mPreviousProfile = profile;
 			
 			this.changeCameraFeedBorderColor(0xFF3AAA35);
-			mLoginNameView.setText(profile.getFirstname() + " " + profile.getSurname());
+			mLoginNameView.setText(profile.getName());
 			mLoginNameView.setVisibility(View.VISIBLE);
 			mGLoginButton.setVisibility(View.VISIBLE);
 			mInfoView.setText(R.string.saadan);

@@ -21,14 +21,14 @@ class ProfileLauncher extends Activity implements AdapterView.OnClickListener{
             {
                 intent = new Intent(Intent.ACTION_MAIN);
                 intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                intent.setComponent(new ComponentName(app.getaPackage(), app.getActivity()));
+                intent.setComponent(new ComponentName(app.getPack(), app.getActivity()));
             }
             else
             {
                 intent = new Intent(v.getContext(),ProfileSelectActivity.class);
             }
 
-            intent.putExtra(Constants.APP_PACKAGE_NAME, app.getaPackage());
+            intent.putExtra(Constants.APP_PACKAGE_NAME, app.getPack());
             intent.putExtra(Constants.APP_ACTIVITY_NAME, app.getActivity());
             intent.putExtra(Constants.GUARDIAN_ID, app.getGuardianID());
             intent.putExtra(Constants.APP_COLOR, app.getBgColor());

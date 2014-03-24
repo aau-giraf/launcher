@@ -43,8 +43,10 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.GAppDragger;
 import dk.aau.cs.giraf.launcher.layoutcontroller.SideBarLayout;
 import dk.aau.cs.giraf.oasis.lib.Helper;
-import dk.aau.cs.giraf.oasis.lib.models.App;
+import dk.aau.cs.giraf.oasis.lib.controllers.ProfileApplicationController;
+import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.oasis.lib.models.ProfileApplication;
 import dk.aau.cs.giraf.oasis.lib.models.Setting;
 
 public class HomeActivity extends Activity {
@@ -53,7 +55,7 @@ public class HomeActivity extends Activity {
 
 	private Profile mCurrentUser; 
 	private Helper mHelper;
-	private App mLauncher;
+	private Application mLauncher;
 
     private static HashMap<String,AppInfo> mAppInfos;
 
@@ -87,8 +89,8 @@ public class HomeActivity extends Activity {
 		HomeActivity.mContext = this;
 		mHelper = new Helper(mContext);
 		
-		mCurrentUser = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getLong(Constants.GUARDIAN_ID));
-		mLauncher = mHelper.appsHelper.getAppByPackageNameAndProfileId(mCurrentUser.getId());
+		mCurrentUser = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
+		mLauncher = mHelper.applicationHelper.getApplicationById(mCurrentUser.getId());
 
         loadViews();
 		loadDrawer();
@@ -148,7 +150,7 @@ public class HomeActivity extends Activity {
 	 */
 	private void loadApplications() {
         //Get the list of apps to show in the container
-		List<App> girafAppsList = LauncherUtility.getVisibleGirafApps(mContext, mCurrentUser);
+		List<Application> girafAppsList = LauncherUtility.getVisibleGirafApps(mContext, mCurrentUser);
 
         if (girafAppsList != null && !girafAppsList.isEmpty()) {
             mAppInfos = new HashMap<String,AppInfo>();
@@ -205,16 +207,16 @@ public class HomeActivity extends Activity {
      * them accesible with only the ID string of the app.
      * @param appsList The list of accessible apps
      */
-    private void loadAppInfos(List<App> appsList) {
+    private void loadAppInfos(List<Application> appsList) {
         mAppInfos = new HashMap<String,AppInfo>();
 
-        for (App app : appsList) {
+        for (Application app : appsList) {
             AppInfo appInfo = new AppInfo(app);
 
             appInfo.load(mContext, mCurrentUser);
-            appInfo.setBgColor(appBgColor(appInfo.getId()));
+            appInfo.setBgColor(appBgColor(appInfo));
 
-            mAppInfos.put(String.valueOf(appInfo.getId()), appInfo);
+            mAppInfos.put(String.valueOf(appInfo.getID()), appInfo);
         }
     }
 
@@ -324,8 +326,7 @@ public class HomeActivity extends Activity {
         });
 	}
 
-    private void popBackDrawer()
-    {
+    private void popBackDrawer(){
         int to;
 
         if(!mSideBarView.isSideBarHidden)
@@ -363,8 +364,7 @@ public class HomeActivity extends Activity {
         }
     }
 
-    private void placeDrawer()
-    {
+    private void placeDrawer(){
         int to;
 
         if(mSideBarView.isSideBarHidden)
@@ -410,6 +410,7 @@ public class HomeActivity extends Activity {
 		mConnectivityWidget = (GWidgetConnectivity) findViewById(R.id.connectivitywidget);
 		mLogoutWidget = (GWidgetLogout) findViewById(R.id.logoutwidget);
 		mHomeDrawerView = (RelativeLayout) findViewById(R.id.HomeDrawer);
+        mProfilePictureView = (LinearLayout) findViewById(R.id.profile_pic);
 
 		mWidgetUpdater = new GWidgetUpdater();
 		mWidgetUpdater.addWidget(mCalendarWidget);
@@ -429,16 +430,18 @@ public class HomeActivity extends Activity {
 
 	/** 
 	 * Finds the background color of a given app, and if no color exists for the app, it is given one.
-	 * @param appID ID of the app to find the background color for.
+	 * @param appInfo of the app to find the background color for.
 	 * @return The background color of the app.
 	 */
-	private int appBgColor(Long appID) {
+	private int appBgColor(AppInfo appInfo) {
 		int[] colors = getResources().getIntArray(R.array.appcolors);
-		Setting<String, String, String> launcherSettings = mLauncher.getSettings();
+        //TODO: The OasisLib group still needs to fix the settings format and more.
+        ProfileApplication profileApplication = mHelper.profileApplicationHelper.getProfileApplicationByProfileIdAndApplicationId(appInfo.getApp(), mCurrentUser);
+        Setting<String, String, String> launcherSettings = profileApplication.getSettings();
 
 		// If settings for the given app exists.
-		if (launcherSettings != null && launcherSettings.containsKey(String.valueOf(appID))) {
-			HashMap<String, String> appSetting = launcherSettings.get(String.valueOf(appID));
+		if (launcherSettings != null && launcherSettings.containsKey(String.valueOf(appInfo.getApp().getID()))) {
+			HashMap<String, String> appSetting = launcherSettings.get(String.valueOf(appInfo.getApp().getID()));
 
 			// If color settings for the given app exists.
 			if (appSetting != null && appSetting.containsKey(Constants.COLOR_BG)) {
@@ -450,7 +453,7 @@ public class HomeActivity extends Activity {
 		int position = (new Random()).nextInt(colors.length);
 
 		// No settings existed, save the new.
-		saveNewBgColor(colors[position], appID);
+		saveNewBgColor(colors[position], appInfo);
 
 		return colors[position];
 	}
@@ -458,25 +461,29 @@ public class HomeActivity extends Activity {
 	/**
 	 * Saves a new color in the launcher settings.
 	 * @param color Color to save.
-	 * @param appID ID of the app to save for.
+	 * @param appInfo the appInfo of the app to save for.
 	 */
-	private void saveNewBgColor(int color, long appID) {
-		Setting<String, String, String> launcherSettings = mLauncher.getSettings();
+	private void saveNewBgColor(int color, AppInfo appInfo) {
+        //TODO: Currently, settings is just a blob of data. The OasisLib group is fixing the format, so we'll need to adjust depending on what format they're going with
+        ProfileApplication profileApplication = mHelper.profileApplicationHelper.getProfileApplicationByProfileIdAndApplicationId(appInfo.getApp(), mCurrentUser);
+		Setting<String, String, String> launcherSettings = profileApplication.getSettings();
 
 		if (launcherSettings == null) {
 			launcherSettings = new Setting<String, String, String>();
 		}
 
 		// If no app specific settings exist.
-		if (!launcherSettings.containsKey(String.valueOf(appID))) {
-			launcherSettings.addValue(String.valueOf(appID), Constants.COLOR_BG, String.valueOf(color));
-		} else if (!launcherSettings.get(String.valueOf(appID)).containsKey(Constants.COLOR_BG)) {
+		if (!launcherSettings.containsKey(String.valueOf(appInfo.getApp().getID()))) {
+			launcherSettings.addValue(String.valueOf(appInfo.getApp().getID()), Constants.COLOR_BG, String.valueOf(color));
+		} else if (!launcherSettings.get(String.valueOf(appInfo.getApp().getID())).containsKey(Constants.COLOR_BG)) {
 			/* If no app specific color settings exist.*/
-			launcherSettings.get(String.valueOf(appID)).put(Constants.COLOR_BG, String.valueOf(color));
+			launcherSettings.get(String.valueOf(appInfo.getApp().getID())).put(Constants.COLOR_BG, String.valueOf(color));
 		}
 
+        //TODO: The OasisLib group still needs to fix the settings format and more.
 		mLauncher.setSettings(launcherSettings);
-		mHelper.appsHelper.modifyAppByProfile(mLauncher, mCurrentUser);
+        //TODO: This function no longer exists. Now it can modify an application, regardless of user.
+		mHelper.applicationHelper.modifyAppByProfile(mLauncher, mCurrentUser);
 	}
 
     /**
@@ -496,9 +503,9 @@ public class HomeActivity extends Activity {
         appIconView.setImageDrawable(appInfo.getIconImage());
         setAppBackground(appView, appInfo.getBgColor());
 
-        appView.setTag(String.valueOf(appInfo.getId()));
+        appView.setTag(String.valueOf(appInfo.getApp().getID()));
         appView.setOnDragListener(new GAppDragger());
-        if(mCurrentUser.getPRole() == Constants.ROLE_GUARDIAN)
+        if(mCurrentUser.getRole() == Profile.Roles.GUARDIAN)
             appView.setOnClickListener(new ProfileLauncher());
         else{appView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -506,13 +513,13 @@ public class HomeActivity extends Activity {
                 AppInfo app = HomeActivity.getAppInfo((String)v.getTag());
                 Intent intent = new Intent(Intent.ACTION_MAIN);
                 intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                intent.setComponent(new ComponentName(app.getaPackage(), app.getActivity()));
+                intent.setComponent(new ComponentName(app.getPack(), app.getActivity()));
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                         | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 
                 intent.putExtra(Constants.CHILD_ID, mCurrentUser.getId());
                 intent.putExtra(Constants.APP_COLOR, app.getBgColor());
-                intent.putExtra(Constants.APP_PACKAGE_NAME, app.getaPackage());
+                intent.putExtra(Constants.APP_PACKAGE_NAME, app.getPack());
                 intent.putExtra(Constants.APP_ACTIVITY_NAME, app.getActivity());
 
                 // Verify the intent will resolve to at least one activity
