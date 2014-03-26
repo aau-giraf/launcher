@@ -34,6 +34,7 @@ class ProfileLauncher extends Activity implements AdapterView.OnClickListener{
             intent.putExtra(Constants.APP_ACTIVITY_NAME, app.getActivity());
             intent.putExtra(Constants.GUARDIAN_ID, app.getGuardianID());
             intent.putExtra(Constants.APP_COLOR, app.getBgColor());
+            intent.putExtra(Constants.APP_ID, app.getId());
 
             // Verify the intent will resolve to at least one activity
             LauncherUtility.secureStartActivity(v.getContext(), intent);

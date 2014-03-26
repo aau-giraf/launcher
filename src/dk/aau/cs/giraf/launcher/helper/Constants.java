@@ -13,9 +13,10 @@ public final class Constants {
 	public static final String CHILD_ID = "currentChildID";
 	public static final String APP_PACKAGE_NAME = "appPackageName";
 	public static final String APP_ACTIVITY_NAME = "appActivityName";
-	public static final String APP_COLOR = "appBackgroundColor";
+    public static final String APP_COLOR = "appBackgroundColor";
+    public static final String APP_ID = "appId";
 
-	// Keys for settings
+    // Keys for settings
 	public static final String COLOR_BG = "backgroundColor";
 
 	// Constants denoting user roles

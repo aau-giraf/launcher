@@ -35,11 +35,10 @@ public class ProfileSelectActivity extends Activity {
 	private long mGuardianID;
 	private String mPackageName;
 	private String mActivityName;
-	private int mAppColor;
+    private long mAppId;
+    private int mAppColor;
     private boolean shouldReturnResult;
     private ListView listView;
-
-    private long childID;
 
 	/**
      * Called when the activity is first created.
@@ -52,13 +51,14 @@ public class ProfileSelectActivity extends Activity {
 		mContext = this;
         mPackageName = Constants.APP_PACKAGE_NAME;
 
-        // Only guardian id is required if expecting result returned
         mHelper = new Helper(mContext);
-		mGuardianID = getIntent().getExtras().getLong(Constants.GUARDIAN_ID);
-        mAppColor = getIntent().getExtras().getInt(Constants.APP_COLOR);
-        mPackageName = getIntent().getExtras().getString(Constants.APP_PACKAGE_NAME);
-        mActivityName = getIntent().getExtras().getString(Constants.APP_ACTIVITY_NAME);
-		loadProfiles();
+        Bundle extras = getIntent().getExtras();
+        mGuardianID = extras.getLong(Constants.GUARDIAN_ID);
+        mAppColor = extras.getInt(Constants.APP_COLOR);
+        mPackageName = extras.getString(Constants.APP_PACKAGE_NAME);
+        mActivityName = extras.getString(Constants.APP_ACTIVITY_NAME);
+        mAppId = extras.getLong(Constants.APP_ID);
+        loadProfiles();
 
         // Start logging this activity
         EasyTracker.getInstance(this).activityStart(this);
@@ -150,6 +150,7 @@ public class ProfileSelectActivity extends Activity {
         intent.putExtra(Constants.CHILD_ID, childID);
         intent.putExtra(Constants.GUARDIAN_ID, mGuardianID);
         intent.putExtra(Constants.APP_COLOR, mAppColor);
+        intent.putExtra(Constants.APP_ID, mAppId);
         // Verify the intent will resolve to at least one activity
         LauncherUtility.secureStartActivity(this, intent);
     }
