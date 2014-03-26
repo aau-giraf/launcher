@@ -69,7 +69,7 @@ public class LauncherUtility {
             // Sending the caught exception to Google Analytics
             LauncherUtility.SendExceptionGoogleAnalytics(context, e);
 
-            Toast toast = Toast.makeText(context, "Applikationen kunne ikke startes", 2000);
+            Toast toast = Toast.makeText(context, context.getString(R.string.activity_not_found_msg), 2000);
             toast.show();
             Log.e(Constants.ERROR_TAG, e.getMessage());
         }

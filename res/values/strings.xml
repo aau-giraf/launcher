@@ -17,5 +17,6 @@
     <string name="Log_out_description">Du er på vej til at logge ud.</string>
     <string name="no_apps_available">Der er ingen applikationer tilgængelige for denne profil.</string>
     <string name="loading_apps_message">Henter applikationer...</string>
+    <string name="activity_not_found_msg">Applikationen kunne ikke startes</string>
 
 </resources>
