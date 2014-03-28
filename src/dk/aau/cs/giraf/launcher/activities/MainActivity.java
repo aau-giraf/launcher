@@ -78,6 +78,12 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 
         mContext = this.getApplicationContext();
 
+        Helper helper = new Helper(mContext);
+        int size = helper.profilesHelper.getProfiles().size();
+        if (size <= 0) {
+            helper.CreateDummyData();
+        }
+
         Animation logoAnimation = AnimationUtils.loadAnimation(mContext, R.animator.rotatelogo);
 
         // Opt in/out whether to show animation or not
@@ -88,12 +94,6 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 
         findViewById(R.id.giraficon).startAnimation(logoAnimation);
         logoAnimation.setAnimationListener(this);
-
-        Helper helper = new Helper(mContext);
-        int size = helper.profilesHelper.getProfiles().size();
-        if (size <= 0) {
-            helper.CreateDummyData();
-        }
 	}
 
     // Necessary for the AnimationListener interface, We use this to check for when the animation ends.

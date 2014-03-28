@@ -13,117 +13,129 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 public class AppInfo extends Application {
 
-	/**
-	 * The intent used to start the application.
-	 */
-	Intent mIntent;
+    /**
+     * The intent used to start the application.
+     */
+    Intent mIntent;
 
-	/**
-	 * The application icon.
-	 */
-	private Drawable mIcon;
+    /**
+     * The application icon.
+     */
+    private Drawable mIcon;
 
     private Application app;
-    public Application getApp(){return this.app;}
 
-	/**
-	 * Get the icon image of the app.
-	 * @return The icon image.
-	 */
-	public Drawable getIconImage() {
-		return this.mIcon;
-	}
+    public Application getApp() {
+        return this.app;
+    }
 
-	/**
-	 * ID of the guardian who is using the launcher.
-	 */
-	private Profile mGuardian;
-	
-	/**
-	 * Creates a new AppInfo from a given parent app.
-	 * @param parentApp App to get data from.
-	 */
-	public AppInfo(Application parentApp) {
+    /**
+     * Get the icon image of the app.
+     *
+     * @return The icon image.
+     */
+    public Drawable getIconImage() {
+        return this.mIcon;
+    }
+
+    /**
+     * ID of the guardian who is using the launcher.
+     */
+    private Profile mGuardian;
+
+    /**
+     * Creates a new AppInfo from a given parent app.
+     *
+     * @param parentApp App to get data from.
+     */
+    public AppInfo(Application parentApp) {
         this.app = parentApp;
-	}
+    }
 
-	/**
-	 * Set ID for the current guardian using the system.
-	 * @param guardian The guardian using the system.
-	 */
-	public void setGuardian(Profile guardian) {
-		if (guardian.getRole() == Profile.Roles.GUARDIAN) {
-			mGuardian = guardian;
-		}
-	}
-	
-	/**
-	 * The application icon background color.
-	 */
-	private int mBgColor;
-	
-	/**
-	 * Set the background color.
-	 * @param color The new background color.
-	 */
-	public void setBgColor(int color) {
-		this.mBgColor = color;
-	}
+    /**
+     * Set ID for the current guardian using the system.
+     *
+     * @param guardian The guardian using the system.
+     */
+    public void setGuardian(Profile guardian) {
+        if (guardian.getRole() == Profile.Roles.GUARDIAN) {
+            mGuardian = guardian;
+        }
+    }
 
-	/**
-	 * Get the color of the app icon background.
-	 * @return The background color.
-	 */
-	public int getBgColor() {
-		return this.mBgColor;
-	}
+    /**
+     * The application icon background color.
+     */
+    private int mBgColor;
 
-	/**
-	 * Get the ID of the currently logged in guardian.
-	 * @return The guardian ID.
-	 */
-	public int getGuardianID() {
-		return mGuardian.getId();
-	}
+    /**
+     * Set the background color.
+     *
+     * @param color The new background color.
+     */
+    public void setBgColor(int color) {
+        this.mBgColor = color;
+    }
 
-	/**
-	 * Getter for the title of the app. 
-	 * Cuts the name off, to make sure it's not too long to show in the launcher.
-	 * @return shortened name for the app
-	 */
-	public String getShortenedName() {
-		if(app.getName().length() > 6){
-			return app.getName().subSequence(0, 5) + "...";
-		} else {
-			return app.getName();
-		}
-	}
+    /**
+     * Get the color of the app icon background.
+     *
+     * @return The background color.
+     */
+    public int getBgColor() {
+        return this.mBgColor;
+    }
 
-	/**
-	 * Loads information needed by the app.
-	 * @param context Context of the current activity.
-	 */
-	public void load(Context context, Profile guardian) {
-		setGuardian(guardian);
-		loadIcon(context);
-	}
+    /**
+     * Get the ID of the currently logged in guardian.
+     *
+     * @return The guardian ID.
+     */
+    public int getGuardianID() {
+        return mGuardian.getId();
+    }
 
-	/**
-	 * Finds the icon of the app.
-	 * @param context Context of the current activity.
-	 */
-	private void loadIcon(Context context) {
-		// Is supposed to allow for custom icons, but does not currently support this.
+    /**
+     * Getter for the title of the app.
+     * Cuts the name off, to make sure it's not too long to show in the launcher.
+     *
+     * @return shortened name for the app
+     */
+    public String getShortenedName() {
+        if (app.getName().length() > 6) {
+            return app.getName().subSequence(0, 5) + "...";
+        } else {
+            return app.getName();
+        }
+    }
 
-		List<ResolveInfo> systemApps = LauncherUtility.getDeviceApps(context);
+    /**
+     * Loads information needed by the app.
+     *
+     * @param context Context of the current activity.
+     */
+    public void load(Context context, Profile guardian) {
+        setGuardian(guardian);
+        loadIcon(context);
+    }
 
-		for (ResolveInfo app : systemApps) {
-			if (app.activityInfo.packageName.equals(this.app.getPack())) {
-				mIcon = app.loadIcon(context.getPackageManager());
-				break;
-			}
-		}
-	}
+    /**
+     * Finds the icon of the app.
+     *
+     * @param context Context of the current activity.
+     */
+    private void loadIcon(Context context) {
+        // Is supposed to allow for custom icons, but does not currently support this.
 
-	
+        List<ResolveInfo> systemApps = LauncherUtility.getDeviceApps(context);
+
+        for (ResolveInfo app : systemApps) {
+            if (app.activityInfo.packageName.equals(this.app.getPackage())) {
+                mIcon = app.loadIcon(context.getPackageManager());
+                break;
+            }
+        }
+    }
+
+
 }

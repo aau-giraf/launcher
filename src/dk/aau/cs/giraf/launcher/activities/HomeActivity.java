@@ -32,6 +32,7 @@ import java.util.Random;
 
 import dk.aau.cs.giraf.gui.GColorAdapter;
 import dk.aau.cs.giraf.gui.GDialog;
+import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GWidgetCalendar;
 import dk.aau.cs.giraf.gui.GWidgetConnectivity;
 import dk.aau.cs.giraf.gui.GWidgetLogout;
@@ -43,11 +44,8 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.GAppDragger;
 import dk.aau.cs.giraf.launcher.layoutcontroller.SideBarLayout;
 import dk.aau.cs.giraf.oasis.lib.Helper;
-import dk.aau.cs.giraf.oasis.lib.controllers.ProfileApplicationController;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
-import dk.aau.cs.giraf.oasis.lib.models.ProfileApplication;
-import dk.aau.cs.giraf.oasis.lib.models.Setting;
 
 public class HomeActivity extends Activity {
 
@@ -216,7 +214,7 @@ public class HomeActivity extends Activity {
             appInfo.load(mContext, mCurrentUser);
             appInfo.setBgColor(appBgColor(appInfo));
 
-            mAppInfos.put(String.valueOf(appInfo.getID()), appInfo);
+            mAppInfos.put(String.valueOf(appInfo.getId()), appInfo);
         }
     }
 
@@ -250,7 +248,7 @@ public class HomeActivity extends Activity {
     private void setupLogoutDialog() {
         String logoutHeadline = mContext.getResources().getString(R.string.Log_out);
         String logoutDescription = mContext.getResources().getString(R.string.Log_out_description);
-        mLogoutDialog = new GDialog(mContext, R.drawable.large_switch_profile, logoutHeadline, logoutDescription, new View.OnClickListener() {
+        mLogoutDialog = new GDialogMessage(mContext, R.drawable.large_switch_profile, logoutHeadline, logoutDescription, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(LauncherUtility.logOutIntent(mContext));
@@ -436,26 +434,25 @@ public class HomeActivity extends Activity {
 	private int appBgColor(AppInfo appInfo) {
 		int[] colors = getResources().getIntArray(R.array.appcolors);
         //TODO: The OasisLib group still needs to fix the settings format and more.
-        ProfileApplication profileApplication = mHelper.profileApplicationHelper.getProfileApplicationByProfileIdAndApplicationId(appInfo.getApp(), mCurrentUser);
-        Setting<String, String, String> launcherSettings = profileApplication.getSettings();
-
-		// If settings for the given app exists.
-		if (launcherSettings != null && launcherSettings.containsKey(String.valueOf(appInfo.getApp().getID()))) {
-			HashMap<String, String> appSetting = launcherSettings.get(String.valueOf(appInfo.getApp().getID()));
-
-			// If color settings for the given app exists.
-			if (appSetting != null && appSetting.containsKey(Constants.COLOR_BG)) {
-				return Integer.parseInt(appSetting.get(Constants.COLOR_BG));
-			}
-		}
-
-		//Randomize a color, if no setting exist, and save it. 
+//        ProfileApplication profileApplication = mHelper.profileApplicationHelper.getProfileApplicationByProfileIdAndApplicationId(appInfo.getApp(), mCurrentUser);
+//        Setting<String, String, String> launcherSettings = profileApplication.getSettings();
+//
+//		// If settings for the given app exists.
+//		if (launcherSettings != null && launcherSettings.containsKey(String.valueOf(appInfo.getApp().getId()))) {
+//			HashMap<String, String> appSetting = launcherSettings.get(String.valueOf(appInfo.getApp().getId()));
+//
+//			// If color settings for the given app exists.
+//			if (appSetting != null && appSetting.containsKey(Constants.COLOR_BG)) {
+//				return Integer.parseInt(appSetting.get(Constants.COLOR_BG));
+//			}
+//		}
+        //Randomize a color, if no setting exist, and save it.
 		int position = (new Random()).nextInt(colors.length);
 
 		// No settings existed, save the new.
-		saveNewBgColor(colors[position], appInfo);
+        //saveNewBgColor(colors[position], appInfo);
 
-		return colors[position];
+        return colors[position];
 	}
 
 	/**
@@ -465,26 +462,26 @@ public class HomeActivity extends Activity {
 	 */
 	private void saveNewBgColor(int color, AppInfo appInfo) {
         //TODO: Currently, settings is just a blob of data. The OasisLib group is fixing the format, so we'll need to adjust depending on what format they're going with
-        ProfileApplication profileApplication = mHelper.profileApplicationHelper.getProfileApplicationByProfileIdAndApplicationId(appInfo.getApp(), mCurrentUser);
-		Setting<String, String, String> launcherSettings = profileApplication.getSettings();
-
-		if (launcherSettings == null) {
-			launcherSettings = new Setting<String, String, String>();
-		}
-
-		// If no app specific settings exist.
-		if (!launcherSettings.containsKey(String.valueOf(appInfo.getApp().getID()))) {
-			launcherSettings.addValue(String.valueOf(appInfo.getApp().getID()), Constants.COLOR_BG, String.valueOf(color));
-		} else if (!launcherSettings.get(String.valueOf(appInfo.getApp().getID())).containsKey(Constants.COLOR_BG)) {
-			/* If no app specific color settings exist.*/
-			launcherSettings.get(String.valueOf(appInfo.getApp().getID())).put(Constants.COLOR_BG, String.valueOf(color));
-		}
-
-        //TODO: The OasisLib group still needs to fix the settings format and more.
-		mLauncher.setSettings(launcherSettings);
-        //TODO: This function no longer exists. Now it can modify an application, regardless of user.
-		mHelper.applicationHelper.modifyAppByProfile(mLauncher, mCurrentUser);
-	}
+//        ProfileApplication profileApplication = mHelper.profileApplicationHelper.getProfileApplicationByProfileIdAndApplicationId(appInfo.getApp(), mCurrentUser);
+//		Setting<String, String, String> launcherSettings = profileApplication.getSettings();
+//
+//		if (launcherSettings == null) {
+//			launcherSettings = new Setting<String, String, String>();
+//		}
+//
+//		// If no app specific settings exist.
+//		if (!launcherSettings.containsKey(String.valueOf(appInfo.getApp().getId()))) {
+//			launcherSettings.addValue(String.valueOf(appInfo.getApp().getId()), Constants.COLOR_BG, String.valueOf(color));
+//		} else if (!launcherSettings.get(String.valueOf(appInfo.getApp().getId())).containsKey(Constants.COLOR_BG)) {
+//			/* If no app specific color settings exist.*/
+//			launcherSettings.get(String.valueOf(appInfo.getApp().getId())).put(Constants.COLOR_BG, String.valueOf(color));
+//		}
+//
+//        //TODO: The OasisLib group still needs to fix the settings format and more.
+//		mLauncher.setSettings(launcherSettings);
+//        //TODO: This function no longer exists. Now it can modify an application, regardless of user.
+//		mHelper.applicationHelper.modifyAppByProfile(mLauncher, mCurrentUser);
+    }
 
     /**
      * @param appInfo
@@ -503,7 +500,7 @@ public class HomeActivity extends Activity {
         appIconView.setImageDrawable(appInfo.getIconImage());
         setAppBackground(appView, appInfo.getBgColor());
 
-        appView.setTag(String.valueOf(appInfo.getApp().getID()));
+        appView.setTag(String.valueOf(appInfo.getApp().getId()));
         appView.setOnDragListener(new GAppDragger());
         if(mCurrentUser.getRole() == Profile.Roles.GUARDIAN)
             appView.setOnClickListener(new ProfileLauncher());
@@ -513,13 +510,13 @@ public class HomeActivity extends Activity {
                 AppInfo app = HomeActivity.getAppInfo((String)v.getTag());
                 Intent intent = new Intent(Intent.ACTION_MAIN);
                 intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                intent.setComponent(new ComponentName(app.getPack(), app.getActivity()));
+                intent.setComponent(new ComponentName(app.getPackage(), app.getActivity()));
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                         | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 
                 intent.putExtra(Constants.CHILD_ID, mCurrentUser.getId());
                 intent.putExtra(Constants.APP_COLOR, app.getBgColor());
-                intent.putExtra(Constants.APP_PACKAGE_NAME, app.getPack());
+                intent.putExtra(Constants.APP_PACKAGE_NAME, app.getPackage());
                 intent.putExtra(Constants.APP_ACTIVITY_NAME, app.getActivity());
 
                 // Verify the intent will resolve to at least one activity

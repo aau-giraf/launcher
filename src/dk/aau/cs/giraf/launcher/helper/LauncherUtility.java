@@ -126,8 +126,8 @@ public class LauncherUtility {
 		Date d = new Date();
 
         //TODO: This error is because we used to use longs for the time, but the OasisLoib group wants us to use ints now, however, there is no DateTime format in int format.
-		editor.putInt(Constants.DATE_KEY, d.getTime());
-		editor.putInt(Constants.GUARDIAN_ID, id);
+        editor.putLong(Constants.DATE_KEY, d.getTime());
+        editor.putInt(Constants.GUARDIAN_ID, id);
 
 		editor.commit();
 	}
@@ -245,7 +245,7 @@ public class LauncherUtility {
 			}
 
             //Exclude the launcher from visible apps
-            if (userApps.get(i).getPack().equals("dk.aau.cs.giraf.launcher")) {
+            if (userApps.get(i).getPackage().equals("dk.aau.cs.giraf.launcher")) {
                 userApps.remove(i);
             }
 		}
@@ -320,8 +320,8 @@ public class LauncherUtility {
 	 * @return True if the app is contained in the list; otherwise false.
 	 */
 	public static boolean appsContain_RI(List<ResolveInfo> systemApps, Application app) {
-		return appsContain_RI(systemApps, app.getPack());
-	}
+        return appsContain_RI(systemApps, app.getPackage());
+    }
 
 	/**
 	 * Checks whether a list of GIRAF apps installed on the system contains a specified app.
@@ -346,8 +346,8 @@ public class LauncherUtility {
 	 * @return True if the app is contained in the list; otherwise false.
 	 */
 	public static boolean appsContain_A(List<Application> systemApps, Application app) {
-		return appsContain_A(systemApps, app.getPack());
-	}
+        return appsContain_A(systemApps, app.getPackage());
+    }
 
 	/**
 	 * Checks whether a list of GIRAF apps installed on the system contains a specified app.
@@ -357,8 +357,8 @@ public class LauncherUtility {
 	 */
 	public static boolean appsContain_A(List<Application> systemApps, String packageName) {
 		for (Application app : systemApps) {
-			if (app.getPack().equals(packageName)) {
-				return true;
+            if (app.getPackage().equals(packageName)) {
+                return true;
 			}
 		}
 

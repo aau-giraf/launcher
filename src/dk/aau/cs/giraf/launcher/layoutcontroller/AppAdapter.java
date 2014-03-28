@@ -13,105 +13,102 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.launcher.activities.HomeActivity;
-import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.oasis.lib.Helper;
-import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
-import dk.aau.cs.giraf.oasis.lib.models.ProfileApplication;
-import dk.aau.cs.giraf.oasis.lib.models.Setting;
 
 public class AppAdapter extends ArrayAdapter<AppInfo> {
 
-	Context mContext;
-	ArrayList<AppInfo> mApps;
+    Context mContext;
+    ArrayList<AppInfo> mApps;
 
-	/**
-	 * Constructs a new adapter to handle the presentation of apps in the launcher.
-	 * @param context Context the adapter is created in.
-	 * @param apps The apps to show.
-	 */
-	public AppAdapter(Context context, ArrayList<AppInfo> apps) {
-		super(context, 0, apps);
+    /**
+     * Constructs a new adapter to handle the presentation of apps in the launcher.
+     *
+     * @param context Context the adapter is created in.
+     * @param apps    The apps to show.
+     */
+    public AppAdapter(Context context, ArrayList<AppInfo> apps) {
+        super(context, 0, apps);
 
-		this.mContext = context;
-		this.mApps = apps;
-	}
-	
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+        this.mContext = context;
+        this.mApps = apps;
+    }
 
-		final AppInfo appInfo = mApps.get(position);
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
 
-		if (convertView == null) {
-			final LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			convertView = inflater.inflate(R.layout.apps, parent, false);
-		}
+        final AppInfo appInfo = mApps.get(position);
 
-		ImageView appIconView = (ImageView) convertView.findViewById(R.id.app_icon);
-		TextView appTextView = (TextView) convertView.findViewById(R.id.app_text);
-		
-		appTextView.setText(appInfo.getShortenedName());
-		appIconView.setImageDrawable(appInfo.getIconImage());
-		setAppBackground(convertView, appInfo.getBgColor());
+        if (convertView == null) {
+            final LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(R.layout.apps, parent, false);
+        }
 
-		convertView.setTag(String.valueOf(appInfo.getID()));
-		convertView.setOnDragListener(new GAppDragger());
-		
-		return convertView;
-	}
+        ImageView appIconView = (ImageView) convertView.findViewById(R.id.app_icon);
+        TextView appTextView = (TextView) convertView.findViewById(R.id.app_text);
 
-	/**
-	 * Sets the background of the app.
-	 * @param wrapperView The view the app is located inside.
-	 * @param backgroundColor The color to use for the background.
-	 */
-	public static void setAppBackground(View wrapperView, int backgroundColor) {    
-		LinearLayout convertViewLayout = (LinearLayout) wrapperView.findViewById(R.id.app_bg);
-		
-		RoundRectShape roundRect = new RoundRectShape( new float[] {15,15, 15,15, 15,15, 15,15}, new RectF(), null);
-		ShapeDrawable shapeDrawable = new ShapeDrawable(roundRect);
-		
-		shapeDrawable.getPaint().setColor(backgroundColor);
-		
-		convertViewLayout.setBackgroundDrawable(shapeDrawable);
-	}
-	
-	/**
-	 * Sets the background color of a given app and saves the color.
-	 * @param context Context of the current activity.
-	 * @param convertView View to change color for.
-	 * @param color Color to change to.
-	 * @param appID ID of the app to change for.
-	 */
-	public static void saveAppBackground(Context context, View convertView, int color, long appID) { 
-		setAppBackground(convertView, color);
-		
-		final Helper helper = new Helper(context);
-		final Profile currentUser = LauncherUtility.findCurrentUser(context);
+        appTextView.setText(appInfo.getShortenedName());
+        appIconView.setImageDrawable(appInfo.getIconImage());
+        setAppBackground(convertView, appInfo.getBgColor());
+
+        convertView.setTag(String.valueOf(appInfo.getId()));
+        convertView.setOnDragListener(new GAppDragger());
+
+        return convertView;
+    }
+
+    /**
+     * Sets the background of the app.
+     *
+     * @param wrapperView     The view the app is located inside.
+     * @param backgroundColor The color to use for the background.
+     */
+    public static void setAppBackground(View wrapperView, int backgroundColor) {
+        LinearLayout convertViewLayout = (LinearLayout) wrapperView.findViewById(R.id.app_bg);
+
+        RoundRectShape roundRect = new RoundRectShape(new float[]{15, 15, 15, 15, 15, 15, 15, 15}, new RectF(), null);
+        ShapeDrawable shapeDrawable = new ShapeDrawable(roundRect);
+
+        shapeDrawable.getPaint().setColor(backgroundColor);
+
+        convertViewLayout.setBackgroundDrawable(shapeDrawable);
+    }
+
+    /**
+     * Sets the background color of a given app and saves the color.
+     *
+     * @param context     Context of the current activity.
+     * @param convertView View to change color for.
+     * @param color       Color to change to.
+     * @param appID       ID of the app to change for.
+     */
+    public static void saveAppBackground(Context context, View convertView, int color, long appID) {
+        setAppBackground(convertView, color);
+
+        final Helper helper = new Helper(context);
+        final Profile currentUser = LauncherUtility.findCurrentUser(context);
 
         //TODO: The OasisLib group still needs to fix their dataformat
-		Application launcher = helper.applicationHelper.getApplicationById(currentUser.getId());
-		Setting<String, String, String> launchSetting = launcher.getSettings();
-        AppInfo appInfo = HomeActivity.getAppInfo(String.valueOf(convertView.getTag()));
-        appInfo.setBgColor(color);
-
-        HashMap<String, String> appSettings = launchSetting.get(String.valueOf(appID));
-
-		appSettings.remove(Constants.COLOR_BG);
-		appSettings.put(Constants.COLOR_BG, String.valueOf(color));
-
-        //TODO: Again, this is due to OasisLib group.
-		launcher.setSettings(launchSetting);
+//		Application launcher = helper.applicationHelper.getApplicationById(currentUser.getId());
+//		Setting<String, String, String> launchSetting = launcher.getSettings();
+//        AppInfo appInfo = HomeActivity.getAppInfo(String.valueOf(convertView.getTag()));
+//        appInfo.setBgColor(color);
+//
+//        HashMap<String, String> appSettings = launchSetting.get(String.valueOf(appID));
+//
+//		appSettings.remove(Constants.COLOR_BG);
+//		appSettings.put(Constants.COLOR_BG, String.valueOf(color));
+//
+//        //TODO: Again, this is due to OasisLib group.
+//		launcher.setSettings(launchSetting);
         //TODO: Once again, it is now not possible to modify an app according to a user.
         //Update: You are apparently supposed to use helper.profileApplicationHelper, but
         //dont do anything till we know what settings we're actually saving.
 
         //PREVIOUS CODE!
         //helper.applicationHelper.modifyAppByProfile(launcher, currentUser);
-	}
+    }
 }
