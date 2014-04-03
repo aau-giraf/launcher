@@ -32,7 +32,7 @@ public class ProfileSelectActivity extends Activity {
 	private List<Profile> mChildren;
     private Helper mHelper;
 	private Context mContext;
-	private long mGuardianID;
+	private int mGuardianID;
 	private String mPackageName;
 	private String mActivityName;
     private long mAppId;
@@ -51,7 +51,7 @@ public class ProfileSelectActivity extends Activity {
 		mContext = this;
         mPackageName = Constants.APP_PACKAGE_NAME;
 
-        mHelper = new Helper(mContext);
+        mHelper = LauncherUtility.getOasisHelper(mContext);
         Bundle extras = getIntent().getExtras();
         mGuardianID = extras.getLong(Constants.GUARDIAN_ID);
         mAppColor = extras.getInt(Constants.APP_COLOR);
@@ -91,7 +91,6 @@ public class ProfileSelectActivity extends Activity {
 	 * and creates the list used to select which child to run an app with. 
 	 */
 	private void loadProfiles() {
-		Profile.setOutput("{1} {2} {3}");
 		
 		mChildren = new ArrayList<Profile>();
 

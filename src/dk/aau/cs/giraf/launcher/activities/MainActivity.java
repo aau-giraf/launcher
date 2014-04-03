@@ -46,7 +46,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
             intent = new Intent(mContext, HomeActivity.class);
 
             SharedPreferences sharedPreferences = getSharedPreferences(Constants.TIMER_KEY, 0);
-            long guardianID = sharedPreferences.getLong(Constants.GUARDIAN_ID, -1);
+            int guardianID = sharedPreferences.getInt(Constants.GUARDIAN_ID, -1);
 
             intent.putExtra(Constants.GUARDIAN_ID, guardianID);
         }
@@ -59,7 +59,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
     }
 
     private Intent skipAuthentication(boolean asChild) {
-        Helper helper = new Helper(this);
+        Helper helper = LauncherUtility.getOasisHelper(mContext);
         Profile profile = helper.profilesHelper.authenticateProfile("jkkxlagqyrztlrexhzofekyzrnppajeobqxcmunkqhsbrgpxdtqgygnmbhrgnpphaxsjshlpupgakmirhpyfaivvtpynqarxsghhilhkqvpelpreevykxurtppcggkzfaepihlodgznrmbrzgqucstflhmndibuymmvwauvdlyqnnlxkurinuypmqypspmkqavuhfwsh");
 
         if(asChild)
@@ -78,16 +78,10 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 
         mContext = this.getApplicationContext();
 
-        // Make sure we do not show animation in case we are already logged in...
-        if (!LauncherUtility.sessionExpired(mContext)) {
-            Intent intent = new Intent(mContext, HomeActivity.class);
-
-            SharedPreferences sharedPreferences = getSharedPreferences(Constants.TIMER_KEY, 0);
-            long guardianID = sharedPreferences.getLong(Constants.GUARDIAN_ID, -1);
-
-            intent.putExtra(Constants.GUARDIAN_ID, guardianID);
-            startActivity(intent);
-            finish();
+        Helper helper = LauncherUtility.getOasisHelper(mContext);
+        int size = helper.profilesHelper.getProfiles().size();
+        if (size <= 0) {
+            helper.CreateDummyData();
         }
 
         Animation logoAnimation = AnimationUtils.loadAnimation(mContext, R.animator.rotatelogo);
@@ -100,12 +94,6 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 
         findViewById(R.id.giraficon).startAnimation(logoAnimation);
         logoAnimation.setAnimationListener(this);
-
-        Helper helper = new Helper(mContext);
-        int size = helper.profilesHelper.getProfiles().size();
-        if (size <= 0) {
-            helper.CreateDummyData();
-        }
 	}
 
     // Necessary for the AnimationListener interface, We use this to check for when the animation ends.
