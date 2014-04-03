@@ -85,9 +85,9 @@ public class HomeActivity extends Activity {
 		setContentView(R.layout.home);
 
 		HomeActivity.mContext = this;
-		mHelper = new Helper(mContext);
+        mHelper = LauncherUtility.getOasisHelper(mContext);
 		
-		mCurrentUser = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
+        mCurrentUser = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
 		mLauncher = mHelper.applicationHelper.getApplicationById(mCurrentUser.getId());
 
         loadViews();

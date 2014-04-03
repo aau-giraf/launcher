@@ -49,8 +49,8 @@ public class ProfileSelectActivity extends Activity {
         mPackageName = Constants.APP_PACKAGE_NAME;
 
         // Only guardian id is required if expecting result returned
-        mHelper = new Helper(mContext);
-		mGuardianID = getIntent().getExtras().getInt(Constants.GUARDIAN_ID);
+        mHelper = LauncherUtility.getOasisHelper(mContext);
+        mGuardianID = getIntent().getExtras().getInt(Constants.GUARDIAN_ID);
         mAppColor = getIntent().getExtras().getInt(Constants.APP_COLOR);
         mPackageName = getIntent().getExtras().getString(Constants.APP_PACKAGE_NAME);
         mActivityName = getIntent().getExtras().getString(Constants.APP_ACTIVITY_NAME);

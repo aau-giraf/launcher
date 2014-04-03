@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.zxing.Result;
@@ -108,31 +109,35 @@ public class AuthenticationActivity extends CaptureActivity {
 	@Override
 	public void handleDecode(Result rawResult, Bitmap barcode)
 	{
-		Helper helper = new Helper(this);
-		Profile profile = helper.profilesHelper.authenticateProfile(rawResult.getText());
+        try {
+            Helper helper = new Helper(this);
+            Profile profile = helper.profilesHelper.authenticateProfile(rawResult.getText());
 
-		// If the certificate was not valid, profile is set to null.
-		if (profile != null) {	
-			if (mPreviousProfile == null || !profile.toString().equals(mPreviousProfile.toString())) {
-				mVibrator.vibrate(400);
-			}
-			mPreviousProfile = profile;
-			
-			this.changeCameraFeedBorderColor(0xFF3AAA35);
-			mLoginNameView.setText(profile.getName());
-			mLoginNameView.setVisibility(View.VISIBLE);
-			mGLoginButton.setVisibility(View.VISIBLE);
-			mInfoView.setText(R.string.saadan);
-			
-			mHomeIntent = new Intent(AuthenticationActivity.this, HomeActivity.class);
-			mHomeIntent.putExtra(Constants.GUARDIAN_ID, profile.getId());
-		} else {
-			this.changeCameraFeedBorderColor(0xFFFF0000);
-			mGLoginButton.setVisibility(View.INVISIBLE);
-			mLoginNameView.setVisibility(View.INVISIBLE);
-			mInfoView.setText(R.string.authentication_step1);
-		}
-		
+            // If the certificate was not valid, profile is set to null.
+            if (profile != null) {
+                if (mPreviousProfile == null || !profile.toString().equals(mPreviousProfile.toString())) {
+                    mVibrator.vibrate(400);
+                }
+                mPreviousProfile = profile;
+
+                this.changeCameraFeedBorderColor(0xFF3AAA35);
+                mLoginNameView.setText(profile.getName());
+                mLoginNameView.setVisibility(View.VISIBLE);
+                mGLoginButton.setVisibility(View.VISIBLE);
+                mInfoView.setText(R.string.saadan);
+
+                mHomeIntent = new Intent(AuthenticationActivity.this, HomeActivity.class);
+                mHomeIntent.putExtra(Constants.GUARDIAN_ID, profile.getId());
+            } else {
+                this.changeCameraFeedBorderColor(0xFFFF0000);
+                mGLoginButton.setVisibility(View.INVISIBLE);
+                mLoginNameView.setVisibility(View.INVISIBLE);
+                mInfoView.setText(R.string.authentication_step1);
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, getString(R.string.could_not_verify_msg), Toast.LENGTH_LONG).show();
+        }
+
 		/*
 		 * Needed by ZXing in order to continuously scan QR codes, and not halt after first scan.
 		 */

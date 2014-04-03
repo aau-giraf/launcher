@@ -16,5 +16,6 @@
     <string name="Log_out">Log ud</string>
     <string name="Log_out_description">Du er på vej til at logge ud.</string>
     <string name="no_apps_available">Der er ingen applikationer tilgængelige for denne profil.</string>
+    <string name="could_not_verify_msg">Kunne ikke verificere brugeren.</string>
 
 </resources>
