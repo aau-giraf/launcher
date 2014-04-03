@@ -53,7 +53,7 @@ public class ProfileSelectActivity extends Activity {
 
         mHelper = LauncherUtility.getOasisHelper(mContext);
         Bundle extras = getIntent().getExtras();
-        mGuardianID = extras.getLong(Constants.GUARDIAN_ID);
+        mGuardianID = extras.getInt(Constants.GUARDIAN_ID);
         mAppColor = extras.getInt(Constants.APP_COLOR);
         mPackageName = extras.getString(Constants.APP_PACKAGE_NAME);
         mActivityName = extras.getString(Constants.APP_ACTIVITY_NAME);
