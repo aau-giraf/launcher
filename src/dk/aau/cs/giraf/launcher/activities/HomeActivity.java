@@ -86,7 +86,7 @@ public class HomeActivity extends Activity {
 
 		HomeActivity.mContext = this;
         mHelper = LauncherUtility.getOasisHelper(mContext);
-		
+
         mCurrentUser = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
 		mLauncher = mHelper.applicationHelper.getApplicationById(mCurrentUser.getId());
 
