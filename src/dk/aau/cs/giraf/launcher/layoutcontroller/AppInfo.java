@@ -23,10 +23,8 @@ public class AppInfo extends Application {
      */
     private Drawable mIcon;
 
-    private Application app;
-
     public Application getApp() {
-        return this.app;
+        return this;
     }
 
     /**
@@ -49,7 +47,13 @@ public class AppInfo extends Application {
      * @param parentApp App to get data from.
      */
     public AppInfo(Application parentApp) {
-        this.app = parentApp;
+        this.setId(parentApp.getId());
+        this.setName(parentApp.getName());
+        this.setVersion(parentApp.getVersion());
+        this.setPackage(parentApp.getPackage());
+        this.setActivity(parentApp.getActivity());
+        this.setDescription(parentApp.getDescription());
+        this.setAuthor(parentApp.getAuthor());
     }
 
     /**
@@ -102,10 +106,10 @@ public class AppInfo extends Application {
      * @return shortened name for the app
      */
     public String getShortenedName() {
-        if (app.getName().length() > 6) {
-            return app.getName().subSequence(0, 5) + "...";
+        if (this.getName().length() > 6) {
+            return this.getName().subSequence(0, 5) + "...";
         } else {
-            return app.getName();
+            return this.getName();
         }
     }
 
@@ -130,7 +134,7 @@ public class AppInfo extends Application {
         List<ResolveInfo> systemApps = LauncherUtility.getDeviceApps(context);
 
         for (ResolveInfo app : systemApps) {
-            if (app.activityInfo.packageName.equals(this.app.getPackage())) {
+            if (app.activityInfo.packageName.equals(this.getPackage())) {
                 mIcon = app.loadIcon(context.getPackageManager());
                 break;
             }
