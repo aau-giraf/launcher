@@ -517,7 +517,7 @@ public class HomeActivity extends Activity {
         ImageView appIconView = (ImageView) appView.findViewById(R.id.app_icon);
         TextView appTextView = (TextView) appView.findViewById(R.id.app_text);
 
-        appTextView.setText(appInfo.getShortenedName());
+        appTextView.setText(appInfo.getName());
         appIconView.setImageDrawable(appInfo.getIconImage());
         setAppBackground(appView, appInfo.getBgColor());
 
