@@ -275,9 +275,15 @@ public class HomeActivity extends Activity {
 
 	/**
 	 * Load the drawer and its functionality.
+     * It is currently disabled, since it was found that end users do not require changing the color of apps.
+     * Because of this, it is considered to be goldplating.
+     * It could be implemented again, but it would have to be implemented with sending colors to all apps and
+     * making sure that these colors fit with the overall theme of the system.
+     * You can read more in the report about the Launcher from 2014.
 	 */
 	private void loadDrawer() {
 		// If result = true, the onTouch-function will be run again.
+        /*
 		mHomeBarLayout.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
@@ -336,6 +342,7 @@ public class HomeActivity extends Activity {
                 return result;
             }
         });
+        */
 	}
 
     private void popBackDrawer(){
