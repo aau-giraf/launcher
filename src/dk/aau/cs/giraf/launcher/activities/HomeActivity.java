@@ -34,6 +34,7 @@ import java.util.Random;
 import dk.aau.cs.giraf.gui.GColorAdapter;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
+import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.gui.GWidgetCalendar;
 import dk.aau.cs.giraf.gui.GWidgetConnectivity;
 import dk.aau.cs.giraf.gui.GWidgetLogout;
@@ -113,7 +114,7 @@ public class HomeActivity extends Activity {
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 
-        if (!mAppsAdded) {
+        if (!mAppsAdded && mAppsContainer.getViewTreeObserver() != null) {
             mAppsContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 
                 @Override
@@ -124,6 +125,8 @@ public class HomeActivity extends Activity {
                     loadApplications();
                 }
             });
+        } else if (mAppsContainer.getViewTreeObserver() == null) {
+            Log.e(Constants.ERROR_TAG, "ViewTreeObserver is null.");
         }
 	}
 
@@ -159,7 +162,7 @@ public class HomeActivity extends Activity {
             Toast toast = Toast.makeText(this, getString(R.string.loading_apps_message), 2000);
             toast.show();
 
-            //Fill AppInfo hashmap with AppInfo objects for each app
+            //Fill AppInfo hash map with AppInfo objects for each app
 			loadAppInfos(girafAppsList);
 
             //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
