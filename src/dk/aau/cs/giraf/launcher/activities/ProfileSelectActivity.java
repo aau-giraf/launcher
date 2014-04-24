@@ -35,7 +35,7 @@ public class ProfileSelectActivity extends Activity {
 	private int mGuardianID;
 	private String mPackageName;
 	private String mActivityName;
-    private long mAppId;
+    private int mAppId;
     private int mAppColor;
     private boolean shouldReturnResult;
     private ListView listView;
@@ -57,7 +57,7 @@ public class ProfileSelectActivity extends Activity {
         mAppColor = extras.getInt(Constants.APP_COLOR);
         mPackageName = extras.getString(Constants.APP_PACKAGE_NAME);
         mActivityName = extras.getString(Constants.APP_ACTIVITY_NAME);
-        mAppId = extras.getLong(Constants.APP_ID);
+        mAppId = extras.getInt(Constants.APP_ID);
         loadProfiles();
 
         // Start logging this activity
