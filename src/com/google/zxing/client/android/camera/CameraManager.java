@@ -75,7 +75,7 @@ public final class CameraManager {
   public void openDriver(SurfaceHolder holder) throws IOException {
     Camera theCamera = camera;
     if (theCamera == null) {
-      theCamera = Camera.open();
+      theCamera = Camera.open(0);
       if (theCamera == null) {
         throw new IOException();
       }
