@@ -37,7 +37,6 @@ public class ProfileSelectActivity extends Activity {
 	private String mActivityName;
     private int mAppId;
     private int mAppColor;
-    private boolean shouldReturnResult;
     private ListView listView;
 
 	/**
@@ -129,7 +128,7 @@ public class ProfileSelectActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Get selected child id
-                final long childID = ((Profile) parent.getAdapter().getItem(position)).getId();
+                final int childID = ((Profile) parent.getAdapter().getItem(position)).getId();
                 startSelectedApplication(childID);
 			}
 		});
@@ -139,7 +138,7 @@ public class ProfileSelectActivity extends Activity {
      * This is used when this activity has been started with startIntent()
      * @param childID
      */
-    private void startSelectedApplication(final long childID) {
+    private void startSelectedApplication(final int childID) {
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
         intent.setComponent(new ComponentName(mPackageName, mActivityName));
