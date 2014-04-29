@@ -47,6 +47,7 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.SideBarLayout;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.settingslib.settingslib.Utility;
 
 public class HomeActivity extends Activity {
 
@@ -204,7 +205,7 @@ public class HomeActivity extends Activity {
                         mAppsContainer.addView(currentAppRow);
                     }
 
-                    View newAppView = createAppView(entry.getValue());
+                    ImageView newAppView = createAppImageView(entry.getValue());
                     newAppView.setPadding(paddingWidth, 0, 0, 0);
                     newAppView.setScaleX(0.9f);
                     newAppView.setScaleY(0.9f);
@@ -296,7 +297,7 @@ public class HomeActivity extends Activity {
                 ((Activity) mContext).finish();
             }
         });
-        mLogoutDialog.setOwnerActivity((Activity)mContext);
+        mLogoutDialog.setOwnerActivity((Activity) mContext);
     }
 
 	/**
@@ -463,15 +464,15 @@ public class HomeActivity extends Activity {
 		mWidgetUpdater.addWidget(mConnectivityWidget);
 
 		mLogoutWidget.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-            if (!mWidgetRunning) {
-                mWidgetRunning = true;
-                mLogoutDialog.show();
-                mWidgetRunning = false;
+            @Override
+            public void onClick(View v) {
+                if (!mWidgetRunning) {
+                    mWidgetRunning = true;
+                    mLogoutDialog.show();
+                    mWidgetRunning = false;
+                }
             }
-			}
-		});
+        });
 	}
 
 	/** 
@@ -535,8 +536,9 @@ public class HomeActivity extends Activity {
      * @param appInfo
      * @return
      */
-    private View createAppView(AppInfo appInfo) {
+    private ImageView createAppImageView(AppInfo appInfo) {
         View appView;
+        ImageView appImageView = new ImageView(mContext);
 
         final LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         appView = inflater.inflate(R.layout.apps, mAppsContainer, false);
@@ -548,11 +550,14 @@ public class HomeActivity extends Activity {
         appIconView.setImageDrawable(appInfo.getIconImage());
         setAppBackground(appView, appInfo.getBgColor());
 
-        appView.setTag(String.valueOf(appInfo.getApp().getId()));
-        appView.setOnDragListener(new GAppDragger());
+        appImageView.setImageBitmap(Utility.createBitmapFromLayoutWithText(mContext, appView, 200, 200));
+
+        appImageView.setTag(String.valueOf(appInfo.getApp().getId()));
+        appImageView.setOnDragListener(new GAppDragger());
         if(mCurrentUser.getRole() == Profile.Roles.GUARDIAN)
-            appView.setOnClickListener(new ProfileLauncher());
-        else{appView.setOnClickListener(new View.OnClickListener() {
+            appImageView.setOnClickListener(new ProfileLauncher());
+        else{
+            appImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AppInfo app = HomeActivity.getAppInfo((String)v.getTag());
@@ -573,7 +578,7 @@ public class HomeActivity extends Activity {
             });
         }
 
-        return appView;
+        return appImageView;
     }
 
     /**
