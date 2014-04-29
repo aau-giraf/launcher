@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/settings_list_view_listitem_selector">
+
+    <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/giraf_settings_list_row_paddingTop"
+            android:paddingBottom="@dimen/giraf_settings_list_row_paddingBottom"
+            android:paddingLeft="@dimen/giraf_settings_list_row_paddingLeft"
+            android:paddingRight="@dimen/giraf_settings_list_row_paddingRight">
+
+        <ImageView
+                android:id="@+id/settingsListAppLogo"
+                android:layout_width="@dimen/giraf_settings_list_row_imageView_size"
+                android:layout_height="@dimen/giraf_settings_list_row_imageView_size"
+                android:layout_marginRight="@dimen/giraf_settings_list_row_imageView_marginRight">
+        </ImageView>
+
+        <TextView
+                android:id="@+id/settingsListAppName"
+                android:layout_toRightOf="@id/settingsListAppLogo"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical"
+                android:textColor="@android:color/black"
+                android:text="@string/giraf_settings_name"
+                android:textSize="32dp" >
+        </TextView>
+
+    </LinearLayout>
+
+    <FrameLayout
+            android:id="@+id/settingsListRowShadow"
+            android:layout_width="@dimen/giraf_settings_list_shadowSize"
+            android:layout_height="fill_parent"
+            android:layout_gravity="right"
+            android:background="@drawable/settings_list_view_shadow_right"/>
+
+</FrameLayout>

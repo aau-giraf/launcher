@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- GIRAF SETTINGS COLORS -->
+    <color name="giraf_settings_list_background">#ffffeeaa</color>
+    <color name="giraf_settings_list_active">#ffffdd55</color>
+    <color name="giraf_settings_container_spinner_background">#ff4d4d4d</color>
+</resources>

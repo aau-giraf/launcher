@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/giraf_settings_container_spinner_background"
+              android:orientation="vertical">
+
+    <FrameLayout
+            android:layout_width="@dimen/giraf_settings_list_shadowSize"
+            android:layout_height="fill_parent"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/settings_list_view_shadow_right"/>
+
+    <LinearLayout
+            android:id="@+id/settingsListSpinner"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/giraf_settings_list_row_paddingTop"
+            android:paddingBottom="@dimen/giraf_settings_list_row_paddingBottom"
+            android:paddingLeft="@dimen/giraf_settings_list_row_paddingLeft"
+            android:paddingRight="@dimen/giraf_settings_list_row_paddingRight">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/giraf_settings_container_selectedUser_padding"
+                android:text="@string/giraf_settings_selectUser_text"
+                android:textColor="@android:color/darker_gray"/>
+
+        <Spinner
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:spinnerStyle="@android:style/Widget.Spinner.DropDown"
+                android:id="@+id/spinnerUser"
+                android:padding="10dp"
+                android:prompt="@string/giraf_settings_user_prompt"
+                android:entries="@array/giraf_settings_dummy_users"/>
+
+    </LinearLayout>
+
+    <ListView
+            android:id="@+id/settingsListView"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/settingsListSpinner"
+            android:choiceMode="singleChoice"
+            android:divider="@android:color/black"
+            android:dividerHeight="1dp"
+            tools:listitem="@layout/fragment_settings_list_row"/>
+
+</RelativeLayout>

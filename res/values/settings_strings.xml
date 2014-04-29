@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="giraf_settings_name">Settings</string>
+    <string name="giraf_settings_user_prompt">Vælg en person</string>
+    <string name="giraf_settings_selectUser_text">Vælg en person</string>
+
+    <string-array name="giraf_settings_dummy_users">
+        <item>Tony Stark</item>
+        <item>Captain America</item>
+        <item>Commander Steel</item>
+        <item>Lady Liberty</item>
+        <item>Jack Flag</item>
+        <item>Phantom Eagle</item>
+        <item>The Yankee Clipper</item>
+        <item>Atomic Betty</item>
+        <item>Doctor Mist</item>
+    </string-array>
+</resources>
