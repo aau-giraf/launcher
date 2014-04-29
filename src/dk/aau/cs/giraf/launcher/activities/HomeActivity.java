@@ -121,7 +121,6 @@ public class HomeActivity extends Activity {
                 public void onGlobalLayout() {
                     // Ensure you call it only once :
                     mAppsContainer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-
                     loadApplications();
                 }
             });
@@ -152,6 +151,7 @@ public class HomeActivity extends Activity {
 	 */
 	private void loadApplications() {
         //Get the list of apps to show in the container
+        //List<Application> girafAppsList = LauncherUtility.getAvailableGirafAppsButLauncher(mContext);
 		List<Application> girafAppsList = LauncherUtility.getVisibleGirafApps(mContext, mCurrentUser);
 
         TextView noAppsMessage = (TextView) findViewById(R.id.noAppsMessage);
@@ -159,7 +159,7 @@ public class HomeActivity extends Activity {
             mAppInfos = new HashMap<String,AppInfo>();
 
             // Tell the user that apps are being loaded
-            Toast toast = Toast.makeText(this, getString(R.string.loading_apps_message), 2000);
+            Toast toast = Toast.makeText(this, getString(R.string.loading_apps_message), 1000);
             toast.show();
 
             //Fill AppInfo hash map with AppInfo objects for each app
@@ -200,14 +200,16 @@ public class HomeActivity extends Activity {
             //Remember that the apps have been added, so they are not added again by the listener
             mAppsAdded = true;
 
-            // If apps are loaded and message is still shown. Cancel the toast.
-            toast.cancel();
+            // If apps are loaded, show a toast.
+            toast = Toast.makeText(this, getString(R.string.apps_loaded_message), 2000);
+            toast.show();
         } else {
             // show no apps available message
             noAppsMessage.setVisibility(View.VISIBLE);
             Log.e(Constants.ERROR_TAG, "App list is null");
 		}
 	}
+
 
     private int getAmountOfApps(int containerHeight) {
         return containerHeight / Constants.APP_ICON_DIMENSION;
@@ -427,6 +429,7 @@ public class HomeActivity extends Activity {
 	/**
 	 * Load the widgets placed on the drawer.
 	 */
+
 	private void loadWidgets() {
 		mCalendarWidget = (GWidgetCalendar) findViewById(R.id.calendarwidget);
 		mConnectivityWidget = (GWidgetConnectivity) findViewById(R.id.connectivitywidget);

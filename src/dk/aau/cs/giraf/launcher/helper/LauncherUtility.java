@@ -248,16 +248,11 @@ public class LauncherUtility {
             return new ArrayList<Application>();
         }
 
-        // Remove all apps from user's list of apps that are not installed on the device.
+        // Remove all apps from user's list of apps that are not installed on the device and exclude the launcher it self.
         for (int i = 0; i < userApps.size(); i++) {
-            if (!appsContain_A(deviceApps, userApps.get(i))) {
+            if (!appsContain_A(deviceApps, userApps.get(i)) || userApps.get(i).getPackage().equals("dk.aau.cs.giraf.launcher")) {
                 userApps.remove(i);
                 i--;
-            }
-
-            //Exclude the launcher from visible apps
-            if (userApps.get(i).getPackage().equals("dk.aau.cs.giraf.launcher")) {
-                userApps.remove(i);
             }
         }
 
@@ -282,6 +277,39 @@ public class LauncherUtility {
 
         for (int i = 0; i < dbApps.size(); i++) {
             if (!appsContain_RI(deviceApps, dbApps.get(i))) {
+                dbApps.remove(i);
+                i--;
+            }
+        }
+
+        return dbApps;
+    }
+
+    /**
+     * Finds all GIRAF apps installed on the device that are also registered in the database, EXCEPT Launcher.
+     *
+     * @param context Context of the current activity.
+     * @return List of apps available for use on the device.
+     */
+    public static List<Application> getAvailableGirafAppsButLauncher(Context context) {
+        Helper helper = getOasisHelper(context);
+
+        List<Application> dbApps = helper.applicationHelper.getApplications();
+        List<ResolveInfo> deviceApps = getDeviceGirafApps(context);
+
+        if (dbApps.isEmpty() || deviceApps.isEmpty()) {
+            return new ArrayList<Application>();
+        }
+
+        for (int i = 0; i < dbApps.size(); i++) {
+            if (!appsContain_RI(deviceApps, dbApps.get(i))) {
+                dbApps.remove(i);
+                i--;
+            }
+
+            String name = dbApps.get(i).getName();
+            if(name.equals("Launcher"))
+            {
                 dbApps.remove(i);
                 i--;
             }
