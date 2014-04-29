@@ -9,9 +9,7 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
@@ -30,11 +28,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import dk.aau.cs.giraf.gui.GColorAdapter;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
-import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.gui.GWidgetCalendar;
 import dk.aau.cs.giraf.gui.GWidgetConnectivity;
 import dk.aau.cs.giraf.gui.GWidgetLogout;
@@ -58,6 +57,7 @@ public class HomeActivity extends Activity {
 	private Application mLauncher;
 
     private static HashMap<String,AppInfo> mAppInfos;
+    private List<Application> mCurrentLoadedApps;
 
     private boolean mAppsAdded = false;
     private boolean mWidgetRunning = false;
@@ -77,6 +77,7 @@ public class HomeActivity extends Activity {
     private LinearLayout mAppsContainer;
     private ScrollView mAppsScrollView;
     private EasyTracker mEasyTracker;
+    private Timer mAppsUpdater;
 
     private RelativeLayout.LayoutParams mAppsScrollViewParams;
 
@@ -98,9 +99,31 @@ public class HomeActivity extends Activity {
 		loadHomeDrawerColorGrid();
         setupLogoutDialog();
 
+        /*mNewAppsObserver = new Runnable() {
+            private boolean stop = false;
+            @Override
+            public void run() {
+                while (!stop){
+
+                }
+            }
+
+            public void cancel(boolean shouldStop){
+                stop = shouldStop;
+            }
+        };*/
+
         // Start logging this activity
         mEasyTracker.getInstance(this).activityStart(this);
 	}
+
+    private void StartObservingApps() {
+        mAppsUpdater = new Timer();
+        AppsObserver timerTask = new AppsObserver();
+        mAppsUpdater.scheduleAtFixedRate(timerTask, 5000, 5000);
+
+        Log.d(Constants.ERROR_TAG, "Applications are being observed.");
+    }
 
     @Override
     protected void onStop() {
@@ -133,12 +156,15 @@ public class HomeActivity extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
+        mAppsUpdater.cancel();
+        Log.d(Constants.ERROR_TAG, "Applications are no longer observed.");
 		mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_STOP);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
+        StartObservingApps();
 		mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_START);
 	}
 
@@ -156,52 +182,58 @@ public class HomeActivity extends Activity {
 
         TextView noAppsMessage = (TextView) findViewById(R.id.noAppsMessage);
         if (girafAppsList != null && !girafAppsList.isEmpty()) {
-            mAppInfos = new HashMap<String,AppInfo>();
+            if (mCurrentLoadedApps == null || mCurrentLoadedApps.size() != girafAppsList.size()){
+                mAppsContainer.removeAllViews();
+                mAppInfos = new HashMap<String,AppInfo>();
 
-            // Tell the user that apps are being loaded
-            Toast toast = Toast.makeText(this, getString(R.string.loading_apps_message), 2000);
-            toast.show();
+                // Tell the user that apps are being loaded
+                Toast toast = Toast.makeText(this, getString(R.string.loading_apps_message), 2000);
+                toast.show();
 
-            //Fill AppInfo hash map with AppInfo objects for each app
-			loadAppInfos(girafAppsList);
+                //Fill AppInfo hash map with AppInfo objects for each app
+                loadAppInfos(girafAppsList);
 
-            //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
-            int containerWidth = ((ScrollView) mAppsContainer.getParent()).getWidth();
-            int appsPrRow = getAmountOfApps(containerWidth);
-            int paddingWidth = getAppPadding(containerWidth, appsPrRow);
+                //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
+                int containerWidth = ((ScrollView) mAppsContainer.getParent()).getWidth();
+                int appsPrRow = getAmountOfApps(containerWidth);
+                int paddingWidth = getAppPadding(containerWidth, appsPrRow);
 
-            //Calculate how many apps the screen can fit vertically on a single screen, and how much space is available for vertical padding
-            int containerHeight = ((ScrollView) mAppsContainer.getParent()).getHeight();
-            int appsPrColumn = getAmountOfApps(containerHeight);
-            int paddingHeight = getAppPadding(containerHeight, appsPrColumn);
+                //Calculate how many apps the screen can fit vertically on a single screen, and how much space is available for vertical padding
+                int containerHeight = ((ScrollView) mAppsContainer.getParent()).getHeight();
+                int appsPrColumn = getAmountOfApps(containerHeight);
+                int paddingHeight = getAppPadding(containerHeight, appsPrColumn);
 
-            //Add the first row to the container
-            LinearLayout currentAppRow = new LinearLayout(mContext);
-            currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
-            currentAppRow.setPadding(0, paddingHeight, 0, paddingHeight);
-            mAppsContainer.addView(currentAppRow);
+                //Add the first row to the container
+                LinearLayout currentAppRow = new LinearLayout(mContext);
+                currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
+                currentAppRow.setPadding(0, paddingHeight, 0, paddingHeight);
+                mAppsContainer.addView(currentAppRow);
 
-            //Insert apps into the container, and add new rows as needed
-            for (Map.Entry<String,AppInfo> entry : mAppInfos.entrySet()) {
-                View newAppView = createAppView(entry.getValue());
-                newAppView.setPadding(paddingWidth, 0, 0, 0);
-                newAppView.setScaleX(0.9f);
-                newAppView.setScaleY(0.9f);
-                currentAppRow.addView(newAppView);
+                //Insert apps into the container, and add new rows as needed
+                for (Map.Entry<String,AppInfo> entry : mAppInfos.entrySet()) {
+                    if (currentAppRow.getChildCount() == appsPrRow) {
+                        currentAppRow = new LinearLayout(mContext);
+                        currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
+                        currentAppRow.setPadding(0, 0, 0, paddingHeight);
+                        mAppsContainer.addView(currentAppRow);
+                    }
 
-                if (currentAppRow.getChildCount() == appsPrRow) {
-                    currentAppRow = new LinearLayout(mContext);
-                    currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
-                    currentAppRow.setPadding(0, 0, 0, paddingHeight);
-                    mAppsContainer.addView(currentAppRow);
+                    View newAppView = createAppView(entry.getValue());
+                    newAppView.setPadding(paddingWidth, 0, 0, 0);
+                    newAppView.setScaleX(0.9f);
+                    newAppView.setScaleY(0.9f);
+                    currentAppRow.addView(newAppView);
                 }
+
+                //Remember that the apps have been added, so they are not added again by the listener
+                mAppsAdded = true;
+
+                //mAppsContainer.invalidate();
+                mCurrentLoadedApps = girafAppsList;
+
+                // If apps are loaded and message is still shown. Cancel the toast.
+                toast.cancel();
             }
-
-            //Remember that the apps have been added, so they are not added again by the listener
-            mAppsAdded = true;
-
-            // If apps are loaded and message is still shown. Cancel the toast.
-            toast.cancel();
         } else {
             // show no apps available message
             noAppsMessage.setVisibility(View.VISIBLE);
@@ -570,5 +602,22 @@ public class HomeActivity extends Activity {
 
     public static AppInfo getAppInfo(String id) {
         return mAppInfos.get(id);
+    }
+
+    /**
+     * Timer task for observing if new apps has been added
+     */
+    private class AppsObserver extends TimerTask {
+        @Override
+        public void run() {
+            // run this on UI thread since UI might need to get updated
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    loadApplications();
+                }
+            });
+            Log.d(Constants.ERROR_TAG, "Applications checked");
+        }
     }
 }
