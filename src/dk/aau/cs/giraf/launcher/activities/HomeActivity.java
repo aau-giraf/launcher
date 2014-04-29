@@ -99,20 +99,6 @@ public class HomeActivity extends Activity {
 		loadHomeDrawerColorGrid();
         setupLogoutDialog();
 
-        /*mNewAppsObserver = new Runnable() {
-            private boolean stop = false;
-            @Override
-            public void run() {
-                while (!stop){
-
-                }
-            }
-
-            public void cancel(boolean shouldStop){
-                stop = shouldStop;
-            }
-        };*/
-
         // Start logging this activity
         mEasyTracker.getInstance(this).activityStart(this);
 	}
@@ -186,9 +172,9 @@ public class HomeActivity extends Activity {
                 mAppsContainer.removeAllViews();
                 mAppInfos = new HashMap<String,AppInfo>();
 
-            // Tell the user that apps are being loaded
-            Toast toast = Toast.makeText(this, getString(R.string.loading_apps_message), 1000);
-            toast.show();
+                // Tell the user that apps are being loaded
+                Toast toast = Toast.makeText(this, getString(R.string.loading_apps_message), Toast.LENGTH_SHORT);
+                toast.show();
 
                 //Fill AppInfo hash map with AppInfo objects for each app
                 loadAppInfos(girafAppsList);
@@ -228,9 +214,10 @@ public class HomeActivity extends Activity {
                 //Remember that the apps have been added, so they are not added again by the listener
                 mAppsAdded = true;
 
-            // If apps are loaded, show a toast.
-            toast = Toast.makeText(this, getString(R.string.apps_loaded_message), 2000);
-            toast.show();
+                // If apps are loaded, show a toast.
+                toast = Toast.makeText(this, getString(R.string.apps_loaded_message), Toast.LENGTH_SHORT);
+                toast.show();
+
                 //mAppsContainer.invalidate();
                 mCurrentLoadedApps = girafAppsList;
 
