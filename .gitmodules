@@ -10,3 +10,6 @@
 	url = http://cs-cust06-int.cs.aau.dk/git-ro/oasis-lib.git
     ignore = dirty
 
+[submodule "Settings-Lib"]
+	path = Settings-Lib
+	url = http://cs-cust06-int.cs.aau.dk/git-ro/settings-lib.git
