@@ -10,8 +10,8 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            class="com.example.android.settings.SettingsListFragment"
-            tools:layout="@layout/fragment_settings_list">
+            class="dk.aau.cs.giraf.launcher.settings.SettingsListFragment"
+            tools:layout="@layout/settings_fragment_list">
             <!-- Preview: layout=@layout/details -->
     </fragment>
 
