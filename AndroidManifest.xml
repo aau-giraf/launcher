@@ -34,7 +34,7 @@
             android:theme="@android:style/Theme.NoTitleBar" 
             >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <!--<action android:name="android.intent.action.MAIN" />-->
 
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -76,6 +76,17 @@
             <intent-filter>
                 <action android:name="dk.aau.cs.giraf.launcher.action.SELECTPROFILE"/>
                 <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity
+                android:name="dk.aau.cs.giraf.launcher.settings.SettingsActivity"
+                android:label="@string/giraf_settings_name"
+                android:theme="@android:style/Theme.Holo.NoActionBar"
+                android:screenOrientation="landscape">
+            //android:theme="@android:style/Theme.Light.NoTitleBar"> // For newer Holo theme, use: @android:style/Theme.Holo.NoActionBar
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
     </application>
