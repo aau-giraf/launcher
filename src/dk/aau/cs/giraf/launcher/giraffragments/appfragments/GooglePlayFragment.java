@@ -15,7 +15,7 @@ public class GooglePlayFragment extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.settings_appfragment_giraf,
+        View view = inflater.inflate(R.layout.settings_appfragment_googleplay,
                 container, false);
 
         return view;
