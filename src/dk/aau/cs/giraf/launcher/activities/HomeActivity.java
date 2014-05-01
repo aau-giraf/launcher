@@ -31,6 +31,7 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import dk.aau.cs.giraf.gui.GButtonSettings;
 import dk.aau.cs.giraf.gui.GColorAdapter;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
@@ -44,6 +45,7 @@ import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.GAppDragger;
 import dk.aau.cs.giraf.launcher.layoutcontroller.SideBarLayout;
+import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -53,7 +55,7 @@ public class HomeActivity extends Activity {
 
 	private static Context mContext;
 
-	private Profile mCurrentUser; 
+	private Profile mCurrentUser;
 	private Helper mHelper;
 	private Application mLauncher;
 
@@ -65,9 +67,6 @@ public class HomeActivity extends Activity {
     private boolean mDrawerAnimationRunning = false;
 
 	private GWidgetUpdater mWidgetUpdater;
-	private GWidgetCalendar mCalendarWidget;
-	private GWidgetConnectivity mConnectivityWidget;
-	private GWidgetLogout mLogoutWidget;
 
     private GDialog mLogoutDialog;
 
@@ -453,17 +452,26 @@ public class HomeActivity extends Activity {
 	 */
 
 	private void loadWidgets() {
-		mCalendarWidget = (GWidgetCalendar) findViewById(R.id.calendarwidget);
-		mConnectivityWidget = (GWidgetConnectivity) findViewById(R.id.connectivitywidget);
-		mLogoutWidget = (GWidgetLogout) findViewById(R.id.logoutwidget);
+        GWidgetCalendar calendarWidget = (GWidgetCalendar) findViewById(R.id.calendarwidget);
+        GWidgetConnectivity connectivityWidget = (GWidgetConnectivity) findViewById(R.id.connectivitywidget);
+        GWidgetLogout logoutWidget = (GWidgetLogout) findViewById(R.id.logoutwidget);
+        GButtonSettings settingsButton = (GButtonSettings) findViewById(R.id.settingsbutton);
 		mHomeDrawerView = (RelativeLayout) findViewById(R.id.HomeDrawer);
         mProfilePictureView = (LinearLayout) findViewById(R.id.profile_pic);
 
 		mWidgetUpdater = new GWidgetUpdater();
-		mWidgetUpdater.addWidget(mCalendarWidget);
-		mWidgetUpdater.addWidget(mConnectivityWidget);
+		mWidgetUpdater.addWidget(calendarWidget);
+		mWidgetUpdater.addWidget(connectivityWidget);
 
-		mLogoutWidget.setOnClickListener(new View.OnClickListener() {
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, SettingsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+		logoutWidget.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!mWidgetRunning) {
