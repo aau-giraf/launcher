@@ -17,7 +17,7 @@ class ProfileLauncher extends Activity implements AdapterView.OnClickListener {
         Intent intent;
 
         // If user chose Admin/OasisApp do not open profile selector
-        if (app.getActivity().toLowerCase().contains("oasis.app")) {
+        if (appIsGuardianOnly(app.getPackage())) {
             intent = new Intent(Intent.ACTION_MAIN);
             intent.addCategory(Intent.CATEGORY_LAUNCHER);
             intent.setComponent(new ComponentName(app.getPackage(), app.getActivity()));
@@ -33,5 +33,15 @@ class ProfileLauncher extends Activity implements AdapterView.OnClickListener {
 
         // Verify the intent will resolve to at least one activity
         LauncherUtility.secureStartActivity(v.getContext(), intent);
+    }
+
+    private boolean appIsGuardianOnly (String packageName) {
+        for (String name : Constants.GUARDIAN_ONLY_APPS) {
+            if (packageName.toLowerCase().contains(name)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

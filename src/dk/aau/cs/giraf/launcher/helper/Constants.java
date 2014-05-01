@@ -3,6 +3,8 @@ package dk.aau.cs.giraf.launcher.helper;
 import dk.aau.cs.giraf.launcher.R;
 
 public final class Constants {
+    //LIST OF GUARDIAN-ONLY APPS
+    public static final String[] GUARDIAN_ONLY_APPS = {"oasis", "pictocreator"};
 	
 	// SharedPreferences keys for log in data
 	public static final String TIMER_KEY = "TIMING";
