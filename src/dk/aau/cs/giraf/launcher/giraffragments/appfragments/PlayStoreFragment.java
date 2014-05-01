@@ -19,7 +19,7 @@ public class PlayStoreFragment extends android.support.v4.app.Fragment {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
         View rootView = inflater.inflate(
-                R.layout.google_play_fragment, container, false);
+                R.layout.settings_appfragment_googleplay, container, false);
         Bundle args = getArguments();
         //((TextView) rootView.findViewById(android.R.id.text1)).setText(Integer.toString(args.getInt(ARG_OBJECT)));
 
