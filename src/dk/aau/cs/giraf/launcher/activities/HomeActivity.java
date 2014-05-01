@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.RectF;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +22,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
 
@@ -65,6 +66,7 @@ public class HomeActivity extends Activity {
     private boolean mAppsAdded = false;
     private boolean mWidgetRunning = false;
     private boolean mDrawerAnimationRunning = false;
+    private int mIconSize;
 
 	private GWidgetUpdater mWidgetUpdater;
 
@@ -150,12 +152,20 @@ public class HomeActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
         StartObservingApps();
+        reloadApplications();
 		mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_START);
 	}
 
     @Override
     public void onBackPressed() {
         //Do nothing, as the user should not be able to back out of this activity
+    }
+
+
+    private void reloadApplications(){
+        if (!mAppsAdded) return;
+        mCurrentLoadedApps = null; // Force loadApplications to redraw
+        loadApplications();
     }
 
 	/**
@@ -172,9 +182,7 @@ public class HomeActivity extends Activity {
                 mAppsContainer.removeAllViews();
                 mAppInfos = new HashMap<String,AppInfo>();
 
-                // Tell the user that apps are being loaded
-                Toast toast = Toast.makeText(this, getString(R.string.loading_apps_message), Toast.LENGTH_SHORT);
-                toast.show();
+                getIconSize(); // Update mIconSize
 
                 //Fill AppInfo hash map with AppInfo objects for each app
                 loadAppInfos(girafAppsList);
@@ -182,7 +190,6 @@ public class HomeActivity extends Activity {
                 //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
                 int containerWidth = ((ScrollView) mAppsContainer.getParent()).getWidth();
                 int appsPrRow = getAmountOfApps(containerWidth);
-                int paddingWidth = getAppPadding(containerWidth, appsPrRow);
 
                 //Calculate how many apps the screen can fit vertically on a single screen, and how much space is available for vertical padding
                 int containerHeight = ((ScrollView) mAppsContainer.getParent()).getHeight();
@@ -191,6 +198,7 @@ public class HomeActivity extends Activity {
 
                 //Add the first row to the container
                 LinearLayout currentAppRow = new LinearLayout(mContext);
+                currentAppRow.setWeightSum(appsPrRow);
                 currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
                 currentAppRow.setPadding(0, paddingHeight, 0, paddingHeight);
                 mAppsContainer.addView(currentAppRow);
@@ -199,30 +207,39 @@ public class HomeActivity extends Activity {
                 for (Map.Entry<String,AppInfo> entry : mAppInfos.entrySet()) {
                     if (currentAppRow.getChildCount() == appsPrRow) {
                         currentAppRow = new LinearLayout(mContext);
+                        currentAppRow.setWeightSum(appsPrRow);
                         currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
                         currentAppRow.setPadding(0, 0, 0, paddingHeight);
                         mAppsContainer.addView(currentAppRow);
                     }
 
                     ImageView newAppView = createAppImageView(entry.getValue());
-                    newAppView.setPadding(paddingWidth, 0, 0, 0);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(mIconSize, mIconSize);
+                    params.weight = 1f;
+                    newAppView.setLayoutParams(params);
                     newAppView.setScaleX(0.9f);
                     newAppView.setScaleY(0.9f);
                     currentAppRow.addView(newAppView);
                 }
 
+                int appsInLastRow = ((LinearLayout)mAppsContainer.getChildAt(mAppsContainer.getChildCount() - 1)).getChildCount();
+
+                while (appsInLastRow < appsPrRow){
+                    ImageView newAppView = new ImageView(mContext);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(mIconSize, mIconSize);
+                    params.weight = 1f;
+                    newAppView.setLayoutParams(params);
+                    newAppView.setScaleX(0.9f);
+                    newAppView.setScaleY(0.9f);
+                    currentAppRow.addView(newAppView);
+                    appsInLastRow = ((LinearLayout)mAppsContainer.getChildAt(mAppsContainer.getChildCount() - 1)).getChildCount();
+                }
+
                 //Remember that the apps have been added, so they are not added again by the listener
                 mAppsAdded = true;
 
-                // If apps are loaded, show a toast.
-                toast = Toast.makeText(this, getString(R.string.apps_loaded_message), Toast.LENGTH_SHORT);
-                toast.show();
-
                 //mAppsContainer.invalidate();
                 mCurrentLoadedApps = girafAppsList;
-
-                // If apps are loaded and message is still shown. Cancel the toast.
-                toast.cancel();
             }
         } else {
             // show no apps available message
@@ -232,12 +249,12 @@ public class HomeActivity extends Activity {
 	}
 
 
-    private int getAmountOfApps(int containerHeight) {
-        return containerHeight / Constants.APP_ICON_DIMENSION;
+    private int getAmountOfApps(int containerSize) {
+        return containerSize / mIconSize;
     }
 
-    private int getAppPadding(int containerWidth, int appsPrRow) {
-        return (containerWidth % Constants.APP_ICON_DIMENSION) / (appsPrRow + 1);
+    private int getAppPadding(int containerSize, int appsPrRow) {
+        return (containerSize % mIconSize) / (appsPrRow + 1);
     }
 
     /**
@@ -558,10 +575,10 @@ public class HomeActivity extends Activity {
         appIconView.setImageDrawable(appInfo.getIconImage());
         setAppBackground(appView, appInfo.getBgColor());
 
-        appImageView.setImageBitmap(Utility.createBitmapFromLayoutWithText(mContext, appView, 200, 200));
-
+        appImageView.setImageBitmap(Utility.createBitmapFromLayoutWithText(mContext, appView, Constants.APP_ICON_DIMENSION_DEF, Constants.APP_ICON_DIMENSION_DEF));
         appImageView.setTag(String.valueOf(appInfo.getApp().getId()));
         appImageView.setOnDragListener(new GAppDragger());
+
         if(mCurrentUser.getRole() == Profile.Roles.GUARDIAN)
             appImageView.setOnClickListener(new ProfileLauncher());
         else{
@@ -587,6 +604,12 @@ public class HomeActivity extends Activity {
         }
 
         return appImageView;
+    }
+
+    private void getIconSize() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int size = prefs.getInt("icon_size_preference", 200);
+        mIconSize = Utility.convertToDP(this, size);
     }
 
     /**

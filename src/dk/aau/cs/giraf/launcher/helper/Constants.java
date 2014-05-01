@@ -5,7 +5,7 @@ import dk.aau.cs.giraf.launcher.R;
 public final class Constants {
 	
 	// SharedPreferences keys for log in data
-	public static final String TIMER_KEY = "TIMING";
+    public static final String TIMER_KEY = "TIMING";
 	public static final String DATE_KEY = "DATE";
 	
 	// Keys for inserting and retrieving data in Intents
@@ -31,7 +31,7 @@ public final class Constants {
 	public static final long TIME_TO_STAY_LOGGED_IN = 28800000;
 	
 	// Home activity values.
-	public static final int APP_ICON_DIMENSION = 200;
+	public static final int APP_ICON_DIMENSION_DEF = 200;
 	
 	// Error logging
 	public static final String ERROR_TAG = "launcher";
