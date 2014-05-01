@@ -11,11 +11,11 @@ import dk.aau.cs.giraf.launcher.R;
 /**
  * Created by Vagner on 01-05-14.
  */
-public class AndroidFragment extends Fragment{
+public class GooglePlayFragment extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.settings_appfragment_android,
+        View view = inflater.inflate(R.layout.settings_appfragment_giraf,
                 container, false);
 
         return view;

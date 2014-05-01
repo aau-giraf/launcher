@@ -15,6 +15,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.giraffragments.appfragments.AppFragment;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.CarsSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.CatSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.CrocSettings;
@@ -72,7 +73,7 @@ public class SettingsActivity extends Activity {
                 View shadowView = view.findViewById(R.id.settingsListRowShadow);
                 shadowView.setVisibility(View.GONE);
 
-                for (int i = 0; i < mAdapter.getCount(); i++){
+                for (int i = 0; i < mAdapter.getCount(); i++) {
 
                 }
             }
@@ -114,7 +115,7 @@ public class SettingsActivity extends Activity {
         SettingsListItem item6 = new SettingsListItem("Cars", getResources().getDrawable(R.drawable.app_icon),
                 new CarsSettings(), new ColorDrawable(0xff9de7e6));
         SettingsListItem item7 = new SettingsListItem("Android", getResources().getDrawable(R.drawable.android_icon),
-                new AndroidSettingsFragment(), new ColorDrawable(0xffe6e6e6));
+                new AppFragment(), new ColorDrawable(0xffe6e6e6));
 
         appList.add(item1);
         appList.add(item2);
