@@ -11,10 +11,16 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
-import dk.aau.cs.giraf.launcher.giraffragments.*;
-import dk.aau.cs.giraf.launcher.R;
 
 import java.util.ArrayList;
+
+import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.settingslib.settingslib.Fragments.CarsSettings;
+import dk.aau.cs.giraf.settingslib.settingslib.Fragments.CatSettings;
+import dk.aau.cs.giraf.settingslib.settingslib.Fragments.CrocSettings;
+import dk.aau.cs.giraf.settingslib.settingslib.Fragments.LauncherSettings;
+import dk.aau.cs.giraf.settingslib.settingslib.Fragments.ParrotSettings;
+import dk.aau.cs.giraf.settingslib.settingslib.Fragments.WombatSettings;
 
 public class SettingsActivity extends Activity {
 
@@ -96,17 +102,17 @@ public class SettingsActivity extends Activity {
         ArrayList<SettingsListItem> appList = new ArrayList<SettingsListItem>();
 
         SettingsListItem item1 = new SettingsListItem("Giraf", getResources().getDrawable(R.drawable.app_icon),
-                new LauncherSettingsFragment(), new ColorDrawable(0xffffdd55));
+                new LauncherSettings(), new ColorDrawable(0xffffdd55));
         SettingsListItem item2 = new SettingsListItem("Cat", getResources().getDrawable(R.drawable.app_icon),
-                new CatSettingsFragment(), new ColorDrawable(0xffac9393));
+                new CatSettings(), new ColorDrawable(0xffac9393));
         SettingsListItem item3 = new SettingsListItem("Wombat", getResources().getDrawable(R.drawable.app_icon),
-                new WombatSettingsFragment(), new ColorDrawable(0xffffe680));
+                new WombatSettings(), new ColorDrawable(0xffffe680));
         SettingsListItem item4 = new SettingsListItem("Parrot", getResources().getDrawable(R.drawable.app_icon),
-                new ParrotSettingsFragment(), new ColorDrawable(0xff808000));
+                new ParrotSettings(), new ColorDrawable(0xff808000));
         SettingsListItem item5 = new SettingsListItem("Croc", getResources().getDrawable(R.drawable.app_icon),
-                new CrocSettingsFragment(), new ColorDrawable(0xff5fd35f));
+                new CrocSettings(), new ColorDrawable(0xff5fd35f));
         SettingsListItem item6 = new SettingsListItem("Cars", getResources().getDrawable(R.drawable.app_icon),
-                new CarsSettingsFragment(), new ColorDrawable(0xff9de7e6));
+                new CarsSettings(), new ColorDrawable(0xff9de7e6));
         SettingsListItem item7 = new SettingsListItem("Android", getResources().getDrawable(R.drawable.android_icon),
                 new AndroidSettingsFragment(), new ColorDrawable(0xffe6e6e6));
 
