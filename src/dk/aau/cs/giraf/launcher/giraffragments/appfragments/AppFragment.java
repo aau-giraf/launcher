@@ -56,27 +56,37 @@ public class AppFragment extends Fragment{
         girafButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 replaceFragment(girafFragment);
-                girafButton.setBackgroundResource(R.color.gBrowncolor);
-                androidButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
-                googlePlayButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
+                if(0 == 1)
+                {
+                    girafButton.setBackgroundResource(R.color.gBrowncolor);
+                    androidButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
+                    googlePlayButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
+                }
+
             }
         });
 
         androidButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 replaceFragment(androidFragment);
+                if(0 == 1)
+                {
                 girafButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
                 androidButton.setBackgroundResource(R.color.gBrowncolor);
                 googlePlayButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
+                }
             }
         });
 
         googlePlayButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 replaceFragment(googlePlayFragment);
+                if(0 == 1)
+                {
                 girafButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
                 androidButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
                 googlePlayButton.setBackgroundResource(R.color.gBrowncolor);
+                }
                 final String appPackageName = activity.getPackageName(); // getPackageName() from Context or Activity object
                 try {
                     // This TaskStackBuilder makes sure that the Play Store returns to this activity after having been closed.

@@ -4,9 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.RectF;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -45,7 +42,7 @@ import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
-import dk.aau.cs.giraf.settingslib.settingslib.Utility;
+import dk.aau.cs.giraf.settingslib.settingslib.SettingsUtility;
 
 public class HomeActivity extends Activity {
 
@@ -469,7 +466,7 @@ public class HomeActivity extends Activity {
     private void getIconSize() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int size = prefs.getInt("icon_size_preference", 200);
-        mIconSize = Utility.convertToDP(this, size);
+        mIconSize = SettingsUtility.convertToDP(this, size);
     }
 
     public static AppInfo getAppInfo(String id) {
