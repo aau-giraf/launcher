@@ -30,7 +30,7 @@
         android:ellipsize="none"
         android:scrollHorizontally="false"
         android:gravity="center_horizontal"
-        android:textColor="#FFFFFF"
+        android:textColor="#000000"
         android:textAppearance="?android:attr/textAppearanceLarge"
         />
     </LinearLayout>

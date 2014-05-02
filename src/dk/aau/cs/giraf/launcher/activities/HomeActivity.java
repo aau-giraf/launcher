@@ -1,7 +1,6 @@
 package dk.aau.cs.giraf.launcher.activities;
 
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,13 +10,11 @@ import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -27,7 +24,6 @@ import com.google.analytics.tracking.android.EasyTracker;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -44,7 +40,6 @@ import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
-import dk.aau.cs.giraf.launcher.layoutcontroller.GAppDragger;
 import dk.aau.cs.giraf.launcher.layoutcontroller.SideBarLayout;
 import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
 import dk.aau.cs.giraf.oasis.lib.Helper;
@@ -168,111 +163,25 @@ public class HomeActivity extends Activity {
         loadApplications();
     }
 
-	/**
-	 * Load the user's applications into the app container.
-	 */
-	private void loadApplications() {
-        //Get the list of apps to show in the container
-        //List<Application> girafAppsList = LauncherUtility.getAvailableGirafAppsButLauncher(mContext);
-		List<Application> girafAppsList = LauncherUtility.getVisibleGirafApps(mContext, mCurrentUser);
-
-        TextView noAppsMessage = (TextView) findViewById(R.id.noAppsMessage);
-        if (girafAppsList != null && !girafAppsList.isEmpty()) {
-            if (mCurrentLoadedApps == null || mCurrentLoadedApps.size() != girafAppsList.size()){
-                mAppsContainer.removeAllViews();
-                mAppInfos = new HashMap<String,AppInfo>();
-
-                getIconSize(); // Update mIconSize
-
-                //Fill AppInfo hash map with AppInfo objects for each app
-                loadAppInfos(girafAppsList);
-
-                //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
-                int containerWidth = ((ScrollView) mAppsContainer.getParent()).getWidth();
-                int appsPrRow = getAmountOfApps(containerWidth);
-
-                //Calculate how many apps the screen can fit vertically on a single screen, and how much space is available for vertical padding
-                int containerHeight = ((ScrollView) mAppsContainer.getParent()).getHeight();
-                int appsPrColumn = getAmountOfApps(containerHeight);
-                int paddingHeight = getAppPadding(containerHeight, appsPrColumn);
-
-                //Add the first row to the container
-                LinearLayout currentAppRow = new LinearLayout(mContext);
-                currentAppRow.setWeightSum(appsPrRow);
-                currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
-                currentAppRow.setPadding(0, paddingHeight, 0, paddingHeight);
-                mAppsContainer.addView(currentAppRow);
-
-                //Insert apps into the container, and add new rows as needed
-                for (Map.Entry<String,AppInfo> entry : mAppInfos.entrySet()) {
-                    if (currentAppRow.getChildCount() == appsPrRow) {
-                        currentAppRow = new LinearLayout(mContext);
-                        currentAppRow.setWeightSum(appsPrRow);
-                        currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
-                        currentAppRow.setPadding(0, 0, 0, paddingHeight);
-                        mAppsContainer.addView(currentAppRow);
-                    }
-
-                    ImageView newAppView = createAppImageView(entry.getValue());
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(mIconSize, mIconSize);
-                    params.weight = 1f;
-                    newAppView.setLayoutParams(params);
-                    newAppView.setScaleX(0.9f);
-                    newAppView.setScaleY(0.9f);
-                    currentAppRow.addView(newAppView);
-                }
-
-                int appsInLastRow = ((LinearLayout)mAppsContainer.getChildAt(mAppsContainer.getChildCount() - 1)).getChildCount();
-
-                while (appsInLastRow < appsPrRow){
-                    ImageView newAppView = new ImageView(mContext);
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(mIconSize, mIconSize);
-                    params.weight = 1f;
-                    newAppView.setLayoutParams(params);
-                    newAppView.setScaleX(0.9f);
-                    newAppView.setScaleY(0.9f);
-                    currentAppRow.addView(newAppView);
-                    appsInLastRow = ((LinearLayout)mAppsContainer.getChildAt(mAppsContainer.getChildCount() - 1)).getChildCount();
-                }
-
-                //Remember that the apps have been added, so they are not added again by the listener
-                mAppsAdded = true;
-
-                //mAppsContainer.invalidate();
-                mCurrentLoadedApps = girafAppsList;
-            }
-        } else {
-            // show no apps available message
-            noAppsMessage.setVisibility(View.VISIBLE);
-            Log.e(Constants.ERROR_TAG, "App list is null");
-		}
-	}
-
-
-    private int getAmountOfApps(int containerSize) {
-        return containerSize / mIconSize;
-    }
-
-    private int getAppPadding(int containerSize, int appsPrRow) {
-        return (containerSize % mIconSize) / (appsPrRow + 1);
-    }
-
     /**
-     * Loads the AppInfo object of app from the list, into the {@code mAppInfos} hashmap, making
-     * them accesible with only the ID string of the app.
-     * @param appsList The list of accessible apps
+     * Load the user's applications into the app container.
      */
-    private void loadAppInfos(List<Application> appsList) {
-        mAppInfos = new HashMap<String,AppInfo>();
-
-        for (Application app : appsList) {
-            AppInfo appInfo = new AppInfo(app);
-
-            appInfo.load(mContext, mCurrentUser);
-            appInfo.setBgColor(appBgColor(appInfo));
-
-            mAppInfos.put(String.valueOf(appInfo.getId()), appInfo);
+    private void loadApplications(){
+        List<Application> girafAppsList = LauncherUtility.getVisibleGirafApps(mContext, mCurrentUser); // For home activity
+        if (mCurrentLoadedApps == null || mCurrentLoadedApps.size() != girafAppsList.size()){
+            getIconSize(); // Update mIconSize
+            mAppInfos = LauncherUtility.loadApplicationsIntoView(mContext, girafAppsList, mAppsContainer, mIconSize);
+            //Remember that the apps have been added, so they are not added again by the listener
+            if (mAppInfos == null){
+                mAppsAdded = false;
+                TextView noAppsMessage = (TextView) findViewById(R.id.noAppsMessage);
+                noAppsMessage.setVisibility(View.VISIBLE);
+            }
+            else{
+                mAppsAdded = true;
+            }
         }
+        mCurrentLoadedApps = girafAppsList;
     }
 
 	/**
@@ -557,75 +466,10 @@ public class HomeActivity extends Activity {
 //		mHelper.applicationHelper.modifyAppByProfile(mLauncher, mCurrentUser);
     }
 
-    /**
-     * @param appInfo
-     * @return
-     */
-    private ImageView createAppImageView(AppInfo appInfo) {
-        View appView;
-        ImageView appImageView = new ImageView(mContext);
-
-        final LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        appView = inflater.inflate(R.layout.apps, mAppsContainer, false);
-
-        ImageView appIconView = (ImageView) appView.findViewById(R.id.app_icon);
-        TextView appTextView = (TextView) appView.findViewById(R.id.app_text);
-
-        appTextView.setText(appInfo.getName());
-        appIconView.setImageDrawable(appInfo.getIconImage());
-        setAppBackground(appView, appInfo.getBgColor());
-
-        appImageView.setImageBitmap(Utility.createBitmapFromLayoutWithText(mContext, appView, Constants.APP_ICON_DIMENSION_DEF, Constants.APP_ICON_DIMENSION_DEF));
-        appImageView.setTag(String.valueOf(appInfo.getApp().getId()));
-        appImageView.setOnDragListener(new GAppDragger());
-
-        if(mCurrentUser.getRole() == Profile.Roles.GUARDIAN)
-            appImageView.setOnClickListener(new ProfileLauncher());
-        else{
-            appImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AppInfo app = HomeActivity.getAppInfo((String)v.getTag());
-                Intent intent = new Intent(Intent.ACTION_MAIN);
-                intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                intent.setComponent(new ComponentName(app.getPackage(), app.getActivity()));
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                        | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-
-                intent.putExtra(Constants.CHILD_ID, mCurrentUser.getId());
-                intent.putExtra(Constants.APP_COLOR, app.getBgColor());
-                intent.putExtra(Constants.APP_PACKAGE_NAME, app.getPackage());
-                intent.putExtra(Constants.APP_ACTIVITY_NAME, app.getActivity());
-
-                // Verify the intent will resolve to at least one activity
-                LauncherUtility.secureStartActivity(v.getContext(), intent);
-            }
-            });
-        }
-
-        return appImageView;
-    }
-
     private void getIconSize() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         int size = prefs.getInt("icon_size_preference", 200);
         mIconSize = Utility.convertToDP(this, size);
-    }
-
-    /**
-     * Sets the background of the app.
-     * @param wrapperView The view the app is located inside.
-     * @param backgroundColor The color to use for the background.
-     */
-    private void setAppBackground(View wrapperView, int backgroundColor) {
-        LinearLayout appViewLayout = (LinearLayout) wrapperView.findViewById(R.id.app_bg);
-
-        RoundRectShape roundRect = new RoundRectShape( new float[] {15,15, 15,15, 15,15, 15,15}, new RectF(), null);
-        ShapeDrawable shapeDrawable = new ShapeDrawable(roundRect);
-
-        shapeDrawable.getPaint().setColor(backgroundColor);
-
-        appViewLayout.setBackgroundDrawable(shapeDrawable);
     }
 
     public static AppInfo getAppInfo(String id) {

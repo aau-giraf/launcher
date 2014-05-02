@@ -10,7 +10,7 @@ import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 
-class ProfileLauncher extends Activity implements AdapterView.OnClickListener {
+public class ProfileLauncher extends Activity implements AdapterView.OnClickListener {
     @Override
     public void onClick(View v) {
         AppInfo app = HomeActivity.getAppInfo((String) v.getTag());

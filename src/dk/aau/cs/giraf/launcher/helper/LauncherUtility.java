@@ -2,15 +2,22 @@ package dk.aau.cs.giraf.launcher.helper;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
+import android.graphics.RectF;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RoundRectShape;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,13 +27,20 @@ import com.google.analytics.tracking.android.StandardExceptionParser;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.AuthenticationActivity;
+import dk.aau.cs.giraf.launcher.activities.HomeActivity;
+import dk.aau.cs.giraf.launcher.activities.ProfileLauncher;
+import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
+import dk.aau.cs.giraf.launcher.layoutcontroller.GAppDragger;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.settingslib.settingslib.Utility;
 
 /**
  * Class for holding static methods and fields, to minimize code duplication.
@@ -422,4 +436,165 @@ public class LauncherUtility {
         return helper;
     }
 
+    public static HashMap<String,AppInfo> loadApplicationsIntoView(Context context, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize) {
+        //Get the list of apps to show in the container
+        //List<Application> girafAppsList = LauncherUtility.getAvailableGirafAppsButLauncher(mContext);
+        HashMap<String,AppInfo> appInfos = null;
+        if (girafAppsList != null && !girafAppsList.isEmpty()) {
+            targetLayout.removeAllViews();
+            appInfos = new HashMap<String,AppInfo>();
+
+            //Fill AppInfo hash map with AppInfo objects for each app
+            Profile user = LauncherUtility.findCurrentUser(context);
+            appInfos = loadAppInfos(context, girafAppsList, user);
+
+            //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
+            int containerWidth = ((ScrollView) targetLayout.getParent()).getWidth();
+            int appsPrRow = getAmountOfAppsWithinBounds(containerWidth, iconSize);
+
+            //Calculate how many apps the screen can fit vertically on a single screen, and how much space is available for vertical padding
+            int containerHeight = ((ScrollView) targetLayout.getParent()).getHeight();
+            int appsPrColumn = getAmountOfAppsWithinBounds(containerHeight, iconSize);
+            int paddingHeight = getLayoutPadding(containerHeight, appsPrColumn, iconSize);
+
+            //Add the first row to the container
+            LinearLayout currentAppRow = new LinearLayout(context);
+            currentAppRow.setWeightSum(appsPrRow);
+            currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
+            currentAppRow.setPadding(0, paddingHeight, 0, paddingHeight);
+            targetLayout.addView(currentAppRow);
+
+            //Insert apps into the container, and add new rows as needed
+            for (Map.Entry<String,AppInfo> entry : appInfos.entrySet()) {
+                if (currentAppRow.getChildCount() == appsPrRow) {
+                    currentAppRow = new LinearLayout(context);
+                    currentAppRow.setWeightSum(appsPrRow);
+                    currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
+                    currentAppRow.setPadding(0, 0, 0, paddingHeight);
+                    targetLayout.addView(currentAppRow);
+                }
+
+                ImageView newAppView = createAppImageView(context, entry.getValue(), targetLayout);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
+                params.weight = 1f;
+                newAppView.setLayoutParams(params);
+                newAppView.setScaleX(0.9f);
+                newAppView.setScaleY(0.9f);
+                currentAppRow.addView(newAppView);
+            }
+
+            int appsInLastRow = ((LinearLayout)targetLayout.getChildAt(targetLayout.getChildCount() - 1)).getChildCount();
+
+            while (appsInLastRow < appsPrRow){
+                ImageView newAppView = new ImageView(context);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
+                params.weight = 1f;
+                newAppView.setLayoutParams(params);
+                newAppView.setScaleX(0.9f);
+                newAppView.setScaleY(0.9f);
+                currentAppRow.addView(newAppView);
+                appsInLastRow = ((LinearLayout)targetLayout.getChildAt(targetLayout.getChildCount() - 1)).getChildCount();
+            }
+
+        } else {
+            // show no apps available message
+            Log.e(Constants.ERROR_TAG, "App list is null");
+        }
+
+        return appInfos;
+    }
+
+
+    private static int getAmountOfAppsWithinBounds(int containerSize, int iconSize) {
+        return containerSize / iconSize;
+    }
+
+    private static int getLayoutPadding(int containerSize, int appsPrRow, int iconSize) {
+        return (containerSize % iconSize) / (appsPrRow + 1);
+    }
+
+    /**
+     * Loads the AppInfo object of app from the list, into the {@code mAppInfos} hashmap, making
+     * them accesible with only the ID string of the app.
+     * @param appsList The list of accessible apps
+     */
+    private static HashMap<String,AppInfo> loadAppInfos(Context context, List<Application> appsList, Profile currentUser) {
+        HashMap<String,AppInfo> appInfos = new HashMap<String,AppInfo>();
+
+        for (Application app : appsList) {
+            AppInfo appInfo = new AppInfo(app);
+
+            appInfo.load(context, currentUser);
+            appInfo.setBgColor(context.getResources().getColor(R.color.app_color_transparent));
+
+            appInfos.put(String.valueOf(appInfo.getId()), appInfo);
+        }
+        return appInfos;
+    }
+
+    /**
+     * @param appInfo
+     * @return
+     */
+    private static ImageView createAppImageView(Context context, AppInfo appInfo, LinearLayout targetLayout) {
+        View appView;
+        ImageView appImageView = new ImageView(context);
+        final Profile currentUser = LauncherUtility.findCurrentUser(context);
+
+        final LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        appView = inflater.inflate(R.layout.apps, targetLayout, false);
+
+        ImageView appIconView = (ImageView) appView.findViewById(R.id.app_icon);
+        TextView appTextView = (TextView) appView.findViewById(R.id.app_text);
+
+        appTextView.setText(appInfo.getName());
+        appIconView.setImageDrawable(appInfo.getIconImage());
+        setAppBackground(appView, appInfo.getBgColor());
+
+        appImageView.setImageBitmap(Utility.createBitmapFromLayoutWithText(context, appView, Constants.APP_ICON_DIMENSION_DEF, Constants.APP_ICON_DIMENSION_DEF));
+        appImageView.setTag(String.valueOf(appInfo.getApp().getId()));
+        appImageView.setOnDragListener(new GAppDragger());
+
+        if(currentUser.getRole() == Profile.Roles.GUARDIAN)
+            appImageView.setOnClickListener(new ProfileLauncher());
+        else{
+            appImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AppInfo app = HomeActivity.getAppInfo((String) v.getTag());
+                    Intent intent = new Intent(Intent.ACTION_MAIN);
+                    intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                    intent.setComponent(new ComponentName(app.getPackage(), app.getActivity()));
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+
+                    intent.putExtra(Constants.CHILD_ID, currentUser.getId());
+                    intent.putExtra(Constants.APP_COLOR, app.getBgColor());
+                    intent.putExtra(Constants.APP_PACKAGE_NAME, app.getPackage());
+                    intent.putExtra(Constants.APP_ACTIVITY_NAME, app.getActivity());
+
+                    // Verify the intent will resolve to at least one activity
+                    LauncherUtility.secureStartActivity(v.getContext(), intent);
+                }
+            });
+        }
+
+        return appImageView;
+    }
+
+    /**
+     * Sets the background of the app.
+     * @param wrapperView The view the app is located inside.
+     * @param backgroundColor The color to use for the background.
+     */
+    private static void setAppBackground(View wrapperView, int backgroundColor) {
+        LinearLayout appViewLayout = (LinearLayout) wrapperView.findViewById(R.id.app_bg);
+
+        RoundRectShape roundRect = new RoundRectShape( new float[] {15,15, 15,15, 15,15, 15,15}, new RectF(), null);
+        ShapeDrawable shapeDrawable = new ShapeDrawable(roundRect);
+
+        shapeDrawable.getPaint().setColor(backgroundColor);
+
+        appViewLayout.setBackgroundDrawable(shapeDrawable);
+    }
 }
