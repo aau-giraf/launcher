@@ -12,28 +12,37 @@ android:layout_height="match_parent">
         android:layout_height="50dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true">
-        <Button
+        <TextView
             android:id="@+id/settings_giraf_button"
             android:layout_width="wrap_content"
             android:layout_weight="4"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:text="GIRAF"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceButton"
+            android:textSize="20dp"
             android:textColor="@android:color/black"
             android:background="@drawable/settings_tab_button_drawable"/>
-        <Button
+        <TextView
             android:id="@+id/settings_android_button"
             android:layout_width="wrap_content"
             android:layout_weight="4"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:text="Android"
+            android:textAppearance="?android:attr/textAppearanceButton"
+            android:textSize="20dp"
+            android:gravity="center"
             android:textColor="@android:color/black"
             android:background="@drawable/settings_tab_button_drawable"/>
-        <Button
+        <TextView
             android:id="@+id/settings_googleplay_button"
             android:layout_width="wrap_content"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:text="Start Google Play"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceButton"
+            android:textSize="20dp"
             android:textColor="@android:color/black"
             android:background="@drawable/settings_tab_button_drawable"/>
 

@@ -3,9 +3,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android"
           android:exitFadeDuration="@android:integer/config_longAnimTime">
 
+    <item android:drawable="@color/giraf_settings_list_background" android:state_pressed="false"/>
     <item android:drawable="@android:color/holo_orange_dark" android:state_pressed="true"/>
-    <item android:drawable="@color/giraf_settings_list_active" android:state_selected="true"/>
-    <item android:drawable="@color/giraf_settings_list_active" android:state_activated="true"/>
-    <item android:drawable="@color/giraf_settings_list_background"/>
 
 </selector>

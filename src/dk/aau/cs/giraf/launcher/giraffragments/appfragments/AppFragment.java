@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.TaskStackBuilder;
@@ -26,6 +27,9 @@ public class AppFragment extends Fragment{
     private Fragment girafFragment;
     private Fragment androidFragment;
     private Fragment googlePlayFragment;
+    private TextView girafButton;
+    private TextView androidButton;
+    private TextView googlePlayButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -39,9 +43,9 @@ public class AppFragment extends Fragment{
 
         activity = this.getActivity();
 
-        final Button girafButton = (Button)view.findViewById(R.id.settings_giraf_button);
-        final Button androidButton = (Button)view.findViewById(R.id.settings_android_button);
-        final Button googlePlayButton = (Button)view.findViewById(R.id.settings_googleplay_button);
+        girafButton = (TextView)view.findViewById(R.id.settings_giraf_button);
+        androidButton = (TextView)view.findViewById(R.id.settings_android_button);
+        googlePlayButton = (TextView)view.findViewById(R.id.settings_googleplay_button);
 
         mFragManager = this.getFragmentManager();
         Fragment fragmentContainer = mFragManager.findFragmentById(R.id.app_settings_fragmentlayout);
@@ -56,37 +60,23 @@ public class AppFragment extends Fragment{
         girafButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 replaceFragment(girafFragment);
-                if(0 == 1)
-                {
-                    girafButton.setBackgroundResource(R.color.gBrowncolor);
-                    androidButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
-                    googlePlayButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
-                }
-
+                focusButton(girafButton);
             }
         });
 
         androidButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 replaceFragment(androidFragment);
-                if(0 == 1)
-                {
-                girafButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
-                androidButton.setBackgroundResource(R.color.gBrowncolor);
-                googlePlayButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
-                }
+                focusButton(androidButton);
+
             }
         });
 
         googlePlayButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 replaceFragment(googlePlayFragment);
-                if(0 == 1)
-                {
-                girafButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
-                androidButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
-                googlePlayButton.setBackgroundResource(R.color.gBrowncolor);
-                }
+                focusButton(googlePlayButton);
+
                 final String appPackageName = activity.getPackageName(); // getPackageName() from Context or Activity object
                 try {
                     // This TaskStackBuilder makes sure that the Play Store returns to this activity after having been closed.
@@ -110,5 +100,19 @@ public class AppFragment extends Fragment{
         ft.replace(R.id.app_settings_fragmentlayout, fragment);
         ft.addToBackStack(null);
         ft.commit();
+    }
+
+    private void focusButton(TextView clickedView)
+    {
+        girafButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
+        androidButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
+        googlePlayButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
+
+        girafButton.setTypeface(Typeface.DEFAULT);
+        androidButton.setTypeface(Typeface.DEFAULT);
+        googlePlayButton.setTypeface(Typeface.DEFAULT);
+
+        clickedView.setTypeface(Typeface.DEFAULT_BOLD);
+        clickedView.setBackgroundResource(android.R.color.holo_orange_dark);
     }
 }
