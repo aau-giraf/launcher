@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/settingsListRowContainer"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -29,13 +30,32 @@
                 android:gravity="center_vertical"
                 android:textColor="@android:color/black"
                 android:text="@string/giraf_settings_name"
-                android:textSize="32dp" >
+                android:textAppearance="?android:textAppearanceLarge" >
         </TextView>
 
     </LinearLayout>
 
+    <!-- Shadow showing ABOVE active list item -->
     <FrameLayout
-            android:id="@+id/settingsListRowShadow"
+            android:id="@+id/settingsListRowShadowAbove"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/giraf_settings_list_shadowSize"
+            android:layout_gravity="bottom"
+            android:background="@drawable/settings_list_view_shadow_top"
+            android:visibility="gone"/>
+
+    <!-- Shadow showing BELOW active list item -->
+    <FrameLayout
+            android:id="@+id/settingsListRowShadowBelow"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/giraf_settings_list_shadowSize"
+            android:layout_gravity="top"
+            android:background="@drawable/settings_list_view_shadow_bottom"
+            android:visibility="gone"/>
+
+    <!-- Right shadow showing on a list item when inactive -->
+    <FrameLayout
+            android:id="@+id/settingsListRowShadowRight"
             android:layout_width="@dimen/giraf_settings_list_shadowSize"
             android:layout_height="fill_parent"
             android:layout_gravity="right"

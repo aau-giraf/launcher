@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-<gradient android:startColor="@android:color/black" android:endColor="@android:color/transparent" android:angle="180"/>
-</shape>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+<item android:top="-2dp" android:bottom="-2dp" android:left="-2dp">
+    <shape xmlns:android="http://schemas.android.com/apk/res/android">
+        <gradient android:startColor="@color/giraf_settings_list_shadow" android:endColor="@android:color/transparent" android:angle="180"/>
+        <stroke android:color="@color/giraf_settings_list_shadow" android:width="1dp"/>
+    </shape>
+</item>
+</layer-list>

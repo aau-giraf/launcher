@@ -44,11 +44,12 @@
     <ListView
             android:id="@+id/settingsListView"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:layout_below="@id/settingsListSpinner"
+            android:verticalScrollbarPosition="left"
             android:choiceMode="singleChoice"
-            android:divider="@android:color/black"
+            android:divider="@color/giraf_settings_list_shadow"
             android:dividerHeight="1dp"
-            tools:listitem="@layout/fragment_settings_list_row"/>
+            tools:listitem="@layout/settings_fragment_list_row"/>
 
 </RelativeLayout>

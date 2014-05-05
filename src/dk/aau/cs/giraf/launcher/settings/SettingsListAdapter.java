@@ -2,12 +2,11 @@ package dk.aau.cs.giraf.launcher.settings;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.*;
 import dk.aau.cs.giraf.launcher.R;
 
 import java.util.ArrayList;
@@ -16,8 +15,8 @@ public class SettingsListAdapter extends BaseAdapter {
 
     private Activity mActivity;
     private ArrayList<SettingsListItem> mApplicationList;
-    private int mSelectedItem;
     private static LayoutInflater mInflater = null;
+    private static int mLastSelectedItem = 0;
 
     public SettingsListAdapter(Activity a, ArrayList<SettingsListItem> l) {
         mActivity = a;
@@ -37,7 +36,13 @@ public class SettingsListAdapter extends BaseAdapter {
         return position;
     }
 
+    public void setSelected(int position) {
+        mLastSelectedItem = position;
+        notifyDataSetChanged();
+    }
+
     public View getView(int position, View convertView, ViewGroup parent) {
+        Log.d("Giraf Settings debugging", "SettingsListAdapter getView() position: " + position);
         View vi = convertView;
 
         if(convertView == null)
@@ -46,18 +51,58 @@ public class SettingsListAdapter extends BaseAdapter {
         // Get current item in the list
         SettingsListItem item = mApplicationList.get(position);
 
-        if (position == mSelectedItem) {
-            // Do something to selected item here
-
+        if (position == mLastSelectedItem) {
+            setShadowRightCurrent(vi, false);
+            ListView listView = (ListView)parent.findViewById(R.id.settingsListView);
+            listView.setItemChecked(position, true);
         }
+        else {
+            setShadowRightCurrent(vi, true);
+        }
+
+        if (position == mLastSelectedItem - 1)
+            setShadowAboveCurrent(vi, true);
+        else
+            setShadowAboveCurrent(vi, false);
+
+        if (position == mLastSelectedItem + 1)
+            setShadowBelowCurrent(vi, true);
+        else
+            setShadowBelowCurrent(vi, false);
 
         ImageView appIcon = (ImageView)vi.findViewById(R.id.settingsListAppLogo);
         TextView appNameText = (TextView)vi.findViewById(R.id.settingsListAppName);
 
         // Setting all values in ListView
-        appIcon.setBackgroundDrawable(item.appIcon);
-        appNameText.setText(item.appName);
+        appIcon.setBackgroundDrawable(item.mAppIcon);
+        appNameText.setText(item.mAppName);
 
         return vi;
+    }
+
+    public void setShadowRightCurrent(View currentView, boolean visible) {
+        View rightShadow = currentView.findViewById(R.id.settingsListRowShadowRight);
+        if (visible)
+            rightShadow.setVisibility(View.VISIBLE);
+        else
+            rightShadow.setVisibility(View.GONE);
+    }
+
+    public void setShadowAboveCurrent(View aboveView, boolean visible) {
+        // Add a shadow at the bottom of the list item ABOVE current
+        View aboveViewShadow = aboveView.findViewById(R.id.settingsListRowShadowAbove);
+        if (visible)
+            aboveViewShadow.setVisibility(View.VISIBLE);
+        else
+            aboveViewShadow.setVisibility(View.GONE);
+    }
+
+    public void setShadowBelowCurrent(View belowView, boolean visible) {
+        // Add a shadow at the top of the list item BELOW current
+        View belowViewShadow = belowView.findViewById(R.id.settingsListRowShadowBelow);
+        if (visible)
+            belowViewShadow.setVisibility(View.VISIBLE);
+        else
+            belowViewShadow.setVisibility(View.GONE);
     }
 }

@@ -11,7 +11,7 @@
             android:layout_weight="1"
             android:layout_height="match_parent"
             class="dk.aau.cs.giraf.launcher.settings.SettingsListFragment"
-            tools:layout="@layout/settings_fragment_list">
+            tools:layout="@layout/fragment_settings_list">
             <!-- Preview: layout=@layout/details -->
     </fragment>
 
@@ -21,7 +21,7 @@
                   android:layout_weight="4"
                   android:id="@+id/settingsContainer"
                   android:background="#ffdd55"
-                  android:padding="20dp">
+                  android:padding="@dimen/giraf_settings_container_padding">
     </FrameLayout>
 
 </LinearLayout>
