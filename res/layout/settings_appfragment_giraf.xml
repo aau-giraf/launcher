@@ -10,18 +10,11 @@
         android:layout_height="fill_parent">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/giraf_appContainer"
+            android:id="@+id/appContainer"
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Giraf Fragment"
-                android:id="@+id/textView"
-                android:layout_gravity="center|center" />
         </LinearLayout>
     </ScrollView>
 

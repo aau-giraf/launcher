@@ -55,6 +55,7 @@ public class LauncherUtility {
     private static boolean DEBUG_MODE = false;
     private static boolean DEBUG_MODE_AS_CHILD = false;
     private final static String DEFAULT_PACKAGE_FILTER = "";
+    private final static boolean DEFAULT_FILTER_INCLUSION = true;
 
     /**
      * Decides if GIRAF launcher is running in debug mode
@@ -436,10 +437,10 @@ public class LauncherUtility {
         return helper;
     }
 
-    public static HashMap<String,AppInfo> loadApplicationsIntoView(Context context, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize) {
+    public static HashMap<String,AppInfo> loadGirafApplicationsIntoView(Context context, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize) {
         //Get the list of apps to show in the container
         //List<Application> girafAppsList = LauncherUtility.getAvailableGirafAppsButLauncher(mContext);
-        HashMap<String,AppInfo> appInfos = null;
+        HashMap<String, AppInfo> appInfos = null;
         if (girafAppsList != null && !girafAppsList.isEmpty()) {
             targetLayout.removeAllViews();
             appInfos = new HashMap<String,AppInfo>();
@@ -504,6 +505,66 @@ public class LauncherUtility {
         return appInfos;
     }
 
+    public static boolean loadOtherApplicationsIntoView(Context context, List<ResolveInfo> appList, LinearLayout targetLayout, int iconSize) {
+        boolean success = false;
+        try {
+            targetLayout.removeAllViews();
+
+            //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
+            int containerWidth = ((ScrollView) targetLayout.getParent()).getWidth();
+            int appsPrRow = getAmountOfAppsWithinBounds(containerWidth, iconSize);
+
+            //Calculate how many apps the screen can fit vertically on a single screen, and how much space is available for vertical padding
+            int containerHeight = ((ScrollView) targetLayout.getParent()).getHeight();
+            int appsPrColumn = getAmountOfAppsWithinBounds(containerHeight, iconSize);
+            int paddingHeight = getLayoutPadding(containerHeight, appsPrColumn, iconSize);
+
+            //Add the first row to the container
+            LinearLayout currentAppRow = new LinearLayout(context);
+            currentAppRow.setWeightSum(appsPrRow);
+            currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
+            currentAppRow.setPadding(0, paddingHeight, 0, paddingHeight);
+            targetLayout.addView(currentAppRow);
+
+            //Insert apps into the container, and add new rows as needed
+            for (ResolveInfo app : appList) {
+                if (currentAppRow.getChildCount() == appsPrRow) {
+                    currentAppRow = new LinearLayout(context);
+                    currentAppRow.setWeightSum(appsPrRow);
+                    currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
+                    currentAppRow.setPadding(0, 0, 0, paddingHeight);
+                    targetLayout.addView(currentAppRow);
+                }
+
+                ImageView newAppView = createAppView(context, targetLayout, app);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
+                params.weight = 1f;
+                newAppView.setLayoutParams(params);
+                newAppView.setScaleX(0.9f);
+                newAppView.setScaleY(0.9f);
+                currentAppRow.addView(newAppView);
+            }
+
+            int appsInLastRow = ((LinearLayout)targetLayout.getChildAt(targetLayout.getChildCount() - 1)).getChildCount();
+
+            while (appsInLastRow < appsPrRow){
+                ImageView newAppView = new ImageView(context);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
+                params.weight = 1f;
+                newAppView.setLayoutParams(params);
+                newAppView.setScaleX(0.9f);
+                newAppView.setScaleY(0.9f);
+                currentAppRow.addView(newAppView);
+                appsInLastRow = ((LinearLayout)targetLayout.getChildAt(targetLayout.getChildCount() - 1)).getChildCount();
+            }
+            success = true;
+        } catch (Exception e){
+            // Exception happend. Do nothing and return false
+            success = false;
+        }
+
+        return success;
+    }
 
     private static int getAmountOfAppsWithinBounds(int containerSize, int iconSize) {
         return containerSize / iconSize;
@@ -609,30 +670,26 @@ public class LauncherUtility {
 
     /**
      * Retrieves all packages on the device as a list of Resolve Info.
-     * @param packageManager PackageManager of the device. Is retrieved by
-     *                       getActivity().getPackageManager();
+     * @param context Context of the application.
      * @return A list of Resolve Info containing information of all discovered applications.
      */
-    public static List<ResolveInfo> getApplicationsFromDevice(PackageManager packageManager){
-        return getApplicationsFromDevice(packageManager, DEFAULT_PACKAGE_FILTER);
+    public static List<ResolveInfo> getApplicationsFromDevice(Context context){
+        return getApplicationsFromDevice(context, DEFAULT_PACKAGE_FILTER, true);
     }
 
     /**
      * Retrieves a list of applications of on the device which fulfills the filter given through
      * packageFilter.
-     * @param packageManager PackageManager of the device. Is retrieved by
-     *                       getActivity().getPackageManager();
+     * @param context Context of the application.
      * @param packageFilter Filter which needs to be fulfilled.
      * @return A list of Resolve Info containing information of the applications found on device.
      */
-    public static List<ResolveInfo> getApplicationsFromDevice(PackageManager packageManager, String packageFilter){
+    public static List<ResolveInfo> getApplicationsFromDevice(Context context, String packageFilter, boolean shouldContainFilter){
         List<ResolveInfo> appInfo = new ArrayList<ResolveInfo>();
+        List<ResolveInfo> apps = getDeviceApps(context);
 
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_LAUNCHER);
-        List<ResolveInfo> apps = packageManager.queryIntentActivities(intent, PackageManager.GET_META_DATA);
         for (ResolveInfo app : apps){
-            if (!packageFilter.equals(DEFAULT_PACKAGE_FILTER) && shouldIncludeApp(app.activityInfo.packageName, packageFilter))
+            if (!packageFilter.equals(DEFAULT_PACKAGE_FILTER) && shouldIncludeApp(app.activityInfo.packageName, packageFilter, shouldContainFilter))
                 appInfo.add(app);
         }
         return appInfo;
@@ -644,28 +701,36 @@ public class LauncherUtility {
      * @param packageFilter Filter which it needs to fulfill.
      * @return true if the filter is fulfilled false otherwise.
      */
-    private static boolean shouldIncludeApp(String packageName, String packageFilter){
+    private static boolean shouldIncludeApp(String packageName, String packageFilter, boolean shouldContainFilter){
+        boolean result = false;
+
         try {
-            if (packageName.toLowerCase().contains(packageFilter.toLowerCase()))
-                return true;
+            if (packageName.toLowerCase().contains(packageFilter.toLowerCase())){
+                result = shouldContainFilter;
+            } else {
+                result = !shouldContainFilter;
+            }
         } catch (Exception e){
             // An exception happened act as filter was not fulfilled. Return false
         }
-        return false;
+
+        return result;
     }
 
     /**
      * Creates a view of the given @appInfo parameter. The default onClickListener opens the app
      * @param context Context of the application
      * @param appInfo ResolveInfo of the application which needs to be converted into a view.
-     * @param packageManager PackageManager of the device. Is retrieved by
-     *                       getActivity().getPackageManager();
      * @return A view of the given application. Containing Icon and name.
      */
-    public static View createAppView(final Context context, LinearLayout targetLayout, final ResolveInfo appInfo, PackageManager packageManager){
+    public static ImageView createAppView(final Context context, LinearLayout targetLayout, final ResolveInfo appInfo){
 
+        PackageManager packageManager = context.getPackageManager();
         View appView = addContentToView(context, targetLayout, appInfo.loadLabel(packageManager).toString(), appInfo.loadIcon(packageManager));
-        appView.setOnClickListener(new View.OnClickListener() { // OnClickListner to open the applicaiton
+        ImageView appImageView = new ImageView(context);
+        appImageView.setImageBitmap(SettingsUtility.createBitmapFromLayoutWithText(context, appView, Constants.APP_ICON_DIMENSION_DEF, Constants.APP_ICON_DIMENSION_DEF));
+
+        appImageView.setOnClickListener(new View.OnClickListener() { // OnClickListner to open the applicaiton
             @Override
             public void onClick(View view) {
                 ActivityInfo activityInfo = appInfo.activityInfo;
@@ -679,20 +744,18 @@ public class LauncherUtility {
             }
         });
 
-        return appView;
+        return appImageView;
     }
 
     /**
      * Creates a view of the given @appInfo parameter. The default onClickListener opens the app.
      * @param context Context of the application.
      * @param appInfo ResolveInfo of the application which needs to be converted into a view.
-     * @param packageManager PackageManager of the device. Is retrieved by
-     *                       getActivity().getPackageManager();
      * @param onClickListener OnClickListener which is to be set on the view.
      * @return A view of the given application. Containing Icon and name.
      */
-    public static View createAppView(Context context, LinearLayout targetLayout, ResolveInfo appInfo, PackageManager packageManager, View.OnClickListener onClickListener){
-        View appView = createAppView(context, targetLayout, appInfo, packageManager);
+    public static ImageView createAppView(Context context, LinearLayout targetLayout, ResolveInfo appInfo, View.OnClickListener onClickListener){
+        ImageView appView = createAppView(context, targetLayout, appInfo);
         appView.setOnClickListener(onClickListener);
 
         return appView;

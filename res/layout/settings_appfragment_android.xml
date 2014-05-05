@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/giraf_appScrollView"
+        android:id="@+id/android_appScrollView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
@@ -15,13 +15,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Android Fragment"
-                android:id="@+id/textView"
-                android:layout_gravity="center|center" />
         </LinearLayout>
     </ScrollView>
 
