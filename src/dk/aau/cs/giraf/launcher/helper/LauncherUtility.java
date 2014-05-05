@@ -10,6 +10,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.util.Log;
@@ -473,7 +474,7 @@ public class LauncherUtility {
                     targetLayout.addView(currentAppRow);
                 }
 
-                ImageView newAppView = createGirafAppImageView(context, entry.getValue(), targetLayout);
+                ImageView newAppView = createGirafLauncherApp(context, entry.getValue(), targetLayout);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
                 params.weight = 1f;
                 newAppView.setLayoutParams(params);
@@ -531,23 +532,32 @@ public class LauncherUtility {
         return appInfos;
     }
 
+
+    private static View addContentToView(Context context, LinearLayout targetLayout, String appName, Drawable appIcon){
+        final LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+        View targetView = inflater.inflate(R.layout.apps, targetLayout, false);
+
+        ImageView appIconView = (ImageView) targetView.findViewById(R.id.app_icon);
+        TextView appTextView = (TextView) targetView.findViewById(R.id.app_text);
+
+        appTextView.setText(appName);
+        appIconView.setImageDrawable(appIcon);
+
+        return  targetView;
+    }
+
     /**
+     *
+     * @param context
      * @param appInfo
+     * @param targetLayout
      * @return
      */
-    private static ImageView createGirafAppImageView(Context context, AppInfo appInfo, LinearLayout targetLayout) {
-        View appView;
+    private static ImageView createGirafLauncherApp(Context context, AppInfo appInfo, LinearLayout targetLayout) {
         ImageView appImageView = new ImageView(context);
         final Profile currentUser = LauncherUtility.findCurrentUser(context);
+        View appView = addContentToView(context, targetLayout, appInfo.getName(), appInfo.getIconImage());
 
-        final LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
-        appView = inflater.inflate(R.layout.apps, targetLayout, false);
-
-        ImageView appIconView = (ImageView) appView.findViewById(R.id.app_icon);
-        TextView appTextView = (TextView) appView.findViewById(R.id.app_text);
-
-        appTextView.setText(appInfo.getName());
-        appIconView.setImageDrawable(appInfo.getIconImage());
         setAppBackground(appView, appInfo.getBgColor());
 
         appImageView.setImageBitmap(SettingsUtility.createBitmapFromLayoutWithText(context, appView, Constants.APP_ICON_DIMENSION_DEF, Constants.APP_ICON_DIMENSION_DEF));
@@ -653,17 +663,8 @@ public class LauncherUtility {
      * @return A view of the given application. Containing Icon and name.
      */
     private static View createAppView(final Context context, LinearLayout targetLayout, final ResolveInfo appInfo, PackageManager packageManager){
-        View appView;
 
-        final LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
-        appView = inflater.inflate(R.layout.apps, targetLayout, false);
-
-        ImageView icon = (ImageView) appView.findViewById(R.id.app_icon);
-        TextView appName = (TextView) appView.findViewById(R.id.app_text);
-
-        icon.setImageDrawable(appInfo.loadIcon(packageManager));
-        appName.setText(appInfo.loadLabel(packageManager));
-
+        View appView = addContentToView(context, targetLayout, appInfo.loadLabel(packageManager).toString(), appInfo.loadIcon(packageManager));
         appView.setOnClickListener(new View.OnClickListener() { // OnClickListner to open the applicaiton
             @Override
             public void onClick(View view) {
