@@ -1,8 +1,10 @@
 package dk.aau.cs.giraf.launcher.giraffragments.appfragments;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,15 +28,44 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
 public class GirafFragment extends Fragment{
 
     List<Application> loadedApps;
+    List<Application> apps;
+    LinearLayout appView;
     boolean haveAppsBeenAdded;
+    Context context;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.settings_appfragment_giraf,
                 container, false);
-        Context context = getActivity();
-        List<Application> apps = LauncherUtility.getAvailableGirafAppsButLauncher(context);
-        LinearLayout appView = (LinearLayout) view.findViewById(R.id.giraf_appContainer);
+        context = getActivity();
+        apps = LauncherUtility.getAvailableGirafAppsButLauncher(context);
+        appView = (LinearLayout) view.findViewById(R.id.giraf_appContainer);
 
+        loadApplications();
+
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        reloadApplications();
+    }
+
+    private void reloadApplications(){
+        if (!haveAppsBeenAdded) return;
+        loadedApps = null; // Force loadApplications to redraw
+        loadApplications();
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        reloadApplications();
+    }
+
+    private void loadApplications()
+    {
         if (loadedApps == null || loadedApps.size() != apps.size()){
             //Remember that the apps have been added, so they are not added again by the listener
             HashMap<String,AppInfo> appInfos = LauncherUtility.loadApplicationsIntoView(context,apps,appView, Constants.APP_ICON_DIMENSION_DEF);
@@ -46,8 +77,5 @@ public class GirafFragment extends Fragment{
             }
         }
         loadedApps = apps;
-
-
-        return view;
     }
 }

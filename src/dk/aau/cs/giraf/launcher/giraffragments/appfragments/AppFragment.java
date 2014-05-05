@@ -30,6 +30,7 @@ public class AppFragment extends Fragment{
     private TextView girafButton;
     private TextView androidButton;
     private TextView googlePlayButton;
+    private Fragment fragmentContainer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,14 +49,7 @@ public class AppFragment extends Fragment{
         googlePlayButton = (TextView)view.findViewById(R.id.settings_googleplay_button);
 
         mFragManager = this.getFragmentManager();
-        Fragment fragmentContainer = mFragManager.findFragmentById(R.id.app_settings_fragmentlayout);
-
-        if (fragmentContainer == null) {
-            {
-                fragmentContainer = girafFragment;
-            }
-            mFragManager.beginTransaction().add(R.id.app_settings_fragmentlayout, fragmentContainer).commit();
-        }
+        fragmentContainer = mFragManager.findFragmentById(R.id.app_settings_fragmentlayout);
 
         girafButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -95,10 +89,23 @@ public class AppFragment extends Fragment{
 
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        focusButton(girafButton);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        replaceFragment(girafFragment);
+        focusButton(girafButton);
+    }
+
     private void replaceFragment(Fragment fragment){
         FragmentTransaction ft = mFragManager.beginTransaction();
         ft.replace(R.id.app_settings_fragmentlayout, fragment);
-        ft.addToBackStack(null);
         ft.commit();
     }
 
