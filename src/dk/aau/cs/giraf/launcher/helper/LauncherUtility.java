@@ -613,7 +613,7 @@ public class LauncherUtility {
      *                       getActivity().getPackageManager();
      * @return A list of Resolve Info containing information of all discovered applications.
      */
-    private static List<ResolveInfo> getApplicationsFromDevice(PackageManager packageManager){
+    public static List<ResolveInfo> getApplicationsFromDevice(PackageManager packageManager){
         return getApplicationsFromDevice(packageManager, DEFAULT_PACKAGE_FILTER);
     }
 
@@ -625,7 +625,7 @@ public class LauncherUtility {
      * @param packageFilter Filter which needs to be fulfilled.
      * @return A list of Resolve Info containing information of the applications found on device.
      */
-    private static List<ResolveInfo> getApplicationsFromDevice(PackageManager packageManager, String packageFilter){
+    public static List<ResolveInfo> getApplicationsFromDevice(PackageManager packageManager, String packageFilter){
         List<ResolveInfo> appInfo = new ArrayList<ResolveInfo>();
 
         Intent intent = new Intent(Intent.ACTION_MAIN);
@@ -662,7 +662,7 @@ public class LauncherUtility {
      *                       getActivity().getPackageManager();
      * @return A view of the given application. Containing Icon and name.
      */
-    private static View createAppView(final Context context, LinearLayout targetLayout, final ResolveInfo appInfo, PackageManager packageManager){
+    public static View createAppView(final Context context, LinearLayout targetLayout, final ResolveInfo appInfo, PackageManager packageManager){
 
         View appView = addContentToView(context, targetLayout, appInfo.loadLabel(packageManager).toString(), appInfo.loadIcon(packageManager));
         appView.setOnClickListener(new View.OnClickListener() { // OnClickListner to open the applicaiton
@@ -691,7 +691,7 @@ public class LauncherUtility {
      * @param onClickListener OnClickListener which is to be set on the view.
      * @return A view of the given application. Containing Icon and name.
      */
-    private static View createAppView(Context context, LinearLayout targetLayout, ResolveInfo appInfo, PackageManager packageManager, View.OnClickListener onClickListener){
+    public static View createAppView(Context context, LinearLayout targetLayout, ResolveInfo appInfo, PackageManager packageManager, View.OnClickListener onClickListener){
         View appView = createAppView(context, targetLayout, appInfo, packageManager);
         appView.setOnClickListener(onClickListener);
 
