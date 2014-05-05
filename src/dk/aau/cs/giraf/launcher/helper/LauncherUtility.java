@@ -6,6 +6,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.RectF;
 import android.graphics.drawable.ShapeDrawable;
@@ -42,6 +44,8 @@ import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.settingslib.settingslib.SettingsUtility;
 
+import static android.content.Context.LAYOUT_INFLATER_SERVICE;
+
 /**
  * Class for holding static methods and fields, to minimize code duplication.
  */
@@ -49,6 +53,7 @@ public class LauncherUtility {
 
     private static boolean DEBUG_MODE = false;
     private static boolean DEBUG_MODE_AS_CHILD = false;
+    private final static String DEFAULT_PACKAGE_FILTER = "";
 
     /**
      * Decides if GIRAF launcher is running in debug mode
@@ -468,7 +473,7 @@ public class LauncherUtility {
                     targetLayout.addView(currentAppRow);
                 }
 
-                ImageView newAppView = createAppImageView(context, entry.getValue(), targetLayout);
+                ImageView newAppView = createGirafAppImageView(context, entry.getValue(), targetLayout);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
                 params.weight = 1f;
                 newAppView.setLayoutParams(params);
@@ -530,12 +535,12 @@ public class LauncherUtility {
      * @param appInfo
      * @return
      */
-    private static ImageView createAppImageView(Context context, AppInfo appInfo, LinearLayout targetLayout) {
+    private static ImageView createGirafAppImageView(Context context, AppInfo appInfo, LinearLayout targetLayout) {
         View appView;
         ImageView appImageView = new ImageView(context);
         final Profile currentUser = LauncherUtility.findCurrentUser(context);
 
-        final LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
         appView = inflater.inflate(R.layout.apps, targetLayout, false);
 
         ImageView appIconView = (ImageView) appView.findViewById(R.id.app_icon);
@@ -590,5 +595,105 @@ public class LauncherUtility {
         shapeDrawable.getPaint().setColor(backgroundColor);
 
         appViewLayout.setBackgroundDrawable(shapeDrawable);
+    }
+
+    /**
+     * Retrieves all packages on the device as a list of Resolve Info.
+     * @param packageManager PackageManager of the device. Is retrieved by
+     *                       getActivity().getPackageManager();
+     * @return A list of Resolve Info containing information of all discovered applications.
+     */
+    private static List<ResolveInfo> getApplicationsFromDevice(PackageManager packageManager){
+        return getApplicationsFromDevice(packageManager, DEFAULT_PACKAGE_FILTER);
+    }
+
+    /**
+     * Retrieves a list of applications of on the device which fulfills the filter given through
+     * packageFilter.
+     * @param packageManager PackageManager of the device. Is retrieved by
+     *                       getActivity().getPackageManager();
+     * @param packageFilter Filter which needs to be fulfilled.
+     * @return A list of Resolve Info containing information of the applications found on device.
+     */
+    private static List<ResolveInfo> getApplicationsFromDevice(PackageManager packageManager, String packageFilter){
+        List<ResolveInfo> appInfo = new ArrayList<ResolveInfo>();
+
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        List<ResolveInfo> apps = packageManager.queryIntentActivities(intent, PackageManager.GET_META_DATA);
+        for (ResolveInfo app : apps){
+            if (!packageFilter.equals(DEFAULT_PACKAGE_FILTER) && shouldIncludeApp(app.activityInfo.packageName, packageFilter))
+                appInfo.add(app);
+        }
+        return appInfo;
+    }
+
+    /**
+     * Determines whether an application fulfills the requirements of the given filter.
+     * @param packageName Package name of the application.
+     * @param packageFilter Filter which it needs to fulfill.
+     * @return true if the filter is fulfilled false otherwise.
+     */
+    private static boolean shouldIncludeApp(String packageName, String packageFilter){
+        try {
+            if (packageName.toLowerCase().contains(packageFilter.toLowerCase()))
+                return true;
+        } catch (Exception e){
+            // An exception happened act as filter was not fulfilled. Return false
+        }
+        return false;
+    }
+
+    /**
+     * Creates a view of the given @appInfo parameter. The default onClickListener opens the app
+     * @param context Context of the application
+     * @param appInfo ResolveInfo of the application which needs to be converted into a view.
+     * @param packageManager PackageManager of the device. Is retrieved by
+     *                       getActivity().getPackageManager();
+     * @return A view of the given application. Containing Icon and name.
+     */
+    private static View createAppView(final Context context, LinearLayout targetLayout, final ResolveInfo appInfo, PackageManager packageManager){
+        View appView;
+
+        final LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
+        appView = inflater.inflate(R.layout.apps, targetLayout, false);
+
+        ImageView icon = (ImageView) appView.findViewById(R.id.app_icon);
+        TextView appName = (TextView) appView.findViewById(R.id.app_text);
+
+        icon.setImageDrawable(appInfo.loadIcon(packageManager));
+        appName.setText(appInfo.loadLabel(packageManager));
+
+        appView.setOnClickListener(new View.OnClickListener() { // OnClickListner to open the applicaiton
+            @Override
+            public void onClick(View view) {
+                ActivityInfo activityInfo = appInfo.activityInfo;
+                ComponentName componentName = new ComponentName(activityInfo.packageName, activityInfo.name);
+
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                intent.setComponent(componentName);
+
+                context.startActivity(intent);
+            }
+        });
+
+        return appView;
+    }
+
+    /**
+     * Creates a view of the given @appInfo parameter. The default onClickListener opens the app.
+     * @param context Context of the application.
+     * @param appInfo ResolveInfo of the application which needs to be converted into a view.
+     * @param packageManager PackageManager of the device. Is retrieved by
+     *                       getActivity().getPackageManager();
+     * @param onClickListener OnClickListener which is to be set on the view.
+     * @return A view of the given application. Containing Icon and name.
+     */
+    private static View createAppView(Context context, LinearLayout targetLayout, ResolveInfo appInfo, PackageManager packageManager, View.OnClickListener onClickListener){
+        View appView = createAppView(context, targetLayout, appInfo, packageManager);
+        appView.setOnClickListener(onClickListener);
+
+        return appView;
     }
 }
