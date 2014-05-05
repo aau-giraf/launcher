@@ -47,21 +47,14 @@ public class GirafFragment extends Fragment{
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
         reloadApplications();
     }
 
     private void reloadApplications(){
-        if (!haveAppsBeenAdded) return;
         loadedApps = null; // Force loadApplications to redraw
         loadApplications();
-    }
-
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        reloadApplications();
     }
 
     private void loadApplications()
