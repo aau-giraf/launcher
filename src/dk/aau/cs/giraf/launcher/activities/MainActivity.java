@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
@@ -31,7 +32,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 
 	private Context mContext;
 
-    /* This function is run after the logo animation is finished.
+    /** This function is run after the logo animation is finished.
        It checks if a session is in progress and launches the correct activity based on the answer
        It goes to AuthenticationActivity to login if a session is not in progress
        It goes to HomeActivity, the home screen, if a session is in progress*/
@@ -86,8 +87,11 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 
         Animation logoAnimation = AnimationUtils.loadAnimation(mContext, R.animator.rotatelogo);
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean skipAuthenticationPref = prefs.getBoolean("show_animation_preference", true);
+
         // Opt in/out whether to show animation or not
-        if (DEBUG_MODE && !showLogoAnimation)
+        if ((DEBUG_MODE && !showLogoAnimation) || !skipAuthenticationPref)
             logoAnimation.setDuration(0);
         else
             logoAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
