@@ -92,7 +92,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 
         // Opt in/out whether to show animation or not
         if ((DEBUG_MODE && !showLogoAnimation) || !skipAuthenticationPref)
-            logoAnimation.setDuration(0);
+            CheckSessionAndGoToActivity();
         else
             logoAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
 
