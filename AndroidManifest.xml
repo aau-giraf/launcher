@@ -19,8 +19,8 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     
-  <instrumentation android:name="android.test.InstrumentationTestRunner"
-       android:targetPackage="dk.aau.cs.giraf.launcher" android:label="Tests for My App" />
+  <!--instrumentation android:name="android.test.InstrumentationTestRunner"
+       android:targetPackage="dk.aau.cs.giraf.launcher" android:label="Tests for My App" /-->
 
     <application
         android:icon="@drawable/app_icon"
@@ -34,7 +34,7 @@
             android:theme="@android:style/Theme.NoTitleBar" 
             >
             <intent-filter>
-                <!--<action android:name="android.intent.action.MAIN" />-->
+                <!--<action android:name="android.intent.action.MAIN" /-->
 
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -83,10 +83,11 @@
                 android:label="@string/giraf_settings_name"
                 android:theme="@android:style/Theme.Holo.NoActionBar"
                 android:screenOrientation="landscape">
-            //android:theme="@android:style/Theme.Light.NoTitleBar"> // For newer Holo theme, use: @android:style/Theme.Holo.NoActionBar
+                android:theme="@android:style/Theme.Light.NoTitleBar"> // For newer Holo theme, use: @android:style/Theme.Holo.NoActionBar
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
     </application>
