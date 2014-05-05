@@ -12,7 +12,6 @@ import android.support.v4.app.TaskStackBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import dk.aau.cs.giraf.launcher.R;
@@ -20,7 +19,7 @@ import dk.aau.cs.giraf.launcher.R;
 /**
  * Created by Vagner on 01-05-14.
  */
-public class AppFragment extends Fragment{
+public class AppManagementFragment extends Fragment{
 
     Activity activity;
     private FragmentManager mFragManager;
