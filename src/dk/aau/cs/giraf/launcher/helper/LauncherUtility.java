@@ -40,7 +40,7 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.GAppDragger;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
-import dk.aau.cs.giraf.settingslib.settingslib.Utility;
+import dk.aau.cs.giraf.settingslib.settingslib.SettingsUtility;
 
 /**
  * Class for holding static methods and fields, to minimize code duplication.
@@ -316,14 +316,8 @@ public class LauncherUtility {
         }
 
         for (int i = 0; i < dbApps.size(); i++) {
-            if (!appsContain_RI(deviceApps, dbApps.get(i))) {
-                dbApps.remove(i);
-                i--;
-            }
-
             String name = dbApps.get(i).getName();
-            if(name.equals("Launcher"))
-            {
+            if (!appsContain_RI(deviceApps, dbApps.get(i)) || name.equals("Launcher")) {
                 dbApps.remove(i);
                 i--;
             }
@@ -551,7 +545,7 @@ public class LauncherUtility {
         appIconView.setImageDrawable(appInfo.getIconImage());
         setAppBackground(appView, appInfo.getBgColor());
 
-        appImageView.setImageBitmap(Utility.createBitmapFromLayoutWithText(context, appView, Constants.APP_ICON_DIMENSION_DEF, Constants.APP_ICON_DIMENSION_DEF));
+        appImageView.setImageBitmap(SettingsUtility.createBitmapFromLayoutWithText(context, appView, Constants.APP_ICON_DIMENSION_DEF, Constants.APP_ICON_DIMENSION_DEF));
         appImageView.setTag(String.valueOf(appInfo.getApp().getId()));
         appImageView.setOnDragListener(new GAppDragger());
 
