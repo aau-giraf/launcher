@@ -736,7 +736,6 @@ public class LauncherUtility {
      * @return A view of the given application. Containing Icon and name.
      */
     public static AppImageView createAppView(final Context context, LinearLayout targetLayout, final ResolveInfo appInfo){
-
         PackageManager packageManager = context.getPackageManager();
         View appView = addContentToView(context, targetLayout, appInfo.loadLabel(packageManager).toString(), appInfo.loadIcon(packageManager));
         AppImageView appImageView = new AppImageView(context);

@@ -68,9 +68,8 @@ public class SettingsActivity extends Activity implements SettingsListFragment.O
                 new CrocSettings(), new ColorDrawable(0xff5fd35f));
         SettingsListItem item6 = new SettingsListItem("Cars", getResources().getDrawable(R.drawable.giraf_icon),
                 new CarsSettings(), new ColorDrawable(0xff9de7e6));
-        AppManagementFragment managementFragment = new AppManagementFragment();
         SettingsListItem item7 = new SettingsListItem("Android", getResources().getDrawable(R.drawable.android_icon),
-                managementFragment, new ColorDrawable(0xffe6e6e6));
+                new AppManagementFragment(), new ColorDrawable(0xffe6e6e6));
 
         appList.add(item1);
         appList.add(item2);
@@ -100,5 +99,10 @@ public class SettingsActivity extends Activity implements SettingsListFragment.O
     @Override
     public void setSelectedAndroidApps(List<ResolveInfo> selectedAndroidApps) {
         this.selectedAndroidApps = selectedAndroidApps;
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
     }
 }
