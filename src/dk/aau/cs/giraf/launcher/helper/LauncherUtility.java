@@ -437,7 +437,7 @@ public class LauncherUtility {
         return helper;
     }
 
-    public static HashMap<String,AppInfo> loadGirafApplicationsIntoView(Context context, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize) {
+    public static HashMap<String,AppInfo> loadGirafApplicationsIntoView(Context context, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize, View.OnClickListener listener) {
         //Get the list of apps to show in the container
         //List<Application> girafAppsList = LauncherUtility.getAvailableGirafAppsButLauncher(mContext);
         HashMap<String, AppInfo> appInfos = null;
@@ -475,7 +475,7 @@ public class LauncherUtility {
                     targetLayout.addView(currentAppRow);
                 }
 
-                ImageView newAppView = createGirafLauncherApp(context, entry.getValue(), targetLayout);
+                ImageView newAppView = createGirafLauncherApp(context, entry.getValue(), targetLayout, listener);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
                 params.weight = 1f;
                 newAppView.setLayoutParams(params);
@@ -614,7 +614,7 @@ public class LauncherUtility {
      * @param targetLayout
      * @return
      */
-    private static ImageView createGirafLauncherApp(Context context, AppInfo appInfo, LinearLayout targetLayout) {
+    private static ImageView createGirafLauncherApp(Context context, AppInfo appInfo, LinearLayout targetLayout, View.OnClickListener listener) {
         ImageView appImageView = new ImageView(context);
         final Profile currentUser = LauncherUtility.findCurrentUser(context);
         View appView = addContentToView(context, targetLayout, appInfo.getName(), appInfo.getIconImage());
@@ -625,28 +625,31 @@ public class LauncherUtility {
         appImageView.setTag(String.valueOf(appInfo.getApp().getId()));
         appImageView.setOnDragListener(new GAppDragger());
 
-        if(currentUser.getRole() == Profile.Roles.GUARDIAN)
-            appImageView.setOnClickListener(new ProfileLauncher());
-        else{
-            appImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AppInfo app = HomeActivity.getAppInfo((String) v.getTag());
-                    Intent intent = new Intent(Intent.ACTION_MAIN);
-                    intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                    intent.setComponent(new ComponentName(app.getPackage(), app.getActivity()));
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                            | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+        if(listener == null)
+        {
+            if(currentUser.getRole() == Profile.Roles.GUARDIAN)
+                appImageView.setOnClickListener(new ProfileLauncher());
+            else{
+                appImageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AppInfo app = HomeActivity.getAppInfo((String) v.getTag());
+                        Intent intent = new Intent(Intent.ACTION_MAIN);
+                        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                        intent.setComponent(new ComponentName(app.getPackage(), app.getActivity()));
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 
-                    intent.putExtra(Constants.CHILD_ID, currentUser.getId());
-                    intent.putExtra(Constants.APP_COLOR, app.getBgColor());
-                    intent.putExtra(Constants.APP_PACKAGE_NAME, app.getPackage());
-                    intent.putExtra(Constants.APP_ACTIVITY_NAME, app.getActivity());
+                        intent.putExtra(Constants.CHILD_ID, currentUser.getId());
+                        intent.putExtra(Constants.APP_COLOR, app.getBgColor());
+                        intent.putExtra(Constants.APP_PACKAGE_NAME, app.getPackage());
+                        intent.putExtra(Constants.APP_ACTIVITY_NAME, app.getActivity());
 
-                    // Verify the intent will resolve to at least one activity
-                    LauncherUtility.secureStartActivity(v.getContext(), intent);
-                }
-            });
+                        // Verify the intent will resolve to at least one activity
+                        LauncherUtility.secureStartActivity(v.getContext(), intent);
+                    }
+                });
+            }
         }
 
         return appImageView;
