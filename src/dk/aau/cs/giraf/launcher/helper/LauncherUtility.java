@@ -476,7 +476,7 @@ public class LauncherUtility {
                     targetLayout.addView(currentAppRow);
                 }
 
-                ImageView newAppView = createGirafLauncherApp(context, entry.getValue(), targetLayout, listener);
+                AppImageView newAppView = createGirafLauncherApp(context, entry.getValue(), targetLayout, listener);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
                 params.weight = 1f;
                 newAppView.setLayoutParams(params);
@@ -488,7 +488,7 @@ public class LauncherUtility {
             int appsInLastRow = ((LinearLayout)targetLayout.getChildAt(targetLayout.getChildCount() - 1)).getChildCount();
 
             while (appsInLastRow < appsPrRow){
-                ImageView newAppView = new ImageView(context);
+                AppImageView newAppView = new AppImageView(context);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
                 params.weight = 1f;
                 newAppView.setLayoutParams(params);
@@ -626,7 +626,7 @@ public class LauncherUtility {
      * @param targetLayout
      * @return
      */
-    private static ImageView createGirafLauncherApp(Context context, AppInfo appInfo, LinearLayout targetLayout, View.OnClickListener listener) {
+    private static AppImageView createGirafLauncherApp(Context context, AppInfo appInfo, LinearLayout targetLayout, View.OnClickListener listener) {
 
         AppImageView appImageView = new AppImageView(context);
         final Profile currentUser = LauncherUtility.findCurrentUser(context);
@@ -663,6 +663,10 @@ public class LauncherUtility {
                     }
                 });
             }
+        }
+        else
+        {
+            appImageView.setOnClickListener(listener);
         }
 
         return appImageView;

@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 import dk.aau.cs.giraf.launcher.activities.ProfileLauncher;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
+import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.controllers.ApplicationController;
@@ -36,15 +38,15 @@ public class GirafFragment extends AppFragment{
     private View.OnClickListener listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            ApplicationController ac = new ApplicationController(context);
+            AppImageView appImageView = (AppImageView) v;
+            appImageView.toggle();
             ProfileApplicationController pac = new ProfileApplicationController(context);
             Profile user = LauncherUtility.findCurrentUser(context);
-            List<Application> userAppList = ac.getApplicationsByProfile(user);
             AppInfo app = appInfos.get(v.getTag().toString());
 
-            if(userAppList.contains(app.getApp()))
+            if(UserHasApplicationInView(v, pac, app.getApp(), user))
             {
-                pac.removeProfileApplicationByProfileAndApplication(app.getApp(),user);
+                pac.removeProfileApplicationByProfileAndApplication(app.getApp(), user);
             }
             else
             {
@@ -103,9 +105,36 @@ public class GirafFragment extends AppFragment{
             }
             else{
                 haveAppsBeenAdded = true;
+                for (int i = 0; i < appView.getChildCount();i++)
+                {
+                    LinearLayout thisLayout = (LinearLayout)appView.getChildAt(i);
+                    for(int j = 0; j < thisLayout.getChildCount(); j++)
+                    {
+                        AppImageView appImageView = (AppImageView) thisLayout.getChildAt(j);
+                        ProfileApplicationController pac = new ProfileApplicationController(context);
+                        Profile user = LauncherUtility.findCurrentUser(context);
+                        AppInfo app = null;
+                        try{app = appInfos.get(appImageView.getTag().toString());}
+                        catch (Exception e)  {}
+                        if(app != null && UserHasApplicationInView(appImageView, pac, app.getApp(), user))
+                        {
+                            appImageView.toggle();
+                        }
+                    }
+                }
             }
         }
         loadedApps = apps;
+    } 
+    private boolean UserHasApplicationInView(View v, ProfileApplicationController pac, Application app, Profile user)
+    {
+        List<ProfileApplication> profileApplications = pac.getListOfProfileApplicationsByProfileId(user);
+        ProfileApplication thisPA = pac.getProfileApplicationByProfileIdAndApplicationId(app,user);
+
+        if(profileApplications.contains(thisPA))
+            return true;
+        else
+            return false;
     }
 
 }
