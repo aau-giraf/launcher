@@ -38,6 +38,7 @@ import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.AuthenticationActivity;
 import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 import dk.aau.cs.giraf.launcher.activities.ProfileLauncher;
+import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.GAppDragger;
 import dk.aau.cs.giraf.oasis.lib.Helper;
@@ -506,6 +507,10 @@ public class LauncherUtility {
     }
 
     public static boolean loadOtherApplicationsIntoView(Context context, List<ResolveInfo> appList, LinearLayout targetLayout, int iconSize) {
+        return loadOtherApplicationsIntoView(context, appList, targetLayout, iconSize, null);
+    }
+
+    public static boolean loadOtherApplicationsIntoView(Context context, List<ResolveInfo> appList, LinearLayout targetLayout, int iconSize, View.OnClickListener onClickListener) {
         boolean success = false;
         try {
             targetLayout.removeAllViews();
@@ -536,7 +541,14 @@ public class LauncherUtility {
                     targetLayout.addView(currentAppRow);
                 }
 
-                ImageView newAppView = createAppView(context, targetLayout, app);
+
+                AppImageView newAppView;
+                if (onClickListener == null)
+                    newAppView = createAppView(context, targetLayout, app);
+                else
+                    newAppView = createAppView(context, targetLayout, app, onClickListener);
+
+                newAppView.setTag(app);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
                 params.weight = 1f;
                 newAppView.setLayoutParams(params);
@@ -615,7 +627,8 @@ public class LauncherUtility {
      * @return
      */
     private static ImageView createGirafLauncherApp(Context context, AppInfo appInfo, LinearLayout targetLayout, View.OnClickListener listener) {
-        ImageView appImageView = new ImageView(context);
+
+        AppImageView appImageView = new AppImageView(context);
         final Profile currentUser = LauncherUtility.findCurrentUser(context);
         View appView = addContentToView(context, targetLayout, appInfo.getName(), appInfo.getIconImage());
 
@@ -726,11 +739,10 @@ public class LauncherUtility {
      * @param appInfo ResolveInfo of the application which needs to be converted into a view.
      * @return A view of the given application. Containing Icon and name.
      */
-    public static ImageView createAppView(final Context context, LinearLayout targetLayout, final ResolveInfo appInfo){
-
+    public static AppImageView createAppView(final Context context, LinearLayout targetLayout, final ResolveInfo appInfo){
         PackageManager packageManager = context.getPackageManager();
         View appView = addContentToView(context, targetLayout, appInfo.loadLabel(packageManager).toString(), appInfo.loadIcon(packageManager));
-        ImageView appImageView = new ImageView(context);
+        AppImageView appImageView = new AppImageView(context);
         appImageView.setImageBitmap(SettingsUtility.createBitmapFromLayoutWithText(context, appView, Constants.APP_ICON_DIMENSION_DEF, Constants.APP_ICON_DIMENSION_DEF));
 
         appImageView.setOnClickListener(new View.OnClickListener() { // OnClickListner to open the applicaiton
@@ -757,8 +769,8 @@ public class LauncherUtility {
      * @param onClickListener OnClickListener which is to be set on the view.
      * @return A view of the given application. Containing Icon and name.
      */
-    public static ImageView createAppView(Context context, LinearLayout targetLayout, ResolveInfo appInfo, View.OnClickListener onClickListener){
-        ImageView appView = createAppView(context, targetLayout, appInfo);
+    public static AppImageView createAppView(Context context, LinearLayout targetLayout, ResolveInfo appInfo, View.OnClickListener onClickListener){
+        AppImageView appView = createAppView(context, targetLayout, appInfo);
         appView.setOnClickListener(onClickListener);
 
         return appView;

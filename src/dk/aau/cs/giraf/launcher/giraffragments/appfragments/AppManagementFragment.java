@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,14 +15,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.List;
+
 import dk.aau.cs.giraf.launcher.R;
 
 /**
  * Created by Vagner on 01-05-14.
  */
-public class AppManagementFragment extends Fragment{
+public class AppManagementFragment extends Fragment implements AndroidFragment.InterfaceParseAndroidApps{
+    public AndroidFragment.InterfaceParseAndroidApps interfaceParseAndroidApps;
 
-    Activity activity;
+    private Activity activity;
     private FragmentManager mFragManager;
     private Fragment girafFragment;
     private Fragment androidFragment;
@@ -30,6 +34,7 @@ public class AppManagementFragment extends Fragment{
     private TextView androidButton;
     private TextView googlePlayButton;
     private Fragment fragmentContainer;
+    private List<ResolveInfo> selectedAndroidApps;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -39,7 +44,6 @@ public class AppManagementFragment extends Fragment{
         girafFragment = new GirafFragment();
         androidFragment = new AndroidFragment();
         googlePlayFragment = new GooglePlayFragment();
-
 
         activity = this.getActivity();
 
@@ -85,7 +89,18 @@ public class AppManagementFragment extends Fragment{
         });
 
         return view;
+    }
 
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        try {
+            interfaceParseAndroidApps = (AndroidFragment.InterfaceParseAndroidApps) activity;
+        } catch (ClassCastException e){
+            throw new ClassCastException(activity.toString() + " must implement GetSelectedAndroidApps");
+        }
     }
 
     @Override
@@ -120,5 +135,10 @@ public class AppManagementFragment extends Fragment{
 
         clickedView.setTypeface(Typeface.DEFAULT_BOLD);
         clickedView.setBackgroundResource(android.R.color.holo_orange_dark);
+    }
+
+    @Override
+    public void setSelectedAndroidApps(List<ResolveInfo> selectedAndroidApps) {
+        interfaceParseAndroidApps.setSelectedAndroidApps(selectedAndroidApps);
     }
 }
