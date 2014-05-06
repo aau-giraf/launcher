@@ -4,14 +4,17 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.pm.ResolveInfo;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.giraffragments.appfragments.AndroidFragment;
 import dk.aau.cs.giraf.launcher.giraffragments.appfragments.AppManagementFragment;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.CarsSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.CatSettings;
@@ -20,11 +23,12 @@ import dk.aau.cs.giraf.settingslib.settingslib.Fragments.LauncherSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.ParrotSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.WombatSettings;
 
-public class SettingsActivity extends Activity implements SettingsListFragment.OnItemClickedListener {
+public class SettingsActivity extends Activity implements SettingsListFragment.OnItemClickedListener, AndroidFragment.InterfaceParseAndroidApps {
 
     private FragmentManager mFragManager;
     private SettingsListAdapter mAdapter;
     private ListView mSettingsListView;
+    private List<ResolveInfo> selectedAndroidApps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,5 +95,10 @@ public class SettingsActivity extends Activity implements SettingsListFragment.O
         FragmentTransaction ft = mFragManager.beginTransaction();
         ft.replace(R.id.settingsContainer, fragment);
         ft.commit();
+    }
+
+    @Override
+    public void setSelectedAndroidApps(List<ResolveInfo> selectedAndroidApps) {
+        this.selectedAndroidApps = selectedAndroidApps;
     }
 }
