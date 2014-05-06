@@ -8,15 +8,17 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.giraffragments.appfragments.AppManagementFragment;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.CarsSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.CatSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.CrocSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.LauncherSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.ParrotSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.WombatSettings;
-
-import java.util.ArrayList;
 
 public class SettingsActivity extends Activity implements SettingsListFragment.OnItemClickedListener {
 
@@ -62,8 +64,9 @@ public class SettingsActivity extends Activity implements SettingsListFragment.O
                 new CrocSettings(), new ColorDrawable(0xff5fd35f));
         SettingsListItem item6 = new SettingsListItem("Cars", getResources().getDrawable(R.drawable.giraf_icon),
                 new CarsSettings(), new ColorDrawable(0xff9de7e6));
+        AppManagementFragment managementFragment = new AppManagementFragment();
         SettingsListItem item7 = new SettingsListItem("Android", getResources().getDrawable(R.drawable.android_icon),
-                new AndroidSettingsFragment(), new ColorDrawable(0xffe6e6e6));
+                managementFragment, new ColorDrawable(0xffe6e6e6));
 
         appList.add(item1);
         appList.add(item2);

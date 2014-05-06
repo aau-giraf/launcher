@@ -23,7 +23,7 @@
        android:targetPackage="dk.aau.cs.giraf.launcher" android:label="Tests for My App" /-->
 
     <application
-        android:icon="@drawable/app_icon"
+        android:icon="@drawable/giraf_icon"
         android:label="@string/application_name">
         <uses-library android:name="android.test.runner" />
         <activity
@@ -83,7 +83,6 @@
                 android:label="@string/giraf_settings_name"
                 android:theme="@android:style/Theme.Holo.NoActionBar"
                 android:screenOrientation="landscape">
-                android:theme="@android:style/Theme.Light.NoTitleBar"> // For newer Holo theme, use: @android:style/Theme.Holo.NoActionBar
             <intent-filter>
                 <!--
                 <action android:name="android.intent.action.MAIN"/>
