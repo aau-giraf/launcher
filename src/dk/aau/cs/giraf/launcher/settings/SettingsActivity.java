@@ -36,13 +36,6 @@ public class SettingsActivity extends Activity
         Log.d("Giraf settings debugging", "SettingsActivity onCreate");
         setContentView(R.layout.settings);
 
-        if (savedInstanceState == null) {
-            Log.d("Giraf settings debugging", "savedInstanceState == null");
-        }
-        else {
-            Log.d("Giraf settings debugging", "savedInstanceState != null");
-        }
-
         mSettingsListView = (ListView)findViewById(R.id.settingsListView);
 
         // Adds data to SettingsListFragment
@@ -58,12 +51,6 @@ public class SettingsActivity extends Activity
 
         mFragManager.beginTransaction().add(R.id.settingsContainer, mActiveFragment)
                 .commit();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString("key", "value");
     }
 
     private void populateListFragment(){
