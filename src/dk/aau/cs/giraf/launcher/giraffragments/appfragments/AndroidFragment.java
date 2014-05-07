@@ -11,11 +11,13 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.helper.AppComparator;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
@@ -25,6 +27,7 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
  */
 public class AndroidFragment extends AppFragment {
 
+    private SharedPreferences preferences;
     private Set<String> selectedApps;
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
@@ -55,6 +58,8 @@ public class AndroidFragment extends AppFragment {
         context = getActivity();
         apps = LauncherUtility.getApplicationsFromDevice(context, "dk.aau.cs.giraf", false);
         appView = (LinearLayout) view.findViewById(R.id.appContainer);
+        preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        selectedApps = preferences.getStringSet(Constants.SELECTED_ANDROID_APPS, new HashSet<String>());
 
         loadApplications();
 
@@ -87,8 +92,7 @@ public class AndroidFragment extends AppFragment {
         if (selectedApps == null)
             selectedApps = new HashSet<String>();
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        preferences.edit().putStringSet("selected_applicaitons", selectedApps).commit();
+        preferences.edit().putStringSet(Constants.SELECTED_ANDROID_APPS, selectedApps).commit();
     }
 
     @Override
@@ -102,6 +106,8 @@ public class AndroidFragment extends AppFragment {
     {
         if (loadedApps == null || loadedApps.size() != apps.size()){
             //Remember that the apps have been added, so they are not added again by the listener
+            List<ResolveInfo> sortedApps = (List<ResolveInfo>) apps;
+            Collections.sort(sortedApps, new AppComparator(context));
             haveAppsBeenAdded = LauncherUtility.loadOtherApplicationsIntoView(context, (List<ResolveInfo>)apps, appView, 110, onClickListener);
         }
         loadedApps = apps;

@@ -168,7 +168,7 @@ public class HomeActivity extends Activity {
     private void loadApplications(){
         List<Application> girafAppsList = LauncherUtility.getVisibleGirafApps(mContext, mCurrentUser); // For home activity
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-        Set<String> androidAppsPackagenames = prefs.getStringSet("selected_applicaitons", new HashSet<String>());
+        Set<String> androidAppsPackagenames = prefs.getStringSet(Constants.SELECTED_ANDROID_APPS, new HashSet<String>());
         List<Application> androidAppsList = LauncherUtility.convertPackageNamesToApplications(mContext, androidAppsPackagenames);
         girafAppsList.addAll(androidAppsList);
         if (mCurrentLoadedApps == null || mCurrentLoadedApps.size() != girafAppsList.size()){
