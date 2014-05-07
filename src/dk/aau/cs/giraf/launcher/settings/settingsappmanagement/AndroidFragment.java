@@ -1,4 +1,4 @@
-package dk.aau.cs.giraf.launcher.giraffragments.appfragments;
+package dk.aau.cs.giraf.launcher.settings.settingsappmanagement;
 
 import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
@@ -26,7 +26,11 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 /**
  * Created by Vagner on 01-05-14.
  */
-public class AndroidFragment extends AppFragment {
+public class AndroidFragment extends AppContainerFragment {
+    public InterfaceParseAndroidApps interfaceParseAndroidApps;
+    public interface InterfaceParseAndroidApps {
+        public void setSelectedAndroidApps(List<ResolveInfo> selectedAndroidApps);
+    }
 
     private SharedPreferences preferences;
     private Set<String> selectedApps;

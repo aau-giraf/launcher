@@ -1,4 +1,4 @@
-package dk.aau.cs.giraf.launcher.giraffragments.appfragments;
+package dk.aau.cs.giraf.launcher.settings.settingsappmanagement;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -15,7 +15,7 @@ import dk.aau.cs.giraf.launcher.R;
 /**
  * Created by Vagner on 01-05-14.
  */
-public class AppFragment extends Fragment{
+public class AppContainerFragment extends Fragment{
 
     protected List<?> loadedApps;
     // This needs to be initialized in the subclasses
