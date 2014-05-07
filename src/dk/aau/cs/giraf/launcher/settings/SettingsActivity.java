@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.pm.ResolveInfo;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,10 +12,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AndroidFragment;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementFragment;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.CarsSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.CatSettings;
@@ -26,14 +23,12 @@ import dk.aau.cs.giraf.settingslib.settingslib.Fragments.ParrotSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.WombatSettings;
 
 public class SettingsActivity extends Activity
-        implements SettingsListFragment.SettingsListFragmentListener,
-                    AndroidFragment.InterfaceParseAndroidApps {
+        implements SettingsListFragment.SettingsListFragmentListener {
 
     private FragmentManager mFragManager;
     private SettingsListAdapter mAdapter;
     private ListView mSettingsListView;
     private Fragment mActiveFragment;
-    private List<ResolveInfo> selectedAndroidApps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,15 +123,5 @@ public class SettingsActivity extends Activity
     @Override
     public void onUserChanged(AdapterView<?> parent, View view, int position, long id) {
         return;
-    }
-
-    @Override
-    public void setSelectedAndroidApps(List<ResolveInfo> selectedAndroidApps) {
-        this.selectedAndroidApps = selectedAndroidApps;
-    }
-
-    @Override
-    public void finish() {
-        super.finish();
     }
 }

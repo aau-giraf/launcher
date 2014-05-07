@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,15 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.List;
-
 import dk.aau.cs.giraf.launcher.R;
 
 /**
  * Created by Vagner on 01-05-14.
  */
-public class AppManagementFragment extends Fragment implements AndroidFragment.InterfaceParseAndroidApps{
-    public AndroidFragment.InterfaceParseAndroidApps interfaceParseAndroidApps;
+public class AppManagementFragment extends Fragment {
 
     private Activity mActivity;
     private FragmentManager mFragManager;
@@ -31,7 +27,6 @@ public class AppManagementFragment extends Fragment implements AndroidFragment.I
     private Fragment mAndroidFragment;
     private Fragment mActiveFragment;
     private Fragment mFragmentContainer;
-    private List<ResolveInfo> mSelectedAndroidApps;
 
     private TextView mGirafButton;
     private TextView mAndroidButton;
@@ -101,17 +96,6 @@ public class AppManagementFragment extends Fragment implements AndroidFragment.I
         });
     }
 
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            interfaceParseAndroidApps = (AndroidFragment.InterfaceParseAndroidApps) activity;
-        } catch (ClassCastException e){
-            throw new ClassCastException(activity.toString() + " must implement GetSelectedAndroidApps");
-        }
-    }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -147,10 +131,5 @@ public class AppManagementFragment extends Fragment implements AndroidFragment.I
 
         clickedView.setTypeface(Typeface.DEFAULT_BOLD);
         clickedView.setBackgroundResource(android.R.color.holo_orange_dark);
-    }
-
-    @Override
-    public void setSelectedAndroidApps(List<ResolveInfo> mSelectedAndroidApps) {
-        interfaceParseAndroidApps.setSelectedAndroidApps(mSelectedAndroidApps);
     }
 }
