@@ -326,6 +326,7 @@ public class LauncherUtility {
             return new ArrayList<Application>();
         }
 
+        //TODO: Launcher name should not be hardcoded!
         for (int i = 0; i < dbApps.size(); i++) {
             String name = dbApps.get(i).getName();
             if (!appsContain_RI(deviceApps, dbApps.get(i)) || name.equals("Launcher")) {
