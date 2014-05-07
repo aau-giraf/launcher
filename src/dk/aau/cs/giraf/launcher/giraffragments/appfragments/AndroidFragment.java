@@ -1,8 +1,9 @@
 package dk.aau.cs.giraf.launcher.giraffragments.appfragments;
 
-import android.app.Activity;
+import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +11,9 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
@@ -22,12 +24,8 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
  * Created by Vagner on 01-05-14.
  */
 public class AndroidFragment extends AppFragment {
-    public InterfaceParseAndroidApps interfaceParseAndroidApps;
-    public interface InterfaceParseAndroidApps {
-        public void setSelectedAndroidApps(List<ResolveInfo> selectedAndroidApps);
-    }
 
-    private List<ResolveInfo> selectedApps;
+    private Set<String> selectedApps;
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -35,16 +33,17 @@ public class AndroidFragment extends AppFragment {
             appImageView.toggle();
 
             if (selectedApps == null)
-                selectedApps = new ArrayList<ResolveInfo>();
+                selectedApps = new HashSet<String>();
 
             ResolveInfo app = (ResolveInfo) v.getTag();
+            String packageName = app.activityInfo.packageName;
 
-            if (selectedApps.contains(app)){
-                selectedApps.remove(app);
+            if (selectedApps.contains(packageName)){
+                selectedApps.remove(packageName);
                 Log.d(Constants.ERROR_TAG, "Removed '" + app.activityInfo.name + "' to list: " + selectedApps.size());
             }
             else{
-                selectedApps.add(app);
+                selectedApps.add(packageName);
                 Log.d(Constants.ERROR_TAG, "Added '" + app.activityInfo.name + "' to list: " + selectedApps.size());
             }
         }
@@ -60,17 +59,6 @@ public class AndroidFragment extends AppFragment {
         loadApplications();
 
         return view;
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        try {
-            interfaceParseAndroidApps = (InterfaceParseAndroidApps) activity;
-        } catch (ClassCastException e){
-            throw new ClassCastException(activity.toString() + " must implement GetSelectedAndroidApps");
-        }
     }
 
     @Override
@@ -97,8 +85,10 @@ public class AndroidFragment extends AppFragment {
     public void onPause() {
         super.onPause();
         if (selectedApps == null)
-            selectedApps = new ArrayList<ResolveInfo>();
-        interfaceParseAndroidApps.setSelectedAndroidApps(selectedApps);
+            selectedApps = new HashSet<String>();
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        preferences.edit().putStringSet("selected_applicaitons", selectedApps).commit();
     }
 
     @Override

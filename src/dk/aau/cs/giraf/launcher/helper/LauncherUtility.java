@@ -33,6 +33,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.AuthenticationActivity;
@@ -438,13 +439,35 @@ public class LauncherUtility {
         return helper;
     }
 
+    public static List<Application> convertPackageNamesToApplications(Context context, Set<String> packageNames){
+        List<ResolveInfo> allApps = getDeviceApps(context);
+        List<Application> selectedApps = new ArrayList<Application>();
+        PackageManager packageManager = context.getPackageManager();
+
+        outerloop:
+        for(ResolveInfo app : allApps){
+            for(String packageName : packageNames){
+                if (app.activityInfo.packageName.equals(packageName)){
+
+                    Application application = new Application();
+                    application.setPackage(packageName);
+                    application.setName(app.activityInfo.loadLabel(packageManager).toString());
+                    application.setId(app.hashCode());
+                    selectedApps.add(application);
+
+                    continue outerloop;
+                }
+            }
+        }
+        return selectedApps;
+    }
+
     public static HashMap<String,AppInfo> loadGirafApplicationsIntoView(Context context, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize) {
         //Get the list of apps to show in the container
         //List<Application> girafAppsList = LauncherUtility.getAvailableGirafAppsButLauncher(mContext);
         HashMap<String, AppInfo> appInfos = null;
         if (girafAppsList != null && !girafAppsList.isEmpty()) {
             targetLayout.removeAllViews();
-            appInfos = new HashMap<String,AppInfo>();
 
             //Fill AppInfo hash map with AppInfo objects for each app
             Profile user = LauncherUtility.findCurrentUser(context);
@@ -604,7 +627,6 @@ public class LauncherUtility {
         }
         return appInfos;
     }
-
 
     private static View addContentToView(Context context, LinearLayout targetLayout, String appName, Drawable appIcon){
         final LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
