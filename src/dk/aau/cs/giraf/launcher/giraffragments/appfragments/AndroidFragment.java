@@ -3,6 +3,7 @@ package dk.aau.cs.giraf.launcher.giraffragments.appfragments;
 import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -104,12 +105,22 @@ public class AndroidFragment extends AppFragment {
     @Override
     public void loadApplications()
     {
-        if (loadedApps == null || loadedApps.size() != apps.size()){
-            //Remember that the apps have been added, so they are not added again by the listener
-            List<ResolveInfo> sortedApps = (List<ResolveInfo>) apps;
-            Collections.sort(sortedApps, new AppComparator(context));
-            haveAppsBeenAdded = LauncherUtility.loadOtherApplicationsIntoView(context, (List<ResolveInfo>)apps, appView, 110, onClickListener);
-        }
-        loadedApps = apps;
+        Handler loadApplicationsHandler = new Handler();
+        loadApplicationsHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (loadedApps == null || loadedApps.size() != apps.size()){
+                    //Remember that the apps have been added, so they are not added again by the listener
+                    List<ResolveInfo> sortedApps = (List<ResolveInfo>) apps;
+                    Collections.sort(sortedApps, new AppComparator(context));
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            haveAppsBeenAdded = LauncherUtility.loadOtherApplicationsIntoView(context, (List<ResolveInfo>) apps, appView, 110, onClickListener);                     }
+                    });
+                    loadedApps = apps;
+                }
+            }
+        });
     }
 }
