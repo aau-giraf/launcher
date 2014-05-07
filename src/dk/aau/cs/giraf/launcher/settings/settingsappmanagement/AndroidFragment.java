@@ -1,4 +1,4 @@
-package dk.aau.cs.giraf.launcher.giraffragments.appfragments;
+package dk.aau.cs.giraf.launcher.settings.settingsappmanagement;
 
 import android.app.Activity;
 import android.content.pm.ResolveInfo;
@@ -21,10 +21,10 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 /**
  * Created by Vagner on 01-05-14.
  */
-public class AndroidFragment extends AppFragment {
+public class AndroidFragment extends AppContainerFragment {
     public InterfaceParseAndroidApps interfaceParseAndroidApps;
     public interface InterfaceParseAndroidApps {
-        public void setSelectedAndroidApps(List<ResolveInfo> selectedAndroidApps);
+        public void setmSelectedAndroidApps(List<ResolveInfo> selectedAndroidApps);
     }
 
     private List<ResolveInfo> selectedApps;
@@ -98,7 +98,7 @@ public class AndroidFragment extends AppFragment {
         super.onPause();
         if (selectedApps == null)
             selectedApps = new ArrayList<ResolveInfo>();
-        interfaceParseAndroidApps.setSelectedAndroidApps(selectedApps);
+        interfaceParseAndroidApps.setmSelectedAndroidApps(selectedApps);
     }
 
     @Override

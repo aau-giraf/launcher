@@ -7,15 +7,17 @@ import android.app.FragmentTransaction;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.launcher.giraffragments.appfragments.AndroidFragment;
-import dk.aau.cs.giraf.launcher.giraffragments.appfragments.AppManagementFragment;
+import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AndroidFragment;
+import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementFragment;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.CarsSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.CatSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.CrocSettings;
@@ -23,17 +25,29 @@ import dk.aau.cs.giraf.settingslib.settingslib.Fragments.LauncherSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.ParrotSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.WombatSettings;
 
-public class SettingsActivity extends Activity implements SettingsListFragment.OnItemClickedListener, AndroidFragment.InterfaceParseAndroidApps {
+public class SettingsActivity extends Activity
+        implements SettingsListFragment.SettingsListFragmentListener,
+                    AndroidFragment.InterfaceParseAndroidApps {
 
+    private Bundle mSavedInstance;
     private FragmentManager mFragManager;
     private SettingsListAdapter mAdapter;
     private ListView mSettingsListView;
+    private Fragment mActiveFragment;
     private List<ResolveInfo> selectedAndroidApps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("Giraf settings debugging", "SettingsActivity onCreate");
         setContentView(R.layout.settings);
+
+        if (savedInstanceState == null) {
+            Log.d("Giraf settings debugging", "savedInstanceState == null");
+        }
+        else {
+            Log.d("Giraf settings debugging", "savedInstanceState != null");
+        }
 
         mSettingsListView = (ListView)findViewById(R.id.settingsListView);
 
@@ -41,16 +55,21 @@ public class SettingsActivity extends Activity implements SettingsListFragment.O
         populateListFragment();
 
         mFragManager = this.getFragmentManager();
-        Fragment settingsContainer = mFragManager.findFragmentById(R.id.settingsContainer);
+        Fragment settingsFragment = mFragManager.findFragmentById(R.id.settingsContainer);
 
-        if (settingsContainer == null) {
-            {
-                SettingsListItem item = (SettingsListItem) mAdapter.getItem(0);
-                settingsContainer = item.mAppFragment;
-            }
-            mFragManager.beginTransaction().add(R.id.settingsContainer, settingsContainer)
-                    .commit();
+        if (settingsFragment == null) {
+            SettingsListItem item = (SettingsListItem) mAdapter.getItem(0);
+            mActiveFragment = item.mAppFragment;
         }
+
+        mFragManager.beginTransaction().add(R.id.settingsContainer, mActiveFragment)
+                .commit();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("key", "value");
     }
 
     private void populateListFragment(){
@@ -85,19 +104,35 @@ public class SettingsActivity extends Activity implements SettingsListFragment.O
     }
 
     @Override
-    public void onItemClicked(int position) {
-        Toast.makeText(this, "Message delivered from Fragment to activity, position: " + position, Toast.LENGTH_SHORT).show();
+    public void setActiveFragment(Fragment fragment) {
+        if (mActiveFragment != fragment) {
+            FragmentTransaction ft = mFragManager.beginTransaction();
+            ft.replace(R.id.settingsContainer, fragment);
+            ft.commit();
+
+            mActiveFragment = fragment;
+        }
     }
 
     @Override
-    public void onFragmentChanged(Fragment fragment) {
-        FragmentTransaction ft = mFragManager.beginTransaction();
-        ft.replace(R.id.settingsContainer, fragment);
-        ft.commit();
+    protected void onResume() {
+        super.onResume();
+        Log.d("Giraf settings debugging", "SettingsActivity onResume");
     }
 
     @Override
-    public void setSelectedAndroidApps(List<ResolveInfo> selectedAndroidApps) {
+    protected void onPause() {
+        super.onPause();
+        Log.d("Giraf settings debugging", "SettingsActivity onPause");
+    }
+
+    @Override
+    public void onUserChanged(AdapterView<?> parent, View view, int position, long id) {
+        return;
+    }
+
+    @Override
+    public void setmSelectedAndroidApps(List<ResolveInfo> selectedAndroidApps) {
         this.selectedAndroidApps = selectedAndroidApps;
     }
 

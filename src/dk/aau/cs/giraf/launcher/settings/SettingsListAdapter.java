@@ -42,7 +42,6 @@ public class SettingsListAdapter extends BaseAdapter {
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.d("Giraf Settings debugging", "SettingsListAdapter getView() position: " + position);
         View vi = convertView;
 
         if(convertView == null)

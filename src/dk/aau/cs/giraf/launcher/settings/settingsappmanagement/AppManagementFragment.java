@@ -1,4 +1,4 @@
-package dk.aau.cs.giraf.launcher.giraffragments.appfragments;
+package dk.aau.cs.giraf.launcher.settings.settingsappmanagement;
 
 import android.app.Activity;
 import android.app.Fragment;

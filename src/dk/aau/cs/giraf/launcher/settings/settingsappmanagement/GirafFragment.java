@@ -1,29 +1,19 @@
-package dk.aau.cs.giraf.launcher.giraffragments.appfragments;
+package dk.aau.cs.giraf.launcher.settings.settingsappmanagement;
 
-import android.content.ComponentName;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import java.util.HashMap;
 import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.launcher.activities.HomeActivity;
-import dk.aau.cs.giraf.launcher.activities.ProfileLauncher;
-import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
-import dk.aau.cs.giraf.oasis.lib.Helper;
-import dk.aau.cs.giraf.oasis.lib.controllers.ApplicationController;
 import dk.aau.cs.giraf.oasis.lib.controllers.ProfileApplicationController;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -32,7 +22,7 @@ import dk.aau.cs.giraf.oasis.lib.models.ProfileApplication;
 /**
  * Created by Vagner on 01-05-14.
  */
-public class GirafFragment extends AppFragment{
+public class GirafFragment extends AppContainerFragment {
 
     private HashMap<String,AppInfo> appInfos;
     private View.OnClickListener listener = new View.OnClickListener() {
