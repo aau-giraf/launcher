@@ -1,8 +1,9 @@
 package dk.aau.cs.giraf.launcher.settings.settingsappmanagement;
 
-import android.app.Activity;
+import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,10 +11,13 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.helper.AppComparator;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
@@ -24,10 +28,11 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 public class AndroidFragment extends AppContainerFragment {
     public InterfaceParseAndroidApps interfaceParseAndroidApps;
     public interface InterfaceParseAndroidApps {
-        public void setmSelectedAndroidApps(List<ResolveInfo> selectedAndroidApps);
+        public void setSelectedAndroidApps(List<ResolveInfo> selectedAndroidApps);
     }
 
-    private List<ResolveInfo> selectedApps;
+    private SharedPreferences preferences;
+    private Set<String> selectedApps;
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -35,16 +40,17 @@ public class AndroidFragment extends AppContainerFragment {
             appImageView.toggle();
 
             if (selectedApps == null)
-                selectedApps = new ArrayList<ResolveInfo>();
+                selectedApps = new HashSet<String>();
 
             ResolveInfo app = (ResolveInfo) v.getTag();
+            String packageName = app.activityInfo.packageName;
 
-            if (selectedApps.contains(app)){
-                selectedApps.remove(app);
+            if (selectedApps.contains(packageName)){
+                selectedApps.remove(packageName);
                 Log.d(Constants.ERROR_TAG, "Removed '" + app.activityInfo.name + "' to list: " + selectedApps.size());
             }
             else{
-                selectedApps.add(app);
+                selectedApps.add(packageName);
                 Log.d(Constants.ERROR_TAG, "Added '" + app.activityInfo.name + "' to list: " + selectedApps.size());
             }
         }
@@ -56,21 +62,12 @@ public class AndroidFragment extends AppContainerFragment {
         context = getActivity();
         apps = LauncherUtility.getApplicationsFromDevice(context, "dk.aau.cs.giraf", false);
         appView = (LinearLayout) view.findViewById(R.id.appContainer);
+        preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        selectedApps = preferences.getStringSet(Constants.SELECTED_ANDROID_APPS, new HashSet<String>());
 
         loadApplications();
 
         return view;
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        try {
-            interfaceParseAndroidApps = (InterfaceParseAndroidApps) activity;
-        } catch (ClassCastException e){
-            throw new ClassCastException(activity.toString() + " must implement GetSelectedAndroidApps");
-        }
     }
 
     @Override
@@ -97,8 +94,9 @@ public class AndroidFragment extends AppContainerFragment {
     public void onPause() {
         super.onPause();
         if (selectedApps == null)
-            selectedApps = new ArrayList<ResolveInfo>();
-        interfaceParseAndroidApps.setmSelectedAndroidApps(selectedApps);
+            selectedApps = new HashSet<String>();
+
+        preferences.edit().putStringSet(Constants.SELECTED_ANDROID_APPS, selectedApps).commit();
     }
 
     @Override
@@ -112,6 +110,8 @@ public class AndroidFragment extends AppContainerFragment {
     {
         if (loadedApps == null || loadedApps.size() != apps.size()){
             //Remember that the apps have been added, so they are not added again by the listener
+            List<ResolveInfo> sortedApps = (List<ResolveInfo>) apps;
+            Collections.sort(sortedApps, new AppComparator(context));
             haveAppsBeenAdded = LauncherUtility.loadOtherApplicationsIntoView(context, (List<ResolveInfo>)apps, appView, 110, onClickListener);
         }
         loadedApps = apps;

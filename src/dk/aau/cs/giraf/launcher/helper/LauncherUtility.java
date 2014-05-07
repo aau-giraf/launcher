@@ -13,6 +13,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -29,10 +30,12 @@ import com.google.analytics.tracking.android.MapBuilder;
 import com.google.analytics.tracking.android.StandardExceptionParser;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.AuthenticationActivity;
@@ -438,17 +441,41 @@ public class LauncherUtility {
         return helper;
     }
 
+    public static List<Application> convertPackageNamesToApplications(Context context, Set<String> packageNames){
+        List<ResolveInfo> allApps = getDeviceApps(context);
+        List<Application> selectedApps = new ArrayList<Application>();
+        PackageManager packageManager = context.getPackageManager();
+
+        outerloop:
+        for(ResolveInfo app : allApps){
+            for(String packageName : packageNames){
+                if (app.activityInfo.packageName.equals(packageName)){
+
+                    Application application = new Application();
+                    application.setPackage(packageName);
+                    application.setName(app.activityInfo.loadLabel(packageManager).toString());
+                    application.setId(app.hashCode());
+                    selectedApps.add(application);
+
+                    continue outerloop;
+                }
+            }
+        }
+        return selectedApps;
+    }
+
     public static HashMap<String,AppInfo> loadGirafApplicationsIntoView(Context context, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize, View.OnClickListener listener) {
         //Get the list of apps to show in the container
         //List<Application> girafAppsList = LauncherUtility.getAvailableGirafAppsButLauncher(mContext);
-        HashMap<String, AppInfo> appInfos = null;
+        HashMap<String, AppInfo> appInfoHash = new HashMap<String, AppInfo>();
         if (girafAppsList != null && !girafAppsList.isEmpty()) {
             targetLayout.removeAllViews();
-            appInfos = new HashMap<String,AppInfo>();
 
             //Fill AppInfo hash map with AppInfo objects for each app
             Profile user = LauncherUtility.findCurrentUser(context);
-            appInfos = loadAppInfos(context, girafAppsList, user);
+            appInfoHash = loadAppInfos(context, girafAppsList, user);
+            List<AppInfo> appInfos = new ArrayList<AppInfo>(appInfoHash.values());
+            Collections.sort(appInfos, new AppComparator(context));
 
             //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
             int containerWidth = ((ScrollView) targetLayout.getParent()).getWidth();
@@ -467,7 +494,7 @@ public class LauncherUtility {
             targetLayout.addView(currentAppRow);
 
             //Insert apps into the container, and add new rows as needed
-            for (Map.Entry<String,AppInfo> entry : appInfos.entrySet()) {
+            for (AppInfo appInfo : appInfos) {
                 if (currentAppRow.getChildCount() == appsPrRow) {
                     currentAppRow = new LinearLayout(context);
                     currentAppRow.setWeightSum(appsPrRow);
@@ -476,7 +503,7 @@ public class LauncherUtility {
                     targetLayout.addView(currentAppRow);
                 }
 
-                AppImageView newAppView = createGirafLauncherApp(context, entry.getValue(), targetLayout, listener);
+                AppImageView newAppView = createGirafLauncherApp(context, appInfo, targetLayout, listener);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
                 params.weight = 1f;
                 newAppView.setLayoutParams(params);
@@ -503,7 +530,7 @@ public class LauncherUtility {
             Log.e(Constants.ERROR_TAG, "App list is null");
         }
 
-        return appInfos;
+        return appInfoHash;
     }
 
     public static boolean loadOtherApplicationsIntoView(Context context, List<ResolveInfo> appList, LinearLayout targetLayout, int iconSize) {
@@ -512,6 +539,7 @@ public class LauncherUtility {
 
     public static boolean loadOtherApplicationsIntoView(Context context, List<ResolveInfo> appList, LinearLayout targetLayout, int iconSize, View.OnClickListener onClickListener) {
         boolean success = false;
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         try {
             targetLayout.removeAllViews();
 
@@ -541,12 +569,17 @@ public class LauncherUtility {
                     targetLayout.addView(currentAppRow);
                 }
 
-
                 AppImageView newAppView;
                 if (onClickListener == null)
                     newAppView = createAppView(context, targetLayout, app);
                 else
                     newAppView = createAppView(context, targetLayout, app, onClickListener);
+
+                // Mark colors of the selected apps when settings is shown.
+                Set<String> selectedApps = preferences.getStringSet(Constants.SELECTED_ANDROID_APPS, new HashSet<String>());
+                if (selectedApps.contains(app.activityInfo.packageName)){
+                    newAppView.setChecked(true);
+                }
 
                 newAppView.setTag(app);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
@@ -604,7 +637,6 @@ public class LauncherUtility {
         }
         return appInfos;
     }
-
 
     private static View addContentToView(Context context, LinearLayout targetLayout, String appName, Drawable appIcon){
         final LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);

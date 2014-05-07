@@ -20,8 +20,10 @@ import android.widget.TextView;
 import com.google.analytics.tracking.android.EasyTracker;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -165,6 +167,10 @@ public class HomeActivity extends Activity {
      */
     private void loadApplications(){
         List<Application> girafAppsList = LauncherUtility.getVisibleGirafApps(mContext, mCurrentUser); // For home activity
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        Set<String> androidAppsPackagenames = prefs.getStringSet(Constants.SELECTED_ANDROID_APPS, new HashSet<String>());
+        List<Application> androidAppsList = LauncherUtility.convertPackageNamesToApplications(mContext, androidAppsPackagenames);
+        girafAppsList.addAll(androidAppsList);
         if (mCurrentLoadedApps == null || mCurrentLoadedApps.size() != girafAppsList.size()){
             getIconSize(); // Update mIconSize
             mAppInfos = LauncherUtility.loadGirafApplicationsIntoView(mContext, girafAppsList, mAppsContainer, mIconSize, null);

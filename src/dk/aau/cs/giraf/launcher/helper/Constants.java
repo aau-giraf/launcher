@@ -18,6 +18,7 @@ public final class Constants {
 
     // Keys for settings
 	public static final String COLOR_BG = "backgroundColor";
+    public static final String SELECTED_ANDROID_APPS = "selected_android_apps";
 
 	// Constants denoting user roles
 	public static final long ROLE_GUARDIAN = 2L;

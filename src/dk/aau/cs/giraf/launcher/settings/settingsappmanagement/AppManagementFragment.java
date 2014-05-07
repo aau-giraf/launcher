@@ -10,7 +10,6 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.TaskStackBuilder;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -151,7 +150,7 @@ public class AppManagementFragment extends Fragment implements AndroidFragment.I
     }
 
     @Override
-    public void setmSelectedAndroidApps(List<ResolveInfo> mSelectedAndroidApps) {
-        interfaceParseAndroidApps.setmSelectedAndroidApps(mSelectedAndroidApps);
+    public void setSelectedAndroidApps(List<ResolveInfo> mSelectedAndroidApps) {
+        interfaceParseAndroidApps.setSelectedAndroidApps(mSelectedAndroidApps);
     }
 }

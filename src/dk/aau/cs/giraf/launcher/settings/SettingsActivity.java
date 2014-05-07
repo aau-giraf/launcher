@@ -29,7 +29,6 @@ public class SettingsActivity extends Activity
         implements SettingsListFragment.SettingsListFragmentListener,
                     AndroidFragment.InterfaceParseAndroidApps {
 
-    private Bundle mSavedInstance;
     private FragmentManager mFragManager;
     private SettingsListAdapter mAdapter;
     private ListView mSettingsListView;
@@ -132,7 +131,7 @@ public class SettingsActivity extends Activity
     }
 
     @Override
-    public void setmSelectedAndroidApps(List<ResolveInfo> selectedAndroidApps) {
+    public void setSelectedAndroidApps(List<ResolveInfo> selectedAndroidApps) {
         this.selectedAndroidApps = selectedAndroidApps;
     }
 
