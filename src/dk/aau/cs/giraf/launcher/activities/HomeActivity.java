@@ -173,7 +173,7 @@ public class HomeActivity extends Activity {
         girafAppsList.addAll(androidAppsList);
         if (mCurrentLoadedApps == null || mCurrentLoadedApps.size() != girafAppsList.size()){
             getIconSize(); // Update mIconSize
-            mAppInfos = LauncherUtility.loadGirafApplicationsIntoView(mContext, girafAppsList, mAppsContainer, mIconSize);
+            mAppInfos = LauncherUtility.loadGirafApplicationsIntoView(mContext, girafAppsList, mAppsContainer, mIconSize, null);
             //Remember that the apps have been added, so they are not added again by the listener
             if (mAppInfos == null){
                 mAppsAdded = false;

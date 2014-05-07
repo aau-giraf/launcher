@@ -36,7 +36,7 @@ public class AppImageView extends ImageView {
 
     private void setRightColor(){
         if (checked){
-            setBackgroundColor(Color.BLUE);
+            setBackgroundColor(context.getResources().getColor(android.R.color.holo_orange_dark));
         }
         else{
             setBackgroundColor(context.getResources().getColor(R.color.app_color_transparent));
