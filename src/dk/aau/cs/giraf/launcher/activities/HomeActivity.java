@@ -34,6 +34,7 @@ import java.util.TimerTask;
 import dk.aau.cs.giraf.gui.GColorAdapter;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
+import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.gui.GWidgetCalendar;
 import dk.aau.cs.giraf.gui.GWidgetConnectivity;
 import dk.aau.cs.giraf.gui.GWidgetLogout;
@@ -45,6 +46,7 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.GAppDragger;
 import dk.aau.cs.giraf.launcher.layoutcontroller.SideBarLayout;
 import dk.aau.cs.giraf.oasis.lib.Helper;
+import dk.aau.cs.giraf.oasis.lib.controllers.ProfileController;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
@@ -462,6 +464,15 @@ public class HomeActivity extends Activity {
 		mWidgetUpdater.addWidget(mCalendarWidget);
 		mWidgetUpdater.addWidget(mConnectivityWidget);
 
+        mProfilePictureView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            Intent intent = new Intent(v.getContext(), ProfileSelectActivity.class);
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                LauncherUtility.secureStartActivity(mContext, intent);
+            }
+        });
+
 		mLogoutWidget.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -550,9 +561,8 @@ public class HomeActivity extends Activity {
 
         appView.setTag(String.valueOf(appInfo.getApp().getId()));
         appView.setOnDragListener(new GAppDragger());
-        if(mCurrentUser.getRole() == Profile.Roles.GUARDIAN)
-            appView.setOnClickListener(new ProfileLauncher());
-        else{appView.setOnClickListener(new View.OnClickListener() {
+        appView.setOnClickListener(new View.OnClickListener(){
+
             @Override
             public void onClick(View v) {
                 AppInfo app = HomeActivity.getAppInfo((String)v.getTag());
@@ -562,7 +572,11 @@ public class HomeActivity extends Activity {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                         | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 
-                intent.putExtra(Constants.CHILD_ID, mCurrentUser.getId());
+                if(mCurrentUser.getRole() == Profile.Roles.CHILD)
+                    intent.putExtra(Constants.CHILD_ID, mCurrentUser.getId());
+                else
+                    intent.putExtra(Constants.GUARDIAN_ID, mCurrentUser.getId());
+
                 intent.putExtra(Constants.APP_COLOR, app.getBgColor());
                 intent.putExtra(Constants.APP_PACKAGE_NAME, app.getPackage());
                 intent.putExtra(Constants.APP_ACTIVITY_NAME, app.getActivity());
@@ -570,8 +584,7 @@ public class HomeActivity extends Activity {
                 // Verify the intent will resolve to at least one activity
                 LauncherUtility.secureStartActivity(v.getContext(), intent);
             }
-            });
-        }
+        });
 
         return appView;
     }

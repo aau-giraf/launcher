@@ -30,6 +30,7 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 public class ProfileSelectActivity extends Activity {
 
 	private List<Profile> mChildren;
+    private static Profile theChosenOne;
     private Helper mHelper;
 	private Context mContext;
 	private int mGuardianID;
@@ -99,7 +100,7 @@ public class ProfileSelectActivity extends Activity {
 		
 		List<Department> guardianDepartments = mHelper.departmentsHelper.getDepartmentsByProfile(guardianProfile);
 		
-		List<Profile> totalChildren = new ArrayList<Profile>();
+		final List<Profile> totalChildren = new ArrayList<Profile>();
 		totalChildren.addAll(guardianChildren);
 		
 		for (Department department : guardianDepartments) {
@@ -128,11 +129,18 @@ public class ProfileSelectActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Get selected child id
-                final int childID = ((Profile) parent.getAdapter().getItem(position)).getId();
-                startSelectedApplication(childID);
+                theChosenOne = totalChildren.get(position);
+                finish();
+                //final int childID = ((Profile) parent.getAdapter().getItem(position)).getId();
+                //startSelectedApplication(childID);
 			}
 		});
 	}
+
+    public static Profile choosenProfile()
+    {
+        return theChosenOne;
+    }
 
     /**
      * This is used when this activity has been started with startIntent()
