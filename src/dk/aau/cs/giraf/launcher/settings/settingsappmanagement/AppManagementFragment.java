@@ -10,6 +10,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,61 +26,73 @@ import dk.aau.cs.giraf.launcher.R;
 public class AppManagementFragment extends Fragment implements AndroidFragment.InterfaceParseAndroidApps{
     public AndroidFragment.InterfaceParseAndroidApps interfaceParseAndroidApps;
 
-    private Activity activity;
+    private Activity mActivity;
     private FragmentManager mFragManager;
-    private Fragment girafFragment;
-    private Fragment androidFragment;
-    private Fragment googlePlayFragment;
-    private TextView girafButton;
-    private TextView androidButton;
-    private TextView googlePlayButton;
-    private Fragment fragmentContainer;
-    private List<ResolveInfo> selectedAndroidApps;
+    private Fragment mGirafFragment;
+    private Fragment mAndroidFragment;
+    private Fragment mActiveFragment;
+    private Fragment mFragmentContainer;
+    private List<ResolveInfo> mSelectedAndroidApps;
+
+    private TextView mGirafButton;
+    private TextView mAndroidButton;
+    private TextView mGooglePlayButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.settings_appfragment_main,
                 container, false);
 
-        girafFragment = new GirafFragment();
-        androidFragment = new AndroidFragment();
-        googlePlayFragment = new GooglePlayFragment();
+        this.setRetainInstance(true);
 
-        activity = this.getActivity();
+        mGirafFragment = new GirafFragment();
+        mAndroidFragment = new AndroidFragment();
 
-        girafButton = (TextView)view.findViewById(R.id.settings_giraf_button);
-        androidButton = (TextView)view.findViewById(R.id.settings_android_button);
-        googlePlayButton = (TextView)view.findViewById(R.id.settings_googleplay_button);
+        mActivity = this.getActivity();
+
+        mGirafButton = (TextView)view.findViewById(R.id.settings_giraf_button);
+        mAndroidButton = (TextView)view.findViewById(R.id.settings_android_button);
+        mGooglePlayButton = (TextView)view.findViewById(R.id.settings_googleplay_button);
+        this.setButtonListeners();
 
         mFragManager = this.getFragmentManager();
-        fragmentContainer = mFragManager.findFragmentById(R.id.app_settings_fragmentlayout);
+        mFragmentContainer = mFragManager.findFragmentById(R.id.app_settings_fragmentlayout);
 
-        girafButton.setOnClickListener(new View.OnClickListener() {
+        if (mFragmentContainer == null) {
+            {
+                mFragmentContainer = mGirafFragment;
+                mActiveFragment = mFragmentContainer;
+            }
+            mFragManager.beginTransaction().add(R.id.app_settings_fragmentlayout, mFragmentContainer)
+                    .commit();
+        }
+
+        return view;
+    }
+
+    private void setButtonListeners() {
+        mGirafButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                replaceFragment(girafFragment);
-                focusButton(girafButton);
+                replaceFragment(mGirafFragment);
+                focusButton(mGirafButton);
             }
         });
 
-        androidButton.setOnClickListener(new View.OnClickListener() {
+        mAndroidButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                replaceFragment(androidFragment);
-                focusButton(androidButton);
-
+                replaceFragment(mAndroidFragment);
+                focusButton(mAndroidButton);
             }
         });
 
-        googlePlayButton.setOnClickListener(new View.OnClickListener() {
+        mGooglePlayButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                replaceFragment(googlePlayFragment);
-                focusButton(googlePlayButton);
-
-                final String appPackageName = activity.getPackageName(); // getPackageName() from Context or Activity object
+                final String appPackageName = mActivity.getPackageName(); // getPackageName() from Context or Activity object
                 try {
-                    // This TaskStackBuilder makes sure that the Play Store returns to this activity after having been closed.
-                    TaskStackBuilder.create(activity)
-                            .addParentStack(activity)
-                            .addNextIntentWithParentStack(new Intent(activity.getApplicationContext(), activity.getClass()))
+                    // This TaskStackBuilder makes sure that the Play Store returns to this mActivity after having been closed.
+                    TaskStackBuilder.create(mActivity)
+                            .addParentStack(mActivity)
+                            .addNextIntentWithParentStack(new Intent(mActivity.getApplicationContext(), mActivity.getClass()))
                             .addNextIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=pub:" + appPackageName)))
                             .startActivities();
                 } catch (android.content.ActivityNotFoundException anfe) {
@@ -87,15 +100,12 @@ public class AppManagementFragment extends Fragment implements AndroidFragment.I
                 }
             }
         });
-
-        return view;
     }
 
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
         try {
             interfaceParseAndroidApps = (AndroidFragment.InterfaceParseAndroidApps) activity;
         } catch (ClassCastException e){
@@ -106,15 +116,18 @@ public class AppManagementFragment extends Fragment implements AndroidFragment.I
     @Override
     public void onStart() {
         super.onStart();
+        focusButton(mGirafButton);
+    }
 
-        focusButton(girafButton);
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        replaceFragment(girafFragment);
-        focusButton(girafButton);
+        focusButton(mGirafButton);
     }
 
     private void replaceFragment(Fragment fragment){
@@ -125,20 +138,20 @@ public class AppManagementFragment extends Fragment implements AndroidFragment.I
 
     private void focusButton(TextView clickedView)
     {
-        girafButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
-        androidButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
-        googlePlayButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
+        mGirafButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
+        mAndroidButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
+        mGooglePlayButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
 
-        girafButton.setTypeface(Typeface.DEFAULT);
-        androidButton.setTypeface(Typeface.DEFAULT);
-        googlePlayButton.setTypeface(Typeface.DEFAULT);
+        mGirafButton.setTypeface(Typeface.DEFAULT);
+        mAndroidButton.setTypeface(Typeface.DEFAULT);
+        mGooglePlayButton.setTypeface(Typeface.DEFAULT);
 
         clickedView.setTypeface(Typeface.DEFAULT_BOLD);
         clickedView.setBackgroundResource(android.R.color.holo_orange_dark);
     }
 
     @Override
-    public void setSelectedAndroidApps(List<ResolveInfo> selectedAndroidApps) {
-        interfaceParseAndroidApps.setSelectedAndroidApps(selectedAndroidApps);
+    public void setmSelectedAndroidApps(List<ResolveInfo> mSelectedAndroidApps) {
+        interfaceParseAndroidApps.setmSelectedAndroidApps(mSelectedAndroidApps);
     }
 }
