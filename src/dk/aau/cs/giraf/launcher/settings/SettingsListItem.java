@@ -11,7 +11,7 @@ public class SettingsListItem {
     Drawable mAppIcon;
     Fragment mAppFragment;
 
-    public SettingsListItem(String _appName, Drawable _appIcon, Fragment _fragment, Drawable _appColor){
+    public SettingsListItem(String _appName, Drawable _appIcon, Fragment _fragment){
         this.mAppName = _appName;
         this.mAppIcon = _appIcon;
         this.mAppFragment = _fragment;

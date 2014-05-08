@@ -21,7 +21,7 @@ import dk.aau.cs.giraf.launcher.R;
 /**
  * Created by Vagner on 01-05-14.
  */
-public class AppManagementFragment extends Fragment {
+public class AppManagementSettings extends Fragment {
 
     private Activity mActivity;
     private FragmentManager mFragManager;
