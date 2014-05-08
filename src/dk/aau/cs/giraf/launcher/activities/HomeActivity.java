@@ -37,6 +37,7 @@ import dk.aau.cs.giraf.gui.GToast;
 import dk.aau.cs.giraf.gui.GWidgetCalendar;
 import dk.aau.cs.giraf.gui.GWidgetConnectivity;
 import dk.aau.cs.giraf.gui.GWidgetLogout;
+import dk.aau.cs.giraf.gui.GWidgetProfileSelection;
 import dk.aau.cs.giraf.gui.GWidgetUpdater;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
@@ -388,8 +389,8 @@ public class HomeActivity extends Activity {
         GWidgetCalendar calendarWidget = (GWidgetCalendar) findViewById(R.id.calendarwidget);
         GWidgetConnectivity connectivityWidget = (GWidgetConnectivity) findViewById(R.id.connectivitywidget);
         GWidgetLogout logoutWidget = (GWidgetLogout) findViewById(R.id.logoutwidget);
+        GWidgetProfileSelection profileSelectionWidget = (GWidgetProfileSelection) findViewById(R.id.profile_widget);
         GButtonSettings settingsButton = (GButtonSettings) findViewById(R.id.settingsbutton);
-        GButton mProfileSelectorButton = (GButton) findViewById(R.id.profile_pic);
 		mHomeDrawerView = (RelativeLayout) findViewById(R.id.HomeDrawer);
 
         if(mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
@@ -415,7 +416,7 @@ public class HomeActivity extends Activity {
             }
         });
 
-        mProfileSelectorButton.setOnClickListener(new View.OnClickListener() {
+        profileSelectionWidget.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mProfileSelectorWidget.show();
