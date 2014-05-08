@@ -15,8 +15,10 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementSettings;
+import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.LauncherSettings;
 
 public class SettingsActivity extends Activity
@@ -27,12 +29,16 @@ public class SettingsActivity extends Activity
     private ListView mSettingsListView;
     private Fragment mActiveFragment;
     private ArrayList<SettingsListItem> mAppList;
+    private Profile mLoggedInGuardian;
+    private Profile mCurrentUser;
+    private GProfileSelector profileSelector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("Giraf settings debugging", "SettingsActivity onCreate");
         setContentView(R.layout.settings);
+
 
         mSettingsListView = (ListView)findViewById(R.id.settingsListView);
 
