@@ -1,8 +1,14 @@
 package dk.aau.cs.giraf.launcher.helper;
 
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 
 public final class Constants {
+	// Launcher TAG
+    public static final String TAG = HomeActivity.class.getName();
+
+    //LIST OF GUARDIAN-ONLY APPS
+    public static final String[] GUARDIAN_ONLY_APPS = {"oasis", "pictocreator"};
 	
 	// SharedPreferences keys for log in data
     public static final String TIMER_KEY = "TIMING";
@@ -11,18 +17,15 @@ public final class Constants {
 	// Keys for inserting and retrieving data in Intents
 	public static final String GUARDIAN_ID = "currentGuardianID";
 	public static final String CHILD_ID = "currentChildID";
+    public static final int NO_CHILD_SELECTED_ID = -1;
 	public static final String APP_PACKAGE_NAME = "appPackageName";
 	public static final String APP_ACTIVITY_NAME = "appActivityName";
     public static final String APP_COLOR = "appBackgroundColor";
     public static final String APP_ID = "appId";
 
     // Keys for settings
-	public static final String COLOR_BG = "backgroundColor";
     public static final String SELECTED_ANDROID_APPS = "selected_android_apps";
-
-	// Constants denoting user roles
-	public static final long ROLE_GUARDIAN = 2L;
-	public static final long ROLE_CHILD = 3L;
+    public static final String ICON_SIZE_PREF = "icon_size_preference";
 	
 	// Logo activity
     public static final int LOGO_ANIMATION_DURATION = 2000;

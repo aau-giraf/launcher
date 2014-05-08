@@ -13,7 +13,6 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -153,7 +152,7 @@ public class LauncherUtility {
         SharedPreferences.Editor editor = sp.edit();
         Date d = new Date();
 
-        //TODO: This error is because we used to use longs for the time, but the OasisLoib group wants us to use ints now, however, there is no DateTime format in int format.
+        //TODO: This error is because we used to use longs for the time, but the OasisLib group wants us to use ints now, however, there is no DateTime format in int format.
         editor.putLong(Constants.DATE_KEY, d.getTime());
         editor.putInt(Constants.GUARDIAN_ID, id);
 
@@ -540,7 +539,7 @@ public class LauncherUtility {
 
     public static boolean loadOtherApplicationsIntoView(Context context, List<ResolveInfo> appList, LinearLayout targetLayout, int iconSize, View.OnClickListener onClickListener) {
         boolean success = false;
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences preferences = LauncherUtility.getSharedPreferencesForCurrentUser(context);
         try {
             targetLayout.removeAllViews();
 
@@ -811,5 +810,37 @@ public class LauncherUtility {
         appView.setOnClickListener(onClickListener);
 
         return appView;
+    }
+
+    public static String getSharedPreferenceUser(Context context){
+        Profile currentUser = findCurrentUser(context);
+        String fileName = "";
+        switch (currentUser.getRole()){
+            case GUARDIAN:
+                fileName += "g";
+                break;
+            case CHILD:
+                fileName += "c";
+                break;
+            case ADMIN:
+                fileName += "a";
+                break;
+            case PARENT:
+                fileName += "p";
+                break;
+            default: // File type is unknown
+                fileName += "u";
+                break;
+        }
+
+        fileName += String.valueOf(currentUser.getId());
+        return  fileName;
+    }
+
+    public static SharedPreferences getSharedPreferencesForCurrentUser(Context context){
+        Profile currentUser = findCurrentUser(context);
+        String fileName = Constants.TAG + ".";
+        fileName += getSharedPreferenceUser(context);
+        return context.getSharedPreferences(fileName, Context.MODE_PRIVATE);
     }
 }

@@ -30,6 +30,7 @@ public class ProfileLauncher extends Activity implements AdapterView.OnClickList
                 intent = new Intent(v.getContext(), ProfileSelectActivity.class);
             }
 
+
             intent.putExtra(Constants.APP_PACKAGE_NAME, app.getPackage());
             intent.putExtra(Constants.APP_ACTIVITY_NAME, app.getActivity());
             intent.putExtra(Constants.GUARDIAN_ID, app.getGuardianID());
@@ -55,5 +56,15 @@ public class ProfileLauncher extends Activity implements AdapterView.OnClickList
             }
 
         }
+    }
+
+    private boolean appIsGuardianOnly (String packageName) {
+        for (String name : Constants.GUARDIAN_ONLY_APPS) {
+            if (packageName.toLowerCase().contains(name)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

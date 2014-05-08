@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -17,11 +18,16 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
+import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
+import dk.aau.cs.giraf.oasis.lib.controllers.ProfileController;
+import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.LauncherSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.WombatSettings;
+import dk.aau.cs.giraf.settingslib.settingslib.SettingsUtility;
 
 public class SettingsActivity extends Activity
         implements SettingsListFragment.SettingsListFragmentListener {
@@ -32,11 +38,28 @@ public class SettingsActivity extends Activity
     private Fragment mActiveFragment;
     private ArrayList<SettingsListItem> mSettingsAppList;
 
+    private Profile mLoggedInGuardian;
+    private Profile mCurrentUser;
+    private GProfileSelector profileSelector;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("Giraf settings debugging", "SettingsActivity onCreate");
         setContentView(R.layout.settings);
+        ProfileController pc = new ProfileController(this);
+        mLoggedInGuardian = pc.getProfileById(this.getIntent().getIntExtra(Constants.GUARDIAN_ID, -1));
+        int childID = this.getIntent().getIntExtra(Constants.CHILD_ID, -1);
+        if(childID == -1)
+        {
+            mCurrentUser = pc.getProfileById(this.getIntent().getIntExtra(Constants.GUARDIAN_ID, -1));
+            profileSelector = new GProfileSelector(this, mLoggedInGuardian, null);
+        }
+        else
+        {
+            mCurrentUser = pc.getProfileById(childID);
+            profileSelector = new GProfileSelector(this, mLoggedInGuardian, mCurrentUser);
+        }
 
         mSettingsListView = (ListView)findViewById(R.id.settingsListView);
 
@@ -45,6 +68,7 @@ public class SettingsActivity extends Activity
 
         mFragManager = this.getFragmentManager();
         Fragment settingsFragment = mFragManager.findFragmentById(R.id.settingsContainer);
+        SetProfileSelector();
 
         if (settingsFragment == null) {
             SettingsListItem item = (SettingsListItem) mAdapter.getItem(0);
@@ -58,9 +82,8 @@ public class SettingsActivity extends Activity
     private void populateListFragment(){
         mSettingsAppList = new ArrayList<SettingsListItem>();
 
-        addApplicationByPackageName("dk.aau.cs.giraf.launcher", new LauncherSettings());
+        addApplicationByPackageName("dk.aau.cs.giraf.launcher", new LauncherSettings(SettingsUtility.getLauncherSettingsTag(LauncherUtility.getSharedPreferenceUser(getApplicationContext()))));
         addApplicationByPackageName("dk.aau.cs.giraf.wombat", new WombatSettings());
-        addApplicationByPackageName("com.android.test", new LauncherSettings());
         addApplicationByName("Android", new AppManagementSettings(), getResources().getDrawable(R.drawable.android_icon));
 
         // Getting mAdapter by passing list data
@@ -151,7 +174,34 @@ public class SettingsActivity extends Activity
     }
 
     @Override
-    public void onUserChanged(AdapterView<?> parent, View view, int position, long id) {
-        return;
+    public void onUserChanged(View view) {
+        profileSelector.show();
+    }
+
+    /**
+     * This is used to set the onClickListener for a new ProfileSelector
+     * It must be used everytime a new selector is set.
+     * */
+    private void SetProfileSelector()
+    {
+        final Context context = this;
+        profileSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                ProfileController pc = new ProfileController(context);
+                mCurrentUser = pc.getProfileById((int)l);
+                profileSelector.dismiss();
+
+                if(mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
+                    profileSelector = new GProfileSelector(context, mLoggedInGuardian, mCurrentUser);
+                else
+                    profileSelector = new GProfileSelector(context, mLoggedInGuardian, null);
+
+                SetProfileSelector();
+            }
+        });
+
+        SettingsListFragment fragment = (SettingsListFragment) mFragManager.findFragmentById(R.id.settingsListFragment);
+        fragment.setSelectedUserName(mCurrentUser.getName());
     }
 }
