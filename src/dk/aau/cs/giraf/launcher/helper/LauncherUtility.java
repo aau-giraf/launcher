@@ -249,9 +249,9 @@ public class LauncherUtility {
     public static boolean isLandscape(Context context) {
         int rotation = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
         if ((rotation % 2) == 0) {
-            return true;
-        } else {
             return false;
+        } else {
+            return true;
         }
     }
 
@@ -448,11 +448,11 @@ public class LauncherUtility {
 
         outerloop:
         for(ResolveInfo app : allApps){
-            for(String packageName : packageNames){
-                if (app.activityInfo.packageName.equals(packageName)){
+            for(String activityName : packageNames){
+                if (app.activityInfo.name.equals(activityName)){
 
                     Application application = new Application();
-                    application.setPackage(packageName);
+                    application.setPackage(activityName);
                     application.setName(app.activityInfo.loadLabel(packageManager).toString());
                     application.setId(app.hashCode());
                     selectedApps.add(application);
@@ -464,7 +464,17 @@ public class LauncherUtility {
         return selectedApps;
     }
 
-    public static HashMap<String,AppInfo> loadGirafApplicationsIntoView(Context context, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize, View.OnClickListener listener) {
+    public static HashMap<String,AppInfo> loadGirafApplicationsIntoView(Context context, Profile currentUser, Profile guardian, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize)
+    {
+        return loadGirafApplicationsIntoView(context, currentUser, guardian, girafAppsList, targetLayout, iconSize, null);
+    }
+
+    public static HashMap<String,AppInfo> loadGirafApplicationsIntoView(Context context, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize, View.OnClickListener listener)
+    {
+        return loadGirafApplicationsIntoView(context, null, null, girafAppsList, targetLayout, iconSize, listener);
+    }
+
+    public static HashMap<String,AppInfo> loadGirafApplicationsIntoView(Context context, Profile currentUser, Profile guardian, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize, View.OnClickListener listener) {
         //Get the list of apps to show in the container
         //List<Application> girafAppsList = LauncherUtility.getAvailableGirafAppsButLauncher(mContext);
         HashMap<String, AppInfo> appInfoHash = new HashMap<String, AppInfo>();
@@ -477,12 +487,20 @@ public class LauncherUtility {
             List<AppInfo> appInfos = new ArrayList<AppInfo>(appInfoHash.values());
             Collections.sort(appInfos, new AppComparator(context));
 
-            //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
             int containerWidth = ((ScrollView) targetLayout.getParent()).getWidth();
+            int containerHeight = ((ScrollView) targetLayout.getParent()).getHeight();
+            // if we are in portrait swap width and height
+            if (!LauncherUtility.isLandscape(context)){
+                int temp = containerWidth;
+                containerWidth = containerHeight;
+                containerHeight = temp;
+                Log.d(Constants.ERROR_TAG, "Portrait mode detected. Width and height swapped.");
+            }
+
+            //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
             int appsPrRow = getAmountOfAppsWithinBounds(containerWidth, iconSize);
 
             //Calculate how many apps the screen can fit vertically on a single screen, and how much space is available for vertical padding
-            int containerHeight = ((ScrollView) targetLayout.getParent()).getHeight();
             int appsPrColumn = getAmountOfAppsWithinBounds(containerHeight, iconSize);
             int paddingHeight = getLayoutPadding(containerHeight, appsPrColumn, iconSize);
 
@@ -503,7 +521,7 @@ public class LauncherUtility {
                     targetLayout.addView(currentAppRow);
                 }
 
-                AppImageView newAppView = createGirafLauncherApp(context, appInfo, targetLayout, listener);
+                AppImageView newAppView = createGirafLauncherApp(context, currentUser, guardian, appInfo, targetLayout, listener);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
                 params.weight = 1f;
                 newAppView.setLayoutParams(params);
@@ -577,7 +595,7 @@ public class LauncherUtility {
 
                 // Mark colors of the selected apps when settings is shown.
                 Set<String> selectedApps = preferences.getStringSet(Constants.SELECTED_ANDROID_APPS, new HashSet<String>());
-                if (selectedApps.contains(app.activityInfo.packageName)){
+                if (selectedApps.contains(app.activityInfo.name)){
                     newAppView.setChecked(true);
                 }
 
@@ -658,10 +676,9 @@ public class LauncherUtility {
      * @param targetLayout
      * @return
      */
-    private static AppImageView createGirafLauncherApp(Context context, AppInfo appInfo, LinearLayout targetLayout, View.OnClickListener listener) {
+    private static AppImageView createGirafLauncherApp(Context context, final Profile currentUser, final Profile guardian, AppInfo appInfo, LinearLayout targetLayout, View.OnClickListener listener) {
 
         AppImageView appImageView = new AppImageView(context);
-        final Profile currentUser = LauncherUtility.findCurrentUser(context);
         View appView = addContentToView(context, targetLayout, appInfo.getName(), appInfo.getIconImage());
 
         setAppBackground(appView, appInfo.getBgColor());
@@ -672,29 +689,31 @@ public class LauncherUtility {
 
         if(listener == null)
         {
-            if(currentUser.getRole() == Profile.Roles.GUARDIAN)
-                appImageView.setOnClickListener(new ProfileLauncher());
-            else{
-                appImageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        AppInfo app = HomeActivity.getAppInfo((String) v.getTag());
-                        Intent intent = new Intent(Intent.ACTION_MAIN);
-                        intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                        intent.setComponent(new ComponentName(app.getPackage(), app.getActivity()));
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+            appImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AppInfo app = HomeActivity.getAppInfo((String) v.getTag());
+                    Intent intent = new Intent(Intent.ACTION_MAIN);
+                    intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                    intent.setComponent(new ComponentName(app.getPackage(), app.getActivity()));
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 
+                    if(currentUser.getRole() == Profile.Roles.CHILD)
                         intent.putExtra(Constants.CHILD_ID, currentUser.getId());
-                        intent.putExtra(Constants.APP_COLOR, app.getBgColor());
-                        intent.putExtra(Constants.APP_PACKAGE_NAME, app.getPackage());
-                        intent.putExtra(Constants.APP_ACTIVITY_NAME, app.getActivity());
+                    else
+                        intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
 
-                        // Verify the intent will resolve to at least one activity
-                        LauncherUtility.secureStartActivity(v.getContext(), intent);
-                    }
-                });
-            }
+                    intent.putExtra(Constants.GUARDIAN_ID, guardian.getId());
+                    intent.putExtra(Constants.APP_COLOR, app.getBgColor());
+                    intent.putExtra(Constants.APP_PACKAGE_NAME, app.getPackage());
+                    intent.putExtra(Constants.APP_ACTIVITY_NAME, app.getActivity());
+
+                    // Verify the intent will resolve to at least one activity
+                    LauncherUtility.secureStartActivity(v.getContext(), intent);
+                }
+            });
+
         }
         else
         {

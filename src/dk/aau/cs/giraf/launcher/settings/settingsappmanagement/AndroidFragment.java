@@ -38,14 +38,14 @@ public class AndroidFragment extends AppContainerFragment {
                 selectedApps = new HashSet<String>();
 
             ResolveInfo app = (ResolveInfo) v.getTag();
-            String packageName = app.activityInfo.packageName;
+            String activityName = app.activityInfo.name;
 
-            if (selectedApps.contains(packageName)){
-                selectedApps.remove(packageName);
+            if (selectedApps.contains(activityName)){
+                selectedApps.remove(activityName);
                 Log.d(Constants.ERROR_TAG, "Removed '" + app.activityInfo.name + "' to list: " + selectedApps.size());
             }
             else{
-                selectedApps.add(packageName);
+                selectedApps.add(activityName);
                 Log.d(Constants.ERROR_TAG, "Added '" + app.activityInfo.name + "' to list: " + selectedApps.size());
             }
         }

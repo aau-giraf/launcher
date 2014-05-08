@@ -28,12 +28,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import dk.aau.cs.giraf.gui.GButtonSettings;
-import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GColorAdapter;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GProfileSelector;
-import dk.aau.cs.giraf.gui.GToast;
 import dk.aau.cs.giraf.gui.GWidgetCalendar;
 import dk.aau.cs.giraf.gui.GWidgetConnectivity;
 import dk.aau.cs.giraf.gui.GWidgetLogout;
@@ -179,7 +177,7 @@ public class HomeActivity extends Activity {
         girafAppsList.addAll(androidAppsList);
         if (mCurrentLoadedApps == null || mCurrentLoadedApps.size() != girafAppsList.size()){
             getIconSize(); // Update mIconSize
-            mAppInfos = LauncherUtility.loadGirafApplicationsIntoView(mContext, girafAppsList, mAppsContainer, mIconSize, null);
+            mAppInfos = LauncherUtility.loadGirafApplicationsIntoView(mContext, mCurrentUser, mLoggedInGuardian, girafAppsList, mAppsContainer, mIconSize);
             //Remember that the apps have been added, so they are not added again by the listener
             if (mAppInfos == null){
                 mAppsAdded = false;
