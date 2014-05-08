@@ -18,6 +18,8 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -39,7 +41,6 @@ import java.util.Set;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.AuthenticationActivity;
 import dk.aau.cs.giraf.launcher.activities.HomeActivity;
-import dk.aau.cs.giraf.launcher.activities.ProfileLauncher;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.GAppDragger;
@@ -449,10 +450,12 @@ public class LauncherUtility {
         outerloop:
         for(ResolveInfo app : allApps){
             for(String activityName : packageNames){
-                if (app.activityInfo.name.equals(activityName)){
-
+                String appActivityName = app.activityInfo.name;
+                String appPackageName = app.activityInfo.packageName;
+                if (appActivityName.equals(activityName)){
                     Application application = new Application();
-                    application.setPackage(activityName);
+                    application.setPackage(appPackageName);
+                    application.setActivity(appActivityName);
                     application.setName(app.activityInfo.loadLabel(packageManager).toString());
                     application.setId(app.hashCode());
                     selectedApps.add(application);
@@ -692,6 +695,12 @@ public class LauncherUtility {
             appImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    try {
+                    Animation animation = AnimationUtils.loadAnimation(v.getContext(), R.anim.press_app);
+                    v.startAnimation(animation);
+                    } catch (NullPointerException e){
+                        // could not get context, no animation.
+                    }
                     AppInfo app = HomeActivity.getAppInfo((String) v.getTag());
                     Intent intent = new Intent(Intent.ACTION_MAIN);
                     intent.addCategory(Intent.CATEGORY_LAUNCHER);
