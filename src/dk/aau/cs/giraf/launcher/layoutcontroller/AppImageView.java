@@ -1,7 +1,6 @@
 package dk.aau.cs.giraf.launcher.layoutcontroller;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
@@ -36,7 +35,7 @@ public class AppImageView extends ImageView {
 
     private void setRightColor(){
         if (checked){
-            setBackgroundColor(context.getResources().getColor(android.R.color.holo_orange_dark));
+            setBackgroundColor(context.getResources().getColor(android.R.color.holo_orange_light));
         }
         else{
             setBackgroundColor(context.getResources().getColor(R.color.app_color_transparent));

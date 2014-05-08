@@ -14,6 +14,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementFragment;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.CarsSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.CatSettings;
@@ -57,7 +58,7 @@ public class SettingsActivity extends Activity
         ArrayList<SettingsListItem> appList = new ArrayList<SettingsListItem>();
 
         SettingsListItem item1 = new SettingsListItem("Giraf", getResources().getDrawable(R.drawable.giraf_icon),
-                new LauncherSettings(), new ColorDrawable(0xffffdd55));
+                new LauncherSettings(LauncherUtility.getSharedPreferenceUser(getApplicationContext())), new ColorDrawable(0xffffdd55));
         SettingsListItem item2 = new SettingsListItem("Cat", getResources().getDrawable(R.drawable.giraf_icon),
                 new CatSettings(), new ColorDrawable(0xffac9393));
         SettingsListItem item3 = new SettingsListItem("Wombat", getResources().getDrawable(R.drawable.giraf_icon),
