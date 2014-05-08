@@ -4,7 +4,6 @@ import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,7 +57,7 @@ public class AndroidFragment extends AppContainerFragment {
         context = getActivity();
         apps = LauncherUtility.getApplicationsFromDevice(context, "dk.aau.cs.giraf", false);
         appView = (LinearLayout) view.findViewById(R.id.appContainer);
-        preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        preferences = LauncherUtility.getSharedPreferencesForCurrentUser(context);
         selectedApps = preferences.getStringSet(Constants.SELECTED_ANDROID_APPS, new HashSet<String>());
 
         loadApplications();
@@ -83,7 +82,7 @@ public class AndroidFragment extends AppContainerFragment {
     @Override
     public void onStart() {
         super.onStart();
-        reloadApplications();
+        //reloadApplications();
     }
 
     @Override
@@ -92,7 +91,10 @@ public class AndroidFragment extends AppContainerFragment {
         if (selectedApps == null)
             selectedApps = new HashSet<String>();
 
-        preferences.edit().putStringSet(Constants.SELECTED_ANDROID_APPS, selectedApps).commit();
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.remove(Constants.SELECTED_ANDROID_APPS).commit(); // Remove to ensure that the new set is written to file.
+        editor.putStringSet(Constants.SELECTED_ANDROID_APPS, selectedApps);
+        editor.apply();
     }
 
     @Override

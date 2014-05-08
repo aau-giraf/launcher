@@ -22,6 +22,11 @@ import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementSettings;
 import dk.aau.cs.giraf.oasis.lib.controllers.ProfileController;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
+import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementFragment;
+import dk.aau.cs.giraf.settingslib.settingslib.Fragments.CarsSettings;
+import dk.aau.cs.giraf.settingslib.settingslib.Fragments.CatSettings;
+import dk.aau.cs.giraf.settingslib.settingslib.Fragments.CrocSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.LauncherSettings;
 
 public class SettingsActivity extends Activity
