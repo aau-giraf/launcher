@@ -7,6 +7,9 @@ public final class Constants {
 	// Launcher TAG
     public static final String TAG = HomeActivity.class.getName();
 
+    //LIST OF GUARDIAN-ONLY APPS
+    public static final String[] GUARDIAN_ONLY_APPS = {"oasis", "pictocreator"};
+	
 	// SharedPreferences keys for log in data
     public static final String TIMER_KEY = "TIMING";
 	public static final String DATE_KEY = "DATE";
@@ -14,6 +17,7 @@ public final class Constants {
 	// Keys for inserting and retrieving data in Intents
 	public static final String GUARDIAN_ID = "currentGuardianID";
 	public static final String CHILD_ID = "currentChildID";
+    public static final int NO_CHILD_SELECTED_ID = -1;
 	public static final String APP_PACKAGE_NAME = "appPackageName";
 	public static final String APP_ACTIVITY_NAME = "appActivityName";
     public static final String APP_COLOR = "appBackgroundColor";

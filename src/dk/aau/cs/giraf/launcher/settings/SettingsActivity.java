@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.graphics.drawable.ColorDrawable;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,15 +15,16 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementSettings;
+import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementFragment;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.CarsSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.CatSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.CrocSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.LauncherSettings;
-import dk.aau.cs.giraf.settingslib.settingslib.Fragments.ParrotSettings;
-import dk.aau.cs.giraf.settingslib.settingslib.Fragments.WombatSettings;
 
 public class SettingsActivity extends Activity
         implements SettingsListFragment.SettingsListFragmentListener {
@@ -30,12 +33,17 @@ public class SettingsActivity extends Activity
     private SettingsListAdapter mAdapter;
     private ListView mSettingsListView;
     private Fragment mActiveFragment;
+    private ArrayList<SettingsListItem> mAppList;
+    private Profile mLoggedInGuardian;
+    private Profile mCurrentUser;
+    private GProfileSelector profileSelector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("Giraf settings debugging", "SettingsActivity onCreate");
         setContentView(R.layout.settings);
+
 
         mSettingsListView = (ListView)findViewById(R.id.settingsListView);
 
@@ -55,34 +63,59 @@ public class SettingsActivity extends Activity
     }
 
     private void populateListFragment(){
-        ArrayList<SettingsListItem> appList = new ArrayList<SettingsListItem>();
+        mAppList = new ArrayList<SettingsListItem>();
 
-        SettingsListItem item1 = new SettingsListItem("Giraf", getResources().getDrawable(R.drawable.giraf_icon),
-                new LauncherSettings(LauncherUtility.getSharedPreferenceUser(getApplicationContext())), new ColorDrawable(0xffffdd55));
-        SettingsListItem item2 = new SettingsListItem("Cat", getResources().getDrawable(R.drawable.giraf_icon),
-                new CatSettings(), new ColorDrawable(0xffac9393));
-        SettingsListItem item3 = new SettingsListItem("Wombat", getResources().getDrawable(R.drawable.giraf_icon),
-                new WombatSettings(), new ColorDrawable(0xffffe680));
-        SettingsListItem item4 = new SettingsListItem("Parrot", getResources().getDrawable(R.drawable.giraf_icon),
-                new ParrotSettings(), new ColorDrawable(0xff808000));
-        SettingsListItem item5 = new SettingsListItem("Croc", getResources().getDrawable(R.drawable.giraf_icon),
-                new CrocSettings(), new ColorDrawable(0xff5fd35f));
-        SettingsListItem item6 = new SettingsListItem("Cars", getResources().getDrawable(R.drawable.giraf_icon),
-                new CarsSettings(), new ColorDrawable(0xff9de7e6));
-        SettingsListItem item7 = new SettingsListItem("Android", getResources().getDrawable(R.drawable.android_icon),
-                new AppManagementFragment(), new ColorDrawable(0xffe6e6e6));
-
-        appList.add(item1);
-        appList.add(item2);
-        appList.add(item3);
-        appList.add(item4);
-        appList.add(item5);
-        appList.add(item6);
-        appList.add(item7);
+        addApplicationByPackageName("dk.aau.cs.giraf.launcher", new LauncherSettings());
+        addApplicationByName("Android", new AppManagementSettings(), getResources().getDrawable(R.drawable.android_icon));
 
         // Getting mAdapter by passing list data
-        mAdapter = new SettingsListAdapter(SettingsActivity.this, appList);
+        mAdapter = new SettingsListAdapter(SettingsActivity.this, mAppList);
         mSettingsListView.setAdapter(mAdapter);
+    }
+
+    private void addApplicationByPackageName(String packageName, Fragment fragment) {
+        final PackageManager pm = getApplicationContext().getPackageManager();
+        ApplicationInfo appInfo = null;
+
+        try {
+            appInfo = pm.getApplicationInfo(packageName, 0);
+        } catch (final PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        String appName;
+        if (appInfo != null) {
+            appName = setCorrectCase(pm.getApplicationLabel(appInfo).toString());
+        }
+        else
+            appName = "(unknown)";
+
+        final Drawable appIcon = (
+                appInfo != null ?
+                        pm.getApplicationIcon(appInfo) :
+                        getResources().getDrawable(R.drawable.giraf_icon)
+        );
+
+        SettingsListItem item = new SettingsListItem(
+                appName,
+                appIcon,
+                fragment
+        );
+        mAppList.add(item);
+    }
+
+    private void addApplicationByName(String appName, Fragment settingsFragment, Drawable icon) {
+        SettingsListItem item = new SettingsListItem(
+                setCorrectCase(appName),
+                icon,
+                settingsFragment
+        );
+        mAppList.add(item);
+    }
+
+    private String setCorrectCase(String name) {
+        return name.substring(0, 1).toUpperCase()
+                + name.substring(1).toLowerCase();
     }
 
     @Override
@@ -109,7 +142,7 @@ public class SettingsActivity extends Activity
     }
 
     @Override
-    public void onUserChanged(AdapterView<?> parent, View view, int position, long id) {
+    public void onUserChanged(View view) {
         return;
     }
 }

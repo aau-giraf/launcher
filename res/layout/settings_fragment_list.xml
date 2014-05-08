@@ -29,15 +29,13 @@
                 android:padding="@dimen/giraf_settings_container_selectedUser_padding"
                 android:text="@string/giraf_settings_selectUser_text"
                 android:textColor="@android:color/darker_gray"/>
-
-        <Spinner
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:spinnerStyle="@android:style/Widget.Spinner.DropDown"
-                android:id="@+id/spinnerUser"
-                android:padding="10dp"
-                android:prompt="@string/giraf_settings_user_prompt"
-                android:entries="@array/giraf_settings_dummy_users"/>
+        <dk.aau.cs.giraf.gui.GButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/profile_selection_button"
+            android:padding="@dimen/giraf_settings_container_selectedUser_padding"
+            android:text="@string/giraf_settings_selectUser_text"
+            android:textColor="@android:color/darker_gray"/>
 
     </LinearLayout>
 

@@ -152,7 +152,7 @@ public class LauncherUtility {
         SharedPreferences.Editor editor = sp.edit();
         Date d = new Date();
 
-        //TODO: This error is because we used to use longs for the time, but the OasisLoib group wants us to use ints now, however, there is no DateTime format in int format.
+        //TODO: This error is because we used to use longs for the time, but the OasisLib group wants us to use ints now, however, there is no DateTime format in int format.
         editor.putLong(Constants.DATE_KEY, d.getTime());
         editor.putInt(Constants.GUARDIAN_ID, id);
 
