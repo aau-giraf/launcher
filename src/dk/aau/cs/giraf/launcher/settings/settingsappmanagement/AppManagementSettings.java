@@ -5,16 +5,13 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.v4.app.TaskStackBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 import dk.aau.cs.giraf.launcher.R;
 
@@ -22,6 +19,10 @@ import dk.aau.cs.giraf.launcher.R;
  * Created by Vagner on 01-05-14.
  */
 public class AppManagementSettings extends Fragment {
+
+    private static final String MARKET_SEARCH_APP_URI = "market://search?q=pub:";
+    private static final String MARKET_SEARCH_WEB_URI = "http://play.google.com/store/search?q=pub:";
+    private static final String PUBLISHER_NAME = "AAU Giraf";
 
     private Activity mActivity;
     private FragmentManager mFragManager;
@@ -95,11 +96,10 @@ public class AppManagementSettings extends Fragment {
 
         mGooglePlayButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                final String appPackageName = mActivity.getPackageName(); // getPackageName() from Context or Activity object
                 try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=pub:" + appPackageName)));
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MARKET_SEARCH_APP_URI + PUBLISHER_NAME)));
                 } catch (android.content.ActivityNotFoundException e) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MARKET_SEARCH_WEB_URI + PUBLISHER_NAME)));
                 }
             }
         });
