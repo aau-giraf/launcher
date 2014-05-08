@@ -422,6 +422,7 @@ public class HomeActivity extends Activity {
                 mProfileSelectorWidget.show();
             }
         });
+
         SetProfileSelector();
 
 		logoutWidget.setOnClickListener(new View.OnClickListener() {
@@ -524,6 +525,7 @@ public class HomeActivity extends Activity {
                 SetProfileSelector();
             }
         });
+        reloadApplications();
     }
 
     /**
@@ -541,5 +543,6 @@ public class HomeActivity extends Activity {
             });
             Log.d(Constants.ERROR_TAG, "Applications checked");
         }
+
     }
 }
