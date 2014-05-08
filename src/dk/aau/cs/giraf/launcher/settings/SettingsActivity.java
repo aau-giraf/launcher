@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -56,7 +57,6 @@ public class SettingsActivity extends Activity
             mCurrentUser = pc.getProfileById(childID);
             profileSelector = new GProfileSelector(this, mLoggedInGuardian, mCurrentUser);
         }
-        SetProfileSelector();
 
         mSettingsListView = (ListView)findViewById(R.id.settingsListView);
 
@@ -65,6 +65,7 @@ public class SettingsActivity extends Activity
 
         mFragManager = this.getFragmentManager();
         Fragment settingsFragment = mFragManager.findFragmentById(R.id.settingsContainer);
+        SetProfileSelector();
 
         if (settingsFragment == null) {
             SettingsListItem item = (SettingsListItem) mAdapter.getItem(0);
@@ -157,7 +158,6 @@ public class SettingsActivity extends Activity
     @Override
     public void onUserChanged(View view) {
         profileSelector.show();
-        return;
     }
 
     /**
@@ -182,5 +182,8 @@ public class SettingsActivity extends Activity
                 SetProfileSelector();
             }
         });
+
+        SettingsListFragment fragment = (SettingsListFragment) mFragManager.findFragmentById(R.id.settingsListFragment);
+        fragment.setSelectedUserName(mCurrentUser.getName());
     }
 }

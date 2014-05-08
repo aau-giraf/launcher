@@ -514,10 +514,10 @@ public class HomeActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 ProfileController pc = new ProfileController(mContext);
-                mCurrentUser = pc.getProfileById((int)l);
+                mCurrentUser = pc.getProfileById((int) l);
                 mProfileSelectorWidget.dismiss();
 
-                if(mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
+                if (mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
                     mProfileSelectorWidget = new GProfileSelector(mContext, mLoggedInGuardian, mCurrentUser);
                 else
                     mProfileSelectorWidget = new GProfileSelector(mContext, mLoggedInGuardian, null);

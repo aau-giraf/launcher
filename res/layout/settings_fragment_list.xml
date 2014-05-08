@@ -23,19 +23,23 @@
             android:paddingLeft="@dimen/giraf_settings_list_row_paddingLeft"
             android:paddingRight="@dimen/giraf_settings_list_row_paddingRight">
 
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/giraf_settings_container_selectedUser_padding"
-                android:text="@string/giraf_settings_selectUser_text"
-                android:textColor="@android:color/darker_gray"/>
-        <dk.aau.cs.giraf.gui.GButton
+        <dk.aau.cs.giraf.gui.GWidgetProfileSelection
+            android:visibility="visible"
+            android:id="@+id/profile_widget_settings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/profile_selection_button"
+            android:layout_alignParentLeft="true"
+            android:layout_gravity="center">
+        </dk.aau.cs.giraf.gui.GWidgetProfileSelection>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:padding="@dimen/giraf_settings_container_selectedUser_padding"
             android:text="@string/giraf_settings_selectUser_text"
-            android:textColor="@android:color/darker_gray"/>
+            android:textColor="@android:color/darker_gray"
+            android:layout_gravity="center"
+            android:id="@+id/profile_selected_name"/>
 
     </LinearLayout>
 

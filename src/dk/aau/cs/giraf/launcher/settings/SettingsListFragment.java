@@ -10,13 +10,15 @@ import android.view.ViewGroup;
 import android.widget.*;
 
 import dk.aau.cs.giraf.gui.GButton;
+import dk.aau.cs.giraf.gui.GWidgetProfileSelection;
 import dk.aau.cs.giraf.launcher.R;
 
 public class SettingsListFragment extends Fragment {
 
     private ListView mSettingsListView;
+    private TextView mProfileName;
     private SettingsListAdapter mAdapter;
-    private GButton mProfileButton;
+    private GWidgetProfileSelection mProfileButton;
     SettingsListFragmentListener mCallback; // Callback to containing Activity implementing the SettingsListFragmentListener interface
 
     // Container Activity must implement this interface
@@ -34,7 +36,8 @@ public class SettingsListFragment extends Fragment {
         mSettingsListView =  (ListView) view.findViewById(R.id.settingsListView);
 
         Log.d(getTag(), "Finding spinnerUser");
-        mProfileButton = (GButton) view.findViewById(R.id.profile_selection_button);
+        mProfileButton = (GWidgetProfileSelection) view.findViewById(R.id.profile_widget_settings);
+        mProfileName = (TextView) view.findViewById(R.id.profile_selected_name);
 
         return view;
     }
@@ -78,5 +81,9 @@ public class SettingsListFragment extends Fragment {
             throw new ClassCastException(activity.toString()
                     + " must implement SettingsListFragmentListener");
         }
+    }
+
+    public void setSelectedUserName(String name) {
+        mProfileName.setText(name);
     }
 }
