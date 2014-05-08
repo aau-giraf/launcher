@@ -43,7 +43,7 @@ public class ProfileLauncher extends Activity implements AdapterView.OnClickList
             List<ResolveInfo> apps = LauncherUtility.getDeviceApps(v.getContext());
             for(ResolveInfo realApp : apps){
                 ActivityInfo activityInfo = realApp.activityInfo;
-                if (activityInfo.packageName.equals(app.getPackage())){
+                if (activityInfo.name.equals(app.getPackage())){
                     ComponentName componentName = new ComponentName(activityInfo.packageName, activityInfo.name);
 
                     intent = new Intent(Intent.ACTION_MAIN);

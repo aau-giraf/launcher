@@ -28,12 +28,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import dk.aau.cs.giraf.gui.GButtonSettings;
-import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GColorAdapter;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GProfileSelector;
-import dk.aau.cs.giraf.gui.GToast;
 import dk.aau.cs.giraf.gui.GWidgetCalendar;
 import dk.aau.cs.giraf.gui.GWidgetConnectivity;
 import dk.aau.cs.giraf.gui.GWidgetLogout;

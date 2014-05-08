@@ -22,12 +22,11 @@ import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
+import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementSettings;
 import dk.aau.cs.giraf.oasis.lib.controllers.ProfileController;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
-import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.LauncherSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.WombatSettings;
-import dk.aau.cs.giraf.settingslib.settingslib.SettingsUtility;
 
 public class SettingsActivity extends Activity
         implements SettingsListFragment.SettingsListFragmentListener {
@@ -82,7 +81,7 @@ public class SettingsActivity extends Activity
     private void populateListFragment(){
         mSettingsAppList = new ArrayList<SettingsListItem>();
 
-        addApplicationByPackageName("dk.aau.cs.giraf.launcher", new LauncherSettings(SettingsUtility.getLauncherSettingsTag(LauncherUtility.getSharedPreferenceUser(getApplicationContext()))));
+        addApplicationByPackageName("dk.aau.cs.giraf.launcher", new LauncherSettings(LauncherUtility.getSharedPreferenceUser(getApplicationContext())));
         addApplicationByPackageName("dk.aau.cs.giraf.wombat", new WombatSettings());
         addApplicationByName("Android", new AppManagementSettings(), getResources().getDrawable(R.drawable.android_icon));
 

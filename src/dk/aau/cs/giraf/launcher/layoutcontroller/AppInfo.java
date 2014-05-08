@@ -134,9 +134,16 @@ public class AppInfo extends Application {
         List<ResolveInfo> systemApps = LauncherUtility.getDeviceApps(context);
 
         for (ResolveInfo app : systemApps) {
-            if (app.activityInfo.packageName.equals(this.getPackage())) {
-                mIcon = app.loadIcon(context.getPackageManager());
-                break;
+            if (this.getActivity() == null){
+                if (app.activityInfo.name.equals(this.getPackage())) {
+                    mIcon = app.loadIcon(context.getPackageManager());
+                    break;
+                }
+            } else {
+                if (app.activityInfo.packageName.equals(this.getPackage())) {
+                    mIcon = app.loadIcon(context.getPackageManager());
+                    break;
+                }
             }
         }
     }

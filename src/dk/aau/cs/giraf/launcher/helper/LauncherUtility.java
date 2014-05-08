@@ -249,9 +249,9 @@ public class LauncherUtility {
     public static boolean isLandscape(Context context) {
         int rotation = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
         if ((rotation % 2) == 0) {
-            return true;
-        } else {
             return false;
+        } else {
+            return true;
         }
     }
 
@@ -448,11 +448,11 @@ public class LauncherUtility {
 
         outerloop:
         for(ResolveInfo app : allApps){
-            for(String packageName : packageNames){
-                if (app.activityInfo.packageName.equals(packageName)){
+            for(String activityName : packageNames){
+                if (app.activityInfo.name.equals(activityName)){
 
                     Application application = new Application();
-                    application.setPackage(packageName);
+                    application.setPackage(activityName);
                     application.setName(app.activityInfo.loadLabel(packageManager).toString());
                     application.setId(app.hashCode());
                     selectedApps.add(application);
@@ -477,12 +477,20 @@ public class LauncherUtility {
             List<AppInfo> appInfos = new ArrayList<AppInfo>(appInfoHash.values());
             Collections.sort(appInfos, new AppComparator(context));
 
-            //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
             int containerWidth = ((ScrollView) targetLayout.getParent()).getWidth();
+            int containerHeight = ((ScrollView) targetLayout.getParent()).getHeight();
+            // if we are in portrait swap width and height
+            if (!LauncherUtility.isLandscape(context)){
+                int temp = containerWidth;
+                containerWidth = containerHeight;
+                containerHeight = temp;
+                Log.d(Constants.ERROR_TAG, "Portrait mode detected. Width and height swapped.");
+            }
+
+            //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
             int appsPrRow = getAmountOfAppsWithinBounds(containerWidth, iconSize);
 
             //Calculate how many apps the screen can fit vertically on a single screen, and how much space is available for vertical padding
-            int containerHeight = ((ScrollView) targetLayout.getParent()).getHeight();
             int appsPrColumn = getAmountOfAppsWithinBounds(containerHeight, iconSize);
             int paddingHeight = getLayoutPadding(containerHeight, appsPrColumn, iconSize);
 
@@ -577,7 +585,7 @@ public class LauncherUtility {
 
                 // Mark colors of the selected apps when settings is shown.
                 Set<String> selectedApps = preferences.getStringSet(Constants.SELECTED_ANDROID_APPS, new HashSet<String>());
-                if (selectedApps.contains(app.activityInfo.packageName)){
+                if (selectedApps.contains(app.activityInfo.name)){
                     newAppView.setChecked(true);
                 }
 
