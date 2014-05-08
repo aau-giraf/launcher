@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -31,10 +32,12 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GColorAdapter;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GProfileSelector;
+import dk.aau.cs.giraf.gui.GToast;
 import dk.aau.cs.giraf.gui.GWidgetCalendar;
 import dk.aau.cs.giraf.gui.GWidgetConnectivity;
 import dk.aau.cs.giraf.gui.GWidgetLogout;
@@ -54,6 +57,7 @@ public class HomeActivity extends Activity {
 
 	private static Context mContext;
 
+    private Profile mLoggedInGuardian;
 	private Profile mCurrentUser; 
 	private Helper mHelper;
 	private Application mLauncher;
@@ -66,6 +70,8 @@ public class HomeActivity extends Activity {
     private boolean mDrawerAnimationRunning = false;
 
 	private GWidgetUpdater mWidgetUpdater;
+    private GProfileSelector mProfileSelectorWidget;
+    private GButton mProfileSelectorButton;
 	private GWidgetCalendar mCalendarWidget;
 	private GWidgetConnectivity mConnectivityWidget;
 	private GWidgetLogout mLogoutWidget;
@@ -75,7 +81,6 @@ public class HomeActivity extends Activity {
 	private RelativeLayout mHomeDrawerView;
     private RelativeLayout mHomeBarLayout;
     private SideBarLayout mSideBarView;
-	private LinearLayout mProfilePictureView;
     private LinearLayout mAppsContainer;
     private ScrollView mAppsScrollView;
     private EasyTracker mEasyTracker;
@@ -93,6 +98,7 @@ public class HomeActivity extends Activity {
         mHelper = LauncherUtility.getOasisHelper(mContext);
 
         mCurrentUser = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
+        mLoggedInGuardian = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
 		mLauncher = mHelper.applicationHelper.getApplicationById(mCurrentUser.getId());
 
         loadViews();
@@ -274,7 +280,6 @@ public class HomeActivity extends Activity {
      * Finds all views used
      */
     private void loadViews() {
-        mProfilePictureView = (LinearLayout)this.findViewById(R.id.profile_pic);
         mHomeBarLayout = (RelativeLayout) this.findViewById(R.id.HomeBarLayout);
         mSideBarView = (SideBarLayout)this.findViewById(R.id.SideBarLayout);
         mAppsContainer = (LinearLayout)this.findViewById(R.id.appContainer);
@@ -458,29 +463,32 @@ public class HomeActivity extends Activity {
 		mConnectivityWidget = (GWidgetConnectivity) findViewById(R.id.connectivitywidget);
 		mLogoutWidget = (GWidgetLogout) findViewById(R.id.logoutwidget);
 		mHomeDrawerView = (RelativeLayout) findViewById(R.id.HomeDrawer);
-        mProfilePictureView = (LinearLayout) findViewById(R.id.profile_pic);
+        mProfileSelectorButton = (GButton) findViewById(R.id.profile_pic);
+        if(mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
+            mProfileSelectorWidget = new GProfileSelector(mContext, mLoggedInGuardian, mCurrentUser);
+        else
+            mProfileSelectorWidget = new GProfileSelector(mContext, mLoggedInGuardian, null);
 
 		mWidgetUpdater = new GWidgetUpdater();
 		mWidgetUpdater.addWidget(mCalendarWidget);
 		mWidgetUpdater.addWidget(mConnectivityWidget);
 
-        mProfilePictureView.setOnClickListener(new View.OnClickListener() {
+        mProfileSelectorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            Intent intent = new Intent(v.getContext(), ProfileSelectActivity.class);
-            intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                LauncherUtility.secureStartActivity(mContext, intent);
+                mProfileSelectorWidget.show();
             }
         });
+        SetProfileSelector();
 
 		mLogoutWidget.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-            if (!mWidgetRunning) {
-                mWidgetRunning = true;
-                mLogoutDialog.show();
-                mWidgetRunning = false;
-            }
+                if (!mWidgetRunning) {
+                    mWidgetRunning = true;
+                    mLogoutDialog.show();
+                    mWidgetRunning = false;
+                }
 			}
 		});
 	}
@@ -571,11 +579,12 @@ public class HomeActivity extends Activity {
                 intent.setComponent(new ComponentName(app.getPackage(), app.getActivity()));
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                         | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                intent.putExtra(Constants.GUARDIAN_ID, mLoggedInGuardian.getId());
 
                 if(mCurrentUser.getRole() == Profile.Roles.CHILD)
                     intent.putExtra(Constants.CHILD_ID, mCurrentUser.getId());
                 else
-                    intent.putExtra(Constants.GUARDIAN_ID, mCurrentUser.getId());
+                    intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
 
                 intent.putExtra(Constants.APP_COLOR, app.getBgColor());
                 intent.putExtra(Constants.APP_PACKAGE_NAME, app.getPackage());
@@ -609,6 +618,28 @@ public class HomeActivity extends Activity {
         return mAppInfos.get(id);
     }
 
+    /*
+    * This is used to set the onClickListener for a new ProfileSelector
+    * It must be used everytime a new selector is set.
+    * */
+    private void SetProfileSelector()
+    {
+        mProfileSelectorWidget.setOnListItemClick(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                ProfileController pc = new ProfileController(mContext);
+                mCurrentUser = pc.getProfileById((int)l);
+                mProfileSelectorWidget.dismiss();
+
+                if(mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
+                    mProfileSelectorWidget = new GProfileSelector(mContext, mLoggedInGuardian, mCurrentUser);
+                else
+                    mProfileSelectorWidget = new GProfileSelector(mContext, mLoggedInGuardian, null);
+
+                SetProfileSelector();
+            }
+        });
+    }
     /**
      * Timer task for observing if new apps has been added
      */
@@ -625,4 +656,5 @@ public class HomeActivity extends Activity {
             Log.d(Constants.ERROR_TAG, "Applications checked");
         }
     }
+
 }
