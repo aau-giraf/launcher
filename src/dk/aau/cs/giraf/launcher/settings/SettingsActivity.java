@@ -6,6 +6,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,10 +15,13 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.LauncherSettings;
+import dk.aau.cs.giraf.settingslib.settingslib.Fragments.WombatSettings;
 
 public class SettingsActivity extends Activity
         implements SettingsListFragment.SettingsListFragmentListener {
@@ -26,7 +30,7 @@ public class SettingsActivity extends Activity
     private SettingsListAdapter mAdapter;
     private ListView mSettingsListView;
     private Fragment mActiveFragment;
-    private ArrayList<SettingsListItem> mAppList;
+    private ArrayList<SettingsListItem> mSettingsAppList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,14 +56,36 @@ public class SettingsActivity extends Activity
     }
 
     private void populateListFragment(){
-        mAppList = new ArrayList<SettingsListItem>();
+        mSettingsAppList = new ArrayList<SettingsListItem>();
 
         addApplicationByPackageName("dk.aau.cs.giraf.launcher", new LauncherSettings());
+        addApplicationByPackageName("dk.aau.cs.giraf.wombat", new WombatSettings());
+        addApplicationByPackageName("com.android.test", new LauncherSettings());
         addApplicationByName("Android", new AppManagementSettings(), getResources().getDrawable(R.drawable.android_icon));
 
         // Getting mAdapter by passing list data
-        mAdapter = new SettingsListAdapter(SettingsActivity.this, mAppList);
+        mAdapter = new SettingsListAdapter(SettingsActivity.this, getInstalledGirafApps(mSettingsAppList));
         mSettingsListView.setAdapter(mAdapter);
+    }
+
+    private ArrayList<SettingsListItem> getInstalledGirafApps(ArrayList<SettingsListItem> list) {
+        List<ResolveInfo> installedGirafApps = LauncherUtility.getDeviceGirafApps(this);
+        ArrayList<SettingsListItem> mAvailableSettingsAppList = (ArrayList<SettingsListItem>) list.clone();
+
+        for (SettingsListItem settingsApp : list) {
+            for (ResolveInfo installedApp : installedGirafApps) {
+                String installedAppName = installedApp.activityInfo.applicationInfo.packageName.toLowerCase();
+
+                if (!mAvailableSettingsAppList.contains(settingsApp)) {
+                    if (settingsApp.mPackageName != null && installedAppName.contains(settingsApp.mPackageName.toLowerCase())) {
+                        mAvailableSettingsAppList.add(settingsApp);
+                    } else if (settingsApp.mPackageName == null && settingsApp.mAppName != null) {
+                        mAvailableSettingsAppList.add(settingsApp);
+                    }
+                }
+            }
+        }
+        return mAvailableSettingsAppList;
     }
 
     private void addApplicationByPackageName(String packageName, Fragment fragment) {
@@ -72,34 +98,28 @@ public class SettingsActivity extends Activity
             e.printStackTrace();
         }
 
-        String appName;
         if (appInfo != null) {
-            appName = setCorrectCase(pm.getApplicationLabel(appInfo).toString());
+            final String appName = setCorrectCase(pm.getApplicationLabel(appInfo).toString());
+            final Drawable appIcon = pm.getApplicationIcon(appInfo);
+
+            SettingsListItem item = new SettingsListItem(
+                    packageName,
+                    appName,
+                    appIcon,
+                    fragment
+            );
+            mSettingsAppList.add(item);
         }
-        else
-            appName = "(unknown)";
-
-        final Drawable appIcon = (
-                appInfo != null ?
-                        pm.getApplicationIcon(appInfo) :
-                        getResources().getDrawable(R.drawable.giraf_icon)
-        );
-
-        SettingsListItem item = new SettingsListItem(
-                appName,
-                appIcon,
-                fragment
-        );
-        mAppList.add(item);
     }
 
     private void addApplicationByName(String appName, Fragment settingsFragment, Drawable icon) {
         SettingsListItem item = new SettingsListItem(
+                null,
                 setCorrectCase(appName),
                 icon,
                 settingsFragment
         );
-        mAppList.add(item);
+        mSettingsAppList.add(item);
     }
 
     private String setCorrectCase(String name) {
