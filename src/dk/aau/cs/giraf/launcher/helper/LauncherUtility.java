@@ -464,7 +464,7 @@ public class LauncherUtility {
         return selectedApps;
     }
 
-    public static HashMap<String,AppInfo> loadGirafApplicationsIntoView(Context context, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize, View.OnClickListener listener) {
+    public static HashMap<String,AppInfo> loadGirafApplicationsIntoView(Context context, Profile currentUser, Profile guardian, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize, View.OnClickListener listener) {
         //Get the list of apps to show in the container
         //List<Application> girafAppsList = LauncherUtility.getAvailableGirafAppsButLauncher(mContext);
         HashMap<String, AppInfo> appInfoHash = new HashMap<String, AppInfo>();
@@ -511,7 +511,7 @@ public class LauncherUtility {
                     targetLayout.addView(currentAppRow);
                 }
 
-                AppImageView newAppView = createGirafLauncherApp(context, appInfo, targetLayout, listener);
+                AppImageView newAppView = createGirafLauncherApp(context, currentUser, guardian, appInfo, targetLayout, listener);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
                 params.weight = 1f;
                 newAppView.setLayoutParams(params);
@@ -666,10 +666,9 @@ public class LauncherUtility {
      * @param targetLayout
      * @return
      */
-    private static AppImageView createGirafLauncherApp(Context context, AppInfo appInfo, LinearLayout targetLayout, View.OnClickListener listener) {
+    private static AppImageView createGirafLauncherApp(Context context, final Profile currentUser, final Profile guardian, AppInfo appInfo, LinearLayout targetLayout, View.OnClickListener listener) {
 
         AppImageView appImageView = new AppImageView(context);
-        final Profile currentUser = LauncherUtility.findCurrentUser(context);
         View appView = addContentToView(context, targetLayout, appInfo.getName(), appInfo.getIconImage());
 
         setAppBackground(appView, appInfo.getBgColor());
@@ -680,29 +679,31 @@ public class LauncherUtility {
 
         if(listener == null)
         {
-            if(currentUser.getRole() == Profile.Roles.GUARDIAN)
-                appImageView.setOnClickListener(new ProfileLauncher());
-            else{
-                appImageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        AppInfo app = HomeActivity.getAppInfo((String) v.getTag());
-                        Intent intent = new Intent(Intent.ACTION_MAIN);
-                        intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                        intent.setComponent(new ComponentName(app.getPackage(), app.getActivity()));
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+            appImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AppInfo app = HomeActivity.getAppInfo((String) v.getTag());
+                    Intent intent = new Intent(Intent.ACTION_MAIN);
+                    intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                    intent.setComponent(new ComponentName(app.getPackage(), app.getActivity()));
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 
+                    if(currentUser.getRole() == Profile.Roles.CHILD)
                         intent.putExtra(Constants.CHILD_ID, currentUser.getId());
-                        intent.putExtra(Constants.APP_COLOR, app.getBgColor());
-                        intent.putExtra(Constants.APP_PACKAGE_NAME, app.getPackage());
-                        intent.putExtra(Constants.APP_ACTIVITY_NAME, app.getActivity());
+                    else
+                        intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
 
-                        // Verify the intent will resolve to at least one activity
-                        LauncherUtility.secureStartActivity(v.getContext(), intent);
-                    }
-                });
-            }
+                    intent.putExtra(Constants.GUARDIAN_ID, guardian.getId());
+                    intent.putExtra(Constants.APP_COLOR, app.getBgColor());
+                    intent.putExtra(Constants.APP_PACKAGE_NAME, app.getPackage());
+                    intent.putExtra(Constants.APP_ACTIVITY_NAME, app.getActivity());
+
+                    // Verify the intent will resolve to at least one activity
+                    LauncherUtility.secureStartActivity(v.getContext(), intent);
+                }
+            });
+
         }
         else
         {
