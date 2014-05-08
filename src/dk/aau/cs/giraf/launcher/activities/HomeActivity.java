@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -28,9 +29,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import dk.aau.cs.giraf.gui.GButtonSettings;
+import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GColorAdapter;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
+import dk.aau.cs.giraf.gui.GProfileSelector;
+import dk.aau.cs.giraf.gui.GToast;
 import dk.aau.cs.giraf.gui.GWidgetCalendar;
 import dk.aau.cs.giraf.gui.GWidgetConnectivity;
 import dk.aau.cs.giraf.gui.GWidgetLogout;
@@ -42,6 +46,7 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.SideBarLayout;
 import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
 import dk.aau.cs.giraf.oasis.lib.Helper;
+import dk.aau.cs.giraf.oasis.lib.controllers.ProfileController;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.settingslib.settingslib.SettingsUtility;
@@ -50,6 +55,7 @@ public class HomeActivity extends Activity {
 
 	private static Context mContext;
 
+    private Profile mLoggedInGuardian;
 	private Profile mCurrentUser;
 	private Helper mHelper;
 	private Application mLauncher;
@@ -63,13 +69,12 @@ public class HomeActivity extends Activity {
     private int mIconSize;
 
 	private GWidgetUpdater mWidgetUpdater;
-
+    private GProfileSelector mProfileSelectorWidget;
     private GDialog mLogoutDialog;
 
 	private RelativeLayout mHomeDrawerView;
     private RelativeLayout mHomeBarLayout;
     private SideBarLayout mSideBarView;
-	private LinearLayout mProfilePictureView;
     private LinearLayout mAppsContainer;
     private ScrollView mAppsScrollView;
     private EasyTracker mEasyTracker;
@@ -87,6 +92,7 @@ public class HomeActivity extends Activity {
         mHelper = LauncherUtility.getOasisHelper(mContext);
 
         mCurrentUser = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
+        mLoggedInGuardian = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
 		mLauncher = mHelper.applicationHelper.getApplicationById(mCurrentUser.getId());
 
         loadViews();
@@ -201,7 +207,6 @@ public class HomeActivity extends Activity {
      * Finds all views used
      */
     private void loadViews() {
-        mProfilePictureView = (LinearLayout)this.findViewById(R.id.profile_pic);
         mHomeBarLayout = (RelativeLayout) this.findViewById(R.id.HomeBarLayout);
         mSideBarView = (SideBarLayout)this.findViewById(R.id.SideBarLayout);
         mAppsContainer = (LinearLayout)this.findViewById(R.id.appContainer);
@@ -385,8 +390,13 @@ public class HomeActivity extends Activity {
         GWidgetConnectivity connectivityWidget = (GWidgetConnectivity) findViewById(R.id.connectivitywidget);
         GWidgetLogout logoutWidget = (GWidgetLogout) findViewById(R.id.logoutwidget);
         GButtonSettings settingsButton = (GButtonSettings) findViewById(R.id.settingsbutton);
+        GButton mProfileSelectorButton = (GButton) findViewById(R.id.profile_pic);
 		mHomeDrawerView = (RelativeLayout) findViewById(R.id.HomeDrawer);
-        mProfilePictureView = (LinearLayout) findViewById(R.id.profile_pic);
+
+        if(mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
+            mProfileSelectorWidget = new GProfileSelector(mContext, mLoggedInGuardian, mCurrentUser);
+        else
+            mProfileSelectorWidget = new GProfileSelector(mContext, mLoggedInGuardian, null);
 
 		mWidgetUpdater = new GWidgetUpdater();
 		mWidgetUpdater.addWidget(calendarWidget);
@@ -400,9 +410,17 @@ public class HomeActivity extends Activity {
             }
         });
 
-		logoutWidget.setOnClickListener(new View.OnClickListener() {
+        mProfileSelectorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mProfileSelectorWidget.show();
+            }
+        });
+        SetProfileSelector();
+
+		logoutWidget.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
                 if (!mWidgetRunning) {
                     mWidgetRunning = true;
                     mLogoutDialog.show();
@@ -479,6 +497,28 @@ public class HomeActivity extends Activity {
         return mAppInfos.get(id);
     }
 
+    /*
+    * This is used to set the onClickListener for a new ProfileSelector
+    * It must be used everytime a new selector is set.
+    * */
+    private void SetProfileSelector()
+    {
+        mProfileSelectorWidget.setOnListItemClick(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                ProfileController pc = new ProfileController(mContext);
+                mCurrentUser = pc.getProfileById((int)l);
+                mProfileSelectorWidget.dismiss();
+
+                if(mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
+                    mProfileSelectorWidget = new GProfileSelector(mContext, mLoggedInGuardian, mCurrentUser);
+                else
+                    mProfileSelectorWidget = new GProfileSelector(mContext, mLoggedInGuardian, null);
+
+                SetProfileSelector();
+            }
+        });
+    }
     /**
      * Timer task for observing if new apps has been added
      */
