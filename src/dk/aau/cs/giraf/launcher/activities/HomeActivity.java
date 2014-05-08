@@ -406,6 +406,12 @@ public class HomeActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, SettingsActivity.class);
+                intent.putExtra(Constants.GUARDIAN_ID, mLoggedInGuardian.getId());
+                if(mCurrentUser.getRole() == Profile.Roles.GUARDIAN)
+                    intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
+                else
+                    intent.putExtra(Constants.CHILD_ID, mCurrentUser.getId());
+
                 startActivity(intent);
             }
         });
@@ -497,10 +503,10 @@ public class HomeActivity extends Activity {
         return mAppInfos.get(id);
     }
 
-    /*
-    * This is used to set the onClickListener for a new ProfileSelector
-    * It must be used everytime a new selector is set.
-    * */
+    /**
+     * This is used to set the onClickListener for a new ProfileSelector
+     * It must be used everytime a new selector is set.
+     * */
     private void SetProfileSelector()
     {
         mProfileSelectorWidget.setOnListItemClick(new AdapterView.OnItemClickListener() {
@@ -519,6 +525,7 @@ public class HomeActivity extends Activity {
             }
         });
     }
+
     /**
      * Timer task for observing if new apps has been added
      */

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
@@ -17,7 +18,9 @@ import java.util.ArrayList;
 
 import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementSettings;
+import dk.aau.cs.giraf.oasis.lib.controllers.ProfileController;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.LauncherSettings;
 
@@ -38,7 +41,20 @@ public class SettingsActivity extends Activity
         super.onCreate(savedInstanceState);
         Log.d("Giraf settings debugging", "SettingsActivity onCreate");
         setContentView(R.layout.settings);
-
+        ProfileController pc = new ProfileController(this);
+        mLoggedInGuardian = pc.getProfileById(this.getIntent().getIntExtra(Constants.GUARDIAN_ID, -1));
+        int childID = this.getIntent().getIntExtra(Constants.CHILD_ID, -1);
+        if(childID == -1)
+        {
+            mCurrentUser = pc.getProfileById(this.getIntent().getIntExtra(Constants.GUARDIAN_ID, -1));
+            profileSelector = new GProfileSelector(this, mLoggedInGuardian, null);
+        }
+        else
+        {
+            mCurrentUser = pc.getProfileById(childID);
+            profileSelector = new GProfileSelector(this, mLoggedInGuardian, mCurrentUser);
+        }
+        SetProfileSelector();
 
         mSettingsListView = (ListView)findViewById(R.id.settingsListView);
 
@@ -138,6 +154,31 @@ public class SettingsActivity extends Activity
 
     @Override
     public void onUserChanged(View view) {
+        profileSelector.show();
         return;
+    }
+
+    /**
+     * This is used to set the onClickListener for a new ProfileSelector
+     * It must be used everytime a new selector is set.
+     * */
+    private void SetProfileSelector()
+    {
+        final Context context = this;
+        profileSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                ProfileController pc = new ProfileController(context);
+                mCurrentUser = pc.getProfileById((int)l);
+                profileSelector.dismiss();
+
+                if(mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
+                    profileSelector = new GProfileSelector(context, mLoggedInGuardian, mCurrentUser);
+                else
+                    profileSelector = new GProfileSelector(context, mLoggedInGuardian, null);
+
+                SetProfileSelector();
+            }
+        });
     }
 }
