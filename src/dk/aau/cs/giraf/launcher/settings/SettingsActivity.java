@@ -108,7 +108,7 @@ public class SettingsActivity extends Activity
     }
 
     @Override
-    public void onUserChanged(AdapterView<?> parent, View view, int position, long id) {
+    public void onUserChanged(View view) {
         return;
     }
 }

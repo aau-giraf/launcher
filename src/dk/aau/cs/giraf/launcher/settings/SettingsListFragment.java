@@ -8,19 +8,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+
+import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.launcher.R;
 
 public class SettingsListFragment extends Fragment {
 
     private ListView mSettingsListView;
     private SettingsListAdapter mAdapter;
-    private Spinner mUserSpinner;
+    private GButton mProfileButton;
     SettingsListFragmentListener mCallback; // Callback to containing Activity implementing the SettingsListFragmentListener interface
 
     // Container Activity must implement this interface
     public interface SettingsListFragmentListener {
         public void setActiveFragment(Fragment fragment);
-        public void onUserChanged(AdapterView<?> parent, View view, int position, long id);
+        public void onUserChanged(View view);
     }
 
     @Override
@@ -32,7 +34,7 @@ public class SettingsListFragment extends Fragment {
         mSettingsListView =  (ListView) view.findViewById(R.id.settingsListView);
 
         Log.d(getTag(), "Finding spinnerUser");
-        mUserSpinner = (Spinner) view.findViewById(R.id.spinnerUser);
+        mProfileButton = (GButton) view.findViewById(R.id.profile_selection_button);
 
         return view;
     }
@@ -55,16 +57,10 @@ public class SettingsListFragment extends Fragment {
         });
 
         Log.d(getTag(), "Setting spinner OnItemSelectedListener");
-        mUserSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("Giraf Settings debugging", "userSpinner onItemSelected");
-                mCallback.onUserChanged(parent, view, position, id);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                return;
+            public void onClick(View v) {
+                mCallback.onUserChanged(v);
             }
         });
     }
