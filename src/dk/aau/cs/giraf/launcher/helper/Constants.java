@@ -13,6 +13,7 @@ public final class Constants {
 	// Keys for inserting and retrieving data in Intents
 	public static final String GUARDIAN_ID = "currentGuardianID";
 	public static final String CHILD_ID = "currentChildID";
+    public static final int NO_CHILD_SELECTED_ID = -1;
 	public static final String APP_PACKAGE_NAME = "appPackageName";
 	public static final String APP_ACTIVITY_NAME = "appActivityName";
     public static final String APP_COLOR = "appBackgroundColor";
