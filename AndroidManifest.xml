@@ -81,7 +81,7 @@
         <activity
                 android:name="dk.aau.cs.giraf.launcher.settings.SettingsActivity"
                 android:label="@string/giraf_settings_name"
-                android:theme="@android:style/Theme.Holo.NoActionBar"
+                android:theme="@android:style/Theme.Holo.Light.NoActionBar"
                 android:screenOrientation="landscape">
             <intent-filter>
                 <!--
