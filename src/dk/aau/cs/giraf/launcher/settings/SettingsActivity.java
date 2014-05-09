@@ -155,8 +155,7 @@ public class SettingsActivity extends Activity
 
     private void reloadCurrentFragment()
     {
-        mFragManager.beginTransaction().detach(mActiveFragment);
-        mFragManager.beginTransaction().attach(mActiveFragment);
+        setActiveFragment(getInstalledSettingsApps().get(0).mAppFragment);
     }
 
     @Override
@@ -182,7 +181,8 @@ public class SettingsActivity extends Activity
                 else
                     profileSelector = new GProfileSelector(SettingsActivity.this, mLoggedInGuardian, null);
 
-                setActiveFragment(getInstalledSettingsApps().get(0).mAppFragment);
+                reloadCurrentFragment();
+
                 SetProfileSelector();
             }
         });
