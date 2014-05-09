@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -46,8 +45,15 @@ public class SettingsActivity extends Activity
         super.onCreate(savedInstanceState);
         Log.d("Giraf settings debugging", "SettingsActivity onCreate");
         setContentView(R.layout.settings);
+
+        mSettingsListView = (ListView)findViewById(R.id.settingsListView);
+
+        // Adds data to SettingsListFragment
+        populateListFragment();
+
         ProfileController pc = new ProfileController(this);
         mLoggedInGuardian = pc.getProfileById(this.getIntent().getIntExtra(Constants.GUARDIAN_ID, -1));
+
         int childID = this.getIntent().getIntExtra(Constants.CHILD_ID, -1);
         if(childID == -1)
         {
@@ -60,14 +66,8 @@ public class SettingsActivity extends Activity
             profileSelector = new GProfileSelector(this, mLoggedInGuardian, mCurrentUser);
         }
 
-        mSettingsListView = (ListView)findViewById(R.id.settingsListView);
-
-        // Adds data to SettingsListFragment
-        populateListFragment();
-
         mFragManager = this.getFragmentManager();
         Fragment settingsFragment = mFragManager.findFragmentById(R.id.settingsContainer);
-        SetProfileSelector();
 
         if (settingsFragment == null) {
             SettingsListItem item = (SettingsListItem) mAdapter.getItem(0);
@@ -76,6 +76,8 @@ public class SettingsActivity extends Activity
 
         mFragManager.beginTransaction().add(R.id.settingsContainer, mActiveFragment)
                 .commit();
+
+        SetProfileSelector();
     }
 
     private void populateListFragment(){
@@ -161,18 +163,6 @@ public class SettingsActivity extends Activity
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d("Giraf settings debugging", "SettingsActivity onResume");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d("Giraf settings debugging", "SettingsActivity onPause");
-    }
-
-    @Override
     public void onUserChanged(View view) {
         profileSelector.show();
     }
@@ -183,18 +173,17 @@ public class SettingsActivity extends Activity
      * */
     private void SetProfileSelector()
     {
-        final Context context = this;
         profileSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                ProfileController pc = new ProfileController(context);
+                ProfileController pc = new ProfileController(SettingsActivity.this);
                 mCurrentUser = pc.getProfileById((int)l);
                 profileSelector.dismiss();
 
                 if(mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
-                    profileSelector = new GProfileSelector(context, mLoggedInGuardian, mCurrentUser);
+                    profileSelector = new GProfileSelector(SettingsActivity.this, mLoggedInGuardian, mCurrentUser);
                 else
-                    profileSelector = new GProfileSelector(context, mLoggedInGuardian, null);
+                    profileSelector = new GProfileSelector(SettingsActivity.this, mLoggedInGuardian, null);
 
                 SetProfileSelector();
             }
