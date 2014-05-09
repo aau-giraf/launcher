@@ -79,7 +79,7 @@ public class SettingsListAdapter extends BaseAdapter {
         return vi;
     }
 
-    public void setShadowRightCurrent(View currentView, boolean visible) {
+    private void setShadowRightCurrent(View currentView, boolean visible) {
         View rightShadow = currentView.findViewById(R.id.settingsListRowShadowRight);
         if (visible)
             rightShadow.setVisibility(View.VISIBLE);
@@ -87,7 +87,7 @@ public class SettingsListAdapter extends BaseAdapter {
             rightShadow.setVisibility(View.GONE);
     }
 
-    public void setShadowAboveCurrent(View aboveView, boolean visible) {
+    private void setShadowAboveCurrent(View aboveView, boolean visible) {
         // Add a shadow at the bottom of the list item ABOVE current
         View aboveViewShadow = aboveView.findViewById(R.id.settingsListRowShadowAbove);
         if (visible)
@@ -96,7 +96,7 @@ public class SettingsListAdapter extends BaseAdapter {
             aboveViewShadow.setVisibility(View.GONE);
     }
 
-    public void setShadowBelowCurrent(View belowView, boolean visible) {
+    private void setShadowBelowCurrent(View belowView, boolean visible) {
         // Add a shadow at the top of the list item BELOW current
         View belowViewShadow = belowView.findViewById(R.id.settingsListRowShadowBelow);
         if (visible)
