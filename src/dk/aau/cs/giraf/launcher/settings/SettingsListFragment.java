@@ -84,6 +84,7 @@ public class SettingsListFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 mCallback.onUserChanged(v);
+                mAdapter.setSelected(0);
             }
         });
     }
