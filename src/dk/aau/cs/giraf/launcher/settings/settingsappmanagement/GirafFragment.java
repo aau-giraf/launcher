@@ -14,6 +14,7 @@ import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
+import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
 import dk.aau.cs.giraf.oasis.lib.controllers.ProfileApplicationController;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -102,11 +103,11 @@ public class GirafFragment extends AppContainerFragment {
                     {
                         AppImageView appImageView = (AppImageView) thisLayout.getChildAt(j);
                         ProfileApplicationController pac = new ProfileApplicationController(context);
-                        Profile user = LauncherUtility.findCurrentUser(context);
+
                         AppInfo app = null;
                         try{app = appInfos.get(appImageView.getTag().toString());}
                         catch (Exception e)  {}
-                        if(app != null && UserHasApplicationInView(appImageView, pac, app.getApp(), user))
+                        if(app != null && UserHasApplicationInView(appImageView, pac, app.getApp(), SettingsActivity.mCurrentUser))
                         {
                             appImageView.toggle();
                         }

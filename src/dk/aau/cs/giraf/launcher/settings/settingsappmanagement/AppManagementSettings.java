@@ -58,15 +58,13 @@ public class AppManagementSettings extends Fragment {
         mFragManager = this.getFragmentManager();
         mFragmentContainer = mFragManager.findFragmentById(R.id.app_settings_fragmentlayout);
 
-        if (mFragmentContainer == null) {
-            {
-                mFragmentContainer = mGirafFragment;
-                focusButton(mGirafButton);
-                mActiveFragment = mFragmentContainer;
-            }
-            mFragManager.beginTransaction().add(R.id.app_settings_fragmentlayout, mFragmentContainer)
-                    .commit();
-        }
+        // Choose the GIRAF pane and set the GIRAF button when the fragment has loaded.
+        mFragmentContainer = mGirafFragment;
+        focusButton(mGirafButton);
+        mActiveFragment = mFragmentContainer;
+
+        mFragManager.beginTransaction().add(R.id.app_settings_fragmentlayout, mFragmentContainer)
+                .commit();
 
         return view;
     }
