@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 
-import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.gui.GWidgetProfileSelection;
 import dk.aau.cs.giraf.launcher.R;
 
@@ -81,6 +80,12 @@ public class SettingsListFragment extends Fragment {
             throw new ClassCastException(activity.toString()
                     + " must implement SettingsListFragmentListener");
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mAdapter.setSelected(0);
     }
 
     public void setSelectedUserName(String name) {
