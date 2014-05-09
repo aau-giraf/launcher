@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +30,8 @@ public class SettingsActivity extends Activity
         implements SettingsListFragment.SettingsListFragmentListener {
 
     private FragmentManager mFragManager;
-    private SettingsListAdapter mAdapter;
-    private ListView mSettingsListView;
     private Fragment mActiveFragment;
-    private ArrayList<SettingsListItem> mSettingsAppList;
+    private ArrayList<SettingsListItem> mAppList;
 
     private Profile mLoggedInGuardian;
     private Profile mCurrentUser;
@@ -45,11 +42,6 @@ public class SettingsActivity extends Activity
         super.onCreate(savedInstanceState);
         Log.d("Giraf settings debugging", "SettingsActivity onCreate");
         setContentView(R.layout.settings);
-
-        mSettingsListView = (ListView)findViewById(R.id.settingsListView);
-
-        // Adds data to SettingsListFragment
-        populateListFragment();
 
         ProfileController pc = new ProfileController(this);
         mLoggedInGuardian = pc.getProfileById(this.getIntent().getIntExtra(Constants.GUARDIAN_ID, -1));
@@ -70,7 +62,7 @@ public class SettingsActivity extends Activity
         Fragment settingsFragment = mFragManager.findFragmentById(R.id.settingsContainer);
 
         if (settingsFragment == null) {
-            SettingsListItem item = (SettingsListItem) mAdapter.getItem(0);
+            SettingsListItem item = getInstalledSettingsApps().get(0);
             mActiveFragment = item.mAppFragment;
         }
 
@@ -80,19 +72,17 @@ public class SettingsActivity extends Activity
         SetProfileSelector();
     }
 
-    private void populateListFragment(){
-        mSettingsAppList = new ArrayList<SettingsListItem>();
+    public ArrayList<SettingsListItem> getInstalledSettingsApps(){
+        mAppList = new ArrayList<SettingsListItem>();
 
         addApplicationByPackageName("dk.aau.cs.giraf.launcher", new LauncherSettings(LauncherUtility.getSharedPreferenceUser(getApplicationContext())));
         addApplicationByPackageName("dk.aau.cs.giraf.wombat", new WombatSettings());
         addApplicationByName("Android", new AppManagementSettings(), getResources().getDrawable(R.drawable.android_icon));
 
-        // Getting mAdapter by passing list data
-        mAdapter = new SettingsListAdapter(SettingsActivity.this, getInstalledGirafApps(mSettingsAppList));
-        mSettingsListView.setAdapter(mAdapter);
+        return removeNonGirafApps(mAppList);
     }
 
-    private ArrayList<SettingsListItem> getInstalledGirafApps(ArrayList<SettingsListItem> list) {
+    private ArrayList<SettingsListItem> removeNonGirafApps(ArrayList<SettingsListItem> list) {
         List<ResolveInfo> installedGirafApps = LauncherUtility.getDeviceGirafApps(this);
         ArrayList<SettingsListItem> mAvailableSettingsAppList = (ArrayList<SettingsListItem>) list.clone();
 
@@ -132,7 +122,7 @@ public class SettingsActivity extends Activity
                     appIcon,
                     fragment
             );
-            mSettingsAppList.add(item);
+            mAppList.add(item);
         }
     }
 
@@ -143,7 +133,7 @@ public class SettingsActivity extends Activity
                 icon,
                 settingsFragment
         );
-        mSettingsAppList.add(item);
+        mAppList.add(item);
     }
 
     private String setCorrectCase(String name) {
