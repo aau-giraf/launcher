@@ -53,7 +53,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         }
 
         if(DEBUG_MODE)
-            LauncherUtility.enableDebugging(DEBUG_MODE, loginAsChild, this);
+            LauncherUtility.setDebugging(DEBUG_MODE, loginAsChild, this);
 
         startActivity(intent);
         finish();

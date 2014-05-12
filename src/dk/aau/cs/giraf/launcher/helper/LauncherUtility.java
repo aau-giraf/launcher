@@ -51,32 +51,49 @@ import dk.aau.cs.giraf.settingslib.settingslib.SettingsUtility;
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 /**
- * Class for holding static methods and fields, to minimize code duplication.
+ * <Code>LauncherUtility</Code> contains static methods related to running the Launcher,
+ * but which do not inherently belong any specific class instance.
  */
-public class LauncherUtility {
-
+public abstract class LauncherUtility {
+    /* Flags that indicate whether Launcher is in debug mode. These should not be changed from here,
+        but from MainActivity.java.                                                                  */
     private static boolean DEBUG_MODE = false;
     private static boolean DEBUG_MODE_AS_CHILD = false;
     private final static String DEFAULT_PACKAGE_FILTER = "";
     private final static boolean DEFAULT_FILTER_INCLUSION = true;
 
     /**
-     * Decides if GIRAF launcher is running in debug mode
-     * Debug mode can be enabled through enableDebugging() method,
-     * which is typically done on MainActivity
+     * Returns whether Launcher is running in debug mode. Debug mode is toggled in the
+     * source code of {@code MainActivity}.
+     *
+     * @return {@code true} if Launcher is running in debug mode.
      */
     public static boolean isDebugging() {
         return DEBUG_MODE;
     }
 
+    /**
+     * Returns whether Launcher is running in debug mode with a child profile. This setting is toggled in the
+     * source code of {@code MainActivity}.
+     *
+     * @return {@code true} if Launcher is running in debug mode with a child profile.
+     */
     public static boolean isDebuggingAsChild() {
         return DEBUG_MODE_AS_CHILD;
     }
 
     /**
-     * Enable GIRAF launcher debug mode
+     * Set whether Launcher is running in debug mode. If debug mode is enabled, Launcher will skip its opening
+     * animation and the login screen. {@code loginAsChild} decides whether the logged in profile is a child or
+     * a guardian. If debug mode is enabled, a warning is shown in {@code activity}.
+     *
+     * @param debugging If {@code true} Launcher will run in debugging mode.
+     * @param loginAsChild If {@code true} Launcher will automatically log in with a child profile. If
+     *                     {@code false} launcher will log in as a guardian.
+     * @param activity An activity in which to display a message indicating that debugging is enabled,
+     *                 if this is the case.
      */
-    public static void enableDebugging(boolean debugging, boolean loginAsChild, Activity activity) {
+    public static void setDebugging(boolean debugging, boolean loginAsChild, Activity activity) {
         DEBUG_MODE = debugging;
         DEBUG_MODE_AS_CHILD = loginAsChild;
 
@@ -104,7 +121,7 @@ public class LauncherUtility {
      * Show warning if DEBUG_MODE is true
      */
     public static void ShowDebugInformation(Activity a) {
-        if (DEBUG_MODE) {
+        if (DEBUG_MODE && a != null) {
             LinearLayout debug = (LinearLayout) a.findViewById(R.id.debug_mode);
             TextView textView = (TextView) a.findViewById(R.id.debug_mode_text);
             textView.setText(a.getText(R.string.giraf_debug_mode) + " "
