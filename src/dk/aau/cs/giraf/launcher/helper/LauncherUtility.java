@@ -242,21 +242,6 @@ public class LauncherUtility {
     }
 
     /**
-     * Returns true if the device currently is held in landscape orientation by the user.
-     *
-     * @param context Context of the current activity.
-     * @return true if the device currently is held in landscape orientation by the user.
-     */
-    public static boolean isLandscape(Context context) {
-        int rotation = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
-        if ((rotation % 2) == 0) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    /**
      * Gets the GIRAF apps that are usable by the given user, relative to their settings and the system they're logged in on.
      *
      * @param context Context of the current activity.
@@ -493,7 +478,7 @@ public class LauncherUtility {
             int containerWidth = ((ScrollView) targetLayout.getParent()).getWidth();
             int containerHeight = ((ScrollView) targetLayout.getParent()).getHeight();
             // if we are in portrait swap width and height
-            if (!LauncherUtility.isLandscape(context)){
+            if (containerHeight > containerWidth){
                 int temp = containerWidth;
                 containerWidth = containerHeight;
                 containerHeight = temp;
