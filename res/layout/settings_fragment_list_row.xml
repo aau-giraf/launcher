@@ -10,10 +10,7 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:orientation="horizontal"
-            android:paddingTop="@dimen/giraf_settings_list_row_paddingTop"
-            android:paddingBottom="@dimen/giraf_settings_list_row_paddingBottom"
-            android:paddingLeft="@dimen/giraf_settings_list_row_paddingLeft"
-            android:paddingRight="@dimen/giraf_settings_list_row_paddingRight">
+            android:padding="@dimen/giraf_settings_list_row_padding">
 
         <ImageView
                 android:id="@+id/settingsListAppLogo"
