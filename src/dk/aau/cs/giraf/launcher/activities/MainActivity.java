@@ -35,20 +35,20 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      * If {@code true}, the authentication screen is shown, despite debugging mode. Has no
      * effect if {@code DEBUG_MODE} is {@code false}.
      */
-    private final boolean SHOW_AUTHENTICATION = false;
+    private final boolean SKIP_AUTHENTICATION = false;
 
     /**
      * If {@code true}, the splash screen is shown, despite debugging mode. Has no
      * effect if {@code DEBUG_MODE} is {@code false}.
      */
-    private final boolean SHOW_SPLASH_SCREEN = false;
+    private final boolean SKIP_SPLASH_SCREEN = false;
 
     /**
      * If {@code true}, Launcher automatically logs in with a child profile. If {@code false},
      * Launcher logs in with a guardian profile. Has no effect if {@code DEBUG_MODE} is {@code false},
-     * or if {@code SHOW_AUTHENTICATION} is {@code true}.
+     * or if {@code SKIP_AUTHENTICATION} is {@code true}.
      */
-    private final boolean LOG_IN_AS_CHILD = false;
+    private final boolean DEBUG_AS_CHILD = false;
     /* ****************************************** */
 
 	private Context mContext;
@@ -57,11 +57,11 @@ public class MainActivity extends Activity implements Animation.AnimationListene
        It checks if a session is in progress and launches the correct activity based on the answer
        It goes to AuthenticationActivity to login if a session is not in progress
        It goes to HomeActivity, the home screen, if a session is in progress*/
-    public void CheckSessionAndGoToActivity(){
+    public void checkSessionAndGoToActivity(){
         Intent intent;
 
-        if (DEBUG_MODE && !SHOW_AUTHENTICATION){
-            intent = skipAuthentication(LOG_IN_AS_CHILD);
+        if (DEBUG_MODE && SKIP_AUTHENTICATION){
+            intent = skipAuthentication(DEBUG_AS_CHILD);
         } else if (LauncherUtility.sessionExpired(mContext)) {
             intent = new Intent(mContext, AuthenticationActivity.class);
         } else {
@@ -74,7 +74,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         }
 
         if(DEBUG_MODE)
-            LauncherUtility.setDebugging(DEBUG_MODE, LOG_IN_AS_CHILD, this);
+            LauncherUtility.setDebugging(DEBUG_MODE, DEBUG_AS_CHILD, this);
 
         startActivity(intent);
         finish();
@@ -112,8 +112,8 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         boolean skipAuthenticationPref = prefs.getBoolean("show_animation_preference", true);
 
         // Opt in/out whether to show animation or not
-        if ((DEBUG_MODE && !SHOW_SPLASH_SCREEN) || !skipAuthenticationPref)
-            CheckSessionAndGoToActivity();
+        if ((DEBUG_MODE && SKIP_SPLASH_SCREEN) || !skipAuthenticationPref)
+            checkSessionAndGoToActivity();
         else
             logoAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
 
@@ -125,7 +125,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
     @Override
     public void onAnimationEnd(Animation animation) {
         // After completing the animation, check for session and go to the correct activity.
-        CheckSessionAndGoToActivity();
+        checkSessionAndGoToActivity();
     }
 
     // Necessary for the AnimationListener interface
