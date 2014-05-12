@@ -18,19 +18,38 @@ import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 /**
- * Handles determination of debug and whether there is a current session or if the user should login again.
- * Shows a fancy logo animation on start up - Which does nothing.... - CLEVER
+ * Displays the splash logo of Launcher, and then starts {@link dk.aau.cs.giraf.launcher.activities.AuthenticationActivity}.
+ * Provides variables for enabling debug mode before compilation.
  */
 public class MainActivity extends Activity implements Animation.AnimationListener{
 
-    /** ****************************************** **/
+    /* ************* DEBUGGING MODE ************* */
     // TODO: ONLY USED FOR DEBUGGING PURPOSES!!!
+    /**
+     * If {@code true}, the Launcher is stated in debugging mode, where the splash screen and
+     * authentication is skipped.
+     */
     private final boolean DEBUG_MODE = false;
-    /** Below functionality can be disabled simply by setting DEBUG_MODE = false **/
-    private final boolean showAuthentication = false;
-    private final boolean showLogoAnimation = false;
-    private final boolean loginAsChild = false;
-    /** ****************************************** **/
+
+    /**
+     * If {@code true}, the authentication screen is shown, despite debugging mode. Has no
+     * effect if {@code DEBUG_MODE} is {@code false}.
+     */
+    private final boolean SHOW_AUTHENTICATION = false;
+
+    /**
+     * If {@code true}, the splash screen is shown, despite debugging mode. Has no
+     * effect if {@code DEBUG_MODE} is {@code false}.
+     */
+    private final boolean SHOW_SPLASH_SCREEN = false;
+
+    /**
+     * If {@code true}, Launcher automatically logs in with a child profile. If {@code false},
+     * Launcher logs in with a guardian profile. Has no effect if {@code DEBUG_MODE} is {@code false},
+     * or if {@code SHOW_AUTHENTICATION} is {@code true}.
+     */
+    private final boolean LOG_IN_AS_CHILD = false;
+    /* ****************************************** */
 
 	private Context mContext;
 
@@ -41,8 +60,8 @@ public class MainActivity extends Activity implements Animation.AnimationListene
     public void CheckSessionAndGoToActivity(){
         Intent intent;
 
-        if (DEBUG_MODE && !showAuthentication){
-            intent = skipAuthentication(loginAsChild);
+        if (DEBUG_MODE && !SHOW_AUTHENTICATION){
+            intent = skipAuthentication(LOG_IN_AS_CHILD);
         } else if (LauncherUtility.sessionExpired(mContext)) {
             intent = new Intent(mContext, AuthenticationActivity.class);
         } else {
@@ -55,7 +74,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         }
 
         if(DEBUG_MODE)
-            LauncherUtility.setDebugging(DEBUG_MODE, loginAsChild, this);
+            LauncherUtility.setDebugging(DEBUG_MODE, LOG_IN_AS_CHILD, this);
 
         startActivity(intent);
         finish();
@@ -93,7 +112,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         boolean skipAuthenticationPref = prefs.getBoolean("show_animation_preference", true);
 
         // Opt in/out whether to show animation or not
-        if ((DEBUG_MODE && !showLogoAnimation) || !skipAuthenticationPref)
+        if ((DEBUG_MODE && !SHOW_SPLASH_SCREEN) || !skipAuthenticationPref)
             CheckSessionAndGoToActivity();
         else
             logoAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
