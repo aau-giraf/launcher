@@ -36,12 +36,7 @@ public class SettingsActivity extends Activity
     private FragmentManager mFragManager;
     private Fragment mActiveFragment;
     private ArrayList<SettingsListItem> mAppList;
-
-    private Profile mLoggedInGuardian;
-    public static Profile mCurrentUser;
-    private GProfileSelector profileSelector;
-
-    private PreferenceFragment launcherSettings;
+    private Profile mCurrentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,26 +44,8 @@ public class SettingsActivity extends Activity
         Log.d("Giraf settings debugging", "SettingsActivity onCreate");
         setContentView(R.layout.settings);
 
-        ProfileController pc = new ProfileController(this);
-        mLoggedInGuardian = pc.getProfileById(this.getIntent().getIntExtra(Constants.GUARDIAN_ID, -1));
-
-        int childID = this.getIntent().getIntExtra(Constants.CHILD_ID, -1);
-        if(childID == -1)
-        {
-            mCurrentUser = pc.getProfileById(this.getIntent().getIntExtra(Constants.GUARDIAN_ID, -1));
-            profileSelector = new GProfileSelector(this, mLoggedInGuardian, null);
-        }
-        else
-        {
-            mCurrentUser = pc.getProfileById(childID);
-            profileSelector = new GProfileSelector(this, mLoggedInGuardian, mCurrentUser);
-        }
-
         mFragManager = this.getFragmentManager();
         Fragment settingsFragment = mFragManager.findFragmentById(R.id.settingsContainer);
-
-        // Create instance of launcher settings
-        launcherSettings = new LauncherSettings(LauncherUtility.getSharedPreferenceUser(mCurrentUser));
 
         if (settingsFragment == null) {
             SettingsListItem item = getInstalledSettingsApps().get(0);
@@ -77,16 +54,17 @@ public class SettingsActivity extends Activity
 
         mFragManager.beginTransaction().add(R.id.settingsContainer, mActiveFragment)
                 .commit();
-
-        SetProfileSelector();
     }
 
     public ArrayList<SettingsListItem> getInstalledSettingsApps(){
         mAppList = new ArrayList<SettingsListItem>();
 
-        addApplicationByPackageName("dk.aau.cs.giraf.launcher", launcherSettings);
-        addApplicationByPackageName("dk.aau.cs.giraf.wombat", new WombatSettings());
-        addApplicationByName(getString(R.string.apps_list_label), new AppManagementSettings(), getResources().getDrawable(R.drawable.android_icon));
+        addApplicationByPackageName("dk.aau.cs.giraf.launcher",
+                new LauncherSettings(LauncherUtility.getSharedPreferenceUser(mCurrentUser)));
+        addApplicationByPackageName("dk.aau.cs.giraf.wombat",
+                new WombatSettings());
+        addApplicationByName(getString(R.string.apps_list_label),
+                new AppManagementSettings(), getResources().getDrawable(R.drawable.android_icon));
 
         return removeNonGirafApps(mAppList);
     }
@@ -161,10 +139,9 @@ public class SettingsActivity extends Activity
         }
     }
 
-    private void restartActivity()
+    @Override
+    public void reloadActivity()
     {
-        //setActiveFragment(getInstalledSettingsApps().get(0).mAppFragment);
-
         Intent intent = getIntent();
 
         if (mCurrentUser.getRole() == Profile.Roles.CHILD) // A child profile has been selected, pass id
@@ -177,36 +154,8 @@ public class SettingsActivity extends Activity
     }
 
     @Override
-    public void onUserChanged(View view) {
-        profileSelector.show();
-    }
-
-    /**
-     * This is used to set the onClickListener for a new ProfileSelector
-     * It must be used everytime a new selector is set.
-     * */
-    private void SetProfileSelector()
-    {
-        profileSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                ProfileController pc = new ProfileController(SettingsActivity.this);
-                mCurrentUser = pc.getProfileById((int)l);
-                profileSelector.dismiss();
-
-                if(mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
-                    profileSelector = new GProfileSelector(SettingsActivity.this, mLoggedInGuardian, mCurrentUser);
-                else
-                    profileSelector = new GProfileSelector(SettingsActivity.this, mLoggedInGuardian, null);
-
-                restartActivity();
-
-                SetProfileSelector();
-            }
-        });
-
-        SettingsListFragment fragment = (SettingsListFragment) mFragManager.findFragmentById(R.id.settingsListFragment);
-        fragment.setSelectedUserName(mCurrentUser.getName());
+    public void setCurrentUser(Profile profile) {
+            mCurrentUser = profile;
     }
 
     @Override
