@@ -16,7 +16,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
-        android:icon="@drawable/giraf_icon"
+        android:icon="@drawable/ic_giraf"
         android:label="@string/application_name"
         android:allowBackup="true">
         <uses-library android:name="android.test.runner" />

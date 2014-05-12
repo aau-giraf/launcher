@@ -26,8 +26,8 @@
                 android:id="@+id/settingsListAppName"
                 android:layout_toRightOf="@id/settingsListAppLogo"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:gravity="center_vertical"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:textColor="@android:color/black"
                 android:text="@string/giraf_settings_name"
                 android:textAppearance="?android:textAppearanceLarge" >

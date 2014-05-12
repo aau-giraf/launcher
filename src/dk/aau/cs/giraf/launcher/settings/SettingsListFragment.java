@@ -101,8 +101,14 @@ public class SettingsListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 SettingsListItem item = (SettingsListItem) parent.getAdapter().getItem(position);
-                mCallback.setActiveFragment(item.mAppFragment);
-                mAdapter.setSelected(position);
+                if (item.mAppFragment != null) {
+                    mCallback.setActiveFragment(item.mAppFragment);
+                    mAdapter.setSelected(position);
+                }
+                else if (item.mIntent != null) {
+                    startActivity(item.mIntent);
+                    mAdapter.setSelected(0);
+                }
             }
         });
 
