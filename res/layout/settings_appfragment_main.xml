@@ -42,19 +42,6 @@ android:layout_height="match_parent">
             android:textColor="@android:color/black"
             android:background="@drawable/settings_tab_button_drawable"/>
         <Button
-            android:id="@+id/settings_androidsettings_button"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="4"
-            android:layout_marginLeft="1dp"
-            android:layout_marginRight="1dp"
-            android:padding="10dp"
-            android:text="@string/android_settings_button"
-            android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/black"
-            android:background="@drawable/settings_tab_button_drawable"/>
-        <Button
             android:id="@+id/settings_googleplay_button"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
