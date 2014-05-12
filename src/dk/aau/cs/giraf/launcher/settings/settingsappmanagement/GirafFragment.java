@@ -55,6 +55,8 @@ public class GirafFragment extends AppContainerFragment {
         appView = (LinearLayout) view.findViewById(R.id.appContainer);
         currentUser = mCallback.getSelectedProfile();
 
+        super.showProgressBar();
+
         return view;
     }
 
@@ -130,6 +132,8 @@ public class GirafFragment extends AppContainerFragment {
             }
         }
         loadedApps = apps;
+
+        super.hideProgressBar();
     } 
     private boolean UserHasApplicationInView(ProfileApplicationController pac, Application app, Profile user)
     {

@@ -130,10 +130,16 @@ public class AppManagementSettings extends Fragment {
         Log.d("testing", "onSavedInstanceState() app management");
     }
 
-    private void replaceFragment(Fragment fragment){
-        FragmentTransaction ft = mFragManager.beginTransaction();
-        ft.replace(R.id.app_settings_fragmentlayout, fragment);
-        ft.commit();
+    private void replaceFragment(final Fragment fragment){
+        new Runnable() {
+            @Override
+            public void run() {
+                FragmentTransaction ft = mFragManager.beginTransaction();
+                ft.replace(R.id.app_settings_fragmentlayout, fragment);
+                ft.commit();
+            }
+        }.run();
+        //new Thread().start();
     }
 
     private void focusButton(Button clickedButton)
