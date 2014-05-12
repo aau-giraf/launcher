@@ -13,10 +13,12 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -550,17 +552,16 @@ public class LauncherUtility {
     }
 
     public static boolean loadOtherApplicationsIntoView(Context context, List<ResolveInfo> appList, LinearLayout targetLayout, int iconSize, View.OnClickListener onClickListener, Profile currentUser) {
-        boolean success = false;
+        /*boolean success = false;
 
-        SharedPreferences preferences;
+        final SharedPreferences preferences;
         if (currentUser == null)
             preferences = LauncherUtility.getSharedPreferencesForCurrentUser(context);
         else
             preferences = LauncherUtility.getSharedPreferencesForCurrentUser(context, currentUser);
 
         try {
-            targetLayout.removeAllViews();
-
+            clearViewOnUIThread(context, targetLayout);
             //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
             int containerWidth = ((ScrollView) targetLayout.getParent()).getWidth();
             int appsPrRow = getAmountOfAppsWithinBounds(containerWidth, iconSize);
@@ -569,13 +570,13 @@ public class LauncherUtility {
             int containerHeight = ((ScrollView) targetLayout.getParent()).getHeight();
             int appsPrColumn = getAmountOfAppsWithinBounds(containerHeight, iconSize);
             int paddingHeight = getLayoutPadding(containerHeight, appsPrColumn, iconSize);
-
             //Add the first row to the container
             LinearLayout currentAppRow = new LinearLayout(context);
             currentAppRow.setWeightSum(appsPrRow);
             currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
             currentAppRow.setPadding(0, paddingHeight, 0, paddingHeight);
-            targetLayout.addView(currentAppRow);
+            //targetLayout.addView(currentAppRow);
+            addViewOnUIThread(context, targetLayout, currentAppRow);
 
             //Insert apps into the container, and add new rows as needed
             for (ResolveInfo app : appList) {
@@ -584,7 +585,8 @@ public class LauncherUtility {
                     currentAppRow.setWeightSum(appsPrRow);
                     currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
                     currentAppRow.setPadding(0, 0, 0, paddingHeight);
-                    targetLayout.addView(currentAppRow);
+                    //targetLayout.addView(currentAppRow);
+                    addViewOnUIThread(context, targetLayout, currentAppRow);
                 }
 
                 AppImageView newAppView;
@@ -605,7 +607,8 @@ public class LauncherUtility {
                 newAppView.setLayoutParams(params);
                 newAppView.setScaleX(0.9f);
                 newAppView.setScaleY(0.9f);
-                currentAppRow.addView(newAppView);
+                //currentAppRow.addView(newAppView);
+                addViewOnUIThread(context, currentAppRow, newAppView);
             }
 
             int appsInLastRow = ((LinearLayout)targetLayout.getChildAt(targetLayout.getChildCount() - 1)).getChildCount();
@@ -617,23 +620,49 @@ public class LauncherUtility {
                 newAppView.setLayoutParams(params);
                 newAppView.setScaleX(0.9f);
                 newAppView.setScaleY(0.9f);
-                currentAppRow.addView(newAppView);
+                addViewOnUIThread(context, currentAppRow, newAppView);
+                //currentAppRow.addView(newAppView);
                 appsInLastRow = ((LinearLayout)targetLayout.getChildAt(targetLayout.getChildCount() - 1)).getChildCount();
             }
+
             success = true;
         } catch (Exception e){
             // Exception happend. Do nothing and return false
+            Log.e(Constants.ERROR_TAG, e.getMessage());
             success = false;
-        }
+        }*/
 
-        return success;
+        LoadAndroidApplicationTask loadAndroidApplicationTask = new LoadAndroidApplicationTask(context, currentUser, targetLayout, iconSize, onClickListener);
+        ResolveInfo[] resolveInfos = new ResolveInfo[appList.size()];
+        appList.toArray(resolveInfos);
+        loadAndroidApplicationTask.execute(resolveInfos);
+
+        return true;
     }
 
-    private static int getAmountOfAppsWithinBounds(int containerSize, int iconSize) {
+    private static void clearViewOnUIThread(Context context, final ViewGroup container){
+        ((Activity) context).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                container.removeAllViews();
+            }
+        });
+    }
+
+    private static void addViewOnUIThread(Context context, final ViewGroup container, final View toAdd){
+        ((Activity) context).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                container.addView(toAdd);
+            }
+        });
+    }
+
+    protected static int getAmountOfAppsWithinBounds(int containerSize, int iconSize) {
         return containerSize / iconSize;
     }
 
-    private static int getLayoutPadding(int containerSize, int appsPrRow, int iconSize) {
+    protected static int getLayoutPadding(int containerSize, int appsPrRow, int iconSize) {
         return (containerSize % iconSize) / (appsPrRow + 1);
     }
 
@@ -875,5 +904,123 @@ public class LauncherUtility {
     public static SharedPreferences getSharedPreferencesForCurrentUser(Context context){
         Profile currentUser = findCurrentUser(context);
         return getSharedPreferencesForCurrentUser(context, currentUser);
+    }
+}
+
+class LoadAndroidApplicationTask extends AsyncTask<ResolveInfo, View, Integer> {
+
+    private Profile currentUser;
+    private Context context;
+    private LinearLayout targetLayout;
+    private int iconSize;
+    private View.OnClickListener onClickListener;
+    private List<LinearLayout> appRowsToAdd;
+
+    public LoadAndroidApplicationTask(Context context, Profile currentUser, LinearLayout targetLayout, int iconSize, View.OnClickListener onClickListener){
+        this.context = context;
+        this.currentUser = currentUser;
+        this.targetLayout = targetLayout;
+        this.iconSize = iconSize;
+        this.onClickListener = onClickListener;
+        appRowsToAdd = new ArrayList<LinearLayout>();
+    }
+
+    @Override
+    protected void onPreExecute() {
+        ((Activity) context).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                targetLayout.removeAllViews();
+            }
+        });
+    }
+
+    @Override
+    protected Integer doInBackground(ResolveInfo... resolveInfos) {
+        int appsAdded = -1;
+
+        final SharedPreferences preferences;
+        if (currentUser == null)
+            preferences = LauncherUtility.getSharedPreferencesForCurrentUser(context);
+        else
+            preferences = LauncherUtility.getSharedPreferencesForCurrentUser(context, currentUser);
+
+        //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
+        int containerWidth = ((ScrollView) targetLayout.getParent()).getWidth();
+        int appsPrRow = LauncherUtility.getAmountOfAppsWithinBounds(containerWidth, iconSize);
+
+        //Calculate how many apps the screen can fit vertically on a single screen, and how much space is available for vertical padding
+        int containerHeight = ((ScrollView) targetLayout.getParent()).getHeight();
+        int appsPrColumn = LauncherUtility.getAmountOfAppsWithinBounds(containerHeight, iconSize);
+        int paddingHeight = LauncherUtility.getLayoutPadding(containerHeight, appsPrColumn, iconSize);
+        //Add the first row to the container
+        LinearLayout currentAppRow = new LinearLayout(context);
+        currentAppRow.setWeightSum(appsPrRow);
+        currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
+        currentAppRow.setPadding(0, paddingHeight, 0, paddingHeight);
+        //targetLayout.addView(currentAppRow);
+        appRowsToAdd.add(currentAppRow);
+
+        //Insert apps into the container, and add new rows as needed
+        for (ResolveInfo app : resolveInfos) {
+            if (currentAppRow.getChildCount() == appsPrRow) {
+                currentAppRow = new LinearLayout(context);
+                currentAppRow.setWeightSum(appsPrRow);
+                currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
+                currentAppRow.setPadding(0, 0, 0, paddingHeight);
+                //targetLayout.addView(currentAppRow);
+                appRowsToAdd.add(currentAppRow);
+            }
+
+            AppImageView newAppView;
+
+            if (onClickListener == null)
+                newAppView = LauncherUtility.createAppView(context, targetLayout, app);
+            else
+                newAppView = LauncherUtility.createAppView(context, targetLayout, app, onClickListener);
+
+            // Mark colors of the selected apps when settings is shown.
+            Set<String> selectedApps = preferences.getStringSet(Constants.SELECTED_ANDROID_APPS, new HashSet<String>());
+            if (selectedApps.contains(app.activityInfo.name)){
+                newAppView.setChecked(true);
+            }
+
+            newAppView.setTag(app);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(iconSize, iconSize);
+            layoutParams.weight = 1f;
+            newAppView.setLayoutParams(layoutParams);
+            newAppView.setScaleX(0.9f);
+            newAppView.setScaleY(0.9f);
+            currentAppRow.addView(newAppView);
+            appsAdded++;
+        }
+        int appsInLastRow = appsPrRow - (resolveInfos.length % appsPrRow);
+
+        while (appsInLastRow < appsPrRow){
+            ImageView newAppView = new ImageView(context);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(iconSize, iconSize);
+            layoutParams.weight = 1f;
+            newAppView.setLayoutParams(layoutParams);
+            newAppView.setScaleX(0.9f);
+            newAppView.setScaleY(0.9f);
+            currentAppRow.addView(newAppView);
+            appsInLastRow++;
+        }
+
+        return appsAdded;
+    }
+
+    @Override
+    protected void onPostExecute(Integer integer) {
+        super.onPostExecute(integer);
+
+        ((Activity) context).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for(LinearLayout row : appRowsToAdd){
+                    targetLayout.addView(row);
+                }
+            }
+        });
     }
 }

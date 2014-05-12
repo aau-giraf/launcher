@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,7 +65,7 @@ public class AndroidFragment extends AppContainerFragment {
         preferences = LauncherUtility.getSharedPreferencesForCurrentUser(getActivity(), currentUser);
         selectedApps = preferences.getStringSet(Constants.SELECTED_ANDROID_APPS, new HashSet<String>());
 
-        loadApplications();
+        super.showProgressBar();
 
         return view;
     }
@@ -101,7 +100,6 @@ public class AndroidFragment extends AppContainerFragment {
     @Override
     public void onStart() {
         super.onStart();
-        //reloadApplications();
     }
 
     @Override
@@ -125,22 +123,18 @@ public class AndroidFragment extends AppContainerFragment {
     @Override
     public void loadApplications()
     {
-        Handler loadApplicationsHandler = new Handler();
-        loadApplicationsHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (loadedApps == null || loadedApps.size() != apps.size()){
-                    //Remember that the apps have been added, so they are not added again by the listener
-                    List<ResolveInfo> sortedApps = (List<ResolveInfo>) apps;
-                    Collections.sort(sortedApps, new AppComparator(context));
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            haveAppsBeenAdded = LauncherUtility.loadOtherApplicationsIntoView(context, (List<ResolveInfo>) apps, appView, 110, onClickListener, currentUser);                     }
-                    });
-                    loadedApps = apps;
-                }
-            }
-        });
+        Log.d(Constants.ERROR_TAG, "Thread says hello");
+        if (loadedApps == null || loadedApps.size() != apps.size()){
+            Log.d(Constants.ERROR_TAG, "Thread says working");
+            //Remember that the apps have been added, so they are not added again by the listener
+            List<ResolveInfo> sortedApps = (List<ResolveInfo>) apps;
+            Collections.sort(sortedApps, new AppComparator(context));
+            haveAppsBeenAdded = LauncherUtility.loadOtherApplicationsIntoView(context, (List<ResolveInfo>) apps, appView, 110, onClickListener, currentUser);
+            loadedApps = apps;
+        }
+
+        super.hideProgressBar();
+
+        Log.d(Constants.ERROR_TAG, "Thread says bye");
     }
 }

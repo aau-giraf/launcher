@@ -2,4 +2,8 @@
 <resources>
     <color name="app_color_brown">#AF8169</color>
     <color name="app_color_transparent">#00FFFFFF</color>
+
+    <color name="color_preloader_start">#4d4d4d</color>
+    <color name="color_preloader_center">#bfbfbf</color>
+    <color name="color_preloader_end">#464646</color>
 </resources>
