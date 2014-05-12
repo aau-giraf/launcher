@@ -22,7 +22,7 @@ import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
-import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AndroidFragment;
+import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AndroidAppsFragmentInterface;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementSettings;
 import dk.aau.cs.giraf.oasis.lib.controllers.ProfileController;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -31,7 +31,7 @@ import dk.aau.cs.giraf.settingslib.settingslib.Fragments.WombatSettings;
 
 public class SettingsActivity extends Activity
         implements SettingsListFragment.SettingsListFragmentListener,
-        AndroidFragment.AndroidAppsFragmentListener {
+        AndroidAppsFragmentInterface {
 
     private FragmentManager mFragManager;
     private Fragment mActiveFragment;
@@ -86,7 +86,7 @@ public class SettingsActivity extends Activity
 
         addApplicationByPackageName("dk.aau.cs.giraf.launcher", launcherSettings);
         addApplicationByPackageName("dk.aau.cs.giraf.wombat", new WombatSettings());
-        addApplicationByName("Android", new AppManagementSettings(), getResources().getDrawable(R.drawable.android_icon));
+        addApplicationByName(getString(R.string.apps_list_label), new AppManagementSettings(), getResources().getDrawable(R.drawable.android_icon));
 
         return removeNonGirafApps(mAppList);
     }

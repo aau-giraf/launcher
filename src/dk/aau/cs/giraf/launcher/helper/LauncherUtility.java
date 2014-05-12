@@ -17,7 +17,6 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -452,14 +451,19 @@ public class LauncherUtility {
         return selectedApps;
     }
 
-    public static HashMap<String,AppInfo> loadGirafApplicationsIntoView(Context context, Profile currentUser, Profile guardian, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize)
-    {
-        return loadGirafApplicationsIntoView(context, currentUser, guardian, girafAppsList, targetLayout, iconSize, null);
-    }
-
     public static HashMap<String,AppInfo> loadGirafApplicationsIntoView(Context context, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize, View.OnClickListener listener)
     {
         return loadGirafApplicationsIntoView(context, null, null, girafAppsList, targetLayout, iconSize, listener);
+    }
+
+    public static HashMap<String,AppInfo> loadGirafApplicationsIntoView(Context context, Profile currentUser, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize, View.OnClickListener listener)
+    {
+        return loadGirafApplicationsIntoView(context, currentUser, null, girafAppsList, targetLayout, iconSize, listener);
+    }
+
+    public static HashMap<String,AppInfo> loadGirafApplicationsIntoView(Context context, Profile currentUser, Profile guardian, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize)
+    {
+        return loadGirafApplicationsIntoView(context, currentUser, guardian, girafAppsList, targetLayout, iconSize, null);
     }
 
     public static HashMap<String,AppInfo> loadGirafApplicationsIntoView(Context context, Profile currentUser, Profile guardian, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize, View.OnClickListener listener) {
@@ -470,8 +474,10 @@ public class LauncherUtility {
             targetLayout.removeAllViews();
 
             //Fill AppInfo hash map with AppInfo objects for each app
-            Profile user = LauncherUtility.findCurrentUser(context);
-            appInfoHash = loadAppInfos(context, girafAppsList, user);
+            if (currentUser == null)
+                currentUser = LauncherUtility.findCurrentUser(context);
+
+            appInfoHash = loadAppInfos(context, girafAppsList, currentUser);
             List<AppInfo> appInfos = new ArrayList<AppInfo>(appInfoHash.values());
             Collections.sort(appInfos, new AppComparator(context));
 

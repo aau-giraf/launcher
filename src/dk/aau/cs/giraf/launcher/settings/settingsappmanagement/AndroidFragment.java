@@ -31,13 +31,7 @@ public class AndroidFragment extends AppContainerFragment {
     private SharedPreferences preferences;
     private Set<String> selectedApps;
     private Profile currentUser;
-    AndroidAppsFragmentListener mCallback; // Callback to containing Activity implementing the SettingsListFragmentListener interface
-
-    // Container Activity must implement this interface
-    public interface AndroidAppsFragmentListener {
-        public Profile getSelectedProfile();
-    }
-
+    AndroidAppsFragmentInterface mCallback; // Callback to containing Activity implementing the SettingsListFragmentListener interface
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
@@ -97,10 +91,10 @@ public class AndroidFragment extends AppContainerFragment {
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            mCallback = (AndroidAppsFragmentListener) activity;
+            mCallback = (AndroidAppsFragmentInterface) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement AndroidAppsFragmentListener");
+                    + " must implement AndroidAppsFragmentInterface");
         }
     }
 

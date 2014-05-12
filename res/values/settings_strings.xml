@@ -8,4 +8,5 @@
     <string name="android_applications_button">Android</string>
     <string name="giraf_applications_button">Giraf</string>
     <string name="giraf_settings_profile_user">Aktive Bruger</string>
+    <string name="apps_list_label">Apps</string>
 </resources>
