@@ -1,5 +1,6 @@
 package dk.aau.cs.giraf.launcher.settings.settingsappmanagement;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import dk.aau.cs.giraf.launcher.helper.AppComparator;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
+import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 /**
  * Created by Vagner on 01-05-14.
@@ -28,6 +30,15 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 public class AndroidFragment extends AppContainerFragment {
     private SharedPreferences preferences;
     private Set<String> selectedApps;
+    private Profile currentUser;
+    AndroidAppsFragmentListener mCallback; // Callback to containing Activity implementing the SettingsListFragmentListener interface
+
+    // Container Activity must implement this interface
+    public interface AndroidAppsFragmentListener {
+        public Profile getSelectedProfile();
+    }
+
+
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -57,7 +68,8 @@ public class AndroidFragment extends AppContainerFragment {
         context = getActivity();
         apps = LauncherUtility.getApplicationsFromDevice(context, "dk.aau.cs.giraf", false);
         appView = (LinearLayout) view.findViewById(R.id.appContainer);
-        preferences = LauncherUtility.getSharedPreferencesForCurrentUser(context);
+        currentUser = mCallback.getSelectedProfile();
+        preferences = LauncherUtility.getSharedPreferencesForCurrentUser(getActivity(), currentUser);
         selectedApps = preferences.getStringSet(Constants.SELECTED_ANDROID_APPS, new HashSet<String>());
 
         loadApplications();
@@ -77,6 +89,19 @@ public class AndroidFragment extends AppContainerFragment {
                 reloadApplications();
             }
         });
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mCallback = (AndroidAppsFragmentListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement AndroidAppsFragmentListener");
+        }
     }
 
     @Override
@@ -117,7 +142,7 @@ public class AndroidFragment extends AppContainerFragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            haveAppsBeenAdded = LauncherUtility.loadOtherApplicationsIntoView(context, (List<ResolveInfo>) apps, appView, 110, onClickListener);                     }
+                            haveAppsBeenAdded = LauncherUtility.loadOtherApplicationsIntoView(context, (List<ResolveInfo>) apps, appView, 110, onClickListener, currentUser);                     }
                     });
                     loadedApps = apps;
                 }

@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.preference.PreferenceFragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,15 +22,16 @@ import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
+import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AndroidFragment;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementSettings;
-import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.GirafFragment;
 import dk.aau.cs.giraf.oasis.lib.controllers.ProfileController;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.LauncherSettings;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.WombatSettings;
 
 public class SettingsActivity extends Activity
-        implements SettingsListFragment.SettingsListFragmentListener {
+        implements SettingsListFragment.SettingsListFragmentListener,
+        AndroidFragment.AndroidAppsFragmentListener {
 
     private FragmentManager mFragManager;
     private Fragment mActiveFragment;
@@ -37,6 +40,8 @@ public class SettingsActivity extends Activity
     private Profile mLoggedInGuardian;
     public static Profile mCurrentUser;
     private GProfileSelector profileSelector;
+
+    private PreferenceFragment launcherSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +67,9 @@ public class SettingsActivity extends Activity
         mFragManager = this.getFragmentManager();
         Fragment settingsFragment = mFragManager.findFragmentById(R.id.settingsContainer);
 
+        // Create instance of launcher settings
+        launcherSettings = new LauncherSettings(LauncherUtility.getSharedPreferenceUser(mCurrentUser));
+
         if (settingsFragment == null) {
             SettingsListItem item = getInstalledSettingsApps().get(0);
             mActiveFragment = item.mAppFragment;
@@ -76,7 +84,7 @@ public class SettingsActivity extends Activity
     public ArrayList<SettingsListItem> getInstalledSettingsApps(){
         mAppList = new ArrayList<SettingsListItem>();
 
-        addApplicationByPackageName("dk.aau.cs.giraf.launcher", new LauncherSettings(LauncherUtility.getSharedPreferenceUser(getApplicationContext())));
+        addApplicationByPackageName("dk.aau.cs.giraf.launcher", launcherSettings);
         addApplicationByPackageName("dk.aau.cs.giraf.wombat", new WombatSettings());
         addApplicationByName("Android", new AppManagementSettings(), getResources().getDrawable(R.drawable.android_icon));
 
@@ -153,9 +161,19 @@ public class SettingsActivity extends Activity
         }
     }
 
-    private void reloadCurrentFragment()
+    private void restartActivity()
     {
-        setActiveFragment(getInstalledSettingsApps().get(0).mAppFragment);
+        //setActiveFragment(getInstalledSettingsApps().get(0).mAppFragment);
+
+        Intent intent = getIntent();
+
+        if (mCurrentUser.getRole() == Profile.Roles.CHILD) // A child profile has been selected, pass id
+            intent.putExtra(Constants.CHILD_ID, mCurrentUser.getId());
+        else // We are a guardian, do not add a child
+            intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
+
+        finish();
+        startActivity(intent);
     }
 
     @Override
@@ -181,7 +199,7 @@ public class SettingsActivity extends Activity
                 else
                     profileSelector = new GProfileSelector(SettingsActivity.this, mLoggedInGuardian, null);
 
-                reloadCurrentFragment();
+                restartActivity();
 
                 SetProfileSelector();
             }
@@ -189,5 +207,10 @@ public class SettingsActivity extends Activity
 
         SettingsListFragment fragment = (SettingsListFragment) mFragManager.findFragmentById(R.id.settingsListFragment);
         fragment.setSelectedUserName(mCurrentUser.getName());
+    }
+
+    @Override
+    public Profile getSelectedProfile() {
+        return mCurrentUser;
     }
 }

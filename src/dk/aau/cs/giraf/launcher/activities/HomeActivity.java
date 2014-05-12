@@ -171,7 +171,7 @@ public class HomeActivity extends Activity {
      */
     private void loadApplications(){
         List<Application> girafAppsList = LauncherUtility.getVisibleGirafApps(mContext, mCurrentUser); // For home activity
-        SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(mContext);
+        SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(mContext, mCurrentUser);
         Set<String> androidAppsPackagenames = prefs.getStringSet(Constants.SELECTED_ANDROID_APPS, new HashSet<String>());
         List<Application> androidAppsList = LauncherUtility.convertPackageNamesToApplications(mContext, androidAppsPackagenames);
         girafAppsList.addAll(androidAppsList);
@@ -493,7 +493,7 @@ public class HomeActivity extends Activity {
     }
 
     private void getIconSize() {
-        SharedPreferences prefs = SettingsUtility.getLauncherSettings(mContext, LauncherUtility.getSharedPreferenceUser(mContext));
+        SharedPreferences prefs = SettingsUtility.getLauncherSettings(mContext, LauncherUtility.getSharedPreferenceUser(mCurrentUser));
         int size = prefs.getInt(Constants.ICON_SIZE_PREF, 200);
         mIconSize = SettingsUtility.convertToDP(this, size);
     }

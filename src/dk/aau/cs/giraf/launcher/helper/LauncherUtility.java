@@ -539,13 +539,19 @@ public class LauncherUtility {
         return appInfoHash;
     }
 
-    public static boolean loadOtherApplicationsIntoView(Context context, List<ResolveInfo> appList, LinearLayout targetLayout, int iconSize) {
-        return loadOtherApplicationsIntoView(context, appList, targetLayout, iconSize, null);
+    public static boolean loadOtherApplicationsIntoView(Context context, List<ResolveInfo> appList, LinearLayout targetLayout, int iconSize, Profile currentUser) {
+        return loadOtherApplicationsIntoView(context, appList, targetLayout, iconSize, null, currentUser);
     }
 
-    public static boolean loadOtherApplicationsIntoView(Context context, List<ResolveInfo> appList, LinearLayout targetLayout, int iconSize, View.OnClickListener onClickListener) {
+    public static boolean loadOtherApplicationsIntoView(Context context, List<ResolveInfo> appList, LinearLayout targetLayout, int iconSize, View.OnClickListener onClickListener, Profile currentUser) {
         boolean success = false;
-        SharedPreferences preferences = LauncherUtility.getSharedPreferencesForCurrentUser(context);
+
+        SharedPreferences preferences;
+        if (currentUser == null)
+            preferences = LauncherUtility.getSharedPreferencesForCurrentUser(context);
+        else
+            preferences = LauncherUtility.getSharedPreferencesForCurrentUser(context, currentUser);
+
         try {
             targetLayout.removeAllViews();
 
@@ -825,10 +831,9 @@ public class LauncherUtility {
         return appView;
     }
 
-    public static String getSharedPreferenceUser(Context context){
-        Profile currentUser = findCurrentUser(context);
+    public static String getSharedPreferenceUser(Profile profile){
         String fileName = "";
-        switch (currentUser.getRole()){
+        switch (profile.getRole()){
             case GUARDIAN:
                 fileName += "g";
                 break;
@@ -846,14 +851,23 @@ public class LauncherUtility {
                 break;
         }
 
-        fileName += String.valueOf(currentUser.getId());
+        fileName += String.valueOf(profile.getId());
         return  fileName;
+    }
+
+    public static String getSharedPreferenceUser(Context context){
+        Profile currentUser = findCurrentUser(context);
+        return getSharedPreferenceUser(currentUser);
+    }
+
+    public static SharedPreferences getSharedPreferencesForCurrentUser(Context context, Profile profile){
+        String fileName = Constants.TAG + ".";
+        fileName += getSharedPreferenceUser(profile);
+        return context.getSharedPreferences(fileName, Context.MODE_PRIVATE);
     }
 
     public static SharedPreferences getSharedPreferencesForCurrentUser(Context context){
         Profile currentUser = findCurrentUser(context);
-        String fileName = Constants.TAG + ".";
-        fileName += getSharedPreferenceUser(context);
-        return context.getSharedPreferences(fileName, Context.MODE_PRIVATE);
+        return getSharedPreferencesForCurrentUser(context, currentUser);
     }
 }
