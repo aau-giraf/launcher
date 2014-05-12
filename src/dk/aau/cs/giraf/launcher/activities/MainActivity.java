@@ -22,6 +22,7 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
  * Provides variables for enabling debug mode before compilation.
  */
 public class MainActivity extends Activity implements Animation.AnimationListener{
+    private Context mContext;
 
     /* ************* DEBUGGING MODE ************* */
     // TODO: ONLY USED FOR DEBUGGING PURPOSES!!!
@@ -51,7 +52,66 @@ public class MainActivity extends Activity implements Animation.AnimationListene
     private final boolean DEBUG_AS_CHILD = false;
     /* ****************************************** */
 
-	private Context mContext;
+    /**
+     * Sets up the activity. Adds dummy data to the database if it's empty. Starts the splash animation,
+     * if this is not disabled through debugging mode.
+     * @param savedInstanceState Information from the last launch of the activity.
+     *
+     * @see dk.aau.cs.giraf.launcher.activities.MainActivity#DEBUG_MODE
+     * @see dk.aau.cs.giraf.launcher.activities.MainActivity#SKIP_SPLASH_SCREEN
+     */
+    @Override
+	public void onCreate(Bundle savedInstanceState) {
+	    super.onCreate(savedInstanceState);
+	    setContentView(R.layout.logo);
+
+        mContext = this.getApplicationContext();
+
+        Helper helper = LauncherUtility.getOasisHelper(mContext);
+        int size = helper.profilesHelper.getProfiles().size();
+        if (size <= 0) {
+            helper.CreateDummyData();
+        }
+
+        Animation logoAnimation = AnimationUtils.loadAnimation(mContext, R.animator.rotatelogo);
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean skipAuthenticationPref = prefs.getBoolean("show_animation_preference", true);
+
+        // Opt in/out whether to show animation or not
+        if ((DEBUG_MODE && SKIP_SPLASH_SCREEN) || !skipAuthenticationPref)
+            startNextActivity();
+        else
+            logoAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
+
+        findViewById(R.id.giraficon).startAnimation(logoAnimation);
+        logoAnimation.setAnimationListener(this);
+	}
+
+    /**
+     * Called by the system. Starts the next activity (through {@link MainActivity#startNextActivity()}
+     * when the animation has ended.
+     *
+     * @param animation Instance of the ended animation. Not used.
+     */
+    @Override
+    public void onAnimationEnd(Animation animation) {
+        // After completing the animation, check for session and go to the correct activity.
+        startNextActivity();
+    }
+
+    // Necessary for the AnimationListener interface
+    @Override
+    public void onAnimationRepeat(Animation animation) {}
+
+    // Necessary for the AnimationListener interface
+    @Override
+    public void onAnimationStart(Animation animation) {}
+
+    @Override
+    public void onBackPressed() {
+        //Do nothing, as the user should not be able to back out of this activity
+    }
 
     /**
      * Launches the next relevant activity, according to the current debugging mode, and to
@@ -89,70 +149,32 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         finish();
     }
 
+    /**
+     * Used for debugging mode.
+     * Overrides the authentication activity by authenticating a test profile, and creating an intent
+     * for starting {@code HomeActivity}. The guardian profile used is 'Tony Stark', and the child profile used
+     * is 'Johnathan Doerwald'.
+     * @param asChild If {@code true}, a child profile is used for authentication. If {@code false}, a guardian
+     *                profile is used for authentication.
+     * @return An intent for starting {@code MainActivity} with the authenticated profile ID as an extra.
+     */
     private Intent skipAuthentication(boolean asChild) {
         Helper helper = LauncherUtility.getOasisHelper(mContext);
-        Profile profile = helper.profilesHelper.authenticateProfile("jkkxlagqyrztlrexhzofekyzrnppajeobqxcmunkqhsbrgpxdtqgygnmbhrgnpphaxsjshlpupgakmirhpyfaivvtpynqarxsghhilhkqvpelpreevykxurtppcggkzfaepihlodgznrmbrzgqucstflhmndibuymmvwauvdlyqnnlxkurinuypmqypspmkqavuhfwsh");
+        Profile profile;
 
-        if(asChild)
+        //Get the relevant profile info.
+        if(asChild) {
             profile = helper.profilesHelper.authenticateProfile("childqkxlnftvxquwrwcdloaumdhzkgyglezzsebpvnethrlstvmlorrolymdynjcyonkrtvcuagwigdqqkftsxxhklcnbhznthcqjxnjzzdoqvmfdlxrudcyakvrnfcbohdumawlwmfndjascmvrsoxfjgwzhdvcvqcroxoyjeazmxtrjtlkldoevgdrqvgfbklhtgm");
+        }
+        else {
+            profile = helper.profilesHelper.authenticateProfile("jkkxlagqyrztlrexhzofekyzrnppajeobqxcmunkqhsbrgpxdtqgygnmbhrgnpphaxsjshlpupgakmirhpyfaivvtpynqarxsghhilhkqvpelpreevykxurtppcggkzfaepihlodgznrmbrzgqucstflhmndibuymmvwauvdlyqnnlxkurinuypmqypspmkqavuhfwsh");
+        }
 
         Intent intent = new Intent(mContext, HomeActivity.class);
+
+        //Add the profile ID to the intent, and save information on the session.
         intent.putExtra(Constants.GUARDIAN_ID, profile.getId());
         LauncherUtility.saveLogInData(mContext, profile.getId(), new Date().getTime());
         return intent;
-    }
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-	    super.onCreate(savedInstanceState);
-	    setContentView(R.layout.logo);
-
-        mContext = this.getApplicationContext();
-
-        Helper helper = LauncherUtility.getOasisHelper(mContext);
-        int size = helper.profilesHelper.getProfiles().size();
-        if (size <= 0) {
-            helper.CreateDummyData();
-        }
-
-        Animation logoAnimation = AnimationUtils.loadAnimation(mContext, R.animator.rotatelogo);
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean skipAuthenticationPref = prefs.getBoolean("show_animation_preference", true);
-
-        // Opt in/out whether to show animation or not
-        if ((DEBUG_MODE && SKIP_SPLASH_SCREEN) || !skipAuthenticationPref)
-            startNextActivity();
-        else
-            logoAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
-
-        findViewById(R.id.giraficon).startAnimation(logoAnimation);
-        logoAnimation.setAnimationListener(this);
-	}
-
-    // Necessary for the AnimationListener interface, We use this to check for when the animation ends.
-    @Override
-    public void onAnimationEnd(Animation animation) {
-        // After completing the animation, check for session and go to the correct activity.
-        startNextActivity();
-    }
-
-    // Necessary for the AnimationListener interface
-    @Override
-    public void onAnimationRepeat(Animation animation) {
-        // TODO Auto-generated method stub
-
-    }
-
-    // Necessary for the AnimationListener interface
-    @Override
-    public void onAnimationStart(Animation animation) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void onBackPressed() {
-        //Do nothing, as the user should not be able to back out of this activity
     }
 }
