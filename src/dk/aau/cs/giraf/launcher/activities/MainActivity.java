@@ -53,26 +53,35 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 
 	private Context mContext;
 
-    /** This function is run after the logo animation is finished.
-       It checks if a session is in progress and launches the correct activity based on the answer
-       It goes to AuthenticationActivity to login if a session is not in progress
-       It goes to HomeActivity, the home screen, if a session is in progress*/
-    public void checkSessionAndGoToActivity(){
+    /**
+     * Launches the next relevant activity, according to the current debugging mode, and to
+     * whether any valid login data is detected in {@code SharedPerferences}.
+     *
+     * @see dk.aau.cs.giraf.launcher.activities.MainActivity#DEBUG_MODE
+     * @see dk.aau.cs.giraf.launcher.activities.MainActivity#SKIP_AUTHENTICATION
+     * @see dk.aau.cs.giraf.launcher.activities.MainActivity#DEBUG_AS_CHILD
+     * @see dk.aau.cs.giraf.launcher.helper.LauncherUtility#sessionExpired(android.content.Context) */
+    public void startNextActivity(){
         Intent intent;
 
         if (DEBUG_MODE && SKIP_AUTHENTICATION){
             intent = skipAuthentication(DEBUG_AS_CHILD);
-        } else if (LauncherUtility.sessionExpired(mContext)) {
+        }
+        //If no valid session is found, start authentication
+        else if (LauncherUtility.sessionExpired(mContext)) {
             intent = new Intent(mContext, AuthenticationActivity.class);
-        } else {
+        }
+        //If a valid session is found, pass the profile ID along with the intent.
+        else {
             intent = new Intent(mContext, HomeActivity.class);
 
-            SharedPreferences sharedPreferences = getSharedPreferences(Constants.LOGIN_TIME_KEY, 0);
-            int guardianID = sharedPreferences.getInt(Constants.GUARDIAN_ID_KEY, -1);
+            SharedPreferences sharedPreferences = getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
+            int guardianID = sharedPreferences.getInt(Constants.GUARDIAN_ID, -1);
 
-            intent.putExtra(Constants.GUARDIAN_ID_KEY, guardianID);
+            intent.putExtra(Constants.GUARDIAN_ID, guardianID);
         }
 
+        //If in debugging mode, set global variables.
         if(DEBUG_MODE)
             LauncherUtility.setDebugging(DEBUG_MODE, DEBUG_AS_CHILD, this);
 
@@ -88,7 +97,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
             profile = helper.profilesHelper.authenticateProfile("childqkxlnftvxquwrwcdloaumdhzkgyglezzsebpvnethrlstvmlorrolymdynjcyonkrtvcuagwigdqqkftsxxhklcnbhznthcqjxnjzzdoqvmfdlxrudcyakvrnfcbohdumawlwmfndjascmvrsoxfjgwzhdvcvqcroxoyjeazmxtrjtlkldoevgdrqvgfbklhtgm");
 
         Intent intent = new Intent(mContext, HomeActivity.class);
-        intent.putExtra(Constants.GUARDIAN_ID_KEY, profile.getId());
+        intent.putExtra(Constants.GUARDIAN_ID, profile.getId());
         LauncherUtility.saveLogInData(mContext, profile.getId(), new Date().getTime());
         return intent;
     }
@@ -113,7 +122,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 
         // Opt in/out whether to show animation or not
         if ((DEBUG_MODE && SKIP_SPLASH_SCREEN) || !skipAuthenticationPref)
-            checkSessionAndGoToActivity();
+            startNextActivity();
         else
             logoAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
 
@@ -125,7 +134,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
     @Override
     public void onAnimationEnd(Animation animation) {
         // After completing the animation, check for session and go to the correct activity.
-        checkSessionAndGoToActivity();
+        startNextActivity();
     }
 
     // Necessary for the AnimationListener interface

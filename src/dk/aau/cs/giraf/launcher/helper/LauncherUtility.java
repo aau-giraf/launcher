@@ -181,11 +181,11 @@ public abstract class LauncherUtility {
      * @param loginTime The time of login (UNIX time, milliseconds).
      */
     public static void saveLogInData(Context context, int id, long loginTime) {
-        SharedPreferences sp = context.getSharedPreferences(Constants.LOGIN_TIME_KEY, 0);
+        SharedPreferences sp = context.getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
         SharedPreferences.Editor editor = sp.edit();
 
-        editor.putLong(Constants.TIME_KEY, loginTime);
-        editor.putInt(Constants.GUARDIAN_ID_KEY, id);
+        editor.putLong(Constants.LOGIN_TIME, loginTime);
+        editor.putInt(Constants.GUARDIAN_ID, id);
 
         editor.commit();
     }
@@ -201,8 +201,8 @@ public abstract class LauncherUtility {
         Helper helper = getOasisHelper(context);
 
         //Get the ID of the logged in user from SharedPreferences.
-        SharedPreferences sp = context.getSharedPreferences(Constants.LOGIN_TIME_KEY, 0);
-        int currentUserID = sp.getInt(Constants.GUARDIAN_ID_KEY, -1);
+        SharedPreferences sp = context.getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
+        int currentUserID = sp.getInt(Constants.GUARDIAN_ID, -1);
 
         //Return null if no login information is found, otherwise return the the profile.
         if (currentUserID == -1) {
@@ -230,11 +230,11 @@ public abstract class LauncherUtility {
      * @param context Context of the current activity.
      */
     public static void clearAuthData(Context context) {
-        SharedPreferences sp = context.getSharedPreferences(Constants.LOGIN_TIME_KEY, 0);
+        SharedPreferences sp = context.getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
         SharedPreferences.Editor editor = sp.edit();
 
-        editor.putLong(Constants.TIME_KEY, 1);
-        editor.putLong(Constants.GUARDIAN_ID_KEY, -1);
+        editor.putLong(Constants.LOGIN_TIME, 1);
+        editor.putLong(Constants.GUARDIAN_ID, -1);
 
         editor.commit();
     }
@@ -246,8 +246,8 @@ public abstract class LauncherUtility {
      * @return True if a log in is required; otherwise false.
      */
     public static boolean sessionExpired(Context context) {
-        SharedPreferences sp = context.getSharedPreferences(Constants.LOGIN_TIME_KEY, 0);
-        Long lastAuthTime = sp.getLong(Constants.TIME_KEY, 1);
+        SharedPreferences sp = context.getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
+        Long lastAuthTime = sp.getLong(Constants.LOGIN_TIME, 1);
         Date d = new Date();
 
         return d.getTime() > lastAuthTime + Constants.TIME_TO_STAY_LOGGED_IN;
@@ -761,7 +761,7 @@ public abstract class LauncherUtility {
                     else
                         intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
 
-                    intent.putExtra(Constants.GUARDIAN_ID_KEY, guardian.getId());
+                    intent.putExtra(Constants.GUARDIAN_ID, guardian.getId());
                     intent.putExtra(Constants.APP_COLOR, app.getBgColor());
                     intent.putExtra(Constants.APP_PACKAGE_NAME, app.getPackage());
                     intent.putExtra(Constants.APP_ACTIVITY_NAME, app.getActivity());

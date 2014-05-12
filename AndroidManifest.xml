@@ -61,18 +61,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.ProfileSelectActivity"
-            android:label="@string/application_name"
-            android:noHistory="true"
-            android:theme="@android:style/Theme.Holo.Dialog.NoActionBar"
-            android:screenOrientation="landscape"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="dk.aau.cs.giraf.launcher.action.SELECTPROFILE"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
-        <activity
                 android:name="dk.aau.cs.giraf.launcher.settings.SettingsActivity"
                 android:label="@string/giraf_settings_name"
                 android:theme="@android:style/Theme.Holo.Light.NoActionBar"
