@@ -13,11 +13,6 @@ public class LauncherUtilityTest extends AndroidTestCase {
 		
 	}
 	
-	public void testisLandscape() {
-		Context context = getContext();
-		assertEquals(true, LauncherUtility.isLandscape(context));
-	}
-	
 	public void testintToDP() {
 		Context context = getContext();
 		int input;
