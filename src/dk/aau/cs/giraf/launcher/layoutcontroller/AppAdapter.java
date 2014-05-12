@@ -89,7 +89,7 @@ public class AppAdapter extends ArrayAdapter<AppInfo> {
         setAppBackground(convertView, color);
 
         final Helper helper = LauncherUtility.getOasisHelper(context);
-        final Profile currentUser = LauncherUtility.findCurrentUser(context);
+        final Profile currentUser = LauncherUtility.getCurrentUser(context);
 
         //TODO: The OasisLib group still needs to fix their dataformat
 //		Application launcher = helper.applicationHelper.getApplicationById(currentUser.getId());

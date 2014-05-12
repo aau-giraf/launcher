@@ -89,8 +89,8 @@ public class HomeActivity extends Activity {
 		HomeActivity.mContext = this;
         mHelper = LauncherUtility.getOasisHelper(mContext);
 
-        mCurrentUser = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
-        mLoggedInGuardian = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
+        mCurrentUser = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID_KEY));
+        mLoggedInGuardian = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID_KEY));
 		mLauncher = mHelper.applicationHelper.getApplicationById(mCurrentUser.getId());
 
         loadViews();
@@ -211,7 +211,9 @@ public class HomeActivity extends Activity {
         mAppsScrollView = (ScrollView) this.findViewById(R.id.appScrollView);
 
         // Show warning if DEBUG_MODE is true
-        LauncherUtility.ShowDebugInformation(this);
+        if (LauncherUtility.isDebugging()) {
+            LauncherUtility.showDebugInformation(this);
+        }
     }
 
     /**
@@ -404,7 +406,7 @@ public class HomeActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, SettingsActivity.class);
-                intent.putExtra(Constants.GUARDIAN_ID, mLoggedInGuardian.getId());
+                intent.putExtra(Constants.GUARDIAN_ID_KEY, mLoggedInGuardian.getId());
                 if(mCurrentUser.getRole() == Profile.Roles.GUARDIAN)
                     intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
                 else

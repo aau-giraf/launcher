@@ -3,7 +3,6 @@ package dk.aau.cs.giraf.launcher.settings;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,12 +46,12 @@ public class SettingsListFragment extends Fragment {
         mProfileName = (TextView) view.findViewById(R.id.profile_selected_name);
 
         ProfileController pc = new ProfileController(getActivity());
-        mLoggedInGuardian = pc.getProfileById(getActivity().getIntent().getIntExtra(Constants.GUARDIAN_ID, -1));
+        mLoggedInGuardian = pc.getProfileById(getActivity().getIntent().getIntExtra(Constants.GUARDIAN_ID_KEY, -1));
 
         int childID = getActivity().getIntent().getIntExtra(Constants.CHILD_ID, -1);
         if(childID == -1)
         {
-            mCurrentUser = pc.getProfileById(getActivity().getIntent().getIntExtra(Constants.GUARDIAN_ID, -1));
+            mCurrentUser = pc.getProfileById(getActivity().getIntent().getIntExtra(Constants.GUARDIAN_ID_KEY, -1));
             mProfileSelector = new GProfileSelector(getActivity(), mLoggedInGuardian, null);
         }
         else

@@ -18,6 +18,8 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.google.zxing.Result;
 import com.google.zxing.client.android.CaptureActivity;
 
+import java.util.Date;
+
 import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
@@ -56,16 +58,14 @@ public class AuthenticationActivity extends CaptureActivity {
 		mInfoView = (TextView)this.findViewById(R.id.authentication_step1);
 
         // Show warning if DEBUG_MODE is true
-        LauncherUtility.ShowDebugInformation(this);
+        LauncherUtility.showDebugInformation(this);
 
 		mGLoginButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				// If the authentication activity was not launched by the launcher...
 				if (!getIntent().hasCategory("dk.aau.cs.giraf.launcher.GIRAF")) {
-                    //TODO:The method call below caused an exception. Figure out why the call is needed.
-					//LauncherUtility.attachLauncher(mContext); // should not be called
-					LauncherUtility.saveLogInData(mContext, mPreviousProfile.getId());
+                    LauncherUtility.saveLogInData(mContext, mPreviousProfile.getId(), new Date().getTime());
 					startActivity(mHomeIntent);
 				}
 			}
@@ -140,7 +140,7 @@ public class AuthenticationActivity extends CaptureActivity {
                 mInfoView.setText(R.string.saadan);
 
                 mHomeIntent = new Intent(AuthenticationActivity.this, HomeActivity.class);
-                mHomeIntent.putExtra(Constants.GUARDIAN_ID, profile.getId());
+                mHomeIntent.putExtra(Constants.GUARDIAN_ID_KEY, profile.getId());
             } else {
                 this.changeCameraFeedBorderColor(0xFFFF0000);
                 mGLoginButton.setVisibility(View.INVISIBLE);

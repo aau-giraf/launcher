@@ -91,58 +91,69 @@ public abstract class LauncherUtility {
      * @param loginAsChild If {@code true} Launcher will automatically log in with a child profile. If
      *                     {@code false} launcher will log in as a guardian.
      * @param activity An activity in which to display a message indicating that debugging is enabled,
-     *                 if this is the case.
+     *                 if this is the case. (See {@link dk.aau.cs.giraf.launcher.helper.LauncherUtility#showDebugInformation(android.app.Activity)})
      */
     public static void setDebugging(boolean debugging, boolean loginAsChild, Activity activity) {
         DEBUG_MODE = debugging;
         DEBUG_MODE_AS_CHILD = loginAsChild;
 
-        ShowDebugInformation(activity);
+        if (DEBUG_MODE) {
+            showDebugInformation(activity);
+        }
     }
 
+    /**
+     * Starts an activity indicated in {@code intent}. If the activity does not exist, Google Analytics is notified,
+     * and a toast is shown.
+     * @param context The context from which to start the activity. In case of failure, a toast is shown in this context.
+     * @param intent The intent describing the requested activity.
+     */
     public static void secureStartActivity(Context context, Intent intent) {
         try {
+            //If the activity exists, start it. Otherwise throw an exception.
             if (intent.resolveActivity(context.getPackageManager()) != null) {
                 context.startActivity(intent);
-            } else { // activity was not found. We want to be notified on google analytics
+            } else {
                 throw new ActivityNotFoundException();
             }
-        } catch (ActivityNotFoundException e) {
+        } catch (ActivityNotFoundException ex) {
             // Sending the caught exception to Google Analytics
-            LauncherUtility.SendExceptionGoogleAnalytics(context, e);
+            LauncherUtility.sendExceptionGoogleAnalytics(context, ex);
 
-            Toast toast = Toast.makeText(context, context.getString(R.string.activity_not_found_msg), 2000);
+            //Display a toast, to inform the user of the problem.
+            Toast toast = Toast.makeText(context, context.getString(R.string.activity_not_found_msg), Toast.LENGTH_SHORT);
             toast.show();
-            Log.e(Constants.ERROR_TAG, e.getMessage());
+            Log.e(Constants.ERROR_TAG, ex.getMessage());
         }
     }
 
     /**
-     * Show warning if DEBUG_MODE is true
+     * Shows a message in {@code activity} indicating that debugging mode is enabled.
+     *
+     * @param activity The activity in which to show the message.
      */
-    public static void ShowDebugInformation(Activity a) {
-        if (DEBUG_MODE && a != null) {
-            LinearLayout debug = (LinearLayout) a.findViewById(R.id.debug_mode);
-            TextView textView = (TextView) a.findViewById(R.id.debug_mode_text);
-            textView.setText(a.getText(R.string.giraf_debug_mode) + " "
-                    + (DEBUG_MODE_AS_CHILD ? a.getText(R.string.giraf_debug_as_child)
-                    : a.getText(R.string.giraf_debug_as_guardian)));
+    public static void showDebugInformation(Activity activity) {
+        if (activity != null) {
+            //Get the necessary views.
+            LinearLayout debug = (LinearLayout) activity.findViewById(R.id.debug_mode);
+            TextView textView = (TextView) activity.findViewById(R.id.debug_mode_text);
+
+            //Fill the view with information on the debug settings.
+            textView.setText(activity.getText(R.string.giraf_debug_mode) + " "
+                    + (DEBUG_MODE_AS_CHILD ? activity.getText(R.string.giraf_debug_as_child)
+                    : activity.getText(R.string.giraf_debug_as_guardian)));
+
             debug.setVisibility(View.VISIBLE);
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
     }
 
     /**
-     * Sending the caught exception to Google Analytics.
+     * Send the exception {@code ex} to Google Analytics.
      *
      * @param context Context of the current activity.
-     * @param e       The caught exception.
+     * @param ex       The caught exception.
      */
-    public static void SendExceptionGoogleAnalytics(Context context, Exception e) {
+    public static void sendExceptionGoogleAnalytics(Context context, Exception ex) {
         // May return null if EasyTracker has not yet been initialized with a
         // property ID.
         EasyTracker easyTracker = EasyTracker.getInstance(context);
@@ -152,57 +163,51 @@ public abstract class LauncherUtility {
                 .createException(new StandardExceptionParser(context, null)    // Context and optional collection of package names
                         // to be used in reporting the exception.
                         .getDescription(Thread.currentThread().getName(),           // The name of the thread on which the exception occurred.
-                                e),                                         // The exception.
+                                ex),                                         // The exception.
                         false)                                      // False indicates a fatal exception
                 .build()
         );
     }
 
     /**
-     * Saves data for the currently authorized log in.
+     * Saves information on which user is currently logged in, and what the time login was authorised.
+     * This information is used to determine when to automatically logout the user.
+     * The information is saved in a {@code SharedPreferences} file.
      *
-     * @param context Context of the current activity.
+     * @param context Context in which the preferences should be saved.
      * @param id      ID of the guardian logging in.
+     * @param loginTime The time of login (UNIX time, milliseconds).
      */
-    public static void saveLogInData(Context context, int id) {
-        SharedPreferences sp = context.getSharedPreferences(Constants.TIMER_KEY, 0);
+    public static void saveLogInData(Context context, int id, long loginTime) {
+        SharedPreferences sp = context.getSharedPreferences(Constants.LOGIN_TIME_KEY, 0);
         SharedPreferences.Editor editor = sp.edit();
-        Date d = new Date();
 
-        //TODO: This error is because we used to use longs for the time, but the OasisLib group wants us to use ints now, however, there is no DateTime format in int format.
-        editor.putLong(Constants.DATE_KEY, d.getTime());
-        editor.putInt(Constants.GUARDIAN_ID, id);
+        editor.putLong(Constants.TIME_KEY, loginTime);
+        editor.putInt(Constants.GUARDIAN_ID_KEY, id);
 
         editor.commit();
     }
 
     /**
-     * Finds the currently logged in user.
+     * Gets the profile object of the currently logged in user. If no user is currently logged in,
+     * {@code null} is returned.
      *
-     * @param context Context of the current activity.
-     * @return Currently logged in user.
+     * @param context Context in which the login information was saved.
+     * @return The currently logged in user. If no login information is found, {@code null} is returned.
      */
-    public static Profile findCurrentUser(Context context) {
+    public static Profile getCurrentUser(Context context) {
         Helper helper = getOasisHelper(context);
 
-        int currentUserID = findCurrentUserID(context);
+        //Get the ID of the logged in user from SharedPreferences.
+        SharedPreferences sp = context.getSharedPreferences(Constants.LOGIN_TIME_KEY, 0);
+        int currentUserID = sp.getInt(Constants.GUARDIAN_ID_KEY, -1);
 
+        //Return null if no login information is found, otherwise return the the profile.
         if (currentUserID == -1) {
             return null;
         } else {
             return helper.profilesHelper.getProfileById(currentUserID);
         }
-    }
-
-    /**
-     * Finds the ID of the currently logged in user.
-     *
-     * @param context Context of the current activity.
-     * @return ID of the currently logged in user.
-     */
-    public static int findCurrentUserID(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.TIMER_KEY, 0);
-        return sharedPreferences.getInt(Constants.GUARDIAN_ID, -1);
     }
 
     /**
@@ -223,11 +228,11 @@ public abstract class LauncherUtility {
      * @param context Context of the current activity.
      */
     public static void clearAuthData(Context context) {
-        SharedPreferences sp = context.getSharedPreferences(Constants.TIMER_KEY, 0);
+        SharedPreferences sp = context.getSharedPreferences(Constants.LOGIN_TIME_KEY, 0);
         SharedPreferences.Editor editor = sp.edit();
 
-        editor.putLong(Constants.DATE_KEY, 1);
-        editor.putLong(Constants.GUARDIAN_ID, -1);
+        editor.putLong(Constants.TIME_KEY, 1);
+        editor.putLong(Constants.GUARDIAN_ID_KEY, -1);
 
         editor.commit();
     }
@@ -239,8 +244,8 @@ public abstract class LauncherUtility {
      * @return True if a log in is required; otherwise false.
      */
     public static boolean sessionExpired(Context context) {
-        SharedPreferences sp = context.getSharedPreferences(Constants.TIMER_KEY, 0);
-        Long lastAuthTime = sp.getLong(Constants.DATE_KEY, 1);
+        SharedPreferences sp = context.getSharedPreferences(Constants.LOGIN_TIME_KEY, 0);
+        Long lastAuthTime = sp.getLong(Constants.TIME_KEY, 1);
         Date d = new Date();
 
         return d.getTime() > lastAuthTime + Constants.TIME_TO_STAY_LOGGED_IN;
@@ -437,7 +442,7 @@ public abstract class LauncherUtility {
         try {
             helper = new Helper(context);
         } catch (Exception e) {
-            SendExceptionGoogleAnalytics(context, e);
+            sendExceptionGoogleAnalytics(context, e);
             Log.e(Constants.ERROR_TAG, e.getMessage());
         }
         return helper;
@@ -492,7 +497,7 @@ public abstract class LauncherUtility {
 
             //Fill AppInfo hash map with AppInfo objects for each app
             if (currentUser == null)
-                currentUser = LauncherUtility.findCurrentUser(context);
+                currentUser = LauncherUtility.getCurrentUser(context);
 
             appInfoHash = loadAppInfos(context, girafAppsList, currentUser);
             List<AppInfo> appInfos = new ArrayList<AppInfo>(appInfoHash.values());
@@ -727,7 +732,7 @@ public abstract class LauncherUtility {
                     else
                         intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
 
-                    intent.putExtra(Constants.GUARDIAN_ID, guardian.getId());
+                    intent.putExtra(Constants.GUARDIAN_ID_KEY, guardian.getId());
                     intent.putExtra(Constants.APP_COLOR, app.getBgColor());
                     intent.putExtra(Constants.APP_PACKAGE_NAME, app.getPackage());
                     intent.putExtra(Constants.APP_ACTIVITY_NAME, app.getActivity());
@@ -879,7 +884,7 @@ public abstract class LauncherUtility {
     }
 
     public static String getSharedPreferenceUser(Context context){
-        Profile currentUser = findCurrentUser(context);
+        Profile currentUser = getCurrentUser(context);
         return getSharedPreferenceUser(currentUser);
     }
 
@@ -890,7 +895,7 @@ public abstract class LauncherUtility {
     }
 
     public static SharedPreferences getSharedPreferencesForCurrentUser(Context context){
-        Profile currentUser = findCurrentUser(context);
+        Profile currentUser = getCurrentUser(context);
         return getSharedPreferencesForCurrentUser(context, currentUser);
     }
 }

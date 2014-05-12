@@ -53,7 +53,7 @@ public class ProfileSelectActivity extends Activity {
 
         mHelper = LauncherUtility.getOasisHelper(mContext);
         Bundle extras = getIntent().getExtras();
-        mGuardianID = extras.getInt(Constants.GUARDIAN_ID);
+        mGuardianID = extras.getInt(Constants.GUARDIAN_ID_KEY);
         mAppColor = extras.getInt(Constants.APP_COLOR);
         mPackageName = extras.getString(Constants.APP_PACKAGE_NAME);
         mActivityName = extras.getString(Constants.APP_ACTIVITY_NAME);
@@ -154,7 +154,7 @@ public class ProfileSelectActivity extends Activity {
                 | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 
         intent.putExtra(Constants.CHILD_ID, childID);
-        intent.putExtra(Constants.GUARDIAN_ID, mGuardianID);
+        intent.putExtra(Constants.GUARDIAN_ID_KEY, mGuardianID);
         intent.putExtra(Constants.APP_COLOR, mAppColor);
         intent.putExtra(Constants.APP_ID, mAppId);
         // Verify the intent will resolve to at least one activity

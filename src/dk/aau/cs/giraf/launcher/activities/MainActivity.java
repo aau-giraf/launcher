@@ -9,6 +9,8 @@ import android.preference.PreferenceManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
+import java.util.Date;
+
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
@@ -46,10 +48,10 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         } else {
             intent = new Intent(mContext, HomeActivity.class);
 
-            SharedPreferences sharedPreferences = getSharedPreferences(Constants.TIMER_KEY, 0);
-            int guardianID = sharedPreferences.getInt(Constants.GUARDIAN_ID, -1);
+            SharedPreferences sharedPreferences = getSharedPreferences(Constants.LOGIN_TIME_KEY, 0);
+            int guardianID = sharedPreferences.getInt(Constants.GUARDIAN_ID_KEY, -1);
 
-            intent.putExtra(Constants.GUARDIAN_ID, guardianID);
+            intent.putExtra(Constants.GUARDIAN_ID_KEY, guardianID);
         }
 
         if(DEBUG_MODE)
@@ -67,8 +69,8 @@ public class MainActivity extends Activity implements Animation.AnimationListene
             profile = helper.profilesHelper.authenticateProfile("childqkxlnftvxquwrwcdloaumdhzkgyglezzsebpvnethrlstvmlorrolymdynjcyonkrtvcuagwigdqqkftsxxhklcnbhznthcqjxnjzzdoqvmfdlxrudcyakvrnfcbohdumawlwmfndjascmvrsoxfjgwzhdvcvqcroxoyjeazmxtrjtlkldoevgdrqvgfbklhtgm");
 
         Intent intent = new Intent(mContext, HomeActivity.class);
-        intent.putExtra(Constants.GUARDIAN_ID, profile.getId());
-        LauncherUtility.saveLogInData(mContext, profile.getId());
+        intent.putExtra(Constants.GUARDIAN_ID_KEY, profile.getId());
+        LauncherUtility.saveLogInData(mContext, profile.getId(), new Date().getTime());
         return intent;
     }
 
