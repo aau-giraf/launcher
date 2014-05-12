@@ -2,6 +2,7 @@ package dk.aau.cs.giraf.launcher.settings;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,12 +16,13 @@ public class SettingsListAdapter extends BaseAdapter {
 
     private Activity mActivity;
     private ArrayList<SettingsListItem> mApplicationList;
+    private ListView mListView;
     private static LayoutInflater mInflater = null;
     private static int mLastSelectedItem = 0;
 
-    public SettingsListAdapter(Activity a, ArrayList<SettingsListItem> l) {
-        mActivity = a;
-        mApplicationList = l;
+    public SettingsListAdapter(Activity activity, ArrayList<SettingsListItem> list) {
+        mActivity = activity;
+        mApplicationList = list;
         mInflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -42,66 +44,65 @@ public class SettingsListAdapter extends BaseAdapter {
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        View vi = convertView;
+        ViewHolder holder;
 
-        if(convertView == null)
-            vi = mInflater.inflate(R.layout.settings_fragment_list_row, null);
+        if (mListView == null)
+            mListView = (ListView) parent.findViewById(R.id.settingsListView);
+
+        if(convertView == null) {
+            convertView = mInflater.inflate(R.layout.settings_fragment_list_row, null);
+
+            holder = new ViewHolder();
+            holder.appIcon = (ImageView)convertView.findViewById(R.id.settingsListAppLogo);
+            holder.appName = (TextView)convertView.findViewById(R.id.settingsListAppName);
+            holder.shadowTop = convertView.findViewById(R.id.settingsListRowShadowBelow);
+            holder.shadowBottom = convertView.findViewById(R.id.settingsListRowShadowAbove);
+            holder.shadowRight = convertView.findViewById(R.id.settingsListRowShadowRight);
+
+            convertView.setTag(holder);
+        }
+        else
+            holder = (ViewHolder)convertView.getTag();
 
         // Get current item in the list
         SettingsListItem item = mApplicationList.get(position);
 
         if (position == mLastSelectedItem) {
-            setShadowRightCurrent(vi, false);
-            ListView listView = (ListView)parent.findViewById(R.id.settingsListView);
-            listView.setItemChecked(position, true);
+            setShadowVisibility(holder.shadowRight, false);
+            mListView.setItemChecked(position, true);
         }
-        else {
-            setShadowRightCurrent(vi, true);
-        }
+        else
+            setShadowVisibility(holder.shadowRight, true);
 
         if (position == mLastSelectedItem - 1)
-            setShadowAboveCurrent(vi, true);
+            setShadowVisibility(holder.shadowBottom, true);
         else
-            setShadowAboveCurrent(vi, false);
+            setShadowVisibility(holder.shadowBottom, false);
 
         if (position == mLastSelectedItem + 1)
-            setShadowBelowCurrent(vi, true);
+            setShadowVisibility(holder.shadowTop, true);
         else
-            setShadowBelowCurrent(vi, false);
-
-        ImageView appIcon = (ImageView)vi.findViewById(R.id.settingsListAppLogo);
-        TextView appNameText = (TextView)vi.findViewById(R.id.settingsListAppName);
+            setShadowVisibility(holder.shadowTop, false);
 
         // Setting all values in ListView
-        appIcon.setBackgroundDrawable(item.mAppIcon);
-        appNameText.setText(item.mAppName);
+        holder.appIcon.setBackgroundDrawable(item.mAppIcon);
+        holder.appName.setText(item.mAppName);
 
-        return vi;
+        return convertView;
     }
 
-    private void setShadowRightCurrent(View currentView, boolean visible) {
-        View rightShadow = currentView.findViewById(R.id.settingsListRowShadowRight);
+    private void setShadowVisibility(View shadowView, boolean visible) {
         if (visible)
-            rightShadow.setVisibility(View.VISIBLE);
+            shadowView.setVisibility(View.VISIBLE);
         else
-            rightShadow.setVisibility(View.GONE);
+            shadowView.setVisibility(View.GONE);
     }
 
-    private void setShadowAboveCurrent(View aboveView, boolean visible) {
-        // Add a shadow at the bottom of the list item ABOVE current
-        View aboveViewShadow = aboveView.findViewById(R.id.settingsListRowShadowAbove);
-        if (visible)
-            aboveViewShadow.setVisibility(View.VISIBLE);
-        else
-            aboveViewShadow.setVisibility(View.GONE);
-    }
-
-    private void setShadowBelowCurrent(View belowView, boolean visible) {
-        // Add a shadow at the top of the list item BELOW current
-        View belowViewShadow = belowView.findViewById(R.id.settingsListRowShadowBelow);
-        if (visible)
-            belowViewShadow.setVisibility(View.VISIBLE);
-        else
-            belowViewShadow.setVisibility(View.GONE);
+    private static class ViewHolder {
+        public ImageView appIcon;
+        public TextView appName;
+        public View shadowTop;
+        public View shadowBottom;
+        public View shadowRight;
     }
 }
