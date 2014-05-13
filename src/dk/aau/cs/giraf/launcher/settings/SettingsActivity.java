@@ -11,6 +11,7 @@ import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -59,12 +60,20 @@ public class SettingsActivity extends Activity
     public ArrayList<SettingsListItem> getInstalledSettingsApps(){
         mAppList = new ArrayList<SettingsListItem>();
 
+        Intent androidSettingsIntent = new Intent(Settings.ACTION_SETTINGS);
+        androidSettingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
         addApplicationByPackageName("dk.aau.cs.giraf.launcher",
                 new LauncherSettings(LauncherUtility.getSharedPreferenceUser(mCurrentUser)));
         addApplicationByPackageName("dk.aau.cs.giraf.wombat",
                 new WombatSettings());
+
+        // These following must be added last!
+        // Application management
         addApplicationByName(getString(R.string.apps_list_label),
-                new AppManagementSettings(), getResources().getDrawable(R.drawable.android_icon));
+                new AppManagementSettings(), getResources().getDrawable(R.drawable.ic_apps));
+        // Native Android Settings
+        addApplicationByName("Android Indstillinger", androidSettingsIntent, getResources().getDrawable(R.drawable.ic_android));
 
         return removeNonGirafApps(mAppList);
     }
@@ -81,6 +90,9 @@ public class SettingsActivity extends Activity
                     if (settingsApp.mPackageName != null && installedAppName.contains(settingsApp.mPackageName.toLowerCase())) {
                         mAvailableSettingsAppList.add(settingsApp);
                     } else if (settingsApp.mPackageName == null && settingsApp.mAppName != null) {
+                        mAvailableSettingsAppList.add(settingsApp);
+                    }
+                    else if (settingsApp.mIntent != null) {
                         mAvailableSettingsAppList.add(settingsApp);
                     }
                 }
@@ -115,10 +127,18 @@ public class SettingsActivity extends Activity
 
     private void addApplicationByName(String appName, Fragment settingsFragment, Drawable icon) {
         SettingsListItem item = new SettingsListItem(
-                null,
                 setCorrectCase(appName),
                 icon,
                 settingsFragment
+        );
+        mAppList.add(item);
+    }
+
+    private void addApplicationByName(String name, Intent intent, Drawable icon) {
+        SettingsListItem item = new SettingsListItem(
+                setCorrectCase(name),
+                icon,
+                intent
         );
         mAppList.add(item);
     }

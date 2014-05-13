@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="giraf_settings_list_row_paddingTop">15dp</dimen>
-    <dimen name="giraf_settings_list_row_paddingBottom">15dp</dimen>
-    <dimen name="giraf_settings_list_row_paddingLeft">15dp</dimen>
-    <dimen name="giraf_settings_list_row_paddingRight">25dp</dimen>
+    <dimen name="giraf_settings_list_row_padding">15dp</dimen>
     <dimen name="giraf_settings_list_row_imageView_size">45dp</dimen>
     <dimen name="giraf_settings_list_row_imageView_marginRight">10dp</dimen>
     <dimen name="giraf_settings_list_shadowSize">8dp</dimen>

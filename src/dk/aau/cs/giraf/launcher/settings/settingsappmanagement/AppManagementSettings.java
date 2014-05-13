@@ -36,7 +36,6 @@ public class AppManagementSettings extends Fragment {
     private Button mGirafButton;
     private Button mAndroidAppsButton;
     private Button mGooglePlayButton;
-    private Button mAndroidSettingsButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,7 +53,6 @@ public class AppManagementSettings extends Fragment {
         mGirafButton = (Button)view.findViewById(R.id.settings_giraf_button);
         mAndroidAppsButton = (Button)view.findViewById(R.id.settings_android_button);
         mGooglePlayButton = (Button)view.findViewById(R.id.settings_googleplay_button);
-        mAndroidSettingsButton = (Button)view.findViewById(R.id.settings_androidsettings_button);
         this.setButtonListeners();
 
         mFragManager = this.getFragmentManager();
@@ -83,15 +81,6 @@ public class AppManagementSettings extends Fragment {
             public void onClick(View v) {
                 replaceFragment(mAndroidFragment);
                 focusButton(mAndroidAppsButton);
-            }
-        });
-
-        mAndroidSettingsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Settings.ACTION_SETTINGS);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
             }
         });
 

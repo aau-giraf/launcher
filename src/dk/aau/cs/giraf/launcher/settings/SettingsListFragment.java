@@ -46,12 +46,12 @@ public class SettingsListFragment extends Fragment {
         mProfileName = (TextView) view.findViewById(R.id.profile_selected_name);
 
         ProfileController pc = new ProfileController(getActivity());
-        mLoggedInGuardian = pc.getProfileById(getActivity().getIntent().getIntExtra(Constants.GUARDIAN_ID_KEY, -1));
+        mLoggedInGuardian = pc.getProfileById(getActivity().getIntent().getIntExtra(Constants.GUARDIAN_ID, -1));
 
         int childID = getActivity().getIntent().getIntExtra(Constants.CHILD_ID, -1);
         if(childID == -1)
         {
-            mCurrentUser = pc.getProfileById(getActivity().getIntent().getIntExtra(Constants.GUARDIAN_ID_KEY, -1));
+            mCurrentUser = pc.getProfileById(getActivity().getIntent().getIntExtra(Constants.GUARDIAN_ID, -1));
             mProfileSelector = new GProfileSelector(getActivity(), mLoggedInGuardian, null);
         }
         else
@@ -101,8 +101,14 @@ public class SettingsListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 SettingsListItem item = (SettingsListItem) parent.getAdapter().getItem(position);
-                mCallback.setActiveFragment(item.mAppFragment);
-                mAdapter.setSelected(position);
+                if (item.mAppFragment != null) {
+                    mCallback.setActiveFragment(item.mAppFragment);
+                    mAdapter.setSelected(position);
+                }
+                else if (item.mIntent != null) {
+                    startActivity(item.mIntent);
+                    mAdapter.setSelected(0);
+                }
             }
         });
 

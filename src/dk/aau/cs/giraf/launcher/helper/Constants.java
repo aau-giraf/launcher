@@ -11,11 +11,11 @@ public final class Constants {
     public static final String[] GUARDIAN_ONLY_APPS = {"oasis", "pictocreator"};
 	
 	// SharedPreferences keys for log in data
-    public static final String LOGIN_TIME_KEY = "TIMING";
-	public static final String TIME_KEY = "DATE";
+    public static final String LOGIN_SESSION_INFO = "TIMING";
+	public static final String LOGIN_TIME = "DATE";
 	
 	// Keys for inserting and retrieving data in Intents
-	public static final String GUARDIAN_ID_KEY = "currentGuardianID";
+	public static final String GUARDIAN_ID = "currentGuardianID";
 	public static final String CHILD_ID = "currentChildID";
     public static final int NO_CHILD_SELECTED_ID = -1;
 	public static final String APP_PACKAGE_NAME = "appPackageName";

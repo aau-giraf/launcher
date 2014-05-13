@@ -140,7 +140,7 @@ public class AuthenticationActivity extends CaptureActivity {
                 mInfoView.setText(R.string.saadan);
 
                 mHomeIntent = new Intent(AuthenticationActivity.this, HomeActivity.class);
-                mHomeIntent.putExtra(Constants.GUARDIAN_ID_KEY, profile.getId());
+                mHomeIntent.putExtra(Constants.GUARDIAN_ID, profile.getId());
             } else {
                 this.changeCameraFeedBorderColor(0xFFFF0000);
                 mGLoginButton.setVisibility(View.INVISIBLE);

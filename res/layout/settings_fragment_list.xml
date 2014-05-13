@@ -14,14 +14,11 @@
             android:background="@drawable/settings_list_view_shadow_right"/>
 
     <LinearLayout
-            android:id="@+id/settingsListSpinner"
+            android:id="@+id/settingsListProfileButton"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="@dimen/giraf_settings_list_row_paddingTop"
-            android:paddingBottom="@dimen/giraf_settings_list_row_paddingBottom"
-            android:paddingLeft="@dimen/giraf_settings_list_row_paddingLeft"
-            android:paddingRight="@dimen/giraf_settings_list_row_paddingRight">
+            android:padding="@dimen/giraf_settings_list_row_padding">
 
         <TextView
             android:layout_width="wrap_content"
@@ -59,7 +56,7 @@
             android:id="@+id/settingsListView"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_below="@id/settingsListSpinner"
+            android:layout_below="@id/settingsListProfileButton"
             android:verticalScrollbarPosition="left"
             android:choiceMode="singleChoice"
             android:divider="@color/giraf_settings_list_shadow"
