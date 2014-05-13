@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:giraf="http://giraf.cs.aau.dk">
+    <PreferenceCategory android:title="Hjemmeskærm"/>
+
+    <SwitchPreference android:key="@string/show_animation_preference_key"
+        android:title="Opstartsanimation"
+        android:summary="Vis animation ved opstart af hjemmeskærmen."
+        android:switchTextOff="SLUKKET"
+        android:switchTextOn="TÆNDT"/>
+
+    <dk.aau.cs.giraf.settingslib.settingslib.Components.IconResizer
+        android:key="@string/icon_size_preference_key"
+        android:title="Ikon størrelse"
+        android:summary="Indstil størrelsen på ikonerne på hjemmeskærmen."
+        android:defaultValue="200"
+        android:max="200"
+        giraf:min="96"/>
+</PreferenceScreen>

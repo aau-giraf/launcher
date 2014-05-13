@@ -156,8 +156,9 @@ public class SettingsListFragment extends Fragment {
                 // Otherwise it must be an intent
                 else if (item.mIntent != null) {
                     // Start a new activity with the intent
-                    // No need to reflect this as a selection in the adapter, since it is starting an activity
                     startActivity(item.mIntent);
+                    // Resets the selection to first item after the intent has been clicked
+                    mAdapter.setSelected(0);
                 }
             }
         });
