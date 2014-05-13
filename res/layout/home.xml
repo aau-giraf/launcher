@@ -79,36 +79,42 @@
 
         </RelativeLayout>
     </dk.aau.cs.giraf.launcher.layoutcontroller.SideBarLayout>
-
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/appScrollView"
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_toRightOf="@id/SideBarLayout">
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/appContainer"
-            android:orientation="vertical"
+        <TextView
+            android:id="@+id/noAppsMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:paddingLeft="100dp"
+            android:textSize="30dp"
+            android:layout_gravity="center"
+            android:text="@string/no_apps_available"
+            android:textColor="@android:color/darker_gray"
+            android:visibility="gone" />
+
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            layout="@layout/debug_mode" />
+
+        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/appScrollView"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="fill_parent">
 
-            <include
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                layout="@layout/debug_mode" />
-        </LinearLayout>
-    </ScrollView>
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/appContainer"
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/noAppsMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:paddingLeft="100dp"
-        android:textSize="30dp"
-        android:text="@string/no_apps_available"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:textColor="@android:color/darker_gray"
-        android:visibility="gone" />
+            </LinearLayout>
+        </ScrollView>
+    </FrameLayout>
+
 </RelativeLayout>

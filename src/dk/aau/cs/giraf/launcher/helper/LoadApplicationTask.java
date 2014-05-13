@@ -33,15 +33,15 @@ import dk.aau.cs.giraf.oasis.lib.models.ProfileApplication;
 
 public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<String, AppInfo>> {
 
-    private Profile currentUser;
-    private Profile guardian;
-    private Context context;
-    private LinearLayout targetLayout;
-    private int iconSize;
-    private View.OnClickListener onClickListener;
-    private List<LinearLayout> appRowsToAdd;
-    private Set<String> selectedApps;
-    private ProgressBar progressbar;
+    protected Profile currentUser;
+    protected Profile guardian;
+    protected Context context;
+    protected LinearLayout targetLayout;
+    protected int iconSize;
+    protected View.OnClickListener onClickListener;
+    protected List<LinearLayout> appRowsToAdd;
+    protected Set<String> selectedApps;
+    protected ProgressBar progressbar;
 
     public LoadApplicationTask(Context context, Profile currentUser, Profile guardian, LinearLayout targetLayout, int iconSize, View.OnClickListener onClickListener){
         this.context = context;
@@ -55,24 +55,18 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
 
     @Override
     protected void onPreExecute() {
+        hideNoAppsMessage();
+        progressbar = new ProgressBar(context);
+        progressbar.setVisibility(View.VISIBLE);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(100,100);
+        params.gravity = Gravity.CENTER;
+        progressbar.setLayoutParams(params);
+        progressbar.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.progressbar));
+        ViewGroup parent = (ViewGroup)targetLayout.getParent();
+        while (parent instanceof ScrollView)
+            parent = (ViewGroup) parent.getParent();
 
-        ((Activity)context).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                progressbar = new ProgressBar(context);
-                progressbar.setVisibility(View.VISIBLE);
-                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(100,100);
-                params.gravity = Gravity.CENTER;
-                progressbar.setLayoutParams(params);
-                progressbar.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.progressbar));
-                ViewGroup parent = (ViewGroup)targetLayout.getParent();
-                while (parent instanceof ScrollView)
-                    parent = (ViewGroup) parent.getParent();
-
-                parent.addView(progressbar);
-            }
-        });
-
+        parent.addView(progressbar);
 
         targetLayout.removeAllViews();
     }
@@ -105,7 +99,7 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
             //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
             int appsPrRow = LauncherUtility.getAmountOfAppsWithinBounds(containerWidth, iconSize);
 
-            if(appInfos.size() % appsPrRow == 0)
+            if(appInfoHash.size() % appsPrRow == 0)
             {
                 appsPrRow--;
             }
@@ -173,10 +167,7 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
         try {
             if(appRowsToAdd.size() > 0)
             {
-                if(context instanceof SettingsActivity)
-                    ((Activity) context).findViewById(R.id.no_apps_textview).setVisibility(View.GONE);
-                else
-                    ((Activity) context).findViewById(R.id.noAppsMessage).setVisibility(View.GONE);
+                hideNoAppsMessage();
 
                 for(LinearLayout row : appRowsToAdd){
                     targetLayout.addView(row);
@@ -184,15 +175,26 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
             }
             else
             {
-                if(context instanceof SettingsActivity)
-                    ((Activity) context).findViewById(R.id.no_apps_textview).setVisibility(View.VISIBLE);
-                else
-                    ((Activity) context).findViewById(R.id.noAppsMessage).setVisibility(View.GONE);
+                showNoAppsMessage();
             }
         } catch (NullPointerException e){
             e.printStackTrace();
         }
         progressbar.setVisibility(View.GONE);
+    }
+
+    private void hideNoAppsMessage() {
+        if(context instanceof SettingsActivity)
+            ((Activity) context).findViewById(R.id.no_apps_textview).setVisibility(View.GONE);
+        else
+            ((Activity) context).findViewById(R.id.noAppsMessage).setVisibility(View.GONE);
+    }
+
+    private void showNoAppsMessage() {
+        if(context instanceof SettingsActivity)
+            ((Activity) context).findViewById(R.id.no_apps_textview).setVisibility(View.VISIBLE);
+        else
+            ((Activity) context).findViewById(R.id.noAppsMessage).setVisibility(View.VISIBLE);
     }
 
     private boolean UserHasGirafApplicationInView(ProfileApplicationController pac, Application app, Profile user)

@@ -40,6 +40,7 @@ import dk.aau.cs.giraf.gui.GWidgetUpdater;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
+import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.SideBarLayout;
 import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
@@ -62,8 +63,9 @@ public class HomeActivity extends Activity {
     private Profile mLoggedInGuardian;
 	private Profile mCurrentUser;
 	private Helper mHelper;
+    private HomeActivityAppTask homeActivityAppTask;
 
-    private List<Application> mCurrentLoadedApps;
+    private HashMap<String, AppInfo> mCurrentLoadedApps;
 
     private boolean mAppsAdded = false;
     private boolean mWidgetRunning = false;
@@ -145,7 +147,7 @@ public class HomeActivity extends Activity {
      *
      * @param hasFocus {@code true} if the activity has focus.
      */
-	@Override
+	/*@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 
@@ -162,7 +164,7 @@ public class HomeActivity extends Activity {
         } else if (mAppsContainer.getViewTreeObserver() == null) {
             Log.e(Constants.ERROR_TAG, "ViewTreeObserver is null.");
         }
-	}
+	}*/
 
     /**
      * Stops the timer looking for updates in the set of available apps.
@@ -175,6 +177,7 @@ public class HomeActivity extends Activity {
         mAppsUpdater.cancel();
         Log.d(Constants.ERROR_TAG, "Applications are no longer observed.");
 		mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_STOP);
+        homeActivityAppTask.cancel(true);
 	}
 
     /**
@@ -186,8 +189,8 @@ public class HomeActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-        startObservingApps();
         reloadApplications();
+        //startObservingApps();
 		mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_START);
 	}
 
@@ -201,8 +204,6 @@ public class HomeActivity extends Activity {
 
     //TODO: What is going on with this function?
     private void reloadApplications(){
-        if (!mAppsAdded) return;
-
         mCurrentLoadedApps = null; // Force loadApplications to redraw
         loadApplications();
     }
@@ -211,26 +212,9 @@ public class HomeActivity extends Activity {
      * Load the user's applications into the app container.
      */
     private void loadApplications(){
-        List<Application> girafAppsList = LauncherUtility.getVisibleGirafApps(mContext, mCurrentUser); // For home activity
-        SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(mContext, mCurrentUser);
-        Set<String> androidAppsPackagenames = prefs.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
-        List<Application> androidAppsList = LauncherUtility.convertPackageNamesToApplications(mContext, androidAppsPackagenames);
-        girafAppsList.addAll(androidAppsList);
-        if (mCurrentLoadedApps == null || mCurrentLoadedApps.size() != girafAppsList.size()){
-            updateIconSize(); // Update mIconSize
-            HashMap<String, AppInfo> appInfos = LauncherUtility.loadAppInfos(mContext, girafAppsList, mCurrentUser);
-            LauncherUtility.loadGirafApplicationsIntoView(mContext, mCurrentUser, mLoggedInGuardian, girafAppsList, mAppsContainer, mIconSize);
-            //Remember that the apps have been added, so they are not added again by the listener
-            if (appInfos.isEmpty()){
-                mAppsAdded = false;
-                TextView noAppsMessage = (TextView) findViewById(R.id.noAppsMessage);
-                noAppsMessage.setVisibility(View.VISIBLE);
-            }
-            else{
-                mAppsAdded = true;
-            }
-        }
-        mCurrentLoadedApps = girafAppsList;
+        updateIconSize();
+        homeActivityAppTask = new HomeActivityAppTask(mContext, mCurrentUser, mLoggedInGuardian, mAppsContainer, mIconSize, null);
+        homeActivityAppTask.execute();
     }
 
     /**
@@ -568,11 +552,11 @@ public class HomeActivity extends Activity {
                     mProfileSelectorWidget = new GProfileSelector(mContext, mLoggedInGuardian, null);
 
                 updatesProfileSelector();
+
+                //Reload the application container, as a new user has been selected.
+                reloadApplications();
             }
         });
-
-        //Reload the application container, as a new user has been selected.
-        reloadApplications();
     }
 
     /**
@@ -581,17 +565,64 @@ public class HomeActivity extends Activity {
      * @see HomeActivity#loadApplications()
      */
     private class AppsObserver extends TimerTask {
+
         @Override
         public void run() {
-            // run this on UI thread since UI might need to get updated
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    loadApplications();
-                }
-            });
+            List<Application> girafAppsList = LauncherUtility.getVisibleGirafApps(mContext, mCurrentUser); // For home activity
+            SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(mContext, mCurrentUser);
+            Set<String> androidAppsPackagenames = prefs.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
+            List<Application> androidAppsList = LauncherUtility.convertPackageNamesToApplications(mContext, androidAppsPackagenames);
+            girafAppsList.addAll(androidAppsList);
+            if (mCurrentLoadedApps == null || mCurrentLoadedApps.size() != girafAppsList.size()){
+                // run this on UI thread since UI might need to get updated
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadApplications();
+                    }
+                });
+            }
             Log.d(Constants.ERROR_TAG, "Applications checked");
         }
 
+    }
+
+    private class HomeActivityAppTask extends LoadApplicationTask {
+
+        public HomeActivityAppTask(Context context, Profile currentUser, Profile guardian, LinearLayout targetLayout, int iconSize, View.OnClickListener onClickListener) {
+            super(context, currentUser, guardian, targetLayout, iconSize, onClickListener);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            if (mAppsUpdater != null)
+                mAppsUpdater.cancel();
+
+            super.onPreExecute();
+        }
+
+        @Override
+        protected HashMap<String, AppInfo> doInBackground(Application... applications) {
+            HashMap<String, AppInfo> appInfos;
+            List<Application> girafAppsList = LauncherUtility.getVisibleGirafApps(context, currentUser); // For home activity
+            SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(context, currentUser);
+            Set<String> androidAppsPackagenames = prefs.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
+            List<Application> androidAppsList = LauncherUtility.convertPackageNamesToApplications(context, androidAppsPackagenames);
+            girafAppsList.addAll(androidAppsList);
+
+            applications = girafAppsList.toArray(applications);
+            appInfos = super.doInBackground(applications);
+
+            return appInfos;
+        }
+
+        @Override
+        protected void onPostExecute(HashMap<String, AppInfo> appInfos) {
+            super.onPostExecute(appInfos);
+
+            mCurrentLoadedApps = appInfos;
+
+            startObservingApps();
+        }
     }
 }
