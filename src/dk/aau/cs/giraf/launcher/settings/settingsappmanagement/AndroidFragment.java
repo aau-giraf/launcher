@@ -3,6 +3,8 @@ package dk.aau.cs.giraf.launcher.settings.settingsappmanagement;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ResolveInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,11 +13,14 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.helper.AppComparator;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
@@ -150,7 +155,7 @@ public class AndroidFragment extends AppContainerFragment {
             Log.d(Constants.ERROR_TAG, "Thread says working");
             applications = LauncherUtility.getAndroidApplicationList(context, "dk.aau.cs.giraf").toArray(applications);
             super.doInBackground(applications);
-            appInfos = LauncherUtility.loadAppInfos(context, applications, currentUser);
+            appInfos = LauncherUtility.updateAppInfoHashMap(context, (List<Application>) apps);
             //Remember that the apps have been added, so they are not added again by the listener
             //List<ResolveInfo> sortedApps = (List<ResolveInfo>) apps;
             //Collections.sort(sortedApps, new AppComparator(context));

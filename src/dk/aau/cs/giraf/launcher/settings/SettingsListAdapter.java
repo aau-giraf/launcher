@@ -12,17 +12,28 @@ import dk.aau.cs.giraf.launcher.R;
 
 import java.util.ArrayList;
 
+/**
+ * Custom adapter to ListView.
+ * @see SettingsListFragment
+ */
 public class SettingsListAdapter extends BaseAdapter {
 
     private Activity mActivity;
-    private ArrayList<SettingsListItem> mApplicationList;
-    private ListView mListView;
     private static LayoutInflater mInflater = null;
+
+    // The list containing the items to add
+    private ArrayList<SettingsListItem> mApplicationList;
+    // Reference to the ListView using the adapter
+    private ListView mListView;
+    // Ensures the first item in the associated ListView is selected
     private static int mLastSelectedItem = 0;
 
-    public SettingsListAdapter(Activity activity, ArrayList<SettingsListItem> list) {
+    public SettingsListAdapter(Activity activity, ListView listView, ArrayList<SettingsListItem> list) {
         mActivity = activity;
         mApplicationList = list;
+        mListView = listView;
+
+        // Get the layout inflater from the activity
         mInflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -39,19 +50,29 @@ public class SettingsListAdapter extends BaseAdapter {
     }
 
     public void setSelected(int position) {
+        // Position in the view implementing the adapter
         mLastSelectedItem = position;
+        // Notify adapter that a new item is selected to redraw views
         notifyDataSetChanged();
     }
 
+    /**
+     * Method that must be implemented by extending the BaseAdapter class.
+     * Returns a view to be used as a row in a ListView.
+     * @param position Position in the ListView of the current item.
+     * @param convertView The view to be inflated containing the information to be shown in the ListView.
+     * @param parent Parent view of the convertView (ListView).
+     * @return The inflated view to be used in a ListView.
+     */
     public View getView(int position, View convertView, ViewGroup parent) {
+        /* Implementing the ViewHolder pattern to minimize the use of findViewById
+        *  The views are set once for each convertView so we don't need to find them again */
         ViewHolder holder;
-
-        if (mListView == null)
-            mListView = (ListView) parent.findViewById(R.id.settingsListView);
 
         if(convertView == null) {
             convertView = mInflater.inflate(R.layout.settings_fragment_list_row, null);
 
+            // Filling the ViewHolder with views used to render a list item
             holder = new ViewHolder();
             holder.appIcon = (ImageView)convertView.findViewById(R.id.settingsListAppLogo);
             holder.appName = (TextView)convertView.findViewById(R.id.settingsListAppName);
@@ -59,26 +80,34 @@ public class SettingsListAdapter extends BaseAdapter {
             holder.shadowBottom = convertView.findViewById(R.id.settingsListRowShadowAbove);
             holder.shadowRight = convertView.findViewById(R.id.settingsListRowShadowRight);
 
+            // Tag the view with the holder object to be able to retrieve it again
             convertView.setTag(holder);
         }
         else
+            // The view has been tagged with a ViewHolder, so we can just retrieve it
+            // to avoid finding them again
             holder = (ViewHolder)convertView.getTag();
 
-        // Get current item in the list
+        // Get the item we are rendering the view for in the list
         SettingsListItem item = mApplicationList.get(position);
 
+        // Set the visibility of the right shadow of current view
         if (position == mLastSelectedItem) {
             setShadowVisibility(holder.shadowRight, false);
+            // Set the selected item in the ListView coming from the constructor
+            // Minimizes the use of findViewById
             mListView.setItemChecked(position, true);
         }
         else
             setShadowVisibility(holder.shadowRight, true);
 
+        // Set the visibility of bottom shadow in the view above
         if (position == mLastSelectedItem - 1)
             setShadowVisibility(holder.shadowBottom, true);
         else
             setShadowVisibility(holder.shadowBottom, false);
 
+        // Set the visibility of top shadow in the view below
         if (position == mLastSelectedItem + 1)
             setShadowVisibility(holder.shadowTop, true);
         else
@@ -91,6 +120,12 @@ public class SettingsListAdapter extends BaseAdapter {
         return convertView;
     }
 
+    /**
+     * Set the visibility of the shadows according to list selection.
+     * @param shadowView The view to change visibility of.
+     * @param visible Boolean value reflecting if it should be visible or not.
+     * @see SettingsListAdapter
+     */
     private void setShadowVisibility(View shadowView, boolean visible) {
         if (visible)
             shadowView.setVisibility(View.VISIBLE);
@@ -98,6 +133,9 @@ public class SettingsListAdapter extends BaseAdapter {
             shadowView.setVisibility(View.GONE);
     }
 
+    /**
+     * Class used in the adapter to hold a reference to each view in a list item (row)
+     */
     private static class ViewHolder {
         public ImageView appIcon;
         public TextView appName;

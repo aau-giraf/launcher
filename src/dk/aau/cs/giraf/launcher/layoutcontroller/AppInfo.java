@@ -13,14 +13,7 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 public class AppInfo extends Application {
 
-    /**
-     * The intent used to start the application.
-     */
-    Intent mIntent;
-
-    /**
-     * The application icon.
-     */
+    /** The application icon. */
     private Drawable mIcon;
 
     public Application getApp() {
@@ -37,11 +30,6 @@ public class AppInfo extends Application {
     }
 
     /**
-     * ID of the guardian who is using the launcher.
-     */
-    private Profile mGuardian;
-
-    /**
      * Creates a new AppInfo from a given parent app.
      *
      * @param parentApp App to get data from.
@@ -54,17 +42,6 @@ public class AppInfo extends Application {
         this.setActivity(parentApp.getActivity());
         this.setDescription(parentApp.getDescription());
         this.setAuthor(parentApp.getAuthor());
-    }
-
-    /**
-     * Set ID for the current guardian using the system.
-     *
-     * @param guardian The guardian using the system.
-     */
-    public void setGuardian(Profile guardian) {
-        if (guardian.getRole() == Profile.Roles.GUARDIAN) {
-            mGuardian = guardian;
-        }
     }
 
     /**
@@ -91,15 +68,6 @@ public class AppInfo extends Application {
     }
 
     /**
-     * Get the ID of the currently logged in guardian.
-     *
-     * @return The guardian ID.
-     */
-    public int getGuardianID() {
-        return mGuardian.getId();
-    }
-
-    /**
      * Getter for the title of the app.
      * Cuts the name off, to make sure it's not too long to show in the launcher.
      *
@@ -118,8 +86,7 @@ public class AppInfo extends Application {
      *
      * @param context Context of the current activity.
      */
-    public void load(Context context, Profile guardian) {
-        setGuardian(guardian);
+    public void load(Context context) {
         loadIcon(context);
     }
 

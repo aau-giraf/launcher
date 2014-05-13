@@ -68,6 +68,7 @@ public class SettingsActivity extends Activity
         /************************************************
         *** Add applications in the giraf suite below ***
         *************************************************/
+        // TODO: Add giraf applications with settings here
 
         // Cars
         addApplicationByPackageName("dk.aau.cs.giraf.cars");
@@ -96,17 +97,18 @@ public class SettingsActivity extends Activity
 
                 // Only add to app to settings if not already in the list of available apps
                 if (!mAvailableSettingsAppList.contains(settingsApp)) {
+
+                    // Add app to settings if it is installed
                     if (settingsApp.mPackageName != null && installedAppName.contains(settingsApp.mPackageName.toLowerCase())) {
                         mAvailableSettingsAppList.add(settingsApp);
-                    } else if (settingsApp.mPackageName == null && settingsApp.mAppName != null) {
-                        mAvailableSettingsAppList.add(settingsApp);
-                    }
-                    else if (settingsApp.mIntent != null) {
+                    // Otherwise it has been added by name and is started through fragment/intent
+                    } else if (settingsApp.mAppName != null && (settingsApp.mAppFragment != null || settingsApp.mIntent != null)) {
                         mAvailableSettingsAppList.add(settingsApp);
                     }
                 }
             }
         }
+        // Return the list containing apps available on the device (giraf and other)
         return mAvailableSettingsAppList;
     }
 

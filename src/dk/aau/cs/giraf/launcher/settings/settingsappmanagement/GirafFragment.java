@@ -113,7 +113,7 @@ public class GirafFragment extends AppContainerFragment {
             Application[] applications = new Application[apps.size()];
             apps.toArray(applications);
             loadApplicationTask.execute(applications);
-            appInfos = LauncherUtility.loadAppInfos(context, (List<Application>) apps, currentUser);
+            appInfos = LauncherUtility.updateAppInfoHashMap(context, (List<Application>) apps);
             if (appInfos == null){
                 haveAppsBeenAdded = false;
             }

@@ -82,7 +82,7 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
             if (currentUser == null)
                 currentUser = LauncherUtility.getCurrentUser(context);
 
-            appInfoHash = LauncherUtility.loadAppInfos(context, applications, currentUser);
+            appInfoHash = LauncherUtility.updateAppInfoHashMap(context, applications);
             List<AppInfo> appInfoList = new ArrayList<AppInfo>(appInfoHash.values());
             Collections.sort(appInfoList, new AppComparator(context));
 
