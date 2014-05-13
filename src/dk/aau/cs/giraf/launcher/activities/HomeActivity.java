@@ -28,7 +28,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import dk.aau.cs.giraf.gui.GButtonSettings;
-import dk.aau.cs.giraf.gui.GColorAdapter;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GProfileSelector;
@@ -49,6 +48,10 @@ import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.settingslib.settingslib.SettingsUtility;
 
+/**
+ * The primary activity of Launcher. Allows the user to start other GIRAF apps and access the settings
+ * activity. It requires a user id in the parent intent.
+ */
 public class HomeActivity extends Activity {
 
 	private static Context mContext;
@@ -56,7 +59,6 @@ public class HomeActivity extends Activity {
     private Profile mLoggedInGuardian;
 	private Profile mCurrentUser;
 	private Helper mHelper;
-	private Application mLauncher;
 
     private static HashMap<String,AppInfo> mAppInfos;
     private List<Application> mCurrentLoadedApps;
@@ -75,12 +77,17 @@ public class HomeActivity extends Activity {
     private SideBarLayout mSideBarView;
     private LinearLayout mAppsContainer;
     private ScrollView mAppsScrollView;
-    private EasyTracker mEasyTracker;
     private Timer mAppsUpdater;
+
 
     private RelativeLayout.LayoutParams mAppsScrollViewParams;
 
-	/** Called when the activity is first created. */
+    /**
+     * Sets up the activity. Specifically view variables are instantiated, the login button listener
+     * is set, and the instruction animation is set up.
+     *
+     * @param savedInstanceState Information from the last launch of the activity.
+     */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -91,18 +98,25 @@ public class HomeActivity extends Activity {
 
         mCurrentUser = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
         mLoggedInGuardian = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
-		mLauncher = mHelper.applicationHelper.getApplicationById(mCurrentUser.getId());
 
         loadViews();
 		loadDrawer();
 		loadWidgets();
-		loadHomeDrawerColorGrid();
+		//loadHomeDrawerColorGrid();
         setupLogoutDialog();
 
         // Start logging this activity
-        mEasyTracker.getInstance(this).activityStart(this);
+        EasyTracker.getInstance(this).activityStart(this);
+
+        // Show warning if DEBUG_MODE is true
+        if (LauncherUtility.isDebugging()) {
+            LauncherUtility.showDebugInformation(this);
+        }
 	}
 
+    /**
+     * Starts a timer that looks for updates in the set of available applications every 5 seconds.
+     */
     private void StartObservingApps() {
         mAppsUpdater = new Timer();
         AppsObserver timerTask = new AppsObserver();
@@ -116,7 +130,7 @@ public class HomeActivity extends Activity {
         super.onStop();
 
         // Stop logging this activity
-        mEasyTracker.getInstance(this).activityStop(this);
+        EasyTracker.getInstance(this).activityStop(this);
     }
 
 	@Override
@@ -172,7 +186,7 @@ public class HomeActivity extends Activity {
     private void loadApplications(){
         List<Application> girafAppsList = LauncherUtility.getVisibleGirafApps(mContext, mCurrentUser); // For home activity
         SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(mContext, mCurrentUser);
-        Set<String> androidAppsPackagenames = prefs.getStringSet(Constants.SELECTED_ANDROID_APPS, new HashSet<String>());
+        Set<String> androidAppsPackagenames = prefs.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
         List<Application> androidAppsList = LauncherUtility.convertPackageNamesToApplications(mContext, androidAppsPackagenames);
         girafAppsList.addAll(androidAppsList);
         if (mCurrentLoadedApps == null || mCurrentLoadedApps.size() != girafAppsList.size()){
@@ -194,13 +208,14 @@ public class HomeActivity extends Activity {
 
 	/**
 	 * Load the user's paintgrid in the drawer.
-	 */
+	 * THIS IS COMMENTED OUT, SINCE IT WAS NO LONGER NEEDED TO IMPLEMENT THE DRAWER.
 	private void loadHomeDrawerColorGrid() {
 		GridView AppColors = (GridView) findViewById(R.id.appcolors);
 		// Removes blue highlight and scroll on AppColors grid
 		AppColors.setEnabled(false);
 		AppColors.setAdapter(new GColorAdapter(this));
 	}
+     */
 
     /**
      * Finds all views used
@@ -210,11 +225,6 @@ public class HomeActivity extends Activity {
         mSideBarView = (SideBarLayout)this.findViewById(R.id.SideBarLayout);
         mAppsContainer = (LinearLayout)this.findViewById(R.id.appContainer);
         mAppsScrollView = (ScrollView) this.findViewById(R.id.appScrollView);
-
-        // Show warning if DEBUG_MODE is true
-        if (LauncherUtility.isDebugging()) {
-            LauncherUtility.showDebugInformation(this);
-        }
     }
 
     /**
@@ -497,7 +507,7 @@ public class HomeActivity extends Activity {
 
     private void getIconSize() {
         SharedPreferences prefs = SettingsUtility.getLauncherSettings(mContext, LauncherUtility.getSharedPreferenceUser(mCurrentUser));
-        int size = prefs.getInt(Constants.ICON_SIZE_PREF, 200);
+        int size = prefs.getInt(getString(R.string.icon_size_preference_key), 200);
         mIconSize = SettingsUtility.convertToDP(this, size);
     }
 
@@ -507,7 +517,7 @@ public class HomeActivity extends Activity {
 
     /**
      * This is used to set the onClickListener for a new ProfileSelector
-     * It must be used everytime a new selector is set.
+     * It must be used every time a new selector is set.
      * */
     private void SetProfileSelector()
     {

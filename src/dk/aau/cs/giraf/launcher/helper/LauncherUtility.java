@@ -133,8 +133,8 @@ public abstract class LauncherUtility {
     public static void showDebugInformation(Activity activity) {
         if (activity != null) {
             //Get the necessary views.
-            LinearLayout debug = (LinearLayout) activity.findViewById(R.id.debug_mode);
-            TextView textView = (TextView) activity.findViewById(R.id.debug_mode_text);
+            LinearLayout debug = (LinearLayout) activity.findViewById(R.id.debug_view);
+            TextView textView = (TextView) activity.findViewById(R.id.debug_text_view);
 
             //Fill the view with information on the debug settings.
             textView.setText(activity.getText(R.string.giraf_debug_mode) + " "
@@ -640,7 +640,7 @@ public abstract class LauncherUtility {
                     newAppView = createAppView(context, targetLayout, app, onClickListener);
 
                 // Mark colors of the selected apps when settings is shown.
-                Set<String> selectedApps = preferences.getStringSet(Constants.SELECTED_ANDROID_APPS, new HashSet<String>());
+                Set<String> selectedApps = preferences.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
                 if (selectedApps.contains(app.activityInfo.name)){
                     newAppView.setChecked(true);
                 }

@@ -6,9 +6,7 @@ import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 public final class Constants {
 	// Launcher TAG
     public static final String TAG = HomeActivity.class.getName();
-
-    //LIST OF GUARDIAN-ONLY APPS
-    public static final String[] GUARDIAN_ONLY_APPS = {"oasis", "pictocreator"};
+    public static final String NO_APP_TAG = "-1";
 	
 	// SharedPreferences keys for log in data
     public static final String LOGIN_SESSION_INFO = "TIMING";
@@ -21,13 +19,8 @@ public final class Constants {
 	public static final String APP_PACKAGE_NAME = "appPackageName";
 	public static final String APP_ACTIVITY_NAME = "appActivityName";
     public static final String APP_COLOR = "appBackgroundColor";
-    public static final String APP_ID = "appId";
-
-    // Keys for settings
-    public static final String SELECTED_ANDROID_APPS = "selected_android_apps";
-    public static final String ICON_SIZE_PREF = "icon_size_preference";
 	
-	// Logo activity
+	// Main activity
     public static final int LOGO_ANIMATION_DURATION = 2000;
 
 	// Authentication activity

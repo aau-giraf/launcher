@@ -29,9 +29,8 @@ import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 /**
- * This activity controls the camera based authentication,
- * used when logging in to launcher. Specifically is sets up
- * QR code scanning, and authenticates valid QR codes.
+ * Handles authentication of the user's QR code through a camera feed. If the the user's QR code
+ * is valid, session information is saved in preferences, and {@code HomeActivity} is started.
  */
 public class AuthenticationActivity extends CaptureActivity {
 	
@@ -44,8 +43,14 @@ public class AuthenticationActivity extends CaptureActivity {
 	private Profile mPreviousProfile;
     private View mCameraFeed;
 
-    private boolean isFrameRedrawn = false;
+    private boolean isFramingRectangleRedrawn = false;
 
+    /**
+     * Sets up the activity. Specifically view variables are instantiated, the login button listener
+     * is set, and the instruction animation is set up.
+     *
+     * @param savedInstanceState Information from the last launch of the activity.
+     */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -81,16 +86,24 @@ public class AuthenticationActivity extends CaptureActivity {
         EasyTracker.getInstance(this).activityStart(this);
 	}
 
+    /**
+     * Draws the feed's framing rectangle if necessary.
+     *
+     * @param hasFocus {@code true} if the activity has focus.
+     */
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (!isFrameRedrawn){
+        if (!isFramingRectangleRedrawn){
             mCameraFeed = this.findViewById(R.id.camerafeed);
             super.setFramingRect(mCameraFeed.getWidth(), mCameraFeed.getHeight());
-            isFrameRedrawn = true;
+            isFramingRectangleRedrawn = true;
         }
     }
 
+    /**
+     * Stops Google Analytics logging.
+     */
     @Override
     public void finish() {
         super.finish();
@@ -101,6 +114,7 @@ public class AuthenticationActivity extends CaptureActivity {
 
     /**
 	 * Changes the color of the border around the camera feed of the QR code scanner.
+     *
 	 * @param color The color which the border should have
 	 */
 	private void changeCameraFeedBorderColor(int color) {
@@ -118,6 +132,7 @@ public class AuthenticationActivity extends CaptureActivity {
 	 * Checks whether the string from a scanned QR code is a valid GIRAF certificate.
      * If the certificate is valid, the certificate-holder's name is shown, and the login button
      * is displayed.
+     *
 	 * @param rawResult Result which the scanned string is saved in.
 	 * @param barcode A greyscale bitmap of the camera data which was decoded.
 	 */
@@ -159,6 +174,9 @@ public class AuthenticationActivity extends CaptureActivity {
 		this.getHandler().sendEmptyMessageDelayed(R.id.restart_preview, 500);
 	}
 
+    /**
+     * Does nothing, to prevent the user from returning to the splash screen or native OS.
+     */
     @Override
     public void onBackPressed() {
         //Do nothing, as the user should not be able to back out of this activity

@@ -30,19 +30,19 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      * If {@code true}, the Launcher is stated in debugging mode, where the splash screen and
      * authentication is skipped.
      */
-    private final boolean DEBUG_MODE = false;
+    private final boolean DEBUG_MODE = true;
 
     /**
      * If {@code true}, the authentication screen is shown, despite debugging mode. Has no
      * effect if {@code DEBUG_MODE} is {@code false}.
      */
-    private final boolean SKIP_AUTHENTICATION = false;
+    private final boolean SKIP_AUTHENTICATION = true;
 
     /**
      * If {@code true}, the splash screen is shown, despite debugging mode. Has no
      * effect if {@code DEBUG_MODE} is {@code false}.
      */
-    private final boolean SKIP_SPLASH_SCREEN = false;
+    private final boolean SKIP_SPLASH_SCREEN = true;
 
     /**
      * If {@code true}, Launcher automatically logs in with a child profile. If {@code false},
@@ -67,22 +67,24 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 
         mContext = this.getApplicationContext();
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Animation logoAnimation = AnimationUtils.loadAnimation(mContext, R.animator.rotatelogo);
+        boolean skipAnimationPref = prefs.getBoolean(getString(R.string.show_animation_preference_key), true);
+
+        //Decide whether to skip animation, according to debug mode
+        if ((DEBUG_MODE && SKIP_SPLASH_SCREEN) || !skipAnimationPref)
+        {
+            startNextActivity();
+        }
+        else {
+            logoAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
+        }
+
         Helper helper = LauncherUtility.getOasisHelper(mContext);
         int size = helper.profilesHelper.getProfiles().size();
         if (size <= 0) {
             helper.CreateDummyData();
         }
-
-        Animation logoAnimation = AnimationUtils.loadAnimation(mContext, R.animator.rotatelogo);
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean skipAuthenticationPref = prefs.getBoolean("show_animation_preference", true);
-
-        // Opt in/out whether to show animation or not
-        if ((DEBUG_MODE && SKIP_SPLASH_SCREEN) || !skipAuthenticationPref)
-            startNextActivity();
-        else
-            logoAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
 
         findViewById(R.id.giraficon).startAnimation(logoAnimation);
         logoAnimation.setAnimationListener(this);
