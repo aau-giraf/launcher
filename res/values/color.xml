@@ -6,4 +6,6 @@
     <color name="color_preloader_start">#4d4d4d</color>
     <color name="color_preloader_center">#bfbfbf</color>
     <color name="color_preloader_end">#464646</color>
+
+    <color name="giraf_yellow">#FFFFDC4A</color>
 </resources>

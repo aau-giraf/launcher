@@ -43,7 +43,7 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.GAppDragger;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
-import dk.aau.cs.giraf.settingslib.settingslib.SettingsUtility;
+import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 

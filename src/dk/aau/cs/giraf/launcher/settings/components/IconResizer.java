@@ -13,8 +13,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
-import dk.aau.cs.giraf.settingslib.settingslib.R;
-import dk.aau.cs.giraf.settingslib.settingslib.SettingsUtility;
+import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 
 /**
  * Created by Frederik on 24-04-14.

@@ -10,7 +10,7 @@
         android:switchTextOff="SLUKKET"
         android:switchTextOn="TÆNDT"/>
 
-    <dk.aau.cs.giraf.settingslib.settingslib.Components.IconResizer
+    <dk.aau.cs.giraf.launcher.settings.components.IconResizer
         android:key="@string/icon_size_preference_key"
         android:title="Ikon størrelse"
         android:summary="Indstil størrelsen på ikonerne på hjemmeskærmen."

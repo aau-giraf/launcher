@@ -7,14 +7,12 @@ import android.graphics.Canvas;
 import android.view.View;
 import android.view.ViewGroup;
 
-import dk.aau.cs.giraf.settingslib.settingslib.Fragments.LauncherSettings;
-
 /**
  * Created by Frederik on 29-04-14.
  */
 public class SettingsUtility {
 
-    public static final String LAUNCHER_SETTINGS_TAG = LauncherSettings.class.getName();
+    public static final String LAUNCHER_SETTINGS_TAG = SettingsLauncher.class.getName();
 
     public static String getLauncherSettingsTag(String user){
         return LAUNCHER_SETTINGS_TAG + "." + user + ".prefs";

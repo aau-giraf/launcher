@@ -21,4 +21,8 @@
     <string name="activity_not_found_msg">Applikationen kunne ikke startes</string>
     <string name="could_not_verify_msg">Kunne ikke verificere brugeren.</string>
 
+    <!-- Launcher preference keys -->
+    <string name="show_animation_preference_key">show_animation_preference</string>
+    <string name="icon_size_preference_key">icon_size_preference</string>
+    <string name="selected_android_apps_key">selected_android_apps</string>
 </resources>

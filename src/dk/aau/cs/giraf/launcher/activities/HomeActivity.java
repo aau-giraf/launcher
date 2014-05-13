@@ -9,14 +9,12 @@ import android.util.Log;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
 
 import com.google.analytics.tracking.android.EasyTracker;
 
@@ -50,7 +48,7 @@ import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.oasis.lib.models.ProfileApplication;
 import dk.aau.cs.giraf.oasis.lib.models.Setting;
-import dk.aau.cs.giraf.settingslib.settingslib.SettingsUtility;
+import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 
 /**
  * The primary activity of Launcher. Allows the user to start other GIRAF apps and access the settings
