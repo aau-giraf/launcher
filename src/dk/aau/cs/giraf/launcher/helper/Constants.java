@@ -6,6 +6,7 @@ import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 public final class Constants {
 	// Launcher TAG
     public static final String TAG = HomeActivity.class.getName();
+    public static final String NO_APP_TAG = "-1";
 	
 	// SharedPreferences keys for log in data
     public static final String LOGIN_SESSION_INFO = "TIMING";
@@ -19,7 +20,7 @@ public final class Constants {
 	public static final String APP_ACTIVITY_NAME = "appActivityName";
     public static final String APP_COLOR = "appBackgroundColor";
 	
-	// Logo activity
+	// Main activity
     public static final int LOGO_ANIMATION_DURATION = 2000;
 
 	// Authentication activity

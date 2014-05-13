@@ -117,7 +117,7 @@ public class LoadAndroidApplicationTask extends AsyncTask<Application, View, Has
                 newAppView.setLayoutParams(params);
                 newAppView.setScaleX(0.9f);
                 newAppView.setScaleY(0.9f);
-                newAppView.setTag("-1");
+                newAppView.setTag(Constants.NO_APP_TAG);
                 currentAppRow.addView(newAppView);
                 appsInLastRow++;
             }
@@ -144,7 +144,7 @@ public class LoadAndroidApplicationTask extends AsyncTask<Application, View, Has
                             AppImageView appImageView = (AppImageView) row.getChildAt(j);
                             ProfileApplicationController pac = new ProfileApplicationController(context);
 
-                            if(appImageView.getTag() != "-1")
+                            if(appImageView.getTag() != Constants.NO_APP_TAG)
                             {
                                 AppInfo app = null;
                                 try{
