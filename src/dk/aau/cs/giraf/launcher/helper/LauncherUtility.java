@@ -137,8 +137,8 @@ public abstract class LauncherUtility {
     public static void showDebugInformation(Activity activity) {
         if (activity != null) {
             //Get the necessary views.
-            LinearLayout debug = (LinearLayout) activity.findViewById(R.id.debug_mode);
-            TextView textView = (TextView) activity.findViewById(R.id.debug_mode_text);
+            LinearLayout debug = (LinearLayout) activity.findViewById(R.id.debug_view);
+            TextView textView = (TextView) activity.findViewById(R.id.debug_text_view);
 
             //Fill the view with information on the debug settings.
             textView.setText(activity.getText(R.string.giraf_debug_mode) + " "

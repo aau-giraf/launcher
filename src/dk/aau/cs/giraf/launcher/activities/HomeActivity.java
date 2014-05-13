@@ -78,6 +78,7 @@ public class HomeActivity extends Activity {
     private EasyTracker mEasyTracker;
     private Timer mAppsUpdater;
 
+
     private RelativeLayout.LayoutParams mAppsScrollViewParams;
 
 	/** Called when the activity is first created. */
@@ -100,7 +101,13 @@ public class HomeActivity extends Activity {
         setupLogoutDialog();
 
         // Start logging this activity
+        //TODO: Why not just "EasyTracker.getInstance(this).activityStart(this);"?
         mEasyTracker.getInstance(this).activityStart(this);
+
+        // Show warning if DEBUG_MODE is true
+        if (LauncherUtility.isDebugging()) {
+            LauncherUtility.showDebugInformation(this);
+        }
 	}
 
     private void StartObservingApps() {
@@ -209,11 +216,6 @@ public class HomeActivity extends Activity {
         mSideBarView = (SideBarLayout)this.findViewById(R.id.SideBarLayout);
         mAppsContainer = (LinearLayout)this.findViewById(R.id.appContainer);
         mAppsScrollView = (ScrollView) this.findViewById(R.id.appScrollView);
-
-        // Show warning if DEBUG_MODE is true
-        if (LauncherUtility.isDebugging()) {
-            LauncherUtility.showDebugInformation(this);
-        }
     }
 
     /**

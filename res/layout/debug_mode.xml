@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/debug_mode"
+        android:id="@+id/debug_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
@@ -9,7 +9,7 @@
         android:background="#ff0000">
 
     <TextView
-            android:id="@+id/debug_mode_text"
+            android:id="@+id/debug_text_view"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:textColor="#fff"
