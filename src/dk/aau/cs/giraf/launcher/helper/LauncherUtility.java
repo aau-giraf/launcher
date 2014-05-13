@@ -37,7 +37,6 @@ import java.util.Set;
 
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.AuthenticationActivity;
-import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.GAppDragger;
@@ -53,7 +52,7 @@ import static android.content.Context.LAYOUT_INFLATER_SERVICE;
  * but which do not inherently belong any specific class instance.
  */
 public abstract class LauncherUtility {
-    private static HashMap<String,AppInfo> mAppInfos;
+    private static HashMap<String,AppInfo> mAppInfoHashMap;
 
     /* Flags that indicate whether Launcher is in debug mode. These should not be changed from here,
         but from MainActivity.java.                                                                  */
@@ -520,7 +519,7 @@ public abstract class LauncherUtility {
             if (currentUser == null)
                 currentUser = LauncherUtility.getCurrentUser(context);
 
-            appInfoHash = loadAppInfos(context, girafAppsList, currentUser);
+            appInfoHash = updateAppInfoHashMap(context, girafAppsList, currentUser);
             List<AppInfo> appInfos = new ArrayList<AppInfo>(appInfoHash.values());
             Collections.sort(appInfos, new AppComparator(context));
 
@@ -713,36 +712,28 @@ public abstract class LauncherUtility {
     }
 
     /**
-     * Loads the AppInfo object of app from the list, into the {@code mAppInfos} hash map, making
+     * Loads the AppInfo object of app from the list, into the {@code mAppInfoHashMap} hash map, making
      * them accessible with only the ID string of the app.
      * @param appsList The list of accessible apps
      */
-    public static HashMap<String,AppInfo> loadAppInfos(Context context, List<Application> appsList, Profile currentUser) {
-        mAppInfos = new HashMap<String,AppInfo>();
+    public static HashMap<String,AppInfo> updateAppInfoHashMap(Context context, List<Application> appsList) {
+        Application[] appArray = new Application[appsList.size()];
 
-        for (Application app : appsList) {
-            AppInfo appInfo = new AppInfo(app);
-
-            appInfo.load(context, currentUser);
-            appInfo.setBgColor(context.getResources().getColor(R.color.app_color_transparent));
-
-            mAppInfos.put(String.valueOf(appInfo.getId()), appInfo);
-        }
-        return mAppInfos;
+        return updateAppInfoHashMap(context, appArray);
     }
 
-    public static HashMap<String,AppInfo> loadAppInfos(Context context, Application[] appsList, Profile currentUser) {
-        HashMap<String,AppInfo> appInfos = new HashMap<String,AppInfo>();
+    public static HashMap<String,AppInfo> updateAppInfoHashMap(Context context, Application[] appsList) {
+        mAppInfoHashMap = new HashMap<String,AppInfo>();
 
         for (Application app : appsList) {
             AppInfo appInfo = new AppInfo(app);
 
-            appInfo.load(context, currentUser);
+            appInfo.load(context);
             appInfo.setBgColor(context.getResources().getColor(R.color.app_color_transparent));
 
-            appInfos.put(String.valueOf(appInfo.getId()), appInfo);
+            mAppInfoHashMap.put(String.valueOf(appInfo.getId()), appInfo);
         }
-        return appInfos;
+        return mAppInfoHashMap;
     }
 
     private static View addContentToView(Context context, LinearLayout targetLayout, String appName, Drawable appIcon){
@@ -787,7 +778,7 @@ public abstract class LauncherUtility {
                     } catch (NullPointerException e){
                         // could not get context, no animation.
                     }
-                    AppInfo app = mAppInfos.get((String) v.getTag());
+                    AppInfo app = mAppInfoHashMap.get((String) v.getTag());
                     Intent intent = new Intent(Intent.ACTION_MAIN);
                     intent.addCategory(Intent.CATEGORY_LAUNCHER);
                     intent.setComponent(new ComponentName(app.getPackage(), app.getActivity()));

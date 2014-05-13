@@ -1,7 +1,6 @@
 package dk.aau.cs.giraf.launcher.helper;
 
 import android.app.Activity;
-import android.app.ApplicationErrorReport;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -67,7 +66,7 @@ public class LoadAndroidApplicationTask extends AsyncTask<Application, View, Has
             if (currentUser == null)
                 currentUser = LauncherUtility.getCurrentUser(context);
 
-            appInfoHash = LauncherUtility.loadAppInfos(context, applications, currentUser);
+            appInfoHash = LauncherUtility.updateAppInfoHashMap(context, applications);
             List<AppInfo> appInfoList = new ArrayList<AppInfo>(appInfoHash.values());
             Collections.sort(appInfoList, new AppComparator(context));
 
