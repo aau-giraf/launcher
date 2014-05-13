@@ -11,7 +11,6 @@ import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -48,6 +47,10 @@ import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.settingslib.settingslib.SettingsUtility;
 
+/**
+ * The primary activity of Launcher. Allows the user to start other GIRAF apps and access the settings
+ * activity. It requires a user id in the parent intent.
+ */
 public class HomeActivity extends Activity {
 
 	private static Context mContext;
@@ -55,9 +58,7 @@ public class HomeActivity extends Activity {
     private Profile mLoggedInGuardian;
 	private Profile mCurrentUser;
 	private Helper mHelper;
-	private Application mLauncher;
 
-    private static HashMap<String,AppInfo> mAppInfos;
     private List<Application> mCurrentLoadedApps;
 
     private boolean mAppsAdded = false;
@@ -74,13 +75,17 @@ public class HomeActivity extends Activity {
     private SideBarLayout mSideBarView;
     private LinearLayout mAppsContainer;
     private ScrollView mAppsScrollView;
-    private EasyTracker mEasyTracker;
     private Timer mAppsUpdater;
 
 
     private RelativeLayout.LayoutParams mAppsScrollViewParams;
 
-	/** Called when the activity is first created. */
+    /**
+     * Sets up the activity. Specifically view variables are instantiated, the login button listener
+     * is set, and the instruction animation is set up.
+     *
+     * @param savedInstanceState Information from the last launch of the activity.
+     */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -91,7 +96,6 @@ public class HomeActivity extends Activity {
 
         mCurrentUser = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
         mLoggedInGuardian = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
-		mLauncher = mHelper.applicationHelper.getApplicationById(mCurrentUser.getId());
 
         loadViews();
 		loadDrawer();
@@ -100,8 +104,7 @@ public class HomeActivity extends Activity {
         setupLogoutDialog();
 
         // Start logging this activity
-        //TODO: Why not just "EasyTracker.getInstance(this).activityStart(this);"?
-        mEasyTracker.getInstance(this).activityStart(this);
+        EasyTracker.getInstance(this).activityStart(this);
 
         // Show warning if DEBUG_MODE is true
         if (LauncherUtility.isDebugging()) {
@@ -109,7 +112,10 @@ public class HomeActivity extends Activity {
         }
 	}
 
-    private void StartObservingApps() {
+    /**
+     * Starts a timer that looks for updates in the set of available applications every 5 seconds.
+     */
+    private void startObservingApps() {
         mAppsUpdater = new Timer();
         AppsObserver timerTask = new AppsObserver();
         mAppsUpdater.scheduleAtFixedRate(timerTask, 5000, 5000);
@@ -117,14 +123,24 @@ public class HomeActivity extends Activity {
         Log.d(Constants.ERROR_TAG, "Applications are being observed.");
     }
 
+    /**
+     * Stops Google Analytics logging.
+     */
     @Override
     protected void onStop() {
         super.onStop();
 
         // Stop logging this activity
-        mEasyTracker.getInstance(this).activityStop(this);
+        EasyTracker.getInstance(this).activityStop(this);
     }
 
+    /**
+     * Loads app icons into the activity. Before this point in the activity lifecycle, it is not
+     * possible to determine the size of the app container, making et much more difficult to calculate
+     * icon spacing.
+     *
+     * @param hasFocus {@code true} if the activity has focus.
+     */
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
@@ -144,6 +160,11 @@ public class HomeActivity extends Activity {
         }
 	}
 
+    /**
+     * Stops the timer looking for updates in the set of available apps.
+     *
+     * @see HomeActivity#startObservingApps()
+     */
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -152,22 +173,32 @@ public class HomeActivity extends Activity {
 		mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_STOP);
 	}
 
+    /**
+     * Redraws the application container and resumes the timer looking for updates in the set of
+     * available apps.
+     *
+     * @see HomeActivity#startObservingApps()
+     */
 	@Override
 	protected void onResume() {
 		super.onResume();
-        StartObservingApps();
+        startObservingApps();
         reloadApplications();
 		mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_START);
 	}
 
+    /**
+     * Does nothing, to prevent the user from returning to the splash screen or native OS.
+     */
     @Override
     public void onBackPressed() {
         //Do nothing, as the user should not be able to back out of this activity
     }
 
-
+    //TODO: What is going on with this function?
     private void reloadApplications(){
         if (!mAppsAdded) return;
+
         mCurrentLoadedApps = null; // Force loadApplications to redraw
         loadApplications();
     }
@@ -183,10 +214,10 @@ public class HomeActivity extends Activity {
         girafAppsList.addAll(androidAppsList);
         if (mCurrentLoadedApps == null || mCurrentLoadedApps.size() != girafAppsList.size()){
             getIconSize(); // Update mIconSize
-            mAppInfos = LauncherUtility.loadAppInfos(mContext, girafAppsList, mCurrentUser);
+            HashMap<String, AppInfo> appInfos = LauncherUtility.loadAppInfos(mContext, girafAppsList, mCurrentUser);
             LauncherUtility.loadGirafApplicationsIntoView(mContext, mCurrentUser, mLoggedInGuardian, girafAppsList, mAppsContainer, mIconSize);
             //Remember that the apps have been added, so they are not added again by the listener
-            if (mAppInfos == null){
+            if (appInfos.isEmpty()){
                 mAppsAdded = false;
                 TextView noAppsMessage = (TextView) findViewById(R.id.noAppsMessage);
                 noAppsMessage.setVisibility(View.VISIBLE);
@@ -503,13 +534,9 @@ public class HomeActivity extends Activity {
         mIconSize = SettingsUtility.convertToDP(this, size);
     }
 
-    public static AppInfo getAppInfo(String id) {
-        return mAppInfos.get(id);
-    }
-
     /**
      * This is used to set the onClickListener for a new ProfileSelector
-     * It must be used everytime a new selector is set.
+     * It must be used every time a new selector is set.
      * */
     private void SetProfileSelector()
     {

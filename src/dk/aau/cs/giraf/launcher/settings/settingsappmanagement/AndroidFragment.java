@@ -156,6 +156,7 @@ public class AndroidFragment extends AppContainerFragment {
             //Remember that the apps have been added, so they are not added again by the listener
             List<ResolveInfo> sortedApps = (List<ResolveInfo>) apps;
             Collections.sort(sortedApps, new AppComparator(context));
+
             LoadAndroidApplicationTask loadAndroidApplicationTask = new LoadAndroidApplicationTask(context, currentUser, null, appView, 110, listener);
             Application[] applications = new Application[apps.size()];
             apps.toArray(applications);
@@ -171,7 +172,7 @@ public class AndroidFragment extends AppContainerFragment {
 
             hideProgressBar();
             Log.d(Constants.ERROR_TAG, "Thread says bye");
-
+            /*
             try{
                 for (int i = 0; i < appView.getChildCount();i++)
                 {
@@ -200,6 +201,7 @@ public class AndroidFragment extends AppContainerFragment {
             catch (Exception e){
                 e.printStackTrace();
             }
+            */
         }
     }
 }
