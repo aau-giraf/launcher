@@ -42,6 +42,8 @@ public class SettingsListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.settings_fragment_list, container, false);
 
+        mSettingsListView =  (ListView) view.findViewById(R.id.settingsListView);
+
         mProfileButton = (GWidgetProfileSelection) view.findViewById(R.id.profile_widget_settings);
         mProfileName = (TextView) view.findViewById(R.id.profile_selected_name);
 
@@ -62,8 +64,7 @@ public class SettingsListFragment extends Fragment {
         mCallback.setCurrentUser(mCurrentUser);
         mProfileName.setText(mCurrentUser.getName());
 
-        mAdapter = new SettingsListAdapter(getActivity(), mCallback.getInstalledSettingsApps());
-        mSettingsListView =  (ListView) view.findViewById(R.id.settingsListView);
+        mAdapter = new SettingsListAdapter(getActivity(), mSettingsListView, mCallback.getInstalledSettingsApps());
         mSettingsListView.setAdapter(mAdapter);
 
         setListeners();
