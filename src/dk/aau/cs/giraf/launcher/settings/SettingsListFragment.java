@@ -28,13 +28,39 @@ public class SettingsListFragment extends Fragment {
     public static Profile mCurrentUser;
     private GProfileSelector mProfileSelector;
 
-    public SettingsListFragmentListener mCallback; // Callback to containing Activity implementing the SettingsListFragmentListener interface
+    // Callback to containing Activity implementing the SettingsListFragmentListener interface
+    public SettingsListFragmentListener mCallback;
 
-    // Container Activity must implement this interface
+    /**
+     * Interface to be implemented by the activity supporting callbacks from this fragment.
+     * @see SettingsActivity
+     */
     public interface SettingsListFragmentListener {
+        /**
+         * Used when an item in the ListView has been clicked
+         * to send the to-be-active fragment back to the Activity.
+         * @param fragment
+         */
         public void setActiveFragment(Fragment fragment);
+
+        /**
+         * Reloads the activity when user settings should be refreshed
+         * based on a new profile selection.
+         * @see SettingsListFragment
+         */
         public void reloadActivity();
+
+        /**
+         * Method is called to load applications into ListView.
+         * @return A list of apps that should be added to the ListView,
+         * containing only valid/available apps.
+         */
         public ArrayList<SettingsListItem> getInstalledSettingsApps();
+
+        /**
+         * Called whenever a new user has been selected.
+         * @param profile The selected profile.
+         */
         public void setCurrentUser(Profile profile);
     }
 
