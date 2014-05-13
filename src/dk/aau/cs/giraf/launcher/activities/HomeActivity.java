@@ -6,12 +6,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.DragEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -46,6 +47,8 @@ import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.controllers.ProfileController;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.oasis.lib.models.ProfileApplication;
+import dk.aau.cs.giraf.oasis.lib.models.Setting;
 import dk.aau.cs.giraf.settingslib.settingslib.SettingsUtility;
 
 /**
@@ -60,7 +63,6 @@ public class HomeActivity extends Activity {
 	private Profile mCurrentUser;
 	private Helper mHelper;
 
-    private static HashMap<String,AppInfo> mAppInfos;
     private List<Application> mCurrentLoadedApps;
 
     private boolean mAppsAdded = false;
@@ -100,9 +102,9 @@ public class HomeActivity extends Activity {
         mLoggedInGuardian = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
 
         loadViews();
-		loadDrawer();
+		//loadDrawer();                 //Temporarily disabled, see JavaDoc.
 		loadWidgets();
-		//loadHomeDrawerColorGrid();
+		//loadHomeDrawerColorGrid();    //Temporarily disabled, see JavaDoc.
         setupLogoutDialog();
 
         // Start logging this activity
@@ -117,7 +119,7 @@ public class HomeActivity extends Activity {
     /**
      * Starts a timer that looks for updates in the set of available applications every 5 seconds.
      */
-    private void StartObservingApps() {
+    private void startObservingApps() {
         mAppsUpdater = new Timer();
         AppsObserver timerTask = new AppsObserver();
         mAppsUpdater.scheduleAtFixedRate(timerTask, 5000, 5000);
@@ -125,6 +127,9 @@ public class HomeActivity extends Activity {
         Log.d(Constants.ERROR_TAG, "Applications are being observed.");
     }
 
+    /**
+     * Stops Google Analytics logging.
+     */
     @Override
     protected void onStop() {
         super.onStop();
@@ -133,6 +138,13 @@ public class HomeActivity extends Activity {
         EasyTracker.getInstance(this).activityStop(this);
     }
 
+    /**
+     * Loads app icons into the activity. Before this point in the activity lifecycle, it is not
+     * possible to determine the size of the app container, making et much more difficult to calculate
+     * icon spacing.
+     *
+     * @param hasFocus {@code true} if the activity has focus.
+     */
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
@@ -152,6 +164,11 @@ public class HomeActivity extends Activity {
         }
 	}
 
+    /**
+     * Stops the timer looking for updates in the set of available apps.
+     *
+     * @see HomeActivity#startObservingApps()
+     */
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -160,22 +177,32 @@ public class HomeActivity extends Activity {
 		mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_STOP);
 	}
 
+    /**
+     * Redraws the application container and resumes the timer looking for updates in the set of
+     * available apps.
+     *
+     * @see HomeActivity#startObservingApps()
+     */
 	@Override
 	protected void onResume() {
 		super.onResume();
-        StartObservingApps();
+        startObservingApps();
         reloadApplications();
 		mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_START);
 	}
 
+    /**
+     * Does nothing, to prevent the user from returning to the authentication or native OS.
+     */
     @Override
     public void onBackPressed() {
         //Do nothing, as the user should not be able to back out of this activity
     }
 
-
+    //TODO: What is going on with this function?
     private void reloadApplications(){
         if (!mAppsAdded) return;
+
         mCurrentLoadedApps = null; // Force loadApplications to redraw
         loadApplications();
     }
@@ -190,11 +217,11 @@ public class HomeActivity extends Activity {
         List<Application> androidAppsList = LauncherUtility.convertPackageNamesToApplications(mContext, androidAppsPackagenames);
         girafAppsList.addAll(androidAppsList);
         if (mCurrentLoadedApps == null || mCurrentLoadedApps.size() != girafAppsList.size()){
-            getIconSize(); // Update mIconSize
-            mAppInfos = LauncherUtility.loadAppInfos(mContext, girafAppsList, mCurrentUser);
+            updateIconSize(); // Update mIconSize
+            HashMap<String, AppInfo> appInfos = LauncherUtility.loadAppInfos(mContext, girafAppsList, mCurrentUser);
             LauncherUtility.loadGirafApplicationsIntoView(mContext, mCurrentUser, mLoggedInGuardian, girafAppsList, mAppsContainer, mIconSize);
             //Remember that the apps have been added, so they are not added again by the listener
-            if (mAppInfos == null){
+            if (appInfos.isEmpty()){
                 mAppsAdded = false;
                 TextView noAppsMessage = (TextView) findViewById(R.id.noAppsMessage);
                 noAppsMessage.setVisibility(View.VISIBLE);
@@ -206,19 +233,8 @@ public class HomeActivity extends Activity {
         mCurrentLoadedApps = girafAppsList;
     }
 
-	/**
-	 * Load the user's paintgrid in the drawer.
-	 * THIS IS COMMENTED OUT, SINCE IT WAS NO LONGER NEEDED TO IMPLEMENT THE DRAWER.
-	private void loadHomeDrawerColorGrid() {
-		GridView AppColors = (GridView) findViewById(R.id.appcolors);
-		// Removes blue highlight and scroll on AppColors grid
-		AppColors.setEnabled(false);
-		AppColors.setAdapter(new GColorAdapter(this));
-	}
-     */
-
     /**
-     * Finds all views used
+     * Initialises the member views of the activity.
      */
     private void loadViews() {
         mHomeBarLayout = (RelativeLayout) this.findViewById(R.id.HomeBarLayout);
@@ -228,7 +244,7 @@ public class HomeActivity extends Activity {
     }
 
     /**
-     * Setup the logout dialog
+     * Initialises the logout dialog.
      */
     private void setupLogoutDialog() {
         String logoutHeadline = mContext.getResources().getString(R.string.Log_out);
@@ -246,15 +262,13 @@ public class HomeActivity extends Activity {
 
 	/**
 	 * Load the drawer and its functionality.
-     * It is currently disabled, since it was found that end users do not require changing the color of apps.
-     * Because of this, it is considered to be goldplating.
-     * It could be implemented again, but it would have to be implemented with sending colors to all apps and
-     * making sure that these colors fit with the overall theme of the system.
+     * This has been temporarily disabled, as it turned out that the clients had no use for it.
+     * It is left in, as it may become useful at a later date.
      * You can read more in the report about the Launcher from 2014.
 	 */
 	private void loadDrawer() {
 		// If result = true, the onTouch-function will be run again.
-        /*
+
 		mHomeBarLayout.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
@@ -313,9 +327,11 @@ public class HomeActivity extends Activity {
                 return result;
             }
         });
-        */
 	}
 
+    /**
+     * Supporting function for {@link HomeActivity#loadDrawer()}
+     */
     private void popBackDrawer(){
         int to;
 
@@ -354,6 +370,9 @@ public class HomeActivity extends Activity {
         }
     }
 
+    /**
+     * Supporting function for {@link HomeActivity#loadDrawer()}
+     */
     private void placeDrawer(){
         int to;
 
@@ -393,9 +412,14 @@ public class HomeActivity extends Activity {
     }
 
 	/**
-	 * Load the widgets placed on the drawer.
+	 * Loads the sidebar's widgets.
+     *
+     * @see dk.aau.cs.giraf.gui.GWidgetCalendar
+     * @see dk.aau.cs.giraf.gui.GWidgetConnectivity
+     * @see dk.aau.cs.giraf.gui.GWidgetLogout
+     * @see dk.aau.cs.giraf.gui.GWidgetProfileSelection
+     * @see dk.aau.cs.giraf.gui.GButtonSettings
 	 */
-
 	private void loadWidgets() {
         GWidgetCalendar calendarWidget = (GWidgetCalendar) findViewById(R.id.calendarwidget);
         GWidgetConnectivity connectivityWidget = (GWidgetConnectivity) findViewById(R.id.connectivitywidget);
@@ -404,11 +428,14 @@ public class HomeActivity extends Activity {
         GButtonSettings settingsButton = (GButtonSettings) findViewById(R.id.settingsbutton);
 		mHomeDrawerView = (RelativeLayout) findViewById(R.id.HomeDrawer);
 
+        /*Setup the profile selector dialog. If the current user is not a guardian, the guardian is used
+          as the current user.*/
         if(mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
             mProfileSelectorWidget = new GProfileSelector(mContext, mLoggedInGuardian, mCurrentUser);
         else
             mProfileSelectorWidget = new GProfileSelector(mContext, mLoggedInGuardian, null);
 
+        //Set up widget updater, which updates the widget's view regularly, according to its status.
 		mWidgetUpdater = new GWidgetUpdater();
 		mWidgetUpdater.addWidget(calendarWidget);
 		mWidgetUpdater.addWidget(connectivityWidget);
@@ -434,7 +461,7 @@ public class HomeActivity extends Activity {
             }
         });
 
-        SetProfileSelector();
+        updatesProfileSelector();
 
 		logoutWidget.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -448,14 +475,18 @@ public class HomeActivity extends Activity {
         });
 	}
 
-	/** 
-	 * Finds the background color of a given app, and if no color exists for the app, it is given one.
-	 * @param appInfo of the app to find the background color for.
-	 * @return The background color of the app.
-	 */
-	private int appBgColor(AppInfo appInfo) {
+    /**
+     * Handles the background color of app icons.
+     * This has been temporarily disabled, as it turned out that the clients had no use for it.
+     * It is left in, as it may become useful at a later date. It may however not work, as it is
+     * tightly coupled with Oasis.
+     * You can read more in the report about the Launcher from 2014.
+     *
+     * @param appInfo The AppInfo object of the applications who's color is requested.
+     * @return An integer corresponding to the requested color.
+     */
+	private int getAppBackgroundColor(AppInfo appInfo) {
 		int[] colors = getResources().getIntArray(R.array.appcolors);
-        //TODO: The OasisLib group still needs to fix the settings format and more.
 //        ProfileApplication profileApplication = mHelper.profileApplicationHelper.getProfileApplicationByProfileIdAndApplicationId(appInfo.getApp(), mCurrentUser);
 //        Setting<String, String, String> launcherSettings = profileApplication.getSettings();
 //
@@ -478,48 +509,51 @@ public class HomeActivity extends Activity {
 	}
 
 	/**
-	 * Saves a new color in the launcher settings.
+	 * Saves a color in the settings of an app.
+     * This has been temporarily disabled, as it turned out that the clients had no use for it.
+     * It is left in, as it may become useful at a later date. It will currently not work as the code
+     * has been changed, to allow the project to compile, despite that necessary variables, constants
+     * and methods have since been removed.
+     * You can read more in the report about the Launcher from 2014.
+     *
 	 * @param color Color to save.
-	 * @param appInfo the appInfo of the app to save for.
+	 * @param appInfo The AppInfo object of the app to save the color for.
 	 */
 	private void saveNewBgColor(int color, AppInfo appInfo) {
-        //TODO: Currently, settings is just a blob of data. The OasisLib group is fixing the format, so we'll need to adjust depending on what format they're going with
-//        ProfileApplication profileApplication = mHelper.profileApplicationHelper.getProfileApplicationByProfileIdAndApplicationId(appInfo.getApp(), mCurrentUser);
-//		Setting<String, String, String> launcherSettings = profileApplication.getSettings();
-//
-//		if (launcherSettings == null) {
-//			launcherSettings = new Setting<String, String, String>();
-//		}
-//
-//		// If no app specific settings exist.
-//		if (!launcherSettings.containsKey(String.valueOf(appInfo.getApp().getId()))) {
-//			launcherSettings.addValue(String.valueOf(appInfo.getApp().getId()), Constants.COLOR_BG, String.valueOf(color));
-//		} else if (!launcherSettings.get(String.valueOf(appInfo.getApp().getId())).containsKey(Constants.COLOR_BG)) {
-//			/* If no app specific color settings exist.*/
-//			launcherSettings.get(String.valueOf(appInfo.getApp().getId())).put(Constants.COLOR_BG, String.valueOf(color));
-//		}
-//
-//        //TODO: The OasisLib group still needs to fix the settings format and more.
-//		mLauncher.setSettings(launcherSettings);
-//        //TODO: This function no longer exists. Now it can modify an application, regardless of user.
-//		mHelper.applicationHelper.modifyAppByProfile(mLauncher, mCurrentUser);
+        ProfileApplication profileApplication = mHelper.profileApplicationHelper.getProfileApplicationByProfileIdAndApplicationId(appInfo.getApp(), mCurrentUser);
+		Setting<String, String, String> launcherSettings = profileApplication.getSettings();
+
+		if (launcherSettings == null) {
+			launcherSettings = new Setting<String, String, String>();
+		}
+
+		// If no app specific settings exist.
+		if (!launcherSettings.containsKey(String.valueOf(appInfo.getApp().getId()))) {
+			launcherSettings.addValue(String.valueOf(appInfo.getApp().getId()), "", String.valueOf(color));
+		} else if (!launcherSettings.get(String.valueOf(appInfo.getApp().getId())).containsKey("")) {
+			/* If no app specific color settings exist.*/
+			launcherSettings.get(String.valueOf(appInfo.getApp().getId())).put("", String.valueOf(color));
+		}
+
+		//mLauncher.setSettings(launcherSettings);
+		//mHelper.applicationHelper.modifyAppByProfile(mLauncher, mCurrentUser);
     }
 
-    private void getIconSize() {
+    /**
+     * Updates the user's preferred icon size from SharedPreferences. This preference it set in Launcher's
+     * PreferenceFragment. The size is saved in {@link HomeActivity#mIconSize}.
+     */
+    private void updateIconSize() {
         SharedPreferences prefs = SettingsUtility.getLauncherSettings(mContext, LauncherUtility.getSharedPreferenceUser(mCurrentUser));
         int size = prefs.getInt(getString(R.string.icon_size_preference_key), 200);
         mIconSize = SettingsUtility.convertToDP(this, size);
     }
 
-    public static AppInfo getAppInfo(String id) {
-        return mAppInfos.get(id);
-    }
-
     /**
-     * This is used to set the onClickListener for a new ProfileSelector
-     * It must be used every time a new selector is set.
+     * Updates the ProfileSelector. It is needed when a new user has been selected, as a different
+     * listener is needed, and the app container has to be reloaded.
      * */
-    private void SetProfileSelector()
+    private void updatesProfileSelector()
     {
         mProfileSelectorWidget.setOnListItemClick(new AdapterView.OnItemClickListener() {
             @Override
@@ -533,14 +567,18 @@ public class HomeActivity extends Activity {
                 else
                     mProfileSelectorWidget = new GProfileSelector(mContext, mLoggedInGuardian, null);
 
-                SetProfileSelector();
+                updatesProfileSelector();
             }
         });
+
+        //Reload the application container, as a new user has been selected.
         reloadApplications();
     }
 
     /**
-     * Timer task for observing if new apps has been added
+     * Task for observing if the set of available apps has changed.
+     *
+     * @see HomeActivity#loadApplications()
      */
     private class AppsObserver extends TimerTask {
         @Override
