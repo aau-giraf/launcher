@@ -1,7 +1,6 @@
 package dk.aau.cs.giraf.launcher.helper;
 
 import android.app.Activity;
-import android.app.ApplicationErrorReport;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -67,9 +66,9 @@ public class LoadAndroidApplicationTask extends AsyncTask<Application, View, Has
             if (currentUser == null)
                 currentUser = LauncherUtility.getCurrentUser(context);
 
-            appInfoHash = LauncherUtility.loadAppInfos(context, applications, currentUser);
-            List<AppInfo> appInfos = new ArrayList<AppInfo>(appInfoHash.values());
-            Collections.sort(appInfos, new AppComparator(context));
+            appInfoHash = LauncherUtility.updateAppInfoHashMap(context, applications);
+            List<AppInfo> appInfoList = new ArrayList<AppInfo>(appInfoHash.values());
+            Collections.sort(appInfoList, new AppComparator(context));
 
             int containerWidth = ((ScrollView) targetLayout.getParent()).getWidth();
             int containerHeight = ((ScrollView) targetLayout.getParent()).getHeight();
@@ -97,7 +96,7 @@ public class LoadAndroidApplicationTask extends AsyncTask<Application, View, Has
             appRowsToAdd.add(currentAppRow);
 
             //Insert apps into the container, and add new rows as needed
-            for (AppInfo appInfo : appInfos) {
+            for (AppInfo appInfo : appInfoList) {
                 if (currentAppRow.getChildCount() == appsPrRow) {
                     currentAppRow = new LinearLayout(context);
                     currentAppRow.setWeightSum(appsPrRow);

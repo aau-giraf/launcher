@@ -152,7 +152,7 @@ public class AndroidFragment extends AppContainerFragment {
         protected Void doInBackground(Void... params) {
             Log.d(Constants.ERROR_TAG, "Thread says working");
             apps = LauncherUtility.getAndroidApplicationList(context, "dk.aau.cs.giraf");
-            appInfos = LauncherUtility.loadAppInfos(context, (List<Application>)apps, currentUser);
+            appInfos = LauncherUtility.updateAppInfoHashMap(context, (List<Application>) apps);
             //Remember that the apps have been added, so they are not added again by the listener
             List<ResolveInfo> sortedApps = (List<ResolveInfo>) apps;
             Collections.sort(sortedApps, new AppComparator(context));

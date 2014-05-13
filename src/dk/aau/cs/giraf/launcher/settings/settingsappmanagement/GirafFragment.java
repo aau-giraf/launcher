@@ -2,7 +2,6 @@ package dk.aau.cs.giraf.launcher.settings.settingsappmanagement;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.helper.LoadAndroidApplicationTask;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
@@ -113,7 +111,7 @@ public class GirafFragment extends AppContainerFragment {
             apps.toArray(applications);
             LoadAndroidApplicationTask load =  (LoadAndroidApplicationTask) loadAndroidApplicationTask.execute(applications);
             //LauncherUtility.loadGirafApplicationsIntoView(context, currentUser, (List<Application>) apps, appView, 110, listener);
-            appInfos = LauncherUtility.loadAppInfos(context, (List<Application>) apps, currentUser);
+            appInfos = LauncherUtility.updateAppInfoHashMap(context, (List<Application>) apps);
             if (appInfos == null){
                 haveAppsBeenAdded = false;
             }
