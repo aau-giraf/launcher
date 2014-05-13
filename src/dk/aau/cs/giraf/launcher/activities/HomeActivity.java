@@ -11,7 +11,6 @@ import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -60,7 +59,6 @@ public class HomeActivity extends Activity {
 	private Profile mCurrentUser;
 	private Helper mHelper;
 
-    private static HashMap<String,AppInfo> mAppInfos;
     private List<Application> mCurrentLoadedApps;
 
     private boolean mAppsAdded = false;
@@ -117,7 +115,7 @@ public class HomeActivity extends Activity {
     /**
      * Starts a timer that looks for updates in the set of available applications every 5 seconds.
      */
-    private void StartObservingApps() {
+    private void startObservingApps() {
         mAppsUpdater = new Timer();
         AppsObserver timerTask = new AppsObserver();
         mAppsUpdater.scheduleAtFixedRate(timerTask, 5000, 5000);
@@ -125,6 +123,9 @@ public class HomeActivity extends Activity {
         Log.d(Constants.ERROR_TAG, "Applications are being observed.");
     }
 
+    /**
+     * Stops Google Analytics logging.
+     */
     @Override
     protected void onStop() {
         super.onStop();
@@ -133,6 +134,13 @@ public class HomeActivity extends Activity {
         EasyTracker.getInstance(this).activityStop(this);
     }
 
+    /**
+     * Loads app icons into the activity. Before this point in the activity lifecycle, it is not
+     * possible to determine the size of the app container, making et much more difficult to calculate
+     * icon spacing.
+     *
+     * @param hasFocus {@code true} if the activity has focus.
+     */
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
@@ -152,6 +160,11 @@ public class HomeActivity extends Activity {
         }
 	}
 
+    /**
+     * Stops the timer looking for updates in the set of available apps.
+     *
+     * @see HomeActivity#startObservingApps()
+     */
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -160,22 +173,32 @@ public class HomeActivity extends Activity {
 		mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_STOP);
 	}
 
+    /**
+     * Redraws the application container and resumes the timer looking for updates in the set of
+     * available apps.
+     *
+     * @see HomeActivity#startObservingApps()
+     */
 	@Override
 	protected void onResume() {
 		super.onResume();
-        StartObservingApps();
+        startObservingApps();
         reloadApplications();
 		mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_START);
 	}
 
+    /**
+     * Does nothing, to prevent the user from returning to the splash screen or native OS.
+     */
     @Override
     public void onBackPressed() {
         //Do nothing, as the user should not be able to back out of this activity
     }
 
-
+    //TODO: What is going on with this function?
     private void reloadApplications(){
         if (!mAppsAdded) return;
+
         mCurrentLoadedApps = null; // Force loadApplications to redraw
         loadApplications();
     }
@@ -191,10 +214,10 @@ public class HomeActivity extends Activity {
         girafAppsList.addAll(androidAppsList);
         if (mCurrentLoadedApps == null || mCurrentLoadedApps.size() != girafAppsList.size()){
             getIconSize(); // Update mIconSize
-            mAppInfos = LauncherUtility.loadAppInfos(mContext, girafAppsList, mCurrentUser);
+            HashMap<String, AppInfo> appInfos = LauncherUtility.loadAppInfos(mContext, girafAppsList, mCurrentUser);
             LauncherUtility.loadGirafApplicationsIntoView(mContext, mCurrentUser, mLoggedInGuardian, girafAppsList, mAppsContainer, mIconSize);
             //Remember that the apps have been added, so they are not added again by the listener
-            if (mAppInfos == null){
+            if (appInfos.isEmpty()){
                 mAppsAdded = false;
                 TextView noAppsMessage = (TextView) findViewById(R.id.noAppsMessage);
                 noAppsMessage.setVisibility(View.VISIBLE);
@@ -509,10 +532,6 @@ public class HomeActivity extends Activity {
         SharedPreferences prefs = SettingsUtility.getLauncherSettings(mContext, LauncherUtility.getSharedPreferenceUser(mCurrentUser));
         int size = prefs.getInt(getString(R.string.icon_size_preference_key), 200);
         mIconSize = SettingsUtility.convertToDP(this, size);
-    }
-
-    public static AppInfo getAppInfo(String id) {
-        return mAppInfos.get(id);
     }
 
     /**
