@@ -22,6 +22,14 @@ public class SettingsListItem {
         this.mIntent = null;
     }
 
+    public SettingsListItem(String _packageName, String _appName, Drawable _appIcon, Intent _intent){
+        this.mPackageName = _packageName;
+        this.mAppName = _appName;
+        this.mAppIcon = _appIcon;
+        this.mAppFragment = null;
+        this.mIntent = _intent;
+    }
+
     public SettingsListItem(String _appName, Drawable _appIcon, Fragment _fragment){
         this.mPackageName = null;
         this.mAppName = _appName;
