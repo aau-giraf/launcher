@@ -570,7 +570,7 @@ public class HomeActivity extends Activity {
             List<Application> girafAppsList = ApplicationControlUtility.getAppsAvailableForUser(mContext, mCurrentUser); // For home activity
             SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(mContext, mCurrentUser);
             Set<String> androidAppsPackagenames = prefs.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
-            List<Application> androidAppsList = LauncherUtility.convertPackageNamesToApplications(mContext, androidAppsPackagenames);
+            List<Application> androidAppsList = ApplicationControlUtility.convertPackageNamesToApplications(mContext, androidAppsPackagenames);
             girafAppsList.addAll(androidAppsList);
             if (mCurrentLoadedApps == null || mCurrentLoadedApps.size() != girafAppsList.size()){
                 // run this on UI thread since UI might need to get updated
@@ -606,7 +606,7 @@ public class HomeActivity extends Activity {
             List<Application> girafAppsList = ApplicationControlUtility.getAppsAvailableForUser(context, currentUser); // For home activity
             SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(context, currentUser);
             Set<String> androidAppsPackagenames = prefs.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
-            List<Application> androidAppsList = LauncherUtility.convertPackageNamesToApplications(context, androidAppsPackagenames);
+            List<Application> androidAppsList = ApplicationControlUtility.convertPackageNamesToApplications(context, androidAppsPackagenames);
             girafAppsList.addAll(androidAppsList);
 
             applications = girafAppsList.toArray(applications);

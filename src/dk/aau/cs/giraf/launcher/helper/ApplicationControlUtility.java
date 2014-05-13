@@ -14,7 +14,10 @@ import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 /**
- * Created by Vagner on 13-05-14.
+ * This class contains functions that are used to either:
+ *  1. Return lists of applications.
+ *  2. Check if certain lists of applications live up to certain criteria
+ *  3.
  */
 public class ApplicationControlUtility {
 
@@ -137,7 +140,14 @@ public class ApplicationControlUtility {
         return context.getPackageManager().queryIntentActivities(mainIntent, 0);
     }
 
-    public static List<Application> getAndroidApplicationList(Context context, String filter){
+    /**
+     * This function returns Android Applications installed on the device as a
+     * list of applications, based on a given filter
+     * @param context The context of the current activity
+     * @param filter The filter to sort out apps
+     * @return
+     */
+    public static List<Application> getAndroidAppsAsApplicationList(Context context, String filter){
         List<ResolveInfo> allApps = getAppsInstalledOnDevice(context);
         List<Application> result = new ArrayList<Application>();
         PackageManager packageManager = context.getPackageManager();
@@ -239,5 +249,4 @@ public class ApplicationControlUtility {
         }
         return selectedApps;
     }
-
 }

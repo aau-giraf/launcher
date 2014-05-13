@@ -3,8 +3,6 @@ package dk.aau.cs.giraf.launcher.settings.settingsappmanagement;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.ResolveInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,14 +11,11 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.launcher.helper.AppComparator;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
@@ -154,14 +149,9 @@ public class AndroidFragment extends AppContainerFragment {
         @Override
         protected HashMap<String, AppInfo> doInBackground(Application... applications) {
             Log.d(Constants.ERROR_TAG, "Thread says working");
-            applications = ApplicationControlUtility.getAndroidApplicationList(context, "dk.aau.cs.giraf").toArray(applications);
-            super.doInBackground(applications);
-            appInfos = LauncherUtility.updateAppInfoHashMap(context, applications);
-            //Remember that the apps have been added, so they are not added again by the listener
-            //List<ResolveInfo> sortedApps = (List<ResolveInfo>) apps;
-            //Collections.sort(sortedApps, new AppComparator(context));
-
-            //LoadApplicationTask loadAndroidApplicationTask = new LoadApplicationTask(context, currentUser, null, targetLayout, 110, listener);
+            applications = ApplicationControlUtility.getAndroidAppsAsApplicationList(context, "dk.aau.cs.giraf").toArray(applications);
+            appInfos = super.doInBackground(applications);
+            //appInfos = LauncherUtility.updateAppInfoHashMap(context, applications);
 
             return null;
         }

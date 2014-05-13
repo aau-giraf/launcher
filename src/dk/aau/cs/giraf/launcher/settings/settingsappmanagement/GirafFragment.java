@@ -1,7 +1,9 @@
 package dk.aau.cs.giraf.launcher.settings.settingsappmanagement;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
+import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
@@ -29,7 +32,7 @@ public class GirafFragment extends AppContainerFragment {
     private AndroidAppsFragmentInterface mCallback;
     private Profile currentUser;
     private HashMap<String,AppInfo> appInfos;
-    private LoadApplicationTask loadApplicationTask;
+    private LoadGirafApplicationTask loadApplicationTask;
     private View.OnClickListener listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -54,7 +57,6 @@ public class GirafFragment extends AppContainerFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         context = getActivity();
-        apps = ApplicationControlUtility.getAvailableGirafAppsButLauncher(context);
         appView = (LinearLayout) view.findViewById(R.id.appContainer);
         currentUser = mCallback.getSelectedProfile();
 
@@ -110,18 +112,10 @@ public class GirafFragment extends AppContainerFragment {
     {
         if (loadedApps == null || loadedApps.size() != apps.size()){
             //Remember that the apps have been added, so they are not added again by the listener
-            loadApplicationTask = new LoadApplicationTask(context, currentUser, null, appView, 110, listener);
-            Application[] applications = new Application[apps.size()];
-            apps.toArray(applications);
-            loadApplicationTask.execute(applications);
-            appInfos = LauncherUtility.updateAppInfoHashMap(context, (List<Application>) apps);
-            if (appInfos == null){
-                haveAppsBeenAdded = false;
-            }
-            else
-                haveAppsBeenAdded = true;
+
+            loadApplicationTask = new LoadGirafApplicationTask(context, currentUser, null, appView, 110, listener);
+            loadApplicationTask.execute();
         }
-        loadedApps = apps;
     }
 
     private boolean UserHasApplicationInView(ProfileApplicationController pac, Application app, Profile user)
@@ -135,4 +129,40 @@ public class GirafFragment extends AppContainerFragment {
             return false;
     }
 
+    class LoadGirafApplicationTask extends LoadApplicationTask {
+
+        public LoadGirafApplicationTask(Context context, Profile currentUser, Profile guardian, LinearLayout targetLayout, int iconSize, View.OnClickListener onClickListener) {
+            super(context, currentUser, guardian, targetLayout, iconSize, onClickListener);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.d(Constants.ERROR_TAG, "Thread says hello");
+        }
+
+        @Override
+        protected HashMap<String, AppInfo> doInBackground(Application... applications) {
+            Log.d(Constants.ERROR_TAG, "Thread says working");
+            apps = ApplicationControlUtility.getAvailableGirafAppsButLauncher(context);
+            applications = apps.toArray(applications);
+            appInfos = super.doInBackground(applications);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(HashMap<String, AppInfo> appInfos) {
+            super.onPostExecute(appInfos);
+            if (appInfos == null){
+                haveAppsBeenAdded = false;
+            }
+            else
+            {
+                haveAppsBeenAdded = true;
+                loadedApps = apps;
+            }
+            Log.d(Constants.ERROR_TAG, "Thread says bye");
+        }
+    }
 }
