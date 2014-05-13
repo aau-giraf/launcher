@@ -13,9 +13,6 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 public class AppInfo extends Application {
 
-    /** The intent used to start the application. */
-    Intent mIntent;
-
     /** The application icon. */
     private Drawable mIcon;
 
