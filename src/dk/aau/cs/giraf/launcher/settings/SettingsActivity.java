@@ -10,25 +10,19 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AndroidAppsFragmentInterface;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementSettings;
-import dk.aau.cs.giraf.oasis.lib.controllers.ProfileController;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.settingslib.settingslib.Fragments.LauncherSettings;
-import dk.aau.cs.giraf.settingslib.settingslib.Fragments.WombatSettings;
 
 public class SettingsActivity extends Activity
         implements SettingsListFragment.SettingsListFragmentListener,
@@ -38,6 +32,7 @@ public class SettingsActivity extends Activity
     private Fragment mActiveFragment;
     private ArrayList<SettingsListItem> mAppList;
     private Profile mCurrentUser;
+    private static final String SETTINGS_INTENT = ".SETTINGSACTIVITY";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +44,12 @@ public class SettingsActivity extends Activity
         Fragment settingsFragment = mFragManager.findFragmentById(R.id.settingsContainer);
 
         if (settingsFragment == null) {
+            // Select the first entry in the list of applications in settings
             SettingsListItem item = getInstalledSettingsApps().get(0);
+            // Update active fragment with the first entry
             mActiveFragment = item.mAppFragment;
         }
-
+        // Load the fragment just selected into view
         mFragManager.beginTransaction().add(R.id.settingsContainer, mActiveFragment)
                 .commit();
     }
@@ -60,32 +57,44 @@ public class SettingsActivity extends Activity
     public ArrayList<SettingsListItem> getInstalledSettingsApps(){
         mAppList = new ArrayList<SettingsListItem>();
 
-        Intent androidSettingsIntent = new Intent(Settings.ACTION_SETTINGS);
-        androidSettingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
+        // Launcher
         addApplicationByPackageName("dk.aau.cs.giraf.launcher",
                 new LauncherSettings(LauncherUtility.getSharedPreferenceUser(mCurrentUser)));
-        addApplicationByPackageName("dk.aau.cs.giraf.wombat",
-                new WombatSettings());
 
-        // These following must be added last!
         // Application management
         addApplicationByName(getString(R.string.apps_list_label),
                 new AppManagementSettings(), getResources().getDrawable(R.drawable.ic_apps));
-        // Native Android Settings
-        addApplicationByName("Android Indstillinger", androidSettingsIntent, getResources().getDrawable(R.drawable.ic_android));
 
+        /************************************************
+        *** Add applications in the giraf suite below ***
+        *************************************************/
+
+        // Cars
+        addApplicationByPackageName("dk.aau.cs.giraf.cars");
+
+        /*************************************************
+         *** Add applications in the giraf suite above ***
+         *************************************************/
+
+        // Native android settings
+        addAndroidSettings();
+
+        // Only add the apps available on the device
         return removeNonGirafApps(mAppList);
     }
 
     private ArrayList<SettingsListItem> removeNonGirafApps(ArrayList<SettingsListItem> list) {
-        List<ResolveInfo> installedGirafApps = LauncherUtility.getDeviceGirafApps(this);
+        // Clone the input list to be able to remove invalid apps
         ArrayList<SettingsListItem> mAvailableSettingsAppList = (ArrayList<SettingsListItem>) list.clone();
+        // Get all installed giraf apps
+        List<ResolveInfo> installedGirafApps = LauncherUtility.getDeviceGirafApps(this);
 
         for (SettingsListItem settingsApp : list) {
             for (ResolveInfo installedApp : installedGirafApps) {
+                // Get the package name of each application
                 String installedAppName = installedApp.activityInfo.applicationInfo.packageName.toLowerCase();
 
+                // Only add to app to settings if not already in the list of available apps
                 if (!mAvailableSettingsAppList.contains(settingsApp)) {
                     if (settingsApp.mPackageName != null && installedAppName.contains(settingsApp.mPackageName.toLowerCase())) {
                         mAvailableSettingsAppList.add(settingsApp);
@@ -102,17 +111,23 @@ public class SettingsActivity extends Activity
     }
 
     private void addApplicationByPackageName(String packageName, Fragment fragment) {
+        // Get the package manager to query package name
         final PackageManager pm = getApplicationContext().getPackageManager();
+        // New container for application we want to add, initially null
         ApplicationInfo appInfo = null;
 
         try {
+            // Check if the package name exists on the device
             appInfo = pm.getApplicationInfo(packageName, 0);
         } catch (final PackageManager.NameNotFoundException e) {
+            // Don't throw exception, just print stack trace
             e.printStackTrace();
         }
 
         if (appInfo != null) {
+            // Extract name of application
             final String appName = setCorrectCase(pm.getApplicationLabel(appInfo).toString());
+            // Extract icon of application
             final Drawable appIcon = pm.getApplicationIcon(appInfo);
 
             SettingsListItem item = new SettingsListItem(
@@ -121,40 +136,99 @@ public class SettingsActivity extends Activity
                     appIcon,
                     fragment
             );
+            // Add item to the list of applications
             mAppList.add(item);
         }
     }
 
-    private void addApplicationByName(String appName, Fragment settingsFragment, Drawable icon) {
+    private void addApplicationByPackageName(String packageName) {
+        // Get the package manager to query package name
+        final PackageManager pm = getApplicationContext().getPackageManager();
+        // New container for application we want to add, initially null
+        ApplicationInfo appInfo = null;
+
+        try {
+            // Check if the package name exists on the device
+            appInfo = pm.getApplicationInfo(packageName, 0);
+        } catch (final PackageManager.NameNotFoundException e) {
+            // Don't throw exception, just print stack trace
+            e.printStackTrace();
+        }
+
+        if (appInfo != null) {
+            // Extract name of application
+            final String appName = setCorrectCase(pm.getApplicationLabel(appInfo).toString());
+            // Extract icon of application
+            final Drawable appIcon = pm.getApplicationIcon(appInfo);
+
+            // Add SETTINGS_INTENT key to package name to open the
+            // settings of the application
+            Intent intent = new Intent(packageName + SETTINGS_INTENT);
+            // Start as a new task to enable stepping back to settings
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            if (mCurrentUser.getRole() == Profile.Roles.CHILD) // A child profile has been selected, pass id
+                intent.putExtra(Constants.CHILD_ID, mCurrentUser.getId());
+            else // We are a guardian, do not add a child
+                intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
+
+            SettingsListItem item = new SettingsListItem(
+                    packageName,
+                    appName,
+                    appIcon,
+                    intent
+            );
+            // Add item to the list of applications
+            mAppList.add(item);
+        }
+    }
+
+    private void addApplicationByName(String appName, Fragment fragment, Drawable icon) {
         SettingsListItem item = new SettingsListItem(
                 setCorrectCase(appName),
                 icon,
-                settingsFragment
+                fragment
         );
+        // Add item to the list of applications
         mAppList.add(item);
     }
 
-    private void addApplicationByName(String name, Intent intent, Drawable icon) {
+    private void addApplicationByName(String appName, Intent intent, Drawable icon) {
         SettingsListItem item = new SettingsListItem(
-                setCorrectCase(name),
+                setCorrectCase(appName),
                 icon,
                 intent
         );
+        // Add item to the list of applications
         mAppList.add(item);
     }
 
+    private void addAndroidSettings() {
+        // Get intent for Native Android Settings
+        Intent androidSettingsIntent = new Intent(Settings.ACTION_SETTINGS);
+        // Start as a new task to enable stepping back to settings
+        androidSettingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        addApplicationByName("Android Indstillinger",
+                androidSettingsIntent, getResources().getDrawable(R.drawable.ic_android));
+    }
+
     private String setCorrectCase(String name) {
+        // Set first character uppercase and following to lowercase
         return name.substring(0, 1).toUpperCase()
                 + name.substring(1).toLowerCase();
     }
 
     @Override
     public void setActiveFragment(Fragment fragment) {
+        // Only add new transaction if the user clicked a non-active fragment
         if (mActiveFragment != fragment) {
             FragmentTransaction ft = mFragManager.beginTransaction();
+            // Replace the fragment in settingsContainer
             ft.replace(R.id.settingsContainer, fragment);
             ft.commit();
 
+            // Update active fragment after transaction has been committed
             mActiveFragment = fragment;
         }
     }
@@ -162,14 +236,17 @@ public class SettingsActivity extends Activity
     @Override
     public void reloadActivity()
     {
-        Intent intent = getIntent();
+        // Get the intent of SettingsActivity
+        Intent intent = SettingsActivity.this.getIntent();
 
         if (mCurrentUser.getRole() == Profile.Roles.CHILD) // A child profile has been selected, pass id
             intent.putExtra(Constants.CHILD_ID, mCurrentUser.getId());
         else // We are a guardian, do not add a child
             intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
 
-        finish();
+        // Stop activity before restarting
+        SettingsActivity.this.finish();
+        // Start activity again to reload contents
         startActivity(intent);
     }
 
