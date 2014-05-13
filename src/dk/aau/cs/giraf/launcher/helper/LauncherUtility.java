@@ -640,7 +640,7 @@ public abstract class LauncherUtility {
                     newAppView = createAppView(context, targetLayout, app, onClickListener);
 
                 // Mark colors of the selected apps when settings is shown.
-                Set<String> selectedApps = preferences.getStringSet(Constants.SELECTED_ANDROID_APPS, new HashSet<String>());
+                Set<String> selectedApps = preferences.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
                 if (selectedApps.contains(app.activityInfo.name)){
                     newAppView.setChecked(true);
                 }

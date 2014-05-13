@@ -69,7 +69,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         Animation logoAnimation = AnimationUtils.loadAnimation(mContext, R.animator.rotatelogo);
-        boolean skipAnimationPref = prefs.getBoolean("show_animation_preference", true); //TODO: Replace string literal with string resource
+        boolean skipAnimationPref = prefs.getBoolean(getString(R.string.show_animation_preference_key), true);
 
         //Decide whether to skip animation, according to debug mode
         if ((DEBUG_MODE && SKIP_SPLASH_SCREEN) || !skipAnimationPref)
