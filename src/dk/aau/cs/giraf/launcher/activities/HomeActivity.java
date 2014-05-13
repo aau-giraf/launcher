@@ -49,6 +49,10 @@ import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.settingslib.settingslib.SettingsUtility;
 
+/**
+ * The primary activity of Launcher. Allows the user to start other GIRAF apps and access the settings
+ * activity. It requires a user id in the parent intent.
+ */
 public class HomeActivity extends Activity {
 
 	private static Context mContext;
@@ -56,7 +60,6 @@ public class HomeActivity extends Activity {
     private Profile mLoggedInGuardian;
 	private Profile mCurrentUser;
 	private Helper mHelper;
-	private Application mLauncher;
 
     private static HashMap<String,AppInfo> mAppInfos;
     private List<Application> mCurrentLoadedApps;
@@ -75,13 +78,17 @@ public class HomeActivity extends Activity {
     private SideBarLayout mSideBarView;
     private LinearLayout mAppsContainer;
     private ScrollView mAppsScrollView;
-    private EasyTracker mEasyTracker;
     private Timer mAppsUpdater;
 
 
     private RelativeLayout.LayoutParams mAppsScrollViewParams;
 
-	/** Called when the activity is first created. */
+    /**
+     * Sets up the activity. Specifically view variables are instantiated, the login button listener
+     * is set, and the instruction animation is set up.
+     *
+     * @param savedInstanceState Information from the last launch of the activity.
+     */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -92,7 +99,6 @@ public class HomeActivity extends Activity {
 
         mCurrentUser = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
         mLoggedInGuardian = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
-		mLauncher = mHelper.applicationHelper.getApplicationById(mCurrentUser.getId());
 
         loadViews();
 		loadDrawer();
@@ -101,8 +107,7 @@ public class HomeActivity extends Activity {
         setupLogoutDialog();
 
         // Start logging this activity
-        //TODO: Why not just "EasyTracker.getInstance(this).activityStart(this);"?
-        mEasyTracker.getInstance(this).activityStart(this);
+        EasyTracker.getInstance(this).activityStart(this);
 
         // Show warning if DEBUG_MODE is true
         if (LauncherUtility.isDebugging()) {
@@ -110,6 +115,9 @@ public class HomeActivity extends Activity {
         }
 	}
 
+    /**
+     * Starts a timer that looks for updates in the set of available applications every 5 seconds.
+     */
     private void StartObservingApps() {
         mAppsUpdater = new Timer();
         AppsObserver timerTask = new AppsObserver();
@@ -123,7 +131,7 @@ public class HomeActivity extends Activity {
         super.onStop();
 
         // Stop logging this activity
-        mEasyTracker.getInstance(this).activityStop(this);
+        EasyTracker.getInstance(this).activityStop(this);
     }
 
 	@Override
@@ -509,7 +517,7 @@ public class HomeActivity extends Activity {
 
     /**
      * This is used to set the onClickListener for a new ProfileSelector
-     * It must be used everytime a new selector is set.
+     * It must be used every time a new selector is set.
      * */
     private void SetProfileSelector()
     {
