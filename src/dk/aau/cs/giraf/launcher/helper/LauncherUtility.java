@@ -493,22 +493,22 @@ public abstract class LauncherUtility {
         return selectedApps;
     }
 
-    public static LoadAndroidApplicationTask loadGirafApplicationsIntoView(Context context, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize, View.OnClickListener listener)
+    public static LoadApplicationTask loadGirafApplicationsIntoView(Context context, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize, View.OnClickListener listener)
     {
         return loadGirafApplicationsIntoView(context, null, null, girafAppsList, targetLayout, iconSize, listener);
     }
 
-    public static LoadAndroidApplicationTask loadGirafApplicationsIntoView(Context context, Profile currentUser, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize, View.OnClickListener listener)
+    public static LoadApplicationTask loadGirafApplicationsIntoView(Context context, Profile currentUser, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize, View.OnClickListener listener)
     {
         return loadGirafApplicationsIntoView(context, currentUser, null, girafAppsList, targetLayout, iconSize, listener);
     }
 
-    public static LoadAndroidApplicationTask loadGirafApplicationsIntoView(Context context, Profile currentUser, Profile guardian, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize)
+    public static LoadApplicationTask loadGirafApplicationsIntoView(Context context, Profile currentUser, Profile guardian, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize)
     {
         return loadGirafApplicationsIntoView(context, currentUser, guardian, girafAppsList, targetLayout, iconSize, null);
     }
 
-    public static LoadAndroidApplicationTask loadGirafApplicationsIntoView(Context context, Profile currentUser, Profile guardian, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize, View.OnClickListener listener) {
+    public static LoadApplicationTask loadGirafApplicationsIntoView(Context context, Profile currentUser, Profile guardian, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize, View.OnClickListener listener) {
         //Get the list of apps to show in the container
         //List<Application> girafAppsList = LauncherUtility.getAvailableGirafAppsButLauncher(mContext);
         /*if (girafAppsList != null && !girafAppsList.isEmpty()) {
@@ -583,12 +583,12 @@ public abstract class LauncherUtility {
             Log.e(Constants.ERROR_TAG, "App list is null");
         }*/
 
-        LoadAndroidApplicationTask loadAndroidApplicationTask = new LoadAndroidApplicationTask(context, currentUser, guardian, targetLayout, iconSize, listener);
+        LoadApplicationTask loadApplicationTask = new LoadApplicationTask(context, currentUser, guardian, targetLayout, iconSize, listener);
         Application[] applications = new Application[girafAppsList.size()];
         girafAppsList.toArray(applications);
-        loadAndroidApplicationTask.execute(applications);
+        loadApplicationTask.execute(applications);
 
-        return loadAndroidApplicationTask;
+        return loadApplicationTask;
     }
 
     public static boolean loadOtherApplicationsIntoView(Context context, List<ResolveInfo> appList, LinearLayout targetLayout, int iconSize, Profile currentUser) {
@@ -676,7 +676,7 @@ public abstract class LauncherUtility {
             success = false;
         }*/
 /*
-        LoadAndroidApplicationTask loadAndroidApplicationTask = new LoadAndroidApplicationTask(context, currentUser, targetLayout, iconSize, onClickListener);
+        LoadApplicationTask loadAndroidApplicationTask = new LoadApplicationTask(context, currentUser, targetLayout, iconSize, onClickListener);
         ResolveInfo[] resolveInfos = new ResolveInfo[appList.size()];
         appList.toArray(resolveInfos);
         loadAndroidApplicationTask.execute(resolveInfos);*/

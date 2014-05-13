@@ -1,9 +1,8 @@
 package dk.aau.cs.giraf.launcher.settings.settingsappmanagement;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.ResolveInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,17 +11,14 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.launcher.helper.AppComparator;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
-import dk.aau.cs.giraf.launcher.helper.LoadAndroidApplicationTask;
+import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
@@ -36,6 +32,7 @@ public class AndroidFragment extends AppContainerFragment {
     private Set<String> selectedApps;
     private Profile currentUser;
     private HashMap<String, AppInfo> appInfos;
+    private LoadAndroidApplicationTask loadApplicationsTask;
     AndroidAppsFragmentInterface mCallback; // Callback to containing Activity implementing the SettingsListFragmentListener interface
 
     private View.OnClickListener listener = new View.OnClickListener() {
@@ -64,7 +61,6 @@ public class AndroidFragment extends AppContainerFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
-        super.showProgressBar();
 
         context = getActivity();
         appView = (LinearLayout) view.findViewById(R.id.appContainer);
@@ -117,6 +113,8 @@ public class AndroidFragment extends AppContainerFragment {
         editor.remove(getString(R.string.selected_android_apps_key)).commit(); // Remove to ensure that the new set is written to file.
         editor.putStringSet(getString(R.string.selected_android_apps_key), selectedApps);
         editor.apply();
+
+        loadApplicationsTask.cancel(true);
     }
 
     @Override
@@ -129,79 +127,43 @@ public class AndroidFragment extends AppContainerFragment {
     public void loadApplications()
     {
         if (loadedApps == null || loadedApps.size() != apps.size()){
-           LoadApplicationsTask loadApplicationsTask = new LoadApplicationsTask();
+           loadApplicationsTask = new LoadAndroidApplicationTask(context, currentUser, null, appView, 110, listener);
            loadApplicationsTask.execute();
         }
 
     }
 
-    @Override
-    protected void hideProgressBar() {
-        super.hideProgressBar();
+    class LoadAndroidApplicationTask extends LoadApplicationTask {
 
-    }
-
-    class LoadApplicationsTask extends AsyncTask<Void, Void, Void>{
+        public LoadAndroidApplicationTask(Context context, Profile currentUser, Profile guardian, LinearLayout targetLayout, int iconSize, View.OnClickListener onClickListener) {
+            super(context, currentUser, guardian, targetLayout, iconSize, onClickListener);
+        }
 
         @Override
         protected void onPreExecute() {
+            super.onPreExecute();
             Log.d(Constants.ERROR_TAG, "Thread says hello");
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected HashMap<String, AppInfo> doInBackground(Application... applications) {
             Log.d(Constants.ERROR_TAG, "Thread says working");
-            apps = LauncherUtility.getAndroidApplicationList(context, "dk.aau.cs.giraf");
-            appInfos = LauncherUtility.loadAppInfos(context, (List<Application>)apps, currentUser);
+            applications = LauncherUtility.getAndroidApplicationList(context, "dk.aau.cs.giraf").toArray(applications);
+            super.doInBackground(applications);
+            appInfos = LauncherUtility.loadAppInfos(context, applications, currentUser);
             //Remember that the apps have been added, so they are not added again by the listener
-            List<ResolveInfo> sortedApps = (List<ResolveInfo>) apps;
-            Collections.sort(sortedApps, new AppComparator(context));
+            //List<ResolveInfo> sortedApps = (List<ResolveInfo>) apps;
+            //Collections.sort(sortedApps, new AppComparator(context));
 
-            LoadAndroidApplicationTask loadAndroidApplicationTask = new LoadAndroidApplicationTask(context, currentUser, null, appView, 110, listener);
-            Application[] applications = new Application[apps.size()];
-            apps.toArray(applications);
-            LoadAndroidApplicationTask load =  (LoadAndroidApplicationTask) loadAndroidApplicationTask.execute(applications);
-            //LoadAndroidApplicationTask applicationLoader = LauncherUtility.loadGirafApplicationsIntoView(context, currentUser, (List<Application>) apps, appView, 110, onClickListener);
-
+            //LoadApplicationTask loadAndroidApplicationTask = new LoadApplicationTask(context, currentUser, null, targetLayout, 110, listener);
 
             return null;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-
-            hideProgressBar();
+        protected void onPostExecute(HashMap<String, AppInfo> appInfos) {
+            super.onPostExecute(appInfos);
             Log.d(Constants.ERROR_TAG, "Thread says bye");
-            /*
-            try{
-                for (int i = 0; i < appView.getChildCount();i++)
-                {
-                    LinearLayout thisLayout = (LinearLayout)appView.getChildAt(i);
-                    for(int j = 0; j < thisLayout.getChildCount(); j++)
-                    {
-                        AppImageView appImageView = (AppImageView) thisLayout.getChildAt(j);
-
-                        AppInfo app = null;
-                        try
-                        {
-                            app = appInfos.get(appImageView.getTag());
-                            if(app != null && selectedApps.contains(app.getActivity()))
-                            {
-                                appImageView.setChecked(true);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-                loadedApps = apps;
-            }
-            catch (Exception e){
-                e.printStackTrace();
-            }
-            */
         }
     }
 }

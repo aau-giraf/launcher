@@ -25,14 +25,12 @@ public class AppContainerFragment extends Fragment{
     protected LinearLayout appView;
     protected boolean haveAppsBeenAdded;
     protected Context context;
-    protected ProgressBar progressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.settings_appfragment_giraf,
+        View view = inflater.inflate(R.layout.settings_appfragment_appcontainer,
                 container, false);
         context = getActivity();
-        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
 
         return view;
     }
@@ -51,22 +49,5 @@ public class AppContainerFragment extends Fragment{
 
     protected void loadApplications()
     {
-    }
-
-    protected void showProgressBar(){
-        progressBar.setVisibility(View.VISIBLE);
-    }
-
-    protected void hideProgressBar(){
-        final android.os.Handler handler = new Handler();
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (appView.getChildCount() > 0)
-                    progressBar.setVisibility(View.GONE);
-                else
-                    handler.postDelayed(this, 100);
-            }
-        });
     }
 }

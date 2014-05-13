@@ -2,7 +2,6 @@ package dk.aau.cs.giraf.launcher.settings.settingsappmanagement;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
-import dk.aau.cs.giraf.launcher.helper.LoadAndroidApplicationTask;
+import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.oasis.lib.controllers.ProfileApplicationController;
@@ -30,6 +28,7 @@ public class GirafFragment extends AppContainerFragment {
     private AndroidAppsFragmentInterface mCallback;
     private Profile currentUser;
     private HashMap<String,AppInfo> appInfos;
+    private LoadApplicationTask loadApplicationTask;
     private View.OnClickListener listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -58,8 +57,6 @@ public class GirafFragment extends AppContainerFragment {
         appView = (LinearLayout) view.findViewById(R.id.appContainer);
         currentUser = mCallback.getSelectedProfile();
 
-        super.showProgressBar();
-
         return view;
     }
 
@@ -75,7 +72,6 @@ public class GirafFragment extends AppContainerFragment {
                     reloadApplications();
                 }
             });
-
     }
 
     @Override
@@ -97,6 +93,12 @@ public class GirafFragment extends AppContainerFragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        loadApplicationTask.cancel(true);
+    }
+
+    @Override
     protected void reloadApplications() {
         super.reloadApplications();
         loadApplications();
@@ -105,48 +107,22 @@ public class GirafFragment extends AppContainerFragment {
     @Override
     public void loadApplications()
     {
-
         if (loadedApps == null || loadedApps.size() != apps.size()){
             //Remember that the apps have been added, so they are not added again by the listener
-            LoadAndroidApplicationTask loadAndroidApplicationTask = new LoadAndroidApplicationTask(context, currentUser, null, appView, 110, listener);
+            loadApplicationTask = new LoadApplicationTask(context, currentUser, null, appView, 110, listener);
             Application[] applications = new Application[apps.size()];
             apps.toArray(applications);
-            LoadAndroidApplicationTask load =  (LoadAndroidApplicationTask) loadAndroidApplicationTask.execute(applications);
-            //LauncherUtility.loadGirafApplicationsIntoView(context, currentUser, (List<Application>) apps, appView, 110, listener);
+            loadApplicationTask.execute(applications);
             appInfos = LauncherUtility.loadAppInfos(context, (List<Application>) apps, currentUser);
             if (appInfos == null){
                 haveAppsBeenAdded = false;
             }
-            else{
+            else
                 haveAppsBeenAdded = true;
-                /*
-                for (int i = 0; i < appView.getChildCount();i++)
-                {
-                    LinearLayout thisLayout = (LinearLayout)appView.getChildAt(i);
-                    for(int j = 0; j < thisLayout.getChildCount(); j++)
-                    {
-                        AppImageView appImageView = (AppImageView) thisLayout.getChildAt(j);
-                        ProfileApplicationController pac = new ProfileApplicationController(context);
-
-                        AppInfo app = null;
-                        try{
-                            app = appInfos.get(appImageView.getTag().toString());
-                        }
-                        catch (Exception e)  {
-                            Log.e(Constants.ERROR_TAG, e.getMessage());
-                        }
-                        if(app != null && UserHasApplicationInView(pac, app.getApp(), currentUser))
-                        {
-                            appImageView.setChecked(true);
-                        }
-                    }
-                }*/
-            }
         }
         loadedApps = apps;
+    }
 
-        super.hideProgressBar();
-    } 
     private boolean UserHasApplicationInView(ProfileApplicationController pac, Application app, Profile user)
     {
         List<ProfileApplication> profileApplications = pac.getListOfProfileApplicationsByProfileId(user);
