@@ -57,8 +57,10 @@ public class AuthenticationActivity extends CaptureActivity {
 		mLoginNameView = (TextView)this.findViewById(R.id.loginname);
 		mInfoView = (TextView)this.findViewById(R.id.authentication_step1);
 
-        // Show warning if DEBUG_MODE is true
-        LauncherUtility.showDebugInformation(this);
+        // Show warning if in debugging mode
+        if (LauncherUtility.isDebugging()) {
+            LauncherUtility.showDebugInformation(this);
+        }
 
 		mGLoginButton.setOnClickListener(new View.OnClickListener() {
 			@Override
