@@ -38,7 +38,7 @@ public class AndroidFragment extends AppContainerFragment {
     private HashMap<String, AppInfo> appInfos;
     AndroidAppsFragmentInterface mCallback; // Callback to containing Activity implementing the SettingsListFragmentListener interface
 
-    private View.OnClickListener onClickListener = new View.OnClickListener() {
+    private View.OnClickListener listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             AppImageView appImageView = (AppImageView) v;
@@ -135,6 +135,12 @@ public class AndroidFragment extends AppContainerFragment {
 
     }
 
+    @Override
+    protected void hideProgressBar() {
+        super.hideProgressBar();
+
+    }
+
     class LoadApplicationsTask extends AsyncTask<Void, Void, Void>{
 
         @Override
@@ -150,7 +156,12 @@ public class AndroidFragment extends AppContainerFragment {
             //Remember that the apps have been added, so they are not added again by the listener
             List<ResolveInfo> sortedApps = (List<ResolveInfo>) apps;
             Collections.sort(sortedApps, new AppComparator(context));
-            LoadAndroidApplicationTask applicationLoader = LauncherUtility.loadGirafApplicationsIntoView(context, currentUser, (List<Application>) apps, appView, 110, onClickListener);
+
+            LoadAndroidApplicationTask loadAndroidApplicationTask = new LoadAndroidApplicationTask(context, currentUser, null, appView, 110, listener);
+            Application[] applications = new Application[apps.size()];
+            apps.toArray(applications);
+            LoadAndroidApplicationTask load =  (LoadAndroidApplicationTask) loadAndroidApplicationTask.execute(applications);
+            //LoadAndroidApplicationTask applicationLoader = LauncherUtility.loadGirafApplicationsIntoView(context, currentUser, (List<Application>) apps, appView, 110, onClickListener);
 
 
             return null;
@@ -158,6 +169,10 @@ public class AndroidFragment extends AppContainerFragment {
 
         @Override
         protected void onPostExecute(Void aVoid) {
+
+            hideProgressBar();
+            Log.d(Constants.ERROR_TAG, "Thread says bye");
+            /*
             try{
                 for (int i = 0; i < appView.getChildCount();i++)
                 {
@@ -186,9 +201,7 @@ public class AndroidFragment extends AppContainerFragment {
             catch (Exception e){
                 e.printStackTrace();
             }
-
-            hideProgressBar();
-            Log.d(Constants.ERROR_TAG, "Thread says bye");
+            */
         }
     }
 }

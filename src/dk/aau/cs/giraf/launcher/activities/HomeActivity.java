@@ -28,7 +28,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import dk.aau.cs.giraf.gui.GButtonSettings;
-import dk.aau.cs.giraf.gui.GColorAdapter;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GProfileSelector;
@@ -103,7 +102,7 @@ public class HomeActivity extends Activity {
         loadViews();
 		loadDrawer();
 		loadWidgets();
-		loadHomeDrawerColorGrid();
+		//loadHomeDrawerColorGrid();
         setupLogoutDialog();
 
         // Start logging this activity
@@ -209,13 +208,14 @@ public class HomeActivity extends Activity {
 
 	/**
 	 * Load the user's paintgrid in the drawer.
-	 */
+	 * THIS IS COMMENTED OUT, SINCE IT WAS NO LONGER NEEDED TO IMPLEMENT THE DRAWER.
 	private void loadHomeDrawerColorGrid() {
 		GridView AppColors = (GridView) findViewById(R.id.appcolors);
 		// Removes blue highlight and scroll on AppColors grid
 		AppColors.setEnabled(false);
 		AppColors.setAdapter(new GColorAdapter(this));
 	}
+     */
 
     /**
      * Finds all views used

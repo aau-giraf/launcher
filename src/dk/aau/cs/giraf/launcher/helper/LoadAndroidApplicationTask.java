@@ -1,7 +1,9 @@
 package dk.aau.cs.giraf.launcher.helper;
 
 import android.app.Activity;
+import android.app.ApplicationErrorReport;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
@@ -11,12 +13,18 @@ import android.widget.ScrollView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
+import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
+import dk.aau.cs.giraf.oasis.lib.controllers.ProfileApplicationController;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.oasis.lib.models.ProfileApplication;
 
 public class LoadAndroidApplicationTask extends AsyncTask<Application, View, HashMap<String, AppInfo>> {
 
@@ -27,6 +35,7 @@ public class LoadAndroidApplicationTask extends AsyncTask<Application, View, Has
     private int iconSize;
     private View.OnClickListener onClickListener;
     private List<LinearLayout> appRowsToAdd;
+    private Set<String> selectedApps;
 
     public LoadAndroidApplicationTask(Context context, Profile currentUser, Profile guardian, LinearLayout targetLayout, int iconSize, View.OnClickListener onClickListener){
         this.context = context;
@@ -50,6 +59,8 @@ public class LoadAndroidApplicationTask extends AsyncTask<Application, View, Has
 
     @Override
     protected HashMap<String, AppInfo> doInBackground(Application... applications) {
+        SharedPreferences preferences = LauncherUtility.getSharedPreferencesForCurrentUser(context, currentUser);
+        selectedApps = preferences.getStringSet(context.getResources().getString(R.string.selected_android_apps_key), new HashSet<String>());
         HashMap<String, AppInfo> appInfoHash = new HashMap<String, AppInfo>();
         if (applications != null && applications.length != 0) {
             //Fill AppInfo hash map with AppInfo objects for each app
@@ -113,6 +124,7 @@ public class LoadAndroidApplicationTask extends AsyncTask<Application, View, Has
                 newAppView.setLayoutParams(params);
                 newAppView.setScaleX(0.9f);
                 newAppView.setScaleY(0.9f);
+                newAppView.setTag(Constants.NO_APP_TAG);
                 currentAppRow.addView(newAppView);
                 appsInLastRow++;
             }
@@ -121,12 +133,49 @@ public class LoadAndroidApplicationTask extends AsyncTask<Application, View, Has
             // show no apps available message
             Log.e(Constants.ERROR_TAG, "App list is null");
         }
+        AddAndMarkApplications(appInfoHash);
 
         return appInfoHash;
     }
 
     @Override
-    protected void onPostExecute(HashMap<String, AppInfo> appInfos) {
+    protected void onPostExecute(final HashMap<String, AppInfo> appInfos) {
+        //AddAndMarkApplications(appInfos);
+    }
+
+    private boolean UserHasGirafApplicationInView(ProfileApplicationController pac, Application app, Profile user)
+    {
+        List<ProfileApplication> profileApplications = pac.getListOfProfileApplicationsByProfileId(user);
+        ProfileApplication thisPA = pac.getProfileApplicationByProfileIdAndApplicationId(app,user);
+
+        if(profileApplications.contains(thisPA))
+            return true;
+        else
+            return false;
+    }
+
+    private void AddAndMarkApplications(final HashMap<String, AppInfo> appInfos)
+    {
+        if (context instanceof SettingsActivity) {
+            final ProfileApplicationController pac = new ProfileApplicationController(context);
+            for(final LinearLayout row : appRowsToAdd){
+                for (int j = 0; j < row.getChildCount(); j++) {
+                    AppImageView appImageView = (AppImageView) row.getChildAt(j);
+                    if (appImageView.getTag() != Constants.NO_APP_TAG) {
+                        AppInfo app = null;
+                        try {
+                            app = appInfos.get(appImageView.getTag().toString());
+                        } catch (Exception e) {
+                            Log.e(Constants.ERROR_TAG, "Undefined error again.");
+                        }
+                        if (app != null && (UserHasGirafApplicationInView(pac, app.getApp(), currentUser) || selectedApps.contains(app.getActivity()))) {
+                            appImageView.setChecked(true);
+                        }
+                    }
+                }
+            }
+        }
+
         ((Activity) context).runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -134,6 +183,8 @@ public class LoadAndroidApplicationTask extends AsyncTask<Application, View, Has
                     targetLayout.addView(row);
                 }
             }
+
         });
+
     }
 }
