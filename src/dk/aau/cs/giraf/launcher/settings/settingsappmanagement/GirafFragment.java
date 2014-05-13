@@ -119,6 +119,7 @@ public class GirafFragment extends AppContainerFragment {
             }
             else{
                 haveAppsBeenAdded = true;
+                /*
                 for (int i = 0; i < appView.getChildCount();i++)
                 {
                     LinearLayout thisLayout = (LinearLayout)appView.getChildAt(i);
@@ -139,7 +140,7 @@ public class GirafFragment extends AppContainerFragment {
                             appImageView.setChecked(true);
                         }
                     }
-                }
+                }*/
             }
         }
         loadedApps = apps;
