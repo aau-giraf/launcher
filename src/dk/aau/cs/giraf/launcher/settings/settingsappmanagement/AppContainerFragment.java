@@ -13,6 +13,7 @@ import android.widget.ProgressBar;
 import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.oasis.lib.models.Application;
 
 /**
  * Created by Vagner on 01-05-14.
@@ -21,7 +22,7 @@ public class AppContainerFragment extends Fragment{
 
     protected List<?> loadedApps;
     // This needs to be initialized in the subclasses
-    protected List<?> apps;
+    protected List<Application> apps;
     protected LinearLayout appView;
     protected boolean haveAppsBeenAdded;
     protected Context context;
