@@ -13,7 +13,7 @@ apply plugin: 'android'
 dependencies {
     compile 'com.android.support:support-v4:+'
     compile fileTree(dir: 'libs', include: '*.jar')
-    compile project(':android')
+    compile project(':barcodescanner')
     compile project(':GIRAF_Components')
     compile files('libs/libGoogleAnalyticsServices.jar')
 }

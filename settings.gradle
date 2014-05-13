@@ -1,4 +1,1 @@
-include ':OasisLib'
-include ':GIRAF_Components'
-include ':android'
-include ':Launcher'
+include 'barcodescanner', 'GIRAF_Components', 'OasisLib'
