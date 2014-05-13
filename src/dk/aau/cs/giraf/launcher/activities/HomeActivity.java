@@ -9,14 +9,12 @@ import android.util.Log;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
 
 import com.google.analytics.tracking.android.EasyTracker;
 
@@ -38,6 +36,7 @@ import dk.aau.cs.giraf.gui.GWidgetLogout;
 import dk.aau.cs.giraf.gui.GWidgetProfileSelection;
 import dk.aau.cs.giraf.gui.GWidgetUpdater;
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
@@ -568,7 +567,7 @@ public class HomeActivity extends Activity {
 
         @Override
         public void run() {
-            List<Application> girafAppsList = LauncherUtility.getVisibleGirafApps(mContext, mCurrentUser); // For home activity
+            List<Application> girafAppsList = ApplicationControlUtility.getAppsAvailableForUser(mContext, mCurrentUser); // For home activity
             SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(mContext, mCurrentUser);
             Set<String> androidAppsPackagenames = prefs.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
             List<Application> androidAppsList = LauncherUtility.convertPackageNamesToApplications(mContext, androidAppsPackagenames);
@@ -604,7 +603,7 @@ public class HomeActivity extends Activity {
         @Override
         protected HashMap<String, AppInfo> doInBackground(Application... applications) {
             HashMap<String, AppInfo> appInfos;
-            List<Application> girafAppsList = LauncherUtility.getVisibleGirafApps(context, currentUser); // For home activity
+            List<Application> girafAppsList = ApplicationControlUtility.getAppsAvailableForUser(context, currentUser); // For home activity
             SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(context, currentUser);
             Set<String> androidAppsPackagenames = prefs.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
             List<Application> androidAppsList = LauncherUtility.convertPackageNamesToApplications(context, androidAppsPackagenames);

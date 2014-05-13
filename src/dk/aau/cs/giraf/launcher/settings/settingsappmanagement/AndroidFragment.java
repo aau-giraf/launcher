@@ -21,6 +21,7 @@ import java.util.Set;
 
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.AppComparator;
+import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
@@ -153,7 +154,7 @@ public class AndroidFragment extends AppContainerFragment {
         @Override
         protected HashMap<String, AppInfo> doInBackground(Application... applications) {
             Log.d(Constants.ERROR_TAG, "Thread says working");
-            applications = LauncherUtility.getAndroidApplicationList(context, "dk.aau.cs.giraf").toArray(applications);
+            applications = ApplicationControlUtility.getAndroidApplicationList(context, "dk.aau.cs.giraf").toArray(applications);
             super.doInBackground(applications);
             appInfos = LauncherUtility.updateAppInfoHashMap(context, applications);
             //Remember that the apps have been added, so they are not added again by the listener

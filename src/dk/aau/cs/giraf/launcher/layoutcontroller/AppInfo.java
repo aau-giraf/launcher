@@ -1,15 +1,14 @@
 package dk.aau.cs.giraf.launcher.layoutcontroller;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 
 import java.util.List;
 
+import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
-import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 public class AppInfo extends Application {
 
@@ -98,7 +97,7 @@ public class AppInfo extends Application {
     private void loadIcon(Context context) {
         // Is supposed to allow for custom icons, but does not currently support this.
 
-        List<ResolveInfo> systemApps = LauncherUtility.getDeviceApps(context);
+        List<ResolveInfo> systemApps = ApplicationControlUtility.getAppsInstalledOnDevice(context);
 
         for (ResolveInfo app : systemApps) {
             if (app.activityInfo.name.equals(this.getActivity())) {

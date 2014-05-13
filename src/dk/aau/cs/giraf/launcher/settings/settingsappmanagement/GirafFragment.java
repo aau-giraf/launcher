@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
@@ -53,7 +54,7 @@ public class GirafFragment extends AppContainerFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         context = getActivity();
-        apps = LauncherUtility.getAvailableGirafAppsButLauncher(context);
+        apps = ApplicationControlUtility.getAvailableGirafAppsButLauncher(context);
         appView = (LinearLayout) view.findViewById(R.id.appContainer);
         currentUser = mCallback.getSelectedProfile();
 

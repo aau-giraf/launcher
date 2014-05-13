@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AndroidAppsFragmentInterface;
@@ -88,7 +89,7 @@ public class SettingsActivity extends Activity
         // Clone the input list to be able to remove invalid apps
         ArrayList<SettingsListItem> mAvailableSettingsAppList = (ArrayList<SettingsListItem>) list.clone();
         // Get all installed giraf apps
-        List<ResolveInfo> installedGirafApps = LauncherUtility.getDeviceGirafApps(this);
+        List<ResolveInfo> installedGirafApps = ApplicationControlUtility.getGirafAppsInstalledOnDevice(this);
 
         for (SettingsListItem settingsApp : list) {
             for (ResolveInfo installedApp : installedGirafApps) {

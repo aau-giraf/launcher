@@ -17,7 +17,6 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -265,10 +264,10 @@ public abstract class LauncherUtility {
      * Gets the GIRAF apps that are usable by the given user, relative to their settings and the system they're logged in on.
      *
      * @param context Context of the current activity.
-     * @param user    The user to find apps for.
+     * param user  The user to find apps for.
      * @return List of apps that are usable by this user on this device.
-     */
-    public static List<Application> getVisibleGirafApps(Context context, Profile user) {
+     *
+    public static List<Application> getAppsAvailableForUser(Context context, Profile user) {
         Helper helper = getOasisHelper(context);
 
         List<Application> userApps = helper.applicationHelper.getApplicationsByProfile(user);
@@ -280,7 +279,7 @@ public abstract class LauncherUtility {
 
         // Remove all apps from user's list of apps that are not installed on the device and exclude the launcher it self.
         for (int i = 0; i < userApps.size(); i++) {
-            if (!appsContain_A(deviceApps, userApps.get(i)) || userApps.get(i).getPackage().equals("dk.aau.cs.giraf.launcher")) {
+            if (!doesApplicationListContainApp(deviceApps, userApps.get(i)) || userApps.get(i).getPackage().equals("dk.aau.cs.giraf.launcher")) {
                 userApps.remove(i);
                 i--;
             }
@@ -294,19 +293,19 @@ public abstract class LauncherUtility {
      *
      * @param context Context of the current activity.
      * @return List of apps available for use on the device.
-     */
+     *
     private static List<Application> getAvailableGirafApps(Context context) {
         Helper helper = getOasisHelper(context);
 
         List<Application> dbApps = helper.applicationHelper.getApplications();
-        List<ResolveInfo> deviceApps = getDeviceGirafApps(context);
+        List<ResolveInfo> deviceApps = getGirafAppsInstalledOnDevice(context);
 
         if (dbApps.isEmpty() || deviceApps.isEmpty()) {
             return new ArrayList<Application>();
         }
 
         for (int i = 0; i < dbApps.size(); i++) {
-            if (!appsContain_RI(deviceApps, dbApps.get(i))) {
+            if (!doesResolveInfoListContainApp(deviceApps, dbApps.get(i))) {
                 dbApps.remove(i);
                 i--;
             }
@@ -320,12 +319,12 @@ public abstract class LauncherUtility {
      *
      * @param context Context of the current activity.
      * @return List of apps available for use on the device.
-     */
+     *
     public static List<Application> getAvailableGirafAppsButLauncher(Context context) {
         Helper helper = getOasisHelper(context);
 
         List<Application> dbApps = helper.applicationHelper.getApplications();
-        List<ResolveInfo> deviceApps = getDeviceGirafApps(context);
+        List<ResolveInfo> deviceApps = getGirafAppsInstalledOnDevice(context);
 
         if (dbApps.isEmpty() || deviceApps.isEmpty()) {
             return new ArrayList<Application>();
@@ -334,7 +333,7 @@ public abstract class LauncherUtility {
         //TODO: Launcher name should not be hardcoded!
         for (int i = 0; i < dbApps.size(); i++) {
             String name = dbApps.get(i).getName();
-            if (!appsContain_RI(deviceApps, dbApps.get(i)) || name.equals("Launcher")) {
+            if (!doesResolveInfoListContainApp(deviceApps, dbApps.get(i)) || name.equals("Launcher")) {
                 dbApps.remove(i);
                 i--;
             }
@@ -348,9 +347,9 @@ public abstract class LauncherUtility {
      *
      * @param context Context of the current activity.
      * @return List of GIRAF apps.
-     */
-    public static List<ResolveInfo> getDeviceGirafApps(Context context) {
-        List<ResolveInfo> systemApps = getDeviceApps(context);
+     *
+    public static List<ResolveInfo> getGirafAppsInstalledOnDevice(Context context) {
+        List<ResolveInfo> systemApps = getAppsInstalledOnDevice(context);
 
         if (systemApps.isEmpty()) {
             return systemApps;
@@ -372,83 +371,16 @@ public abstract class LauncherUtility {
      *
      * @param context Context of the current activity.
      * @return List of apps.
-     */
-    public static List<ResolveInfo> getDeviceApps(Context context) {
+     *
+    public static List<ResolveInfo> getAppsInstalledOnDevice(Context context) {
         Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
 
         return context.getPackageManager().queryIntentActivities(mainIntent, 0);
     }
 
-    /**
-     * Checks whether a list of GIRAF apps installed on the system contains a specified app.
-     *
-     * @param systemApps List of apps (as ResolveInfos) to check.
-     * @param app        The app to check for.
-     * @return True if the app is contained in the list; otherwise false.
-     */
-    public static boolean appsContain_RI(List<ResolveInfo> systemApps, Application app) {
-        return appsContain_RI(systemApps, app.getPackage());
-    }
-
-    /**
-     * Checks whether a list of GIRAF apps installed on the system contains a specified app.
-     *
-     * @param systemApps  List of apps (as ResolveInfos) to check.
-     * @param packageName Package name of the app to check for.
-     * @return True if the app is contained in the list; otherwise false.
-     */
-    public static boolean appsContain_RI(List<ResolveInfo> systemApps, String packageName) {
-        for (ResolveInfo app : systemApps) {
-            if (app.activityInfo.packageName.equals(packageName)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Checks whether a list of GIRAF apps installed on the system contains a specified app.
-     *
-     * @param systemApps List of apps (as Apps) to check.
-     * @param app        The app to check for.
-     * @return True if the app is contained in the list; otherwise false.
-     */
-    public static boolean appsContain_A(List<Application> systemApps, Application app) {
-        return appsContain_A(systemApps, app.getPackage());
-    }
-
-    /**
-     * Checks whether a list of GIRAF apps installed on the system contains a specified app.
-     *
-     * @param systemApps  List of apps (as Apps) to check.
-     * @param packageName Package name of the app to check for.
-     * @return True if the app is contained in the list; otherwise false.
-     */
-    public static boolean appsContain_A(List<Application> systemApps, String packageName) {
-        for (Application app : systemApps) {
-            if (app.getPackage().equals(packageName)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static Helper getOasisHelper(Context context) {
-        Helper helper = null;
-        try {
-            helper = new Helper(context);
-        } catch (Exception e) {
-            sendExceptionGoogleAnalytics(context, e);
-            Log.e(Constants.ERROR_TAG, e.getMessage());
-        }
-        return helper;
-    }
-
     public static List<Application> getAndroidApplicationList(Context context, String filter){
-        List<ResolveInfo> allApps = getDeviceApps(context);
+        List<ResolveInfo> allApps = getAppsInstalledOnDevice(context);
         List<Application> result = new ArrayList<Application>();
         PackageManager packageManager = context.getPackageManager();
 
@@ -469,8 +401,65 @@ public abstract class LauncherUtility {
         return result;
     }
 
+    /**
+     * Checks whether a list of GIRAF apps installed on the system contains a specified app.
+     *
+     * param systemApps List of apps (as ResolveInfos) to check.
+     * param app        The app to check for.
+     * @return True if the app is contained in the list; otherwise false.
+     *
+    public static boolean doesResolveInfoListContainApp(List<ResolveInfo> systemApps, Application app) {
+        return doesResolveInfoListContainApp(systemApps, app.getPackage());
+    }
+
+    /**
+     * Checks whether a list of GIRAF apps installed on the system contains a specified app.
+     *
+     * param systemApps  List of apps (as ResolveInfos) to check.
+     * param packageName Package name of the app to check for.
+     * @return True if the app is contained in the list; otherwise false.
+     *
+    public static boolean doesResolveInfoListContainApp(List<ResolveInfo> systemApps, String packageName) {
+        for (ResolveInfo app : systemApps) {
+            if (app.activityInfo.packageName.equals(packageName)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks whether a list of GIRAF apps installed on the system contains a specified app.
+     *
+     * param systemApps List of apps (as Apps) to check.
+     * param app        The app to check for.
+     * @return True if the app is contained in the list; otherwise false.
+     *
+    public static boolean doesApplicationListContainApp(List<Application> systemApps, Application app) {
+        return doesApplicationListContainApp(systemApps, app.getPackage());
+    }
+
+    /**
+     * Checks whether a list of GIRAF apps installed on the system contains a specified app.
+     *
+     * param systemApps  List of apps (as Apps) to check.
+     * param packageName Package name of the app to check for.
+     * @return True if the app is contained in the list; otherwise false.
+     *
+    public static boolean doesApplicationListContainApp(List<Application> systemApps, String packageName) {
+        for (Application app : systemApps) {
+            if (app.getPackage().equals(packageName)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    */
+
     public static List<Application> convertPackageNamesToApplications(Context context, Set<String> packageNames){
-        List<ResolveInfo> allApps = getDeviceApps(context);
+        List<ResolveInfo> allApps = ApplicationControlUtility.getAppsInstalledOnDevice(context);
         List<Application> selectedApps = new ArrayList<Application>();
         PackageManager packageManager = context.getPackageManager();
 
@@ -494,213 +483,15 @@ public abstract class LauncherUtility {
         return selectedApps;
     }
 
-    public static LoadApplicationTask loadGirafApplicationsIntoView(Context context, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize, View.OnClickListener listener)
-    {
-        return loadGirafApplicationsIntoView(context, null, null, girafAppsList, targetLayout, iconSize, listener);
-    }
-
-    public static LoadApplicationTask loadGirafApplicationsIntoView(Context context, Profile currentUser, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize, View.OnClickListener listener)
-    {
-        return loadGirafApplicationsIntoView(context, currentUser, null, girafAppsList, targetLayout, iconSize, listener);
-    }
-
-    public static LoadApplicationTask loadGirafApplicationsIntoView(Context context, Profile currentUser, Profile guardian, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize)
-    {
-        return loadGirafApplicationsIntoView(context, currentUser, guardian, girafAppsList, targetLayout, iconSize, null);
-    }
-
-    public static LoadApplicationTask loadGirafApplicationsIntoView(Context context, Profile currentUser, Profile guardian, List<Application> girafAppsList, LinearLayout targetLayout, int iconSize, View.OnClickListener listener) {
-        //Get the list of apps to show in the container
-        //List<Application> girafAppsList = LauncherUtility.getAvailableGirafAppsButLauncher(mContext);
-        /*if (girafAppsList != null && !girafAppsList.isEmpty()) {
-            targetLayout.removeAllViews();
-
-            //Fill AppInfo hash map with AppInfo objects for each app
-            if (currentUser == null)
-                currentUser = LauncherUtility.getCurrentUser(context);
-
-            appInfoHash = updateAppInfoHashMap(context, girafAppsList, currentUser);
-            List<AppInfo> appInfos = new ArrayList<AppInfo>(appInfoHash.values());
-            Collections.sort(appInfos, new AppComparator(context));
-
-            int containerWidth = ((ScrollView) targetLayout.getParent()).getWidth();
-            int containerHeight = ((ScrollView) targetLayout.getParent()).getHeight();
-            // if we are in portrait swap width and height
-            if (containerHeight > containerWidth){
-                int temp = containerWidth;
-                containerWidth = containerHeight;
-                containerHeight = temp;
-                Log.d(Constants.ERROR_TAG, "Portrait mode detected. Width and height swapped.");
-            }
-
-            //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
-            int appsPrRow = getAmountOfAppsWithinBounds(containerWidth, iconSize);
-
-            //Calculate how many apps the screen can fit vertically on a single screen, and how much space is available for vertical padding
-            int appsPrColumn = getAmountOfAppsWithinBounds(containerHeight, iconSize);
-            int paddingHeight = getLayoutPadding(containerHeight, appsPrColumn, iconSize);
-
-            //Add the first row to the container
-            LinearLayout currentAppRow = new LinearLayout(context);
-            currentAppRow.setWeightSum(appsPrRow);
-            currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
-            currentAppRow.setPadding(0, paddingHeight, 0, paddingHeight);
-            targetLayout.addView(currentAppRow);
-
-            //Insert apps into the container, and add new rows as needed
-            for (AppInfo appInfo : appInfos) {
-                if (currentAppRow.getChildCount() == appsPrRow) {
-                    currentAppRow = new LinearLayout(context);
-                    currentAppRow.setWeightSum(appsPrRow);
-                    currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
-                    currentAppRow.setPadding(0, 0, 0, paddingHeight);
-                    targetLayout.addView(currentAppRow);
-                }
-
-                AppImageView newAppView = createGirafLauncherApp(context, currentUser, guardian, appInfo, targetLayout, listener);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
-                params.weight = 1f;
-                newAppView.setLayoutParams(params);
-                newAppView.setScaleX(0.9f);
-                newAppView.setScaleY(0.9f);
-                currentAppRow.addView(newAppView);
-            }
-
-            int appsInLastRow = ((LinearLayout)targetLayout.getChildAt(targetLayout.getChildCount() - 1)).getChildCount();
-
-            while (appsInLastRow < appsPrRow){
-                AppImageView newAppView = new AppImageView(context);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
-                params.weight = 1f;
-                newAppView.setLayoutParams(params);
-                newAppView.setScaleX(0.9f);
-                newAppView.setScaleY(0.9f);
-                currentAppRow.addView(newAppView);
-                appsInLastRow = ((LinearLayout)targetLayout.getChildAt(targetLayout.getChildCount() - 1)).getChildCount();
-            }
-
-        } else {
-            // show no apps available message
-            Log.e(Constants.ERROR_TAG, "App list is null");
-        }*/
-
-        LoadApplicationTask loadApplicationTask = new LoadApplicationTask(context, currentUser, guardian, targetLayout, iconSize, listener);
-        Application[] applications = new Application[girafAppsList.size()];
-        girafAppsList.toArray(applications);
-        loadApplicationTask.execute(applications);
-
-        return loadApplicationTask;
-    }
-
-    public static boolean loadOtherApplicationsIntoView(Context context, List<ResolveInfo> appList, LinearLayout targetLayout, int iconSize, Profile currentUser) {
-        return loadOtherApplicationsIntoView(context, appList, targetLayout, iconSize, null, currentUser);
-    }
-
-    public static boolean loadOtherApplicationsIntoView(Context context, List<ResolveInfo> appList, LinearLayout targetLayout, int iconSize, View.OnClickListener onClickListener, Profile currentUser) {
-        /*boolean success = false;
-
-        final SharedPreferences preferences;
-        if (currentUser == null)
-            preferences = LauncherUtility.getSharedPreferencesForCurrentUser(context);
-        else
-            preferences = LauncherUtility.getSharedPreferencesForCurrentUser(context, currentUser);
-
+    public static Helper getOasisHelper(Context context) {
+        Helper helper = null;
         try {
-            clearViewOnUIThread(context, targetLayout);
-            //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
-            int containerWidth = ((ScrollView) targetLayout.getParent()).getWidth();
-            int appsPrRow = getAmountOfAppsWithinBounds(containerWidth, iconSize);
-
-            //Calculate how many apps the screen can fit vertically on a single screen, and how much space is available for vertical padding
-            int containerHeight = ((ScrollView) targetLayout.getParent()).getHeight();
-            int appsPrColumn = getAmountOfAppsWithinBounds(containerHeight, iconSize);
-            int paddingHeight = getLayoutPadding(containerHeight, appsPrColumn, iconSize);
-            //Add the first row to the container
-            LinearLayout currentAppRow = new LinearLayout(context);
-            currentAppRow.setWeightSum(appsPrRow);
-            currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
-            currentAppRow.setPadding(0, paddingHeight, 0, paddingHeight);
-            //targetLayout.addView(currentAppRow);
-            addViewOnUIThread(context, targetLayout, currentAppRow);
-
-            //Insert apps into the container, and add new rows as needed
-            for (ResolveInfo app : appList) {
-                if (currentAppRow.getChildCount() == appsPrRow) {
-                    currentAppRow = new LinearLayout(context);
-                    currentAppRow.setWeightSum(appsPrRow);
-                    currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
-                    currentAppRow.setPadding(0, 0, 0, paddingHeight);
-                    //targetLayout.addView(currentAppRow);
-                    addViewOnUIThread(context, targetLayout, currentAppRow);
-                }
-
-                AppImageView newAppView;
-                if (onClickListener == null)
-                    newAppView = createAppView(context, targetLayout, app);
-                else
-                    newAppView = createAppView(context, targetLayout, app, onClickListener);
-
-                // Mark colors of the selected apps when settings is shown.
-                Set<String> selectedApps = preferences.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
-                if (selectedApps.contains(app.activityInfo.name)){
-                    newAppView.setChecked(true);
-                }
-
-                newAppView.setTag(app);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
-                params.weight = 1f;
-                newAppView.setLayoutParams(params);
-                newAppView.setScaleX(0.9f);
-                newAppView.setScaleY(0.9f);
-                //currentAppRow.addView(newAppView);
-                addViewOnUIThread(context, currentAppRow, newAppView);
-            }
-
-            int appsInLastRow = ((LinearLayout)targetLayout.getChildAt(targetLayout.getChildCount() - 1)).getChildCount();
-
-            while (appsInLastRow < appsPrRow){
-                ImageView newAppView = new ImageView(context);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
-                params.weight = 1f;
-                newAppView.setLayoutParams(params);
-                newAppView.setScaleX(0.9f);
-                newAppView.setScaleY(0.9f);
-                addViewOnUIThread(context, currentAppRow, newAppView);
-                //currentAppRow.addView(newAppView);
-                appsInLastRow = ((LinearLayout)targetLayout.getChildAt(targetLayout.getChildCount() - 1)).getChildCount();
-            }
-
-            success = true;
-        } catch (Exception e){
-            // Exception happend. Do nothing and return false
+            helper = new Helper(context);
+        } catch (Exception e) {
+            sendExceptionGoogleAnalytics(context, e);
             Log.e(Constants.ERROR_TAG, e.getMessage());
-            success = false;
-        }*/
-/*
-        LoadApplicationTask loadAndroidApplicationTask = new LoadApplicationTask(context, currentUser, targetLayout, iconSize, onClickListener);
-        ResolveInfo[] resolveInfos = new ResolveInfo[appList.size()];
-        appList.toArray(resolveInfos);
-        loadAndroidApplicationTask.execute(resolveInfos);*/
-
-        return true;
-    }
-
-    private static void clearViewOnUIThread(Context context, final ViewGroup container){
-        ((Activity) context).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                container.removeAllViews();
-            }
-        });
-    }
-
-    private static void addViewOnUIThread(Context context, final ViewGroup container, final View toAdd){
-        ((Activity) context).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                container.addView(toAdd);
-            }
-        });
+        }
+        return helper;
     }
 
     protected static int getAmountOfAppsWithinBounds(int containerSize, int iconSize) {
@@ -824,55 +615,6 @@ public abstract class LauncherUtility {
         shapeDrawable.getPaint().setColor(backgroundColor);
 
         appViewLayout.setBackgroundDrawable(shapeDrawable);
-    }
-
-    /**
-     * Retrieves all packages on the device as a list of Resolve Info.
-     * @param context Context of the application.
-     * @return A list of Resolve Info containing information of all discovered applications.
-     */
-    public static List<ResolveInfo> getApplicationsFromDevice(Context context){
-        return getApplicationsFromDevice(context, DEFAULT_PACKAGE_FILTER, true);
-    }
-
-    /**
-     * Retrieves a list of applications of on the device which fulfills the filter given through
-     * packageFilter.
-     * @param context Context of the application.
-     * @param packageFilter Filter which needs to be fulfilled.
-     * @return A list of Resolve Info containing information of the applications found on device.
-     */
-    public static List<ResolveInfo> getApplicationsFromDevice(Context context, String packageFilter, boolean shouldContainFilter){
-        List<ResolveInfo> appInfo = new ArrayList<ResolveInfo>();
-        List<ResolveInfo> apps = getDeviceApps(context);
-
-        for (ResolveInfo app : apps){
-            if (!packageFilter.equals(DEFAULT_PACKAGE_FILTER) && shouldIncludeApp(app.activityInfo.packageName, packageFilter, shouldContainFilter))
-                appInfo.add(app);
-        }
-        return appInfo;
-    }
-
-    /**
-     * Determines whether an application fulfills the requirements of the given filter.
-     * @param packageName Package name of the application.
-     * @param packageFilter Filter which it needs to fulfill.
-     * @return true if the filter is fulfilled false otherwise.
-     */
-    private static boolean shouldIncludeApp(String packageName, String packageFilter, boolean shouldContainFilter){
-        boolean result = false;
-
-        try {
-            if (packageName.toLowerCase().contains(packageFilter.toLowerCase())){
-                result = shouldContainFilter;
-            } else {
-                result = !shouldContainFilter;
-            }
-        } catch (Exception e){
-            // An exception happened act as filter was not fulfilled. Return false
-        }
-
-        return result;
     }
 
     /**
