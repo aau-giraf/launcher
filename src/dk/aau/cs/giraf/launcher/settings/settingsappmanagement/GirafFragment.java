@@ -15,6 +15,7 @@ import java.util.List;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
+import dk.aau.cs.giraf.launcher.helper.LoadAndroidApplicationTask;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.oasis.lib.controllers.ProfileApplicationController;
@@ -107,8 +108,12 @@ public class GirafFragment extends AppContainerFragment {
 
         if (loadedApps == null || loadedApps.size() != apps.size()){
             //Remember that the apps have been added, so they are not added again by the listener
-            LauncherUtility.loadGirafApplicationsIntoView(context, currentUser, (List<Application>) apps, appView, 110, listener);
-            appInfos = LauncherUtility.loadAppInfos(context, (List<Application>)apps, currentUser);
+            LoadAndroidApplicationTask loadAndroidApplicationTask = new LoadAndroidApplicationTask(context, currentUser, null, appView, 110, listener);
+            Application[] applications = new Application[apps.size()];
+            apps.toArray(applications);
+            LoadAndroidApplicationTask load =  (LoadAndroidApplicationTask) loadAndroidApplicationTask.execute(applications);
+            //LauncherUtility.loadGirafApplicationsIntoView(context, currentUser, (List<Application>) apps, appView, 110, listener);
+            appInfos = LauncherUtility.loadAppInfos(context, (List<Application>) apps, currentUser);
             if (appInfos == null){
                 haveAppsBeenAdded = false;
             }

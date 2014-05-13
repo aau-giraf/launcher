@@ -1,6 +1,7 @@
 package dk.aau.cs.giraf.launcher.helper;
 
 import android.app.Activity;
+import android.app.ApplicationErrorReport;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -15,8 +16,11 @@ import java.util.List;
 
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
+import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
+import dk.aau.cs.giraf.oasis.lib.controllers.ProfileApplicationController;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.oasis.lib.models.ProfileApplication;
 
 public class LoadAndroidApplicationTask extends AsyncTask<Application, View, HashMap<String, AppInfo>> {
 
@@ -113,6 +117,7 @@ public class LoadAndroidApplicationTask extends AsyncTask<Application, View, Has
                 newAppView.setLayoutParams(params);
                 newAppView.setScaleX(0.9f);
                 newAppView.setScaleY(0.9f);
+                newAppView.setTag("-1");
                 currentAppRow.addView(newAppView);
                 appsInLastRow++;
             }
@@ -126,14 +131,48 @@ public class LoadAndroidApplicationTask extends AsyncTask<Application, View, Has
     }
 
     @Override
-    protected void onPostExecute(HashMap<String, AppInfo> appInfos) {
+    protected void onPostExecute(final HashMap<String, AppInfo> appInfos) {
         ((Activity) context).runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 for(LinearLayout row : appRowsToAdd){
                     targetLayout.addView(row);
+                    if(context instanceof SettingsActivity)
+                    {
+                        for(int j = 0; j < row.getChildCount(); j++)
+                        {
+                            AppImageView appImageView = (AppImageView) row.getChildAt(j);
+                            ProfileApplicationController pac = new ProfileApplicationController(context);
+
+                            if(appImageView.getTag() != "-1")
+                            {
+                                AppInfo app = null;
+                                try{
+                                    app = appInfos.get(appImageView.getTag().toString());
+                                }
+                                catch (Exception e)  {
+                                    Log.e(Constants.ERROR_TAG, "Undefined error again.");
+                                }
+                                if(app != null && UserHasApplicationInView(pac, app.getApp(), currentUser))
+                                {
+                                    appImageView.setChecked(true);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         });
+    }
+
+    private boolean UserHasApplicationInView(ProfileApplicationController pac, Application app, Profile user)
+    {
+        List<ProfileApplication> profileApplications = pac.getListOfProfileApplicationsByProfileId(user);
+        ProfileApplication thisPA = pac.getProfileApplicationByProfileIdAndApplicationId(app,user);
+
+        if(profileApplications.contains(thisPA))
+            return true;
+        else
+            return false;
     }
 }
