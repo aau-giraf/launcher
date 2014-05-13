@@ -2,6 +2,7 @@ package dk.aau.cs.giraf.launcher.settings.settingsappmanagement;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
@@ -91,7 +93,6 @@ public class GirafFragment extends AppContainerFragment {
     @Override
     public void onStart() {
         super.onStart();
-        reloadApplications();
     }
 
     @Override
@@ -106,7 +107,8 @@ public class GirafFragment extends AppContainerFragment {
 
         if (loadedApps == null || loadedApps.size() != apps.size()){
             //Remember that the apps have been added, so they are not added again by the listener
-            appInfos = LauncherUtility.loadGirafApplicationsIntoView(context, currentUser, (List<Application>) apps, appView, 110, listener);
+            LauncherUtility.loadGirafApplicationsIntoView(context, currentUser, (List<Application>) apps, appView, 110, listener);
+            appInfos = LauncherUtility.loadAppInfos(context, (List<Application>)apps, currentUser);
             if (appInfos == null){
                 haveAppsBeenAdded = false;
             }
@@ -121,11 +123,15 @@ public class GirafFragment extends AppContainerFragment {
                         ProfileApplicationController pac = new ProfileApplicationController(context);
 
                         AppInfo app = null;
-                        try{app = appInfos.get(appImageView.getTag().toString());}
-                        catch (Exception e)  {}
+                        try{
+                            app = appInfos.get(appImageView.getTag().toString());
+                        }
+                        catch (Exception e)  {
+                            Log.e(Constants.ERROR_TAG, e.getMessage());
+                        }
                         if(app != null && UserHasApplicationInView(pac, app.getApp(), currentUser))
                         {
-                            appImageView.toggle();
+                            appImageView.setChecked(true);
                         }
                     }
                 }
