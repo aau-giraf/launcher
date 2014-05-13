@@ -718,6 +718,7 @@ public abstract class LauncherUtility {
      */
     public static HashMap<String,AppInfo> updateAppInfoHashMap(Context context, List<Application> appsList) {
         Application[] appArray = new Application[appsList.size()];
+        appArray = appsList.toArray(appArray);
 
         return updateAppInfoHashMap(context, appArray);
     }
