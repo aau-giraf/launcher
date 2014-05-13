@@ -18,10 +18,6 @@ public final class Constants {
 	public static final String APP_PACKAGE_NAME = "appPackageName";
 	public static final String APP_ACTIVITY_NAME = "appActivityName";
     public static final String APP_COLOR = "appBackgroundColor";
-
-    // Keys for settings
-    public static final String SELECTED_ANDROID_APPS = "selected_android_apps";
-    public static final String ICON_SIZE_PREF = "icon_size_preference";
 	
 	// Logo activity
     public static final int LOGO_ANIMATION_DURATION = 2000;

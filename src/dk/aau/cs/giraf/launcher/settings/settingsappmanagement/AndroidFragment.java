@@ -70,7 +70,7 @@ public class AndroidFragment extends AppContainerFragment {
         appView = (LinearLayout) view.findViewById(R.id.appContainer);
         currentUser = mCallback.getSelectedProfile();
         preferences = LauncherUtility.getSharedPreferencesForCurrentUser(getActivity(), currentUser);
-        selectedApps = preferences.getStringSet(Constants.SELECTED_ANDROID_APPS, new HashSet<String>());
+        selectedApps = preferences.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
 
         return view;
     }
@@ -114,8 +114,8 @@ public class AndroidFragment extends AppContainerFragment {
             selectedApps = new HashSet<String>();
 
         SharedPreferences.Editor editor = preferences.edit();
-        editor.remove(Constants.SELECTED_ANDROID_APPS).commit(); // Remove to ensure that the new set is written to file.
-        editor.putStringSet(Constants.SELECTED_ANDROID_APPS, selectedApps);
+        editor.remove(getString(R.string.selected_android_apps_key)).commit(); // Remove to ensure that the new set is written to file.
+        editor.putStringSet(getString(R.string.selected_android_apps_key), selectedApps);
         editor.apply();
     }
 
