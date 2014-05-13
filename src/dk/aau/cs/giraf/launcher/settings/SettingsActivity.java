@@ -68,6 +68,7 @@ public class SettingsActivity extends Activity
         /************************************************
         *** Add applications in the giraf suite below ***
         *************************************************/
+        // TODO: Add giraf applications with settings here
 
         // Cars
         addApplicationByPackageName("dk.aau.cs.giraf.cars");
