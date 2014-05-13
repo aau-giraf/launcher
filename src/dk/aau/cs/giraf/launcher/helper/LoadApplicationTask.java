@@ -1,6 +1,5 @@
 package dk.aau.cs.giraf.launcher.helper;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -13,7 +12,6 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -82,7 +80,7 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
             if (currentUser == null)
                 currentUser = LauncherUtility.getCurrentUser(context);
 
-            appInfoHash = LauncherUtility.updateAppInfoHashMap(context, applications);
+            appInfoHash = AppViewCreationUtility.updateAppInfoHashMap(context, applications);
             List<AppInfo> appInfoList = new ArrayList<AppInfo>(appInfoHash.values());
             Collections.sort(appInfoList, new AppComparator(context));
 
@@ -97,7 +95,7 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
             }
 
             //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
-            int appsPrRow = LauncherUtility.getAmountOfAppsWithinBounds(containerWidth, iconSize);
+            int appsPrRow = AppViewCreationUtility.getAmountOfAppsWithinBounds(containerWidth, iconSize);
 
             if(appInfoHash.size() % appsPrRow == 0)
             {
@@ -105,29 +103,21 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
             }
 
             //Calculate how many apps the screen can fit vertically on a single screen, and how much space is available for vertical padding
-            int appsPrColumn = LauncherUtility.getAmountOfAppsWithinBounds(containerHeight, iconSize);
-            int paddingHeight = LauncherUtility.getLayoutPadding(containerHeight, appsPrColumn, iconSize);
+            int appsPrColumn = AppViewCreationUtility.getAmountOfAppsWithinBounds(containerHeight, iconSize);
+            int paddingHeight = AppViewCreationUtility.getLayoutPadding(containerHeight, appsPrColumn, iconSize);
 
             //Add the first row to the container
-            LinearLayout currentAppRow = new LinearLayout(context);
-            currentAppRow.setWeightSum(appsPrRow);
-            currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
-            currentAppRow.setPadding(0, paddingHeight, 0, paddingHeight);
-            currentAppRow.setLayoutParams(targetLayout.getLayoutParams());
+            LinearLayout currentAppRow = createNewRow(appsPrRow, paddingHeight, true);
             appRowsToAdd.add(currentAppRow);
 
             //Insert apps into the container, and add new rows as needed
             for (AppInfo appInfo : appInfoList) {
                 if (currentAppRow.getChildCount() == appsPrRow) {
-                    currentAppRow = new LinearLayout(context);
-                    currentAppRow.setWeightSum(appsPrRow);
-                    currentAppRow.setOrientation(LinearLayout.HORIZONTAL);
-                    currentAppRow.setPadding(0, 0, 0, paddingHeight);
-                    currentAppRow.setLayoutParams(targetLayout.getLayoutParams());
+                    currentAppRow = createNewRow(appsPrRow,paddingHeight,false);
                     appRowsToAdd.add(currentAppRow);
                 }
 
-                AppImageView newAppView = LauncherUtility.createGirafLauncherApp(context, currentUser, guardian, appInfo, targetLayout, onClickListener);
+                AppImageView newAppView = AppViewCreationUtility.createAppImageView(context, currentUser, guardian, appInfo, targetLayout, onClickListener);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
                 params.setMargins(2,2,2,2);
                 params.weight = 1f;
@@ -197,8 +187,7 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
             ((Activity) context).findViewById(R.id.noAppsMessage).setVisibility(View.VISIBLE);
     }
 
-    private boolean UserHasGirafApplicationInView(ProfileApplicationController pac, Application app, Profile user)
-    {
+    private boolean UserHasGirafApplicationInView(ProfileApplicationController pac, Application app, Profile user){
         List<ProfileApplication> profileApplications = pac.getListOfProfileApplicationsByProfileId(user);
         ProfileApplication thisPA = pac.getProfileApplicationByProfileIdAndApplicationId(app,user);
 
@@ -208,8 +197,7 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
             return false;
     }
 
-    private void markApplications(final HashMap<String, AppInfo> appInfos)
-    {
+    private void markApplications(final HashMap<String, AppInfo> appInfos){
         if (context instanceof SettingsActivity) {
             final ProfileApplicationController pac = new ProfileApplicationController(context);
             for(final LinearLayout row : appRowsToAdd){
@@ -229,5 +217,20 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
                 }
             }
         }
+    }
+
+    private LinearLayout createNewRow(int appsPrRow, int paddingHeight, boolean isFirstRow){
+        LinearLayout newAppRow = new LinearLayout(context);
+        newAppRow = new LinearLayout(context);
+        newAppRow.setWeightSum(appsPrRow);
+        newAppRow.setOrientation(LinearLayout.HORIZONTAL);
+        if(!isFirstRow)
+            newAppRow.setPadding(0, 0, 0, paddingHeight);
+        else
+            newAppRow.setPadding(0, paddingHeight, 0, paddingHeight);
+
+        newAppRow.setLayoutParams(targetLayout.getLayoutParams());
+
+        return newAppRow;
     }
 }
