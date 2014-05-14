@@ -46,8 +46,7 @@
                 android:id="@+id/profile_widget"
                 android:layout_width="@dimen/profile_selection_width"
                 android:layout_height="@dimen/profile_selection_height"
-                android:layout_alignParentLeft="true">
-            </dk.aau.cs.giraf.gui.GWidgetProfileSelection>
+                android:layout_alignParentLeft="true" />
 
             <dk.aau.cs.giraf.gui.GButtonSettings
                 android:id="@+id/settingsbutton"
