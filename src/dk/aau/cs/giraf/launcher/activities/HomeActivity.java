@@ -49,7 +49,7 @@ import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.oasis.lib.models.ProfileApplication;
 import dk.aau.cs.giraf.oasis.lib.models.Setting;
-import dk.aau.cs.giraf.settingslib.settingslib.SettingsUtility;
+import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 
 /**
  * The primary activity of Launcher. Allows the user to start other GIRAF apps and access the settings

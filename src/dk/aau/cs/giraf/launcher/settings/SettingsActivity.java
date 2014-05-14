@@ -23,7 +23,6 @@ import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AndroidAppsFragmentInterface;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementSettings;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
-import dk.aau.cs.giraf.settingslib.settingslib.Fragments.LauncherSettings;
 
 public class SettingsActivity extends Activity
         implements SettingsListFragment.SettingsListFragmentListener,
@@ -60,7 +59,7 @@ public class SettingsActivity extends Activity
 
         // Launcher
         addApplicationByPackageName("dk.aau.cs.giraf.launcher",
-                new LauncherSettings(LauncherUtility.getSharedPreferenceUser(mCurrentUser)));
+                new SettingsLauncher(LauncherUtility.getSharedPreferenceUser(mCurrentUser)));
 
         // Application management
         addApplicationByName(getString(R.string.apps_list_label),
