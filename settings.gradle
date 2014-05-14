@@ -1,1 +1,3 @@
-include 'barcodescanner', 'GIRAF_Components', 'OasisLib'
+include ':barcodescanner'
+include ':GIRAF_Components'
+include ':OasisLib'
