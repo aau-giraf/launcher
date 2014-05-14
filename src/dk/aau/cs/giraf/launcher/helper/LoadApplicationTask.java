@@ -47,7 +47,7 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
         this.currentUser = currentUser;
         this.guardian = guardian;
         this.targetLayout = targetLayout;
-        this.iconSize = SettingsUtility.convertToDP(context, iconSize);
+        this.iconSize = LauncherUtility.intToDP(context, iconSize);
         this.onClickListener = onClickListener;
         appRowsToAdd = new ArrayList<LinearLayout>();
     }
