@@ -14,7 +14,9 @@ import java.util.Date;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
+import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 import dk.aau.cs.giraf.oasis.lib.Helper;
+import dk.aau.cs.giraf.oasis.lib.controllers.ProfileController;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 /**
@@ -23,6 +25,7 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
  */
 public class MainActivity extends Activity implements Animation.AnimationListener{
     private Context mContext;
+    private int oldSessionGuardianID = -1;
 
     /* ************* DEBUGGING MODE ************* */
     // TODO: ONLY USED FOR DEBUGGING PURPOSES!!!
@@ -63,16 +66,27 @@ public class MainActivity extends Activity implements Animation.AnimationListene
     @Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
+
+        boolean skipAnimation = false;
+
 	    setContentView(R.layout.logo);
 
         mContext = this.getApplicationContext();
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        //Load the splash animation
         Animation logoAnimation = AnimationUtils.loadAnimation(mContext, R.animator.rotatelogo);
-        boolean skipAnimationPref = prefs.getBoolean(getString(R.string.show_animation_preference_key), true);
+
+        //Load the preference determining whether the animation should be shown
+        findOldSession();
+        if (oldSessionGuardianID != -1) {
+            Profile oldSessionProfile = new ProfileController(mContext).getProfileById(oldSessionGuardianID);
+            SharedPreferences prefs = SettingsUtility.getLauncherSettings(mContext, LauncherUtility.getSharedPreferenceUser(oldSessionProfile));
+            skipAnimation = prefs.getBoolean(getString(R.string.show_animation_preference_key), false);
+        }
+
 
         //Decide whether to skip animation, according to debug mode
-        if ((DEBUG_MODE && SKIP_SPLASH_SCREEN) || !skipAnimationPref)
+        if ((DEBUG_MODE && SKIP_SPLASH_SCREEN) || skipAnimation)
         {
             startNextActivity();
         }
@@ -178,5 +192,14 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         intent.putExtra(Constants.GUARDIAN_ID, profile.getId());
         LauncherUtility.saveLogInData(mContext, profile.getId(), new Date().getTime());
         return intent;
+    }
+
+    private void findOldSession() {
+        if (LauncherUtility.sessionExpired(mContext)) {
+            oldSessionGuardianID = -1;
+        } else {
+            SharedPreferences sharedPreferences = getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
+            oldSessionGuardianID = sharedPreferences.getInt(Constants.GUARDIAN_ID, -1);
+        }
     }
 }
