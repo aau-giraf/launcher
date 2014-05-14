@@ -56,18 +56,11 @@
                 android:layout_below="@id/profile_widget"
                 android:layout_marginTop="15dp" />
 
-            <dk.aau.cs.giraf.gui.GWidgetCalendar
-                android:id="@+id/calendarwidget"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_below="@id/connectivitywidget"
-                android:layout_marginTop="15dp" />
-
             <dk.aau.cs.giraf.gui.GButtonSettings
                 android:id="@+id/settingsbutton"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:layout_below="@id/calendarwidget"
+                android:layout_below="@id/connectivitywidget"
                 android:layout_marginTop="15dp" />
 
             <dk.aau.cs.giraf.gui.GWidgetLogout
