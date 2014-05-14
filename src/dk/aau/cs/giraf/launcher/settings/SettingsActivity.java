@@ -220,7 +220,7 @@ public class SettingsActivity extends Activity
         // Start as a new task to enable stepping back to settings
         androidSettingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        addApplicationByName("Android Indstillinger",
+        addApplicationByName(getResources().getString(R.string.giraf_settings_name),
                 androidSettingsIntent, getResources().getDrawable(R.drawable.ic_android));
     }
 
