@@ -83,7 +83,6 @@ public class HomeActivity extends Activity {
     private ScrollView mAppsScrollView;
     private Timer mAppsUpdater;
 
-
     private RelativeLayout.LayoutParams mAppsScrollViewParams;
 
     /**
@@ -408,7 +407,6 @@ public class HomeActivity extends Activity {
      * @see dk.aau.cs.giraf.gui.GButtonSettings
 	 */
 	private void loadWidgets() {
-        GWidgetConnectivity connectivityWidget = (GWidgetConnectivity) findViewById(R.id.connectivitywidget);
         GWidgetLogout logoutWidget = (GWidgetLogout) findViewById(R.id.logoutwidget);
         GWidgetProfileSelection profileSelectionWidget = (GWidgetProfileSelection) findViewById(R.id.profile_widget);
         GButtonSettings settingsButton = (GButtonSettings) findViewById(R.id.settingsbutton);
@@ -423,7 +421,6 @@ public class HomeActivity extends Activity {
 
         //Set up widget updater, which updates the widget's view regularly, according to its status.
 		mWidgetUpdater = new GWidgetUpdater();
-		mWidgetUpdater.addWidget(connectivityWidget);
 
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override

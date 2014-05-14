@@ -49,18 +49,11 @@
                 android:layout_alignParentLeft="true">
             </dk.aau.cs.giraf.gui.GWidgetProfileSelection>
 
-            <dk.aau.cs.giraf.gui.GWidgetConnectivity
-                android:id="@+id/connectivitywidget"
-                android:layout_width="@dimen/drawer_widget_dimension"
-                android:layout_height="@dimen/drawer_widget_dimension"
-                android:layout_below="@id/profile_widget"
-                android:layout_marginTop="@dimen/drawer_widget_marginTop" />
-
             <dk.aau.cs.giraf.gui.GButtonSettings
                 android:id="@+id/settingsbutton"
                 android:layout_width="@dimen/drawer_widget_dimension"
                 android:layout_height="@dimen/drawer_widget_dimension"
-                android:layout_below="@id/connectivitywidget"
+                android:layout_below="@id/profile_widget"
                 android:layout_marginTop="@dimen/drawer_widget_marginTop" />
 
             <dk.aau.cs.giraf.gui.GWidgetLogout
@@ -69,9 +62,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_marginTop="@dimen/drawer_widget_marginTop" />
-
         </RelativeLayout>
+        
     </dk.aau.cs.giraf.launcher.layoutcontroller.SideBarLayout>
+
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
