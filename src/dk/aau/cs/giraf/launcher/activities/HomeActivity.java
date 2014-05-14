@@ -498,7 +498,7 @@ public class HomeActivity extends Activity {
 
     /**
      * Task for observing if the set of available apps has changed.
-     *
+     * Is only instantiated after apps have been loaded the first time.
      * @see HomeActivity#loadApplications()
      */
     private class AppsObserver extends TimerTask {
