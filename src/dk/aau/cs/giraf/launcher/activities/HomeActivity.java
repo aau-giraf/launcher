@@ -478,8 +478,7 @@ public class HomeActivity extends Activity {
      */
     private void updateIconSize() {
         SharedPreferences prefs = SettingsUtility.getLauncherSettings(mContext, LauncherUtility.getSharedPreferenceUser(mCurrentUser));
-        int size = prefs.getInt(getString(R.string.icon_size_preference_key), 200);
-        mIconSize = SettingsUtility.convertToDP(this, size);
+        mIconSize = prefs.getInt(getString(R.string.icon_size_preference_key), 200);
     }
 
     /**
