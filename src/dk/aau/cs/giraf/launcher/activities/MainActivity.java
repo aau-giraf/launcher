@@ -67,7 +67,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 
-        boolean skipAnimation = false;
+        boolean showAnimation = false;
 
 	    setContentView(R.layout.logo);
 
@@ -81,12 +81,12 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         if (oldSessionGuardianID != -1) {
             Profile oldSessionProfile = new ProfileController(mContext).getProfileById(oldSessionGuardianID);
             SharedPreferences prefs = SettingsUtility.getLauncherSettings(mContext, LauncherUtility.getSharedPreferenceUser(oldSessionProfile));
-            skipAnimation = prefs.getBoolean(getString(R.string.show_animation_preference_key), false);
+            showAnimation = prefs.getBoolean(getString(R.string.show_animation_preference_key), true);
         }
 
 
         //Decide whether to skip animation, according to debug mode
-        if ((DEBUG_MODE && SKIP_SPLASH_SCREEN) || skipAnimation)
+        if ((DEBUG_MODE && SKIP_SPLASH_SCREEN) || !showAnimation)
         {
             startNextActivity();
         }
