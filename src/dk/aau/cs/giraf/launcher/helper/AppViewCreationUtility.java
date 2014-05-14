@@ -3,18 +3,12 @@ package dk.aau.cs.giraf.launcher.helper;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -22,15 +16,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.HashMap;
-import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.GAppDragger;
+import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
-import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
@@ -55,7 +48,7 @@ public class AppViewCreationUtility {
         for (Application app : appsList) {
             AppInfo appInfo = new AppInfo(app);
 
-            appInfo.load(context);
+            appInfo.loadIcon(context);
             appInfo.setBgColor(context.getResources().getColor(R.color.app_color_transparent));
 
             mAppInfoHashMap.put(String.valueOf(appInfo.getId()), appInfo);
