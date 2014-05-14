@@ -1,3 +1,8 @@
 include ':barcodescanner'
 include ':GIRAF_Components'
 include ':OasisLib'
+include ':local-db'
+include ':metadata'
+
+project(':local-db').projectDir = new File('local-db/')
+project(':metadata').projectDir = new File('local-db/metadata/')
