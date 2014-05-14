@@ -9,11 +9,13 @@ import android.util.Log;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
@@ -173,12 +175,17 @@ public class HomeActivity extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-        if(mAppsUpdater != null)
+        mIsAppsContainerInitialized = true; //This makes the Launcher load applications if it was paused before loading them.
+        if(mAppsUpdater != null){
             mAppsUpdater.cancel();
+            Log.d(Constants.ERROR_TAG, "Applications are no longer observed.");
+        }
 
-        Log.d(Constants.ERROR_TAG, "Applications are no longer observed.");
-		mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_STOP);
-        homeActivityAppTask.cancel(true);
+        if(mWidgetUpdater != null)
+		    mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_STOP);
+
+        if(homeActivityAppTask != null)
+            homeActivityAppTask.cancel(true);
 	}
 
     /**
@@ -193,7 +200,10 @@ public class HomeActivity extends Activity {
         if(mIsAppsContainerInitialized)
             reloadApplications();
         //startObservingApps();
-		mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_START);
+        if(mWidgetUpdater != null)
+		    mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_START);
+
+
 	}
 
     /**
@@ -204,9 +214,11 @@ public class HomeActivity extends Activity {
         //Do nothing, as the user should not be able to back out of this activity
     }
 
-    //TODO: What is going on with this function?
+    /**
+     * Force loadApplications to redraw but setting mCurrentlyLoadedApps to null
+     */
     private void reloadApplications(){
-        mCurrentLoadedApps = null; // Force loadApplications to redraw
+        mCurrentLoadedApps = null;
         loadApplications();
     }
 
@@ -463,8 +475,7 @@ public class HomeActivity extends Activity {
      */
     private void updateIconSize() {
         SharedPreferences prefs = SettingsUtility.getLauncherSettings(mContext, LauncherUtility.getSharedPreferenceUser(mCurrentUser));
-        int size = prefs.getInt(getString(R.string.icon_size_preference_key), 200);
-        mIconSize = SettingsUtility.convertToDP(this, size);
+        mIconSize = prefs.getInt(getString(R.string.icon_size_preference_key), 200);
     }
 
     /**

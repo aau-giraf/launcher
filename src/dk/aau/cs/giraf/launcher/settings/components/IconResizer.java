@@ -28,6 +28,7 @@ public class IconResizer extends Preference implements SeekBar.OnSeekBarChangeLi
     private static final int APP_MAX_SIZE = 200;
     private static final int ICON_MAX_SIZE = 120;
 
+    private Context mContext;
     private int mMaxValue      = 100;
     private int mMinValue      = 0;
     private int mInterval      = 1;
@@ -40,11 +41,13 @@ public class IconResizer extends Preference implements SeekBar.OnSeekBarChangeLi
 
     public IconResizer(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mContext = context;
         initPreference(context, attrs);
     }
 
     public IconResizer(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        mContext = context;
         initPreference(context, attrs);
     }
 
@@ -191,10 +194,11 @@ public class IconResizer extends Preference implements SeekBar.OnSeekBarChangeLi
     }
 
     private void updateAppSize(int newValue){
+        int dpValue = SettingsUtility.convertToDP(mContext, newValue);
         mAppImageView.setImageBitmap(mAppBitmap);
         ViewGroup.LayoutParams params = mAppImageView.getLayoutParams();
-        params.width = newValue;
-        params.height = newValue;
+        params.width = dpValue;
+        params.height = dpValue;
         mAppImageView.setLayoutParams(params);
     }
 
