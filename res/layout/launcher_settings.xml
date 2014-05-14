@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:giraf="http://giraf.cs.aau.dk">
-    <PreferenceCategory android:title="Hjemmeskærm"/>
+    xmlns:giraf="http://giraf.cs.aau.dk"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <PreferenceCategory android:title="Hjemmeskærm"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <SwitchPreference android:key="@string/show_animation_preference_key"
         android:title="Opstartsanimation"
@@ -17,4 +22,5 @@
         android:defaultValue="200"
         android:max="200"
         giraf:min="96"/>
+
 </PreferenceScreen>
