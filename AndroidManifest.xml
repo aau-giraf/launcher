@@ -19,17 +19,14 @@
         android:icon="@drawable/ic_giraf"
         android:label="@string/application_name"
         android:allowBackup="true">
-        <uses-library android:name="android.test.runner" />
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/application_name"
             android:screenOrientation="landscape"
             android:noHistory="true"
-            android:theme="@android:style/Theme.NoTitleBar"
-            >
+            android:theme="@android:style/Theme.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -40,7 +37,7 @@
             android:label="@string/application_name"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.NoTitleBar"
-            android:noHistory="true" >
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="dk.aau.cs.giraf.launcher.AUTHENTICATE" />
                 <category android:name="dk.aau.cs.giraf.launcher.GIRAF" />
@@ -61,17 +58,10 @@
             </intent-filter>
         </activity>
         <activity
-                android:name="dk.aau.cs.giraf.launcher.settings.SettingsActivity"
+                android:name=".settings.SettingsActivity"
                 android:label="@string/giraf_settings_name"
                 android:theme="@android:style/Theme.Holo.Light.NoActionBar"
                 android:screenOrientation="landscape">
-            <intent-filter>
-                <!--
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                -->
-            </intent-filter>
         </activity>
     </application>
 
