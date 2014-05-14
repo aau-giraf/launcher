@@ -86,7 +86,7 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
 
             int containerWidth = ((ScrollView) targetLayout.getParent()).getWidth();
             int containerHeight = ((ScrollView) targetLayout.getParent()).getHeight();
-            // if we are in portrait swap width and height
+            //If we are in portrait swap width and height
             if (containerHeight > containerWidth){
                 int temp = containerWidth;
                 containerWidth = containerHeight;
@@ -97,10 +97,10 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
             //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
             int appsPrRow = getAmountOfAppsWithinBounds(containerWidth, iconSize);
 
-            if(appInfoHash.size() % appsPrRow == 0)
+            /*if(appInfoHash.size() % appsPrRow == 0)
             {
                 appsPrRow--;
-            }
+            }*/
 
             //Calculate how many apps the screen can fit vertically on a single screen, and how much space is available for vertical padding
             int appsPrColumn = getAmountOfAppsWithinBounds(containerHeight, iconSize);
@@ -128,18 +128,21 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
                 }
             }
 
-            int appsInLastRow = (applications.length % appsPrRow);
+            int appsInLastRow = (appInfoList.size() % appsPrRow);
 
-            while (appsInLastRow < appsPrRow){
-                AppImageView newAppView = new AppImageView(context);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
-                params.setMargins(2,2,2,2);
-                params.weight = 1f;
-                newAppView.setLayoutParams(params);
-                newAppView.setTag(Constants.NO_APP_TAG);
-                currentAppRow.addView(newAppView);
-                appsInLastRow++;
+            if (appsInLastRow > 0) {
+                while (appsInLastRow < appsPrRow){
+                    AppImageView newAppView = new AppImageView(context);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
+                    params.setMargins(2,2,2,2);
+                    params.weight = 1f;
+                    newAppView.setLayoutParams(params);
+                    newAppView.setTag(Constants.NO_APP_TAG);
+                    currentAppRow.addView(newAppView);
+                    appsInLastRow++;
+                }
             }
+
 
         } else {
             // show no apps available message
