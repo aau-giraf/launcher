@@ -158,33 +158,39 @@ public class SettingsActivity extends Activity
         } catch (final PackageManager.NameNotFoundException e) {
             // Don't throw exception, just print stack trace
             e.printStackTrace();
+            // The package does not exist, return
+            return;
         }
 
-        if (appInfo != null) {
-            // Extract name of application
-            final String appName = setCorrectCase(pm.getApplicationLabel(appInfo).toString());
-            // Extract icon of application
-            final Drawable appIcon = pm.getApplicationIcon(appInfo);
+        Intent intent = new Intent();
+        // Add SETTINGS_INTENT key to package name to open the
+        // settings of the application
+        intent.setAction(packageName + SETTINGS_INTENT);
+        // Start as a new task to enable stepping back to settings
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-            // Add SETTINGS_INTENT key to package name to open the
-            // settings of the application
-            Intent intent = new Intent(packageName + SETTINGS_INTENT);
-            // Start as a new task to enable stepping back to settings
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        // Check if the intent exists
+        if(intent.resolveActivity(pm) != null) {
+            if (appInfo != null) {
+                // Extract name of application
+                final String appName = setCorrectCase(pm.getApplicationLabel(appInfo).toString());
+                // Extract icon of application
+                final Drawable appIcon = pm.getApplicationIcon(appInfo);
 
-            if (mCurrentUser.getRole() == Profile.Roles.CHILD) // A child profile has been selected, pass id
-                intent.putExtra(Constants.CHILD_ID, mCurrentUser.getId());
-            else // We are a guardian, do not add a child
-                intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
+                if (mCurrentUser.getRole() == Profile.Roles.CHILD) // A child profile has been selected, pass id
+                    intent.putExtra(Constants.CHILD_ID, mCurrentUser.getId());
+                else // We are a guardian, do not add a child
+                    intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
 
-            SettingsListItem item = new SettingsListItem(
-                    packageName,
-                    appName,
-                    appIcon,
-                    intent
-            );
-            // Add item to the list of applications
-            mAppList.add(item);
+                SettingsListItem item = new SettingsListItem(
+                        packageName,
+                        appName,
+                        appIcon,
+                        intent
+                );
+                // Add item to the list of applications
+                mAppList.add(item);
+            }
         }
     }
 
