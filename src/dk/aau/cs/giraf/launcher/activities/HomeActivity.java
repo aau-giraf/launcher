@@ -402,14 +402,12 @@ public class HomeActivity extends Activity {
 	/**
 	 * Loads the sidebar's widgets.
      *
-     * @see dk.aau.cs.giraf.gui.GWidgetCalendar
      * @see dk.aau.cs.giraf.gui.GWidgetConnectivity
      * @see dk.aau.cs.giraf.gui.GWidgetLogout
      * @see dk.aau.cs.giraf.gui.GWidgetProfileSelection
      * @see dk.aau.cs.giraf.gui.GButtonSettings
 	 */
 	private void loadWidgets() {
-        GWidgetCalendar calendarWidget = (GWidgetCalendar) findViewById(R.id.calendarwidget);
         GWidgetConnectivity connectivityWidget = (GWidgetConnectivity) findViewById(R.id.connectivitywidget);
         GWidgetLogout logoutWidget = (GWidgetLogout) findViewById(R.id.logoutwidget);
         GWidgetProfileSelection profileSelectionWidget = (GWidgetProfileSelection) findViewById(R.id.profile_widget);
@@ -425,7 +423,6 @@ public class HomeActivity extends Activity {
 
         //Set up widget updater, which updates the widget's view regularly, according to its status.
 		mWidgetUpdater = new GWidgetUpdater();
-		mWidgetUpdater.addWidget(calendarWidget);
 		mWidgetUpdater.addWidget(connectivityWidget);
 
         settingsButton.setOnClickListener(new View.OnClickListener() {
@@ -462,70 +459,6 @@ public class HomeActivity extends Activity {
             }
         });
 	}
-
-    /**
-     * Handles the background color of app icons.
-     * This has been temporarily disabled, as it turned out that the clients had no use for it.
-     * It is left in, as it may become useful at a later date. It may however not work, as it is
-     * tightly coupled with Oasis.
-     * You can read more in the report about the Launcher from 2014.
-     *
-     * @param appInfo The AppInfo object of the applications who's color is requested.
-     * @return An integer corresponding to the requested color.
-     */
-	private int getAppBackgroundColor(AppInfo appInfo) {
-		int[] colors = getResources().getIntArray(R.array.appcolors);
-//        ProfileApplication profileApplication = mHelper.profileApplicationHelper.getProfileApplicationByProfileIdAndApplicationId(appInfo.getApp(), mCurrentUser);
-//        Setting<String, String, String> launcherSettings = profileApplication.getSettings();
-//
-//		// If settings for the given app exists.
-//		if (launcherSettings != null && launcherSettings.containsKey(String.valueOf(appInfo.getApp().getId()))) {
-//			HashMap<String, String> appSetting = launcherSettings.get(String.valueOf(appInfo.getApp().getId()));
-//
-//			// If color settings for the given app exists.
-//			if (appSetting != null && appSetting.containsKey(Constants.COLOR_BG)) {
-//				return Integer.parseInt(appSetting.get(Constants.COLOR_BG));
-//			}
-//		}
-        //Randomize a color, if no setting exist, and save it.
-		int position = (new Random()).nextInt(colors.length);
-
-		// No settings existed, save the new.
-        //saveNewBgColor(colors[position], appInfo);
-
-        return colors[position];
-	}
-
-	/**
-	 * Saves a color in the settings of an app.
-     * This has been temporarily disabled, as it turned out that the clients had no use for it.
-     * It is left in, as it may become useful at a later date. It will currently not work as the code
-     * has been changed, to allow the project to compile, despite that necessary variables, constants
-     * and methods have since been removed.
-     * You can read more in the report about the Launcher from 2014.
-     *
-	 * @param color Color to save.
-	 * @param appInfo The AppInfo object of the app to save the color for.
-	 */
-	private void saveNewBgColor(int color, AppInfo appInfo) {
-        ProfileApplication profileApplication = mHelper.profileApplicationHelper.getProfileApplicationByProfileIdAndApplicationId(appInfo.getApp(), mCurrentUser);
-		Setting<String, String, String> launcherSettings = profileApplication.getSettings();
-
-		if (launcherSettings == null) {
-			launcherSettings = new Setting<String, String, String>();
-		}
-
-		// If no app specific settings exist.
-		if (!launcherSettings.containsKey(String.valueOf(appInfo.getApp().getId()))) {
-			launcherSettings.addValue(String.valueOf(appInfo.getApp().getId()), "", String.valueOf(color));
-		} else if (!launcherSettings.get(String.valueOf(appInfo.getApp().getId())).containsKey("")) {
-			/* If no app specific color settings exist.*/
-			launcherSettings.get(String.valueOf(appInfo.getApp().getId())).put("", String.valueOf(color));
-		}
-
-		//mLauncher.setSettings(launcherSettings);
-		//mHelper.applicationHelper.modifyAppByProfile(mLauncher, mCurrentUser);
-    }
 
     /**
      * Updates the user's preferred icon size from SharedPreferences. This preference it set in Launcher's
@@ -565,7 +498,7 @@ public class HomeActivity extends Activity {
 
     /**
      * Task for observing if the set of available apps has changed.
-     *
+     * Is only instantiated after apps have been loaded the first time.
      * @see HomeActivity#loadApplications()
      */
     private class AppsObserver extends TimerTask {
