@@ -60,9 +60,7 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
         params.gravity = Gravity.CENTER;
         progressbar.setLayoutParams(params);
         progressbar.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.progressbar));
-        ViewGroup parent = (ViewGroup)targetLayout.getParent();
-        while (parent instanceof ScrollView)
-            parent = (ViewGroup) parent.getParent();
+        ViewGroup parent = getProgressBarParent();
 
         parent.addView(progressbar);
 
@@ -154,6 +152,8 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
     protected void onPostExecute(HashMap<String, AppInfo> appInfos) {
         //appRowsToAdd = new ArrayList<LinearLayout>();
 
+        progressbar.setVisibility(View.GONE);
+
         try {
             if(appRowsToAdd.size() > 0)
             {
@@ -170,7 +170,47 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
         } catch (NullPointerException e){
             e.printStackTrace();
         }
-        progressbar.setVisibility(View.GONE);
+        removeStrayProgressbars();
+    }
+
+    @Override
+    protected void onCancelled() {
+        super.onCancelled();
+        if(progressbar != null)
+            progressbar.setVisibility(View.GONE);
+    }
+
+    private ViewGroup getProgressBarParent()
+    {
+        ViewGroup parent = (ViewGroup)targetLayout.getParent();
+        while (parent instanceof ScrollView)
+            parent = (ViewGroup) parent.getParent();
+
+        return parent;
+    }
+    /**
+     * Check for stray progressbars still running and remove them if needed.
+     * This must be done this way, since
+     */
+    private void removeStrayProgressbars()
+    {
+        ViewGroup parent = getProgressBarParent();
+
+        ArrayList<Integer> delete = new ArrayList<Integer>();
+        for(int i = 0; i < parent.getChildCount();i++)
+        {
+            if(parent.getChildAt(i) instanceof ProgressBar)
+            {
+                delete.add(i);
+            }
+        }
+
+        if(delete.size() > 0){
+            for(int i = delete.size()-1; i >= 0 ;i--)
+            {
+                parent.removeViewAt(delete.get(i));
+            }
+        }
     }
 
     private void hideNoAppsMessage() {
