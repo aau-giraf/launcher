@@ -48,6 +48,7 @@
             android:layout_below="@+id/seekBarPrefUnitsRight"
             android:orientation="horizontal" >
 
+            <!-- TODO: Implement this with GIRAF-specific SeekBar -->
             <SeekBar
                 android:id="@+id/seekBarPrefSeekBar"
                 android:layout_width="fill_parent"

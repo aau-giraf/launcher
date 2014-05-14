@@ -24,6 +24,7 @@ import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
+import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 import dk.aau.cs.giraf.oasis.lib.controllers.ProfileApplicationController;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -46,7 +47,7 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
         this.currentUser = currentUser;
         this.guardian = guardian;
         this.targetLayout = targetLayout;
-        this.iconSize = iconSize;
+        this.iconSize = SettingsUtility.convertToDP(context, iconSize);
         this.onClickListener = onClickListener;
         appRowsToAdd = new ArrayList<LinearLayout>();
     }
@@ -97,11 +98,6 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
             //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
             int appsPrRow = getAmountOfAppsWithinBounds(containerWidth, iconSize);
 
-            /*if(appInfoHash.size() % appsPrRow == 0)
-            {
-                appsPrRow--;
-            }*/
-
             //Calculate how many apps the screen can fit vertically on a single screen, and how much space is available for vertical padding
             int appsPrColumn = getAmountOfAppsWithinBounds(containerHeight, iconSize);
             int paddingHeight = getLayoutPadding(containerHeight, appsPrColumn, iconSize);
@@ -128,8 +124,8 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
                 }
             }
 
+            //If last row is not full, fill it with empty elements, to get the icon alignment right
             int appsInLastRow = (appInfoList.size() % appsPrRow);
-
             if (appsInLastRow > 0) {
                 while (appsInLastRow < appsPrRow){
                     AppImageView newAppView = new AppImageView(context);
