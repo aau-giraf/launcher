@@ -73,6 +73,9 @@ public class SettingsActivity extends Activity
         // Cars
         addApplicationByPackageName("dk.aau.cs.giraf.cars");
 
+        // Zebra
+        addApplicationByPackageName("dk.aau.cs.giraf.zebra");
+
         /*************************************************
          *** Add applications in the giraf suite above ***
          *************************************************/

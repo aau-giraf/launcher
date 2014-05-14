@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
@@ -66,7 +67,7 @@ public class HomeActivity extends Activity {
 
     private HashMap<String, AppInfo> mCurrentLoadedApps;
 
-    private boolean mAppsAdded = false;
+    private boolean mIsAppsContainerInitialized = false;
     private boolean mWidgetRunning = false;
     private boolean mDrawerAnimationRunning = false;
     private int mIconSize;
@@ -146,11 +147,11 @@ public class HomeActivity extends Activity {
      *
      * @param hasFocus {@code true} if the activity has focus.
      */
-	/*@Override
+	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 
-        if (!mAppsAdded && mAppsContainer.getViewTreeObserver() != null) {
+        if (!mIsAppsContainerInitialized && mAppsContainer.getViewTreeObserver() != null) {
             mAppsContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 
                 @Override
@@ -163,7 +164,7 @@ public class HomeActivity extends Activity {
         } else if (mAppsContainer.getViewTreeObserver() == null) {
             Log.e(Constants.ERROR_TAG, "ViewTreeObserver is null.");
         }
-	}*/
+	}
 
     /**
      * Stops the timer looking for updates in the set of available apps.
@@ -190,7 +191,8 @@ public class HomeActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-        reloadApplications();
+        if(mIsAppsContainerInitialized)
+            reloadApplications();
         //startObservingApps();
 		mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_START);
 	}
@@ -216,6 +218,7 @@ public class HomeActivity extends Activity {
         updateIconSize();
         homeActivityAppTask = new HomeActivityAppTask(mContext, mCurrentUser, mLoggedInGuardian, mAppsContainer, mIconSize, null);
         homeActivityAppTask.execute();
+        mIsAppsContainerInitialized = true;
     }
 
     /**
