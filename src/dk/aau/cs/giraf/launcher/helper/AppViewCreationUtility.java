@@ -36,14 +36,6 @@ public class AppViewCreationUtility {
     private final static String DEFAULT_PACKAGE_FILTER = "";
     private final static boolean DEFAULT_FILTER_INCLUSION = true;
 
-    protected static int getAmountOfAppsWithinBounds(int containerSize, int iconSize) {
-        return containerSize / iconSize;
-    }
-
-    protected static int getLayoutPadding(int containerSize, int appsPrRow, int iconSize) {
-        return (containerSize % iconSize) / (appsPrRow + 1);
-    }
-
     /**
      * Loads the AppInfo object of app from the list, into the {@code mAppInfoHashMap} hash map, making
      * them accessible with only the ID string of the app.
