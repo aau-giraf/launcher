@@ -2,8 +2,10 @@ package dk.aau.cs.giraf.launcher.settings;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.ActivityNotFoundException;
 import android.os.Bundle;
 import android.sax.StartElementListener;
+import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -155,10 +157,20 @@ public class SettingsListFragment extends Fragment {
                 }
                 // Otherwise it must be an intent
                 else if (item.mIntent != null) {
-                    // Start a new activity with the intent
-                    startActivity(item.mIntent);
-                    // Resets the selection to first item after the intent has been clicked
-                    mAdapter.setSelected(0);
+                    try {
+                        // Start a new activity with the intent
+                        startActivity(item.mIntent);
+                    }
+                    //Handle exception if the intended activity can not be found.
+                    catch (ActivityNotFoundException ex) {
+                        Toast.makeText(parent.getContext(), R.string.settings_activity_not_found_msg, Toast.LENGTH_SHORT).show();
+                    }
+                    finally {
+                        // Resets the selection to first item after the intent has been clicked
+                        mAdapter.setSelected(0);
+                    }
+
+
                 }
             }
         });
