@@ -173,7 +173,9 @@ public class HomeActivity extends Activity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-        mAppsUpdater.cancel();
+        if(mAppsUpdater != null)
+            mAppsUpdater.cancel();
+
         Log.d(Constants.ERROR_TAG, "Applications are no longer observed.");
 		mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_STOP);
         homeActivityAppTask.cancel(true);

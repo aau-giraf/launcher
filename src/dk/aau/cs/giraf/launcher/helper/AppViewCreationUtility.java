@@ -30,7 +30,7 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.GAppDragger;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
-import dk.aau.cs.giraf.settingslib.settingslib.SettingsUtility;
+import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
@@ -42,14 +42,6 @@ public class AppViewCreationUtility {
     private static HashMap<String,AppInfo> mAppInfoHashMap;
     private final static String DEFAULT_PACKAGE_FILTER = "";
     private final static boolean DEFAULT_FILTER_INCLUSION = true;
-
-    protected static int getAmountOfAppsWithinBounds(int containerSize, int iconSize) {
-        return containerSize / iconSize;
-    }
-
-    protected static int getLayoutPadding(int containerSize, int appsPrRow, int iconSize) {
-        return (containerSize % iconSize) / (appsPrRow + 1);
-    }
 
     /**
      * Loads the AppInfo object of app from the list, into the {@code mAppInfoHashMap} hash map, making

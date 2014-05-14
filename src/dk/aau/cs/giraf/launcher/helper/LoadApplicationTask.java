@@ -95,7 +95,7 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
             }
 
             //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
-            int appsPrRow = AppViewCreationUtility.getAmountOfAppsWithinBounds(containerWidth, iconSize);
+            int appsPrRow = getAmountOfAppsWithinBounds(containerWidth, iconSize);
 
             if(appInfoHash.size() % appsPrRow == 0)
             {
@@ -103,8 +103,8 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
             }
 
             //Calculate how many apps the screen can fit vertically on a single screen, and how much space is available for vertical padding
-            int appsPrColumn = AppViewCreationUtility.getAmountOfAppsWithinBounds(containerHeight, iconSize);
-            int paddingHeight = AppViewCreationUtility.getLayoutPadding(containerHeight, appsPrColumn, iconSize);
+            int appsPrColumn = getAmountOfAppsWithinBounds(containerHeight, iconSize);
+            int paddingHeight = getLayoutPadding(containerHeight, appsPrColumn, iconSize);
 
             //Add the first row to the container
             LinearLayout currentAppRow = createNewRow(appsPrRow, paddingHeight, true);
@@ -232,5 +232,13 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
         newAppRow.setLayoutParams(targetLayout.getLayoutParams());
 
         return newAppRow;
+    }
+
+    protected static int getAmountOfAppsWithinBounds(int containerSize, int iconSize) {
+        return containerSize / iconSize;
+    }
+
+    protected static int getLayoutPadding(int containerSize, int appsPrRow, int iconSize) {
+        return (containerSize % iconSize) / (appsPrRow + 1);
     }
 }
