@@ -81,20 +81,11 @@ public class AppInfo extends Application {
     }
 
     /**
-     * Loads information needed by the app.
-     *
-     * @param context Context of the current activity.
-     */
-    public void load(Context context) {
-        loadIcon(context);
-    }
-
-    /**
      * Finds the icon of the app.
      *
      * @param context Context of the current activity.
      */
-    private void loadIcon(Context context) {
+    public void loadIcon(Context context) {
         // Is supposed to allow for custom icons, but does not currently support this.
 
         List<ResolveInfo> systemApps = ApplicationControlUtility.getAppsInstalledOnDevice(context);

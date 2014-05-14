@@ -52,7 +52,7 @@ public class SettingsListFragment extends Fragment {
         public void reloadActivity();
 
         /**
-         * Method is called to load applications into ListView.
+         * Method is called to loadIcon applications into ListView.
          * @return A list of apps that should be added to the ListView,
          * containing only valid/available apps.
          */
