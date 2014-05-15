@@ -22,9 +22,9 @@ import dk.aau.cs.giraf.oasis.lib.controllers.ProfileApplicationController;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.oasis.lib.models.ProfileApplication;
-
 /**
- * Created by Vagner on 01-05-14.
+ * This is the Fragment used to show the available Giraf apps installed on the device.
+ * The user can select or deselect each app by pressing it, handled in the OnClickListener listener
  */
 public class GirafFragment extends AppContainerFragment {
 
@@ -34,6 +34,14 @@ public class GirafFragment extends AppContainerFragment {
     private loadGirafApplicationTask loadApplicationTask;
     private View.OnClickListener listener;
 
+    /**
+     * Because we are dealing with a Fragment, OnCreateView is where most of the variables are set.
+     * The context is set by the superclass.
+     * @param inflater The inflater (Android takes care of this)
+     * @param container The container, the ViewGroup, that the fragment should be inflate in.
+     * @param savedInstanceState The previously saved instancestate
+     * @return the inflated view.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
@@ -44,20 +52,6 @@ public class GirafFragment extends AppContainerFragment {
         setListeners();
 
         return view;
-    }
-
-    @Override
-    public void onViewCreated(final View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-            view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-
-                @Override
-                public void onGlobalLayout() {
-                    // Ensure you call it only once :
-                    view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                    reloadApplications();
-                }
-            });
     }
 
     @Override

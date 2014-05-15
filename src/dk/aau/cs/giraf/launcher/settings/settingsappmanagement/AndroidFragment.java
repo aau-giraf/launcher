@@ -26,7 +26,7 @@ import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 /**
- * This is the Fragment used to show the available Android apps in the device.
+ * This is the Fragment used to show the available Android apps installed on the device.
  * The user can select or deselect each app by pressing it, handled in the OnClickListener listener
  */
 public class AndroidFragment extends AppContainerFragment {
@@ -58,28 +58,6 @@ public class AndroidFragment extends AppContainerFragment {
         setListeners();
 
         return view;
-    }
-
-    /**
-     * Once the view has been created, we start loading applications into the view with a call to reloadApplications.
-     * This call is done inside the ViewTreeObserver, since the Observer ensures that the view has been fully inflated.
-     * If we attempt to call reloadApplications without the Observer, the view is not inflated yet.
-     * This means that the width of the view, which we use to see how many apps we can fill into a row, is 0.
-     * @param view The view that has been created
-     * @param savedInstanceState The previously saved instancestate.
-     */
-    @Override
-    public void onViewCreated(final View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        appView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-
-            @Override
-            public void onGlobalLayout() {
-                // Ensure you call it only once :
-                appView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                reloadApplications();
-            }
-        });
     }
 
     /**

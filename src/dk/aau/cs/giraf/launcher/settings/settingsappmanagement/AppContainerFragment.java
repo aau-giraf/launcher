@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
@@ -45,6 +46,28 @@ public abstract class AppContainerFragment extends Fragment{
         context = getActivity();
 
         return view;
+    }
+
+    /**
+     * Once the view has been created, we start loading applications into the view with a call to reloadApplications.
+     * This call is done inside the ViewTreeObserver, since the Observer ensures that the view has been fully inflated.
+     * If we attempt to call reloadApplications without the Observer, the view is not inflated yet.
+     * This means that the width of the view, which we use to see how many apps we can fill into a row, is 0.
+     * @param view The view that has been created
+     * @param savedInstanceState The previously saved instancestate.
+     */
+    @Override
+    public void onViewCreated(final View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        appView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+            @Override
+            public void onGlobalLayout() {
+                // Ensure you call it only once :
+                appView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                reloadApplications();
+            }
+        });
     }
 
     /**
