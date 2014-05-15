@@ -13,7 +13,10 @@ import android.widget.LinearLayout;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
@@ -30,6 +33,7 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
  * The user can select or deselect each app by pressing it, handled in the OnClickListener listener
  */
 public class AndroidFragment extends AppContainerFragment {
+    private Timer appsUpdater;
     private SharedPreferences preferences;
     private Set<String> selectedApps;
     private HashMap<String, AppInfo> appInfos;
@@ -58,6 +62,7 @@ public class AndroidFragment extends AppContainerFragment {
 
     /**
      * Handles what happens when the fragment is paused
+     * It stops observing apps, so it doesnt try an update while paused.
      * It removes the file containing the previous settings for which Android apps are connected to the user
      * Subsequently, it inputs a new file, containing the new settings for the apps saved to a user.
      * Finally, if the fragment is still loadapplications in the ASyncTask, it cancels the task
@@ -67,6 +72,11 @@ public class AndroidFragment extends AppContainerFragment {
         super.onPause();
         if (selectedApps == null)
             selectedApps = new HashSet<String>();
+
+        if(appsUpdater != null){
+            appsUpdater.cancel();
+            Log.d(Constants.ERROR_TAG, "Applications are no longer observed.");
+        }
 
         SharedPreferences.Editor editor = preferences.edit();
         editor.remove(getString(R.string.selected_android_apps_key)).commit(); // Remove to ensure that the new set is written to file.
@@ -90,13 +100,14 @@ public class AndroidFragment extends AppContainerFragment {
      * Loads applications into the appview container if:
      *  - the currently loadedapps list is null OR
      *  - the size of the current loadedapps list is not equal to the list of all apps that should be loaded.
+     *  the superclass merely exists for derived classes to overwrite it and is empty
+     *  Keep in mind that this version of loadapplication uses LoadAndroidApplicationTask,
+     *  while GirafFragment uses LoadGirafApplicationTask, which is why it must be overridden
      */
     @Override
     public void loadApplications(){
-        if (loadedApps == null || loadedApps.size() != apps.size()){
            loadApplicationsTask = new LoadAndroidApplicationTask(context, currentUser, null, appView, 110, listener);
            loadApplicationsTask.execute();
-        }
 
     }
 
@@ -105,6 +116,7 @@ public class AndroidFragment extends AppContainerFragment {
      * The listener is the OnClickListener that all the AppImageViews created need to implement to make them
      * selectable and deselectable by the user.
      */
+
     private void setListeners(){
         listener = new View.OnClickListener() {
             @Override
@@ -133,6 +145,18 @@ public class AndroidFragment extends AppContainerFragment {
     }
 
     /**
+     * Starts a timer that looks for updates in the set of available applications every 5 seconds.
+     */
+    private void startObservingApps() {
+        appsUpdater = new Timer();
+        AppsObserver timerTask = new AppsObserver();
+        appsUpdater.scheduleAtFixedRate(timerTask, 5000, 5000);
+
+        Log.d(Constants.ERROR_TAG, "Applications are being observed.");
+    }
+
+
+    /**
      * This class carries out all the work of populating the appView with clickable applications.
      * It inherits from LoadApplicationTask, which does most of the work.
      * However, since there are some special things that need to be handled in the case of Android applications,
@@ -141,7 +165,7 @@ public class AndroidFragment extends AppContainerFragment {
     class LoadAndroidApplicationTask extends LoadApplicationTask {
 
         /**
-         * the contructor of the class
+         * The contructor of the class
          * @param context The context of the current activity
          * @param currentUser The current user (if the current user is a guardian, this is set to null)
          * @param guardian The guardian of the current user (or just the current user, if the user is a guardian)
@@ -153,17 +177,59 @@ public class AndroidFragment extends AppContainerFragment {
             super(context, currentUser, guardian, targetLayout, iconSize, onClickListener);
         }
 
+        /** We override onPreExecute to cancel the AppObserver if it is running*/
+        @Override
+        protected void onPreExecute() {
+            if(appsUpdater != null)
+                appsUpdater.cancel();
+
+            super.onPreExecute();
+        }
+
         /**
          * This method needs to be overridden since we need to inform the superclass of exactly which apps should be generated.
+         * In this case it is Android applications only.
          * @param applications the applications that the task should generate AppImageViews for
          * @return The Hashmap of AppInfos that describe the added applications.
          */
         @Override
         protected HashMap<String, AppInfo> doInBackground(Application... applications) {
-            applications = ApplicationControlUtility.getAndroidAppsAsApplicationList(context, "dk.aau.cs.giraf").toArray(applications);
+            applications = ApplicationControlUtility.getAndroidAppsAsApplicationList(context).toArray(applications);
             appInfos = super.doInBackground(applications);
 
-            return null;
+            return appInfos;
         }
+
+        /**Once we have loaded applications, we start observing for new apps*/
+        @Override
+        protected void onPostExecute(HashMap<String, AppInfo> appInfos) {
+            super.onPostExecute(appInfos);
+            loadedApps = appInfos;
+            startObservingApps();
+            haveAppsBeenAdded = true;
+        }
+    }
+
+    /**
+     * Task for observing if the set of available apps has changed.
+     * Is only instantiated after apps have been loaded the first time.
+     * @see dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AndroidFragment#loadApplications()
+     */
+    private class AppsObserver extends TimerTask {
+
+        @Override
+        public void run() {
+            apps = ApplicationControlUtility.getAndroidAppsAsApplicationList(context);
+            if (loadedApps == null || loadedApps.size() != apps.size()){
+                ((Activity)context).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadApplications();
+                    }
+                });
+            }
+            Log.d(Constants.ERROR_TAG, "Applications checked");
+        }
+
     }
 }

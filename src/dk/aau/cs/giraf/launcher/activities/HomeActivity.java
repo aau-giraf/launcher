@@ -199,11 +199,8 @@ public class HomeActivity extends Activity {
 		super.onResume();
         if(mIsAppsContainerInitialized)
             reloadApplications();
-        //startObservingApps();
         if(mWidgetUpdater != null)
 		    mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_START);
-
-
 	}
 
     /**
@@ -482,8 +479,7 @@ public class HomeActivity extends Activity {
      * Updates the ProfileSelector. It is needed when a new user has been selected, as a different
      * listener is needed, and the app container has to be reloaded.
      * */
-    private void updatesProfileSelector()
-    {
+    private void updatesProfileSelector(){
         mProfileSelectorWidget.setOnListItemClick(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

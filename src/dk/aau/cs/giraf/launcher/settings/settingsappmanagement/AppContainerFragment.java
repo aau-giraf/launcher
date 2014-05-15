@@ -12,9 +12,11 @@ import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import java.util.HashMap;
 import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
@@ -28,11 +30,11 @@ public abstract class AppContainerFragment extends Fragment{
 
     protected AppsFragmentInterface mCallback; // Callback to containing Activity implementing the SettingsListFragmentListener interface
     protected Profile currentUser;
-    protected List<?> loadedApps;
+    protected HashMap<String, AppInfo> loadedApps;
     // This needs to be initialized in the subclasses
     protected List<Application> apps;
     protected LinearLayout appView;
-    protected boolean haveAppsBeenAdded;
+    protected boolean haveAppsBeenAdded = false;
     protected Context context;
 
     /**
@@ -64,15 +66,24 @@ public abstract class AppContainerFragment extends Fragment{
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        appView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        if (!haveAppsBeenAdded && appView.getViewTreeObserver() != null) {
+            appView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 
-            @Override
-            public void onGlobalLayout() {
-                // Ensure you call it only once :
-                appView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                reloadApplications();
-            }
-        });
+                @Override
+                public void onGlobalLayout() {
+                    // Ensure you call it only once :
+                    appView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    reloadApplications();
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(haveAppsBeenAdded)
+            reloadApplications();
     }
 
     /**

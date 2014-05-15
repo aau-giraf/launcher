@@ -21,9 +21,10 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
  */
 public class ApplicationControlUtility {
 
+    private final static String ANDROID_FILTER = "dk.aau.cs.giraf";
+
     /**
      * Gets the GIRAF apps that are usable by the given user, relative to their settings and the system they're logged in on.
-     *
      * @param context Context of the current activity.
      * @param user    The user to find apps for.
      * @return List of apps that are usable by this user on this device.
@@ -144,10 +145,9 @@ public class ApplicationControlUtility {
      * This function returns Android Applications installed on the device as a
      * list of applications, based on a given filter
      * @param context The context of the current activity
-     * @param filter The filter to sort out apps
      * @return
      */
-    public static List<Application> getAndroidAppsAsApplicationList(Context context, String filter){
+    public static List<Application> getAndroidAppsAsApplicationList(Context context){
         List<ResolveInfo> allApps = getAppsInstalledOnDevice(context);
         List<Application> result = new ArrayList<Application>();
         PackageManager packageManager = context.getPackageManager();
@@ -156,7 +156,7 @@ public class ApplicationControlUtility {
             String appActivityName = app.activityInfo.name;
             String appPackageName = app.activityInfo.packageName;
 
-            if (appPackageName.contains(filter))
+            if (appPackageName.contains(ANDROID_FILTER))
                 continue;
 
             Application application = new Application();
