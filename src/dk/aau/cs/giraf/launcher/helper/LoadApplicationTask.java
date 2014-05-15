@@ -54,6 +54,7 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
 
     @Override
     protected void onPreExecute() {
+        Log.d(Constants.ERROR_TAG, "Thread says hello");
         hideNoAppsMessage();
         progressbar = new ProgressBar(context);
         progressbar.setVisibility(View.VISIBLE);
@@ -70,6 +71,7 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
 
     @Override
     protected HashMap<String, AppInfo> doInBackground(Application... applications) {
+        Log.d(Constants.ERROR_TAG, "Thread says working");
         SharedPreferences preferences = LauncherUtility.getSharedPreferencesForCurrentUser(context, currentUser);
         selectedApps = preferences.getStringSet(context.getResources().getString(R.string.selected_android_apps_key), new HashSet<String>());
 
@@ -149,7 +151,7 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
 
     @Override
     protected void onPostExecute(HashMap<String, AppInfo> appInfos) {
-        //appRowsToAdd = new ArrayList<LinearLayout>();
+        Log.d(Constants.ERROR_TAG, "Thread says bye");
 
         progressbar.setVisibility(View.GONE);
 
