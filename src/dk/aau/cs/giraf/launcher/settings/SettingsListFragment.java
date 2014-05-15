@@ -161,7 +161,7 @@ public class SettingsListFragment extends Fragment {
                         // Start a new activity with the intent
                         startActivity(item.mIntent);
                     }
-                    //Handle exception if the intended activity can not be found.
+                    // Handle exception if the intended activity can not be started.
                     catch (ActivityNotFoundException ex) {
                         Toast.makeText(parent.getContext(), R.string.settings_activity_not_found_msg, Toast.LENGTH_SHORT).show();
                     }
@@ -169,8 +169,6 @@ public class SettingsListFragment extends Fragment {
                         // Resets the selection to first item after the intent has been clicked
                         mAdapter.setSelected(0);
                     }
-
-
                 }
             }
         });

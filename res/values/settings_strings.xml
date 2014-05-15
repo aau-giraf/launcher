@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="giraf_settings_name">Settings</string>
+    <string name="giraf_settings_name">Android Indstillinger</string>
     <string name="giraf_settings_user_prompt">Vælg en person</string>
     <string name="giraf_settings_selectUser_text">Tryk for at vælge:</string>
     <string name="google_play_button">Butik</string>
-    <string name="android_settings_button">Tablet indstillinger</string>
     <string name="android_applications_button">Android</string>
     <string name="giraf_applications_button">Giraf</string>
     <string name="giraf_settings_profile_user">Aktive Bruger</string>

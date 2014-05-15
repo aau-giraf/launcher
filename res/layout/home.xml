@@ -44,34 +44,28 @@
             <dk.aau.cs.giraf.gui.GWidgetProfileSelection
                 android:visibility="visible"
                 android:id="@+id/profile_widget"
-                android:layout_width="80dp"
-                android:layout_height="100dp"
+                android:layout_width="@dimen/profile_selection_width"
+                android:layout_height="@dimen/profile_selection_height"
                 android:layout_alignParentLeft="true">
             </dk.aau.cs.giraf.gui.GWidgetProfileSelection>
 
-            <dk.aau.cs.giraf.gui.GWidgetConnectivity
-                android:id="@+id/connectivitywidget"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_below="@id/profile_widget"
-                android:layout_marginTop="15dp" />
-
             <dk.aau.cs.giraf.gui.GButtonSettings
                 android:id="@+id/settingsbutton"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_below="@id/connectivitywidget"
-                android:layout_marginTop="15dp" />
+                android:layout_width="@dimen/drawer_widget_dimension"
+                android:layout_height="@dimen/drawer_widget_dimension"
+                android:layout_below="@id/profile_widget"
+                android:layout_marginTop="@dimen/drawer_widget_marginTop" />
 
             <dk.aau.cs.giraf.gui.GWidgetLogout
                 android:id="@+id/logoutwidget"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_marginTop="15dp" />
-
+                android:layout_marginTop="@dimen/drawer_widget_marginTop" />
         </RelativeLayout>
+        
     </dk.aau.cs.giraf.launcher.layoutcontroller.SideBarLayout>
+
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
