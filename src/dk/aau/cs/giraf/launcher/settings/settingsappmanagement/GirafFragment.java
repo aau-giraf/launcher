@@ -11,7 +11,6 @@ import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 
 import java.util.HashMap;
-import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
@@ -121,13 +120,9 @@ public class GirafFragment extends AppContainerFragment {
 
     private boolean userHasApplicationInView(ProfileApplicationController pac, Application app, Profile user)
     {
-        List<ProfileApplication> profileApplications = pac.getListOfProfileApplicationsByProfileId(user);
         ProfileApplication thisPA = pac.getProfileApplicationByProfileIdAndApplicationId(app,user);
 
-        if(profileApplications.contains(thisPA))
-            return true;
-        else
-            return false;
+        return thisPA != null;
     }
 
     class loadGirafApplicationTask extends LoadApplicationTask {

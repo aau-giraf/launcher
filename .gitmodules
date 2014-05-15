@@ -7,3 +7,9 @@
 	url = http://cs-cust06-int.cs.aau.dk/git-ro/oasis-lib.git
     ignore = dirty
 
+[submodule "metadata"]
+	path = metadata
+	url = http://cs-cust06-int.cs.aau.dk/git-ro/meta-database
+[submodule "local-db"]
+	path = local-db
+	url = http://cs-cust06-int.cs.aau.dk/git-ro/local-db

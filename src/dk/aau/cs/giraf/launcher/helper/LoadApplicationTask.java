@@ -229,13 +229,9 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
     }
 
     private boolean UserHasGirafApplicationInView(ProfileApplicationController pac, Application app, Profile user){
-        List<ProfileApplication> profileApplications = pac.getListOfProfileApplicationsByProfileId(user);
         ProfileApplication thisPA = pac.getProfileApplicationByProfileIdAndApplicationId(app,user);
 
-        if(profileApplications.contains(thisPA))
-            return true;
-        else
-            return false;
+        return thisPA != null;
     }
 
     private void markApplications(final HashMap<String, AppInfo> appInfos){

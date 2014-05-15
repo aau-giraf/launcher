@@ -1,3 +1,5 @@
 include ':barcodescanner'
 include ':GIRAF_Components'
+include ':metadata'
 include ':OasisLib'
+include ':local-db'
