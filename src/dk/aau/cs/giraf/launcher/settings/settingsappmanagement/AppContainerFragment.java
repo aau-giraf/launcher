@@ -16,9 +16,12 @@ import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 
 /**
- * Created by Vagner on 01-05-14.
+ * This is the superclass that both AndroidFragment and GirafFragment inherits from
+ * Since both fragments implement many of the same features with very smaller differences, this was deemed to be the best way.
+ * This Fragment should never be implemented directly, but simply inherited from.
+ * It is therefore abstract
  */
-public class AppContainerFragment extends Fragment{
+public abstract class AppContainerFragment extends Fragment{
 
     protected List<?> loadedApps;
     // This needs to be initialized in the subclasses
@@ -27,6 +30,14 @@ public class AppContainerFragment extends Fragment{
     protected boolean haveAppsBeenAdded;
     protected Context context;
 
+    /**
+     * Because we are dealing with a Fragment, OnCreateView is where most of the variables are set.
+     * Only the context is initiated, the rest should be instantiated by the inheriting classes.
+     * @param inflater The inflater (Android takes care of this)
+     * @param container The container, the ViewGroup, that the fragment should be inflate in.
+     * @param savedInstanceState The previously saved instancestate
+     * @return the inflated view.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.settings_appfragment_appcontainer,
@@ -34,11 +45,6 @@ public class AppContainerFragment extends Fragment{
         context = getActivity();
 
         return view;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
     }
 
     /**

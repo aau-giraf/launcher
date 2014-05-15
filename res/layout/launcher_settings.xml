@@ -5,20 +5,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <PreferenceCategory android:title="Hjemmeskærm"
+    <PreferenceCategory
+        android:title="Hjemmeskærm"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <SwitchPreference android:key="@string/show_animation_preference_key"
-        android:title="Opstartsanimation"
-        android:summary="Vis animation ved opstart af hjemmeskærmen."
-        android:switchTextOff="SLUKKET"
-        android:switchTextOn="TÆNDT"/>
+    <SwitchPreference
+        android:key="@string/show_animation_preference_key"
+        android:title="@string/setting_launcher_animation_title"
+        android:summary="@string/setting_launcher_animation_summary"
+        android:switchTextOff="@string/setting_launcher_animation_off"
+        android:switchTextOn="@string/setting_launcher_animation_on"
+        android:defaultValue="true"/>
 
     <dk.aau.cs.giraf.launcher.settings.components.IconResizer
+        android:id="@+id/icon_resizer"
         android:key="@string/icon_size_preference_key"
-        android:title="Ikon størrelse"
-        android:summary="Indstil størrelsen på ikonerne på hjemmeskærmen."
+        android:title="@string/setting_launcher_icon_size_title"
+        android:summary="@string/setting_launcher_icon_size_summary"
         android:defaultValue="200"
         android:max="200"
         giraf:min="96"/>

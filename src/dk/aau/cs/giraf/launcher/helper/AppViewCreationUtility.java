@@ -3,12 +3,15 @@ package dk.aau.cs.giraf.launcher.helper;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -28,13 +31,12 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 /**
- * Created by Vagner on 13-05-14.
+ * This class is used for creation of AppImageViews containing infomation about the application
+ * that the AppImageView contains.
  */
 public class AppViewCreationUtility {
 
     private static HashMap<String,AppInfo> mAppInfoHashMap;
-    private final static String DEFAULT_PACKAGE_FILTER = "";
-    private final static boolean DEFAULT_FILTER_INCLUSION = true;
 
     /**
      * Loads the AppInfo object of app from the list, into the {@code mAppInfoHashMap} hash map, making
@@ -92,9 +94,7 @@ public class AppViewCreationUtility {
 
         setAppBackground(appView, appInfo.getBgColor());
 
-        /**Note that createBitmapFromLayoutWithText is used when the icons are being resized in LauncherSettings
-        and is thus a part of the SettingsUtility and not AppViewCreationUtility.*/
-        appImageView.setImageBitmap(SettingsUtility.createBitmapFromLayoutWithText(context, appView, Constants.APP_ICON_DIMENSION_DEF, Constants.APP_ICON_DIMENSION_DEF));
+        appImageView.setImageBitmap(createBitmapFromLayoutWithText(context, appView, Constants.APP_ICON_DIMENSION_DEF, Constants.APP_ICON_DIMENSION_DEF));
         appImageView.setTag(String.valueOf(appInfo.getApp().getId()));
         appImageView.setOnDragListener(new GAppDragger());
 
@@ -154,6 +154,43 @@ public class AppViewCreationUtility {
         shapeDrawable.getPaint().setColor(backgroundColor);
 
         appViewLayout.setBackgroundDrawable(shapeDrawable);
+    }
+
+    /**
+     * This function create a Bitmap to put into the AppImageView. The Bitmap is scaled to be a certain size when it is returned.
+     * @param context The context of the current activity.
+     * @param view The AppImageView that the bitmap should be inserted into.
+     * @param widthInDP The width of the Bitmap in density pixels.
+     * @param heightInDP The height of the bitmap in density pixels.
+     * @return the final bitmap of the application to be inserted into the AppImageView.
+     */
+    public static Bitmap createBitmapFromLayoutWithText(Context context, View view, int widthInDP, int heightInDP) {
+        int width = LauncherUtility.intToDP(context, widthInDP);
+        int height = LauncherUtility.intToDP(context, heightInDP);
+
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        params.width = width;
+        params.height = height;
+        view.setLayoutParams(params);
+
+        //Pre-measure the view so that height and width don't remain null.
+        view.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
+
+        //Assign a size and position to the view and all of its descendants
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+
+        //Create the bitmap
+        Bitmap bitmap = Bitmap.createBitmap(view.getMeasuredWidth(),
+                view.getMeasuredHeight(),
+                Bitmap.Config.ARGB_8888);
+        //Create a canvas with the specified bitmap to draw into
+        Canvas c = new Canvas(bitmap);
+
+        //Render this view (and all of its children) to the given Canvas
+        view.draw(c);
+        view.setVisibility(View.GONE);
+        return bitmap;
     }
 
 }

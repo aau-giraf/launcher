@@ -14,6 +14,8 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.helper.AppViewCreationUtility;
+import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 
 /**
@@ -152,7 +154,7 @@ public class IconResizer extends Preference implements SeekBar.OnSeekBarChangeLi
 
             View appView = view.findViewById(R.id.app_bg);
             if (mAppBitmap == null){
-                mAppBitmap = SettingsUtility.createBitmapFromLayoutWithText(getContext(), appView, 200, 200);
+                mAppBitmap = AppViewCreationUtility.createBitmapFromLayoutWithText(getContext(), appView, 200, 200);
             }
             mAppImageView = (ImageView) view.findViewById(R.id.app_image);
 
@@ -194,7 +196,7 @@ public class IconResizer extends Preference implements SeekBar.OnSeekBarChangeLi
     }
 
     private void updateAppSize(int newValue){
-        int dpValue = SettingsUtility.convertToDP(mContext, newValue);
+        int dpValue = LauncherUtility.intToDP(mContext, newValue);
         mAppImageView.setImageBitmap(mAppBitmap);
         ViewGroup.LayoutParams params = mAppImageView.getLayoutParams();
         params.width = dpValue;
