@@ -5,15 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <PreferenceCategory android:title="Hjemmeskærm"
+    <PreferenceCategory
+        android:title="Hjemmeskærm"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <SwitchPreference android:key="@string/show_animation_preference_key"
+    <SwitchPreference
+        android:key="@string/show_animation_preference_key"
         android:title="Opstartsanimation"
         android:summary="Vis animation ved opstart af hjemmeskærmen."
         android:switchTextOff="SLUKKET"
-        android:switchTextOn="TÆNDT"/>
+        android:switchTextOn="TÆNDT" />
 
     <dk.aau.cs.giraf.launcher.settings.components.IconResizer
         android:key="@string/icon_size_preference_key"
