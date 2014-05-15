@@ -28,8 +28,6 @@ import dk.aau.cs.giraf.oasis.lib.models.ProfileApplication;
  */
 public class GirafFragment extends AppContainerFragment {
 
-    private AppsFragmentInterface mCallback;
-    private Profile currentUser;
     private HashMap<String,AppInfo> appInfos;
     private loadGirafApplicationTask loadApplicationTask;
     private View.OnClickListener listener;
@@ -45,26 +43,11 @@ public class GirafFragment extends AppContainerFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
-        context = getActivity();
         appView = (LinearLayout) view.findViewById(R.id.appContainer);
-        currentUser = mCallback.getSelectedProfile();
 
         setListeners();
 
         return view;
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        // This makes sure that the container activity has implemented
-        // the callback interface. If not, it throws an exception
-        try {
-            mCallback = (AppsFragmentInterface) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement AppsFragmentInterface");
-        }
     }
 
     @Override

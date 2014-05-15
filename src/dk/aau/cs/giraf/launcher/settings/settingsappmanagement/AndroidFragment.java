@@ -32,15 +32,13 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
 public class AndroidFragment extends AppContainerFragment {
     private SharedPreferences preferences;
     private Set<String> selectedApps;
-    private Profile currentUser;
     private HashMap<String, AppInfo> appInfos;
     private LoadAndroidApplicationTask loadApplicationsTask;
-    AppsFragmentInterface mCallback; // Callback to containing Activity implementing the SettingsListFragmentListener interface
     private View.OnClickListener listener;
 
     /**
      * Because we are dealing with a Fragment, OnCreateView is where most of the variables are set.
-     * The context is set by the superclass.
+     * The context and the currentUser is set by the superclass.
      * @param inflater The inflater (Android takes care of this)
      * @param container The container, the ViewGroup, that the fragment should be inflate in.
      * @param savedInstanceState The previously saved instancestate
@@ -50,30 +48,12 @@ public class AndroidFragment extends AppContainerFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
-        context = getActivity();
         appView = (LinearLayout) view.findViewById(R.id.appContainer);
-        currentUser = mCallback.getSelectedProfile();
         preferences = LauncherUtility.getSharedPreferencesForCurrentUser(getActivity(), currentUser);
         selectedApps = preferences.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
         setListeners();
 
         return view;
-    }
-
-    /**
-     * This makes sure that the container activity has implemented the callback interface. If not, it throws an exception.
-     * The callback interface is needed to reload applications when a new user is selected.
-     * @param activity
-     */
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mCallback = (AppsFragmentInterface) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement AppsFragmentInterface");
-        }
     }
 
     /**

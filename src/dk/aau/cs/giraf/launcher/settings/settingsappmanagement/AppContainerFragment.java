@@ -1,5 +1,6 @@
 package dk.aau.cs.giraf.launcher.settings.settingsappmanagement;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
+import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 /**
  * This is the superclass that both AndroidFragment and GirafFragment inherits from
@@ -24,6 +26,8 @@ import dk.aau.cs.giraf.oasis.lib.models.Application;
  */
 public abstract class AppContainerFragment extends Fragment{
 
+    protected AppsFragmentInterface mCallback; // Callback to containing Activity implementing the SettingsListFragmentListener interface
+    protected Profile currentUser;
     protected List<?> loadedApps;
     // This needs to be initialized in the subclasses
     protected List<Application> apps;
@@ -44,6 +48,7 @@ public abstract class AppContainerFragment extends Fragment{
         View view = inflater.inflate(R.layout.settings_appfragment_appcontainer,
                 container, false);
         context = getActivity();
+        currentUser = mCallback.getSelectedProfile();
 
         return view;
     }
@@ -68,6 +73,22 @@ public abstract class AppContainerFragment extends Fragment{
                 reloadApplications();
             }
         });
+    }
+
+    /**
+     * This makes sure that the container activity has implemented the callback interface. If not, it throws an exception.
+     * The callback interface is needed to reload applications when a new user is selected.
+     * @param activity
+     */
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mCallback = (AppsFragmentInterface) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement AppsFragmentInterface");
+        }
     }
 
     /**

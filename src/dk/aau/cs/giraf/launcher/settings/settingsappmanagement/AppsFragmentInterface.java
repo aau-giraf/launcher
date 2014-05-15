@@ -4,7 +4,7 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 /**
  * This interface allows fragments to get the currently selected profile.
- * It is implemented by GirafFragment and AndroidFragment
+ * It is implemented by AppContainerFragment
  */
 public interface AppsFragmentInterface {
     public Profile getSelectedProfile();
