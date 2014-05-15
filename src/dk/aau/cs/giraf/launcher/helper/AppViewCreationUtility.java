@@ -95,8 +95,6 @@ public class AppViewCreationUtility {
 
         setAppBackground(appView, appInfo.getBgColor());
 
-        /**Note that createBitmapFromLayoutWithText is used when the icons are being resized in LauncherSettings
-        and is thus a part of the SettingsUtility and not AppViewCreationUtility.*/
         appImageView.setImageBitmap(createBitmapFromLayoutWithText(context, appView, Constants.APP_ICON_DIMENSION_DEF, Constants.APP_ICON_DIMENSION_DEF));
         appImageView.setTag(String.valueOf(appInfo.getApp().getId()));
         appImageView.setOnDragListener(new GAppDragger());
@@ -159,6 +157,14 @@ public class AppViewCreationUtility {
         appViewLayout.setBackgroundDrawable(shapeDrawable);
     }
 
+    /**
+     * This function create a Bitmap to put into the AppImageView. The Bitmap is scaled to be a certain size when it is returned.
+     * @param context The context of the current activity.
+     * @param view The AppImageView that the bitmap should be inserted into.
+     * @param widthInDP The width of the Bitmap in density pixels.
+     * @param heightInDP The height of the bitmap in density pixels.
+     * @return the final bitmap of the application to be inserted into the AppImageView.
+     */
     public static Bitmap createBitmapFromLayoutWithText(Context context, View view, int widthInDP, int heightInDP) {
         int width = LauncherUtility.intToDP(context, widthInDP);
         int height = LauncherUtility.intToDP(context, heightInDP);
