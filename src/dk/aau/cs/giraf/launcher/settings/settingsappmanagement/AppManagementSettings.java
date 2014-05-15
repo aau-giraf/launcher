@@ -88,6 +88,11 @@ public class AppManagementSettings extends Fragment {
         });
     }
 
+    /**
+     * Replace active fragment by running the transaction in a new thread.
+     * Adds responsiveness when loading list of installed apps.
+     * @param fragment
+     */
     private void replaceFragment(final Fragment fragment){
         new Runnable() {
             @Override
