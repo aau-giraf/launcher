@@ -4,18 +4,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
@@ -24,7 +23,6 @@ import com.google.analytics.tracking.android.EasyTracker;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -33,8 +31,6 @@ import dk.aau.cs.giraf.gui.GButtonSettings;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GProfileSelector;
-import dk.aau.cs.giraf.gui.GWidgetCalendar;
-import dk.aau.cs.giraf.gui.GWidgetConnectivity;
 import dk.aau.cs.giraf.gui.GWidgetLogout;
 import dk.aau.cs.giraf.gui.GWidgetProfileSelection;
 import dk.aau.cs.giraf.gui.GWidgetUpdater;
@@ -50,8 +46,6 @@ import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.controllers.ProfileController;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
-import dk.aau.cs.giraf.oasis.lib.models.ProfileApplication;
-import dk.aau.cs.giraf.oasis.lib.models.Setting;
 import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 
 /**
@@ -75,7 +69,8 @@ public class HomeActivity extends Activity {
     private int mIconSize;
 
 	private GWidgetUpdater mWidgetUpdater;
-    private GProfileSelector mProfileSelectorWidget;
+    private GWidgetProfileSelection mWidgetProfileSelection;
+    private GProfileSelector mProfileSelectorDialog;
     private GDialog mLogoutDialog;
 
 	private RelativeLayout mHomeDrawerView;
@@ -420,16 +415,16 @@ public class HomeActivity extends Activity {
 	 */
 	private void loadWidgets() {
         GWidgetLogout logoutWidget = (GWidgetLogout) findViewById(R.id.logoutwidget);
-        GWidgetProfileSelection profileSelectionWidget = (GWidgetProfileSelection) findViewById(R.id.profile_widget);
+        mWidgetProfileSelection = (GWidgetProfileSelection) findViewById(R.id.profile_widget);
         GButtonSettings settingsButton = (GButtonSettings) findViewById(R.id.settingsbutton);
 		mHomeDrawerView = (RelativeLayout) findViewById(R.id.HomeDrawer);
 
         /*Setup the profile selector dialog. If the current user is not a guardian, the guardian is used
           as the current user.*/
         if(mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
-            mProfileSelectorWidget = new GProfileSelector(mContext, mLoggedInGuardian, mCurrentUser);
+            mProfileSelectorDialog = new GProfileSelector(mContext, mLoggedInGuardian, mCurrentUser);
         else
-            mProfileSelectorWidget = new GProfileSelector(mContext, mLoggedInGuardian, null);
+            mProfileSelectorDialog = new GProfileSelector(mContext, mLoggedInGuardian, null);
 
         //Set up widget updater, which updates the widget's view regularly, according to its status.
 		mWidgetUpdater = new GWidgetUpdater();
@@ -448,12 +443,13 @@ public class HomeActivity extends Activity {
             }
         });
 
-        profileSelectionWidget.setOnClickListener(new View.OnClickListener() {
+        mWidgetProfileSelection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mProfileSelectorWidget.show();
+                mProfileSelectorDialog.show();
             }
         });
+        mWidgetProfileSelection.setImageBitmap(mCurrentUser.getImage());
 
         updatesProfileSelector();
 
@@ -484,17 +480,20 @@ public class HomeActivity extends Activity {
      * */
     private void updatesProfileSelector()
     {
-        mProfileSelectorWidget.setOnListItemClick(new AdapterView.OnItemClickListener() {
+        mProfileSelectorDialog.setOnListItemClick(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 ProfileController pc = new ProfileController(mContext);
                 mCurrentUser = pc.getProfileById((int) l);
-                mProfileSelectorWidget.dismiss();
+                mProfileSelectorDialog.dismiss();
 
                 if (mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
-                    mProfileSelectorWidget = new GProfileSelector(mContext, mLoggedInGuardian, mCurrentUser);
+                    mProfileSelectorDialog = new GProfileSelector(mContext, mLoggedInGuardian, mCurrentUser);
                 else
-                    mProfileSelectorWidget = new GProfileSelector(mContext, mLoggedInGuardian, null);
+                    mProfileSelectorDialog = new GProfileSelector(mContext, mLoggedInGuardian, null);
+
+                Bitmap newProfileImage = mCurrentUser.getImage();
+                mWidgetProfileSelection.setImageBitmap(newProfileImage);
 
                 updatesProfileSelector();
 
