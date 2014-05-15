@@ -166,8 +166,10 @@ public class SettingsListFragment extends Fragment {
                         Toast.makeText(parent.getContext(), R.string.settings_activity_not_found_msg, Toast.LENGTH_SHORT).show();
                     }
                     finally {
-                        // Resets the selection to first item after the intent has been clicked
-                        mAdapter.setSelected(0);
+                        // Notify adapter to redraw views since we want to reset the visual style
+                        // of the selected since its state should not be preserved (= reset selected item
+                        // to the item selected when starting the Intent.
+                        mAdapter.notifyDataSetChanged();
                     }
                 }
             }
