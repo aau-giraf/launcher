@@ -23,13 +23,11 @@ public class AppManagementSettings extends Fragment {
     private static final String MARKET_SEARCH_APP_URI = "market://search?q=pub:";
     private static final String MARKET_SEARCH_WEB_URI = "http://play.google.com/store/search?q=pub:";
     //TODO: Remember to change our publisher name when Giraf has been published on Google Play
-    private static final String PUBLISHER_NAME = "AAU Giraf";
+    private static final String PUBLISHER_NAME = "Giraf Autism Apps";
 
-    private Activity mActivity;
     private FragmentManager mFragManager;
     private Fragment mGirafFragment;
     private Fragment mAndroidFragment;
-    private Fragment mActiveFragment;
     private Fragment mFragmentContainer;
 
     private Button mGirafButton;
@@ -41,13 +39,10 @@ public class AppManagementSettings extends Fragment {
         View view = inflater.inflate(R.layout.settings_appfragment,
                 container, false);
 
-        Log.d("testing", "onCreateView() app management");
         this.setRetainInstance(true);
 
         mGirafFragment = new GirafFragment();
         mAndroidFragment = new AndroidFragment();
-
-        mActivity = this.getActivity();
 
         mGirafButton = (Button)view.findViewById(R.id.settings_giraf_button);
         mAndroidAppsButton = (Button)view.findViewById(R.id.settings_android_button);
@@ -60,7 +55,6 @@ public class AppManagementSettings extends Fragment {
         // Choose the GIRAF pane and set the GIRAF button when the fragment has loaded.
         mFragmentContainer = mGirafFragment;
         focusButton(mGirafButton);
-        mActiveFragment = mFragmentContainer;
 
         mFragManager.beginTransaction().add(R.id.app_settings_fragmentlayout, mFragmentContainer)
                 .commit();
@@ -94,30 +88,11 @@ public class AppManagementSettings extends Fragment {
         });
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.d("testing", "onStart() app management");
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d("testing", "onPause() app management");
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d("testing", "onResume() app management");
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Log.d("testing", "onSavedInstanceState() app management");
-    }
-
+    /**
+     * Replace active fragment by running the transaction in a new thread.
+     * Adds responsiveness when loading list of installed apps.
+     * @param fragment
+     */
     private void replaceFragment(final Fragment fragment){
         new Runnable() {
             @Override
