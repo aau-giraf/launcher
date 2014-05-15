@@ -54,7 +54,11 @@ public abstract class AppContainerFragment extends Fragment{
         loadedApps = null; // Force loadApplications to redraw
     }
 
-    protected void loadApplications()
-    {
+    /**
+     * This function only exists to be overridden by inheriting classes.
+     * This is because the inheriting classes MUST use this method to loadapplications, but they
+     * must specify which ASyncTask class they use to load the applications as well.
+     */
+    protected void loadApplications(){
     }
 }
