@@ -1,10 +1,13 @@
 package dk.aau.cs.giraf.launcher.settings;
 
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.SwitchPreference;
 
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
+import dk.aau.cs.giraf.launcher.settings.components.IconResizer;
 
 public class SettingsLauncher extends PreferenceFragment {
 
