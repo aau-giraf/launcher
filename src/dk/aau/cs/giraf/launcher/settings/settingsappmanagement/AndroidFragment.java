@@ -40,7 +40,8 @@ public class AndroidFragment extends AppContainerFragment {
     private View.OnClickListener listener;
 
     /**
-     * Because we are dealing with a Fragment, OnCreateView is where most of the variables are set
+     * Because we are dealing with a Fragment, OnCreateView is where most of the variables are set.
+     * The context is set by the superclass.
      * @param inflater The inflater (Android takes care of this)
      * @param container The container, the ViewGroup, that the fragment should be inflate in.
      * @param savedInstanceState The previously saved instancestate
