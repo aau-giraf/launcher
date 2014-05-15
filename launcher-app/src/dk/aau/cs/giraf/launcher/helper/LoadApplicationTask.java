@@ -151,7 +151,6 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
 
     @Override
     protected void onPostExecute(HashMap<String, AppInfo> appInfos) {
-        Log.d(Constants.ERROR_TAG, "Thread says bye");
 
         progressbar.setVisibility(View.GONE);
 
@@ -171,7 +170,9 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
         } catch (NullPointerException e){
             e.printStackTrace();
         }
+
         removeStrayProgressbars();
+        Log.d(Constants.ERROR_TAG, "Thread says bye");
     }
 
     @Override
@@ -181,8 +182,7 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
             progressbar.setVisibility(View.GONE);
     }
 
-    private ViewGroup getProgressBarParent()
-    {
+    private ViewGroup getProgressBarParent(){
         ViewGroup parent = (ViewGroup)targetLayout.getParent();
         while (parent instanceof ScrollView)
             parent = (ViewGroup) parent.getParent();

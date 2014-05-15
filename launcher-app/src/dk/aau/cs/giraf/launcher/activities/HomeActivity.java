@@ -10,11 +10,13 @@ import android.util.Log;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
@@ -23,6 +25,7 @@ import com.google.analytics.tracking.android.EasyTracker;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -31,6 +34,8 @@ import dk.aau.cs.giraf.gui.GButtonSettings;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GProfileSelector;
+import dk.aau.cs.giraf.gui.GWidgetCalendar;
+import dk.aau.cs.giraf.gui.GWidgetConnectivity;
 import dk.aau.cs.giraf.gui.GWidgetLogout;
 import dk.aau.cs.giraf.gui.GWidgetProfileSelection;
 import dk.aau.cs.giraf.gui.GWidgetUpdater;
@@ -46,6 +51,8 @@ import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.controllers.ProfileController;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.oasis.lib.models.ProfileApplication;
+import dk.aau.cs.giraf.oasis.lib.models.Setting;
 import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 
 /**
@@ -415,7 +422,7 @@ public class HomeActivity extends Activity {
 	 */
 	private void loadWidgets() {
         GWidgetLogout logoutWidget = (GWidgetLogout) findViewById(R.id.logoutwidget);
-        mWidgetProfileSelection = (GWidgetProfileSelection) findViewById(R.id.profile_widget);
+        GWidgetProfileSelection profileSelectionWidget = (GWidgetProfileSelection) findViewById(R.id.profile_widget);
         GButtonSettings settingsButton = (GButtonSettings) findViewById(R.id.settingsbutton);
 		mHomeDrawerView = (RelativeLayout) findViewById(R.id.HomeDrawer);
 
@@ -443,13 +450,12 @@ public class HomeActivity extends Activity {
             }
         });
 
-        mWidgetProfileSelection.setOnClickListener(new View.OnClickListener() {
+        profileSelectionWidget.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mProfileSelectorDialog.show();
             }
         });
-        mWidgetProfileSelection.setImageBitmap(mCurrentUser.getImage());
 
         updatesProfileSelector();
 
@@ -478,8 +484,7 @@ public class HomeActivity extends Activity {
      * Updates the ProfileSelector. It is needed when a new user has been selected, as a different
      * listener is needed, and the app container has to be reloaded.
      * */
-    private void updatesProfileSelector()
-    {
+    private void updatesProfileSelector(){
         mProfileSelectorDialog.setOnListItemClick(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -491,9 +496,6 @@ public class HomeActivity extends Activity {
                     mProfileSelectorDialog = new GProfileSelector(mContext, mLoggedInGuardian, mCurrentUser);
                 else
                     mProfileSelectorDialog = new GProfileSelector(mContext, mLoggedInGuardian, null);
-
-                Bitmap newProfileImage = mCurrentUser.getImage();
-                mWidgetProfileSelection.setImageBitmap(newProfileImage);
 
                 updatesProfileSelector();
 

@@ -50,8 +50,6 @@ public class AndroidFragment extends AppContainerFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
-        this.setRetainInstance(true);
-
         context = getActivity();
         appView = (LinearLayout) view.findViewById(R.id.appContainer);
         currentUser = mCallback.getSelectedProfile();
@@ -204,7 +202,7 @@ public class AndroidFragment extends AppContainerFragment {
          */
         @Override
         protected HashMap<String, AppInfo> doInBackground(Application... applications) {
-            applications = ApplicationControlUtility.getAndroidAppsAsApplicationList(context, "dk.aau.cs.giraf").toArray(applications);
+            applications = ApplicationControlUtility.getAndroidAppsAsApplicationList(context).toArray(applications);
             appInfos = super.doInBackground(applications);
 
             return null;
