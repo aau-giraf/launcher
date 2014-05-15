@@ -29,7 +29,7 @@ import dk.aau.cs.giraf.oasis.lib.models.ProfileApplication;
  */
 public class GirafFragment extends AppContainerFragment {
 
-    private AndroidAppsFragmentInterface mCallback;
+    private AppsFragmentInterface mCallback;
     private Profile currentUser;
     private HashMap<String,AppInfo> appInfos;
     private loadGirafApplicationTask loadApplicationTask;
@@ -67,10 +67,10 @@ public class GirafFragment extends AppContainerFragment {
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            mCallback = (AndroidAppsFragmentInterface) activity;
+            mCallback = (AppsFragmentInterface) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement AndroidAppsFragmentInterface");
+                    + " must implement AppsFragmentInterface");
         }
     }
 

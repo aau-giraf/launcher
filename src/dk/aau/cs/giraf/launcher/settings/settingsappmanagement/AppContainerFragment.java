@@ -18,6 +18,8 @@ import dk.aau.cs.giraf.oasis.lib.models.Application;
 /**
  * This is the superclass that both AndroidFragment and GirafFragment inherits from
  * Since both fragments implement many of the same features with very smaller differences, this was deemed to be the best way.
+ * This Fragment should never be implemented directly, but simply inherited from.
+ * It is therefore abstract
  */
 public abstract class AppContainerFragment extends Fragment{
 

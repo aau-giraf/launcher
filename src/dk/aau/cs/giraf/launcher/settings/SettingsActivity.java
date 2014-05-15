@@ -11,7 +11,6 @@ import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,7 @@ import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
-import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AndroidAppsFragmentInterface;
+import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementSettings;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
@@ -30,7 +29,7 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
  */
 public class SettingsActivity extends Activity
         implements SettingsListFragment.SettingsListFragmentListener,
-        AndroidAppsFragmentInterface {
+        AppsFragmentInterface {
 
     /**
      * Global variable containing giraf applications with settings.
