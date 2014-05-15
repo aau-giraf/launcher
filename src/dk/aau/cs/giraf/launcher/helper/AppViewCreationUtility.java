@@ -31,13 +31,12 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 /**
- * Created by Vagner on 13-05-14.
+ * This class is used for creation of AppImageViews containing infomation about the application
+ * that the AppImageView contains.
  */
 public class AppViewCreationUtility {
 
     private static HashMap<String,AppInfo> mAppInfoHashMap;
-    private final static String DEFAULT_PACKAGE_FILTER = "";
-    private final static boolean DEFAULT_FILTER_INCLUSION = true;
 
     /**
      * Loads the AppInfo object of app from the list, into the {@code mAppInfoHashMap} hash map, making
