@@ -50,6 +50,8 @@ public class AndroidFragment extends AppContainerFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
+        this.setRetainInstance(true);
+
         context = getActivity();
         appView = (LinearLayout) view.findViewById(R.id.appContainer);
         currentUser = mCallback.getSelectedProfile();
