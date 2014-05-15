@@ -16,11 +16,9 @@ import java.util.List;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
-import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
-import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 import dk.aau.cs.giraf.oasis.lib.controllers.ProfileApplicationController;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -30,29 +28,12 @@ import dk.aau.cs.giraf.oasis.lib.models.ProfileApplication;
  * Created by Vagner on 01-05-14.
  */
 public class GirafFragment extends AppContainerFragment {
+
     private AndroidAppsFragmentInterface mCallback;
     private Profile currentUser;
     private HashMap<String,AppInfo> appInfos;
-    private LoadGirafApplicationTask loadApplicationTask;
-    private View.OnClickListener listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            AppImageView appImageView = (AppImageView) v;
-            appImageView.toggle();
-            ProfileApplicationController pac = new ProfileApplicationController(context);
-            AppInfo app = appInfos.get(v.getTag().toString());
-
-            if(UserHasApplicationInView(pac, app.getApp(), currentUser))
-            {
-                pac.removeProfileApplicationByProfileAndApplication(app.getApp(), currentUser);
-            }
-            else
-            {
-                ProfileApplication pa = new ProfileApplication(currentUser.getId(), app.getApp().getId());
-                pac.insertProfileApplication(pa);
-            }
-        }
-    };
+    private loadGirafApplicationTask loadApplicationTask;
+    private View.OnClickListener listener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -60,6 +41,8 @@ public class GirafFragment extends AppContainerFragment {
         context = getActivity();
         appView = (LinearLayout) view.findViewById(R.id.appContainer);
         currentUser = mCallback.getSelectedProfile();
+
+        setListeners();
 
         return view;
     }
@@ -92,11 +75,6 @@ public class GirafFragment extends AppContainerFragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         loadApplicationTask.cancel(true);
@@ -114,12 +92,34 @@ public class GirafFragment extends AppContainerFragment {
         if (loadedApps == null || loadedApps.size() != apps.size()){
             //Remember that the apps have been added, so they are not added again by the listener
 
-            loadApplicationTask = new LoadGirafApplicationTask(context, currentUser, null, appView, 110, listener);
+            loadApplicationTask = new loadGirafApplicationTask(context, currentUser, null, appView, 110, listener);
             loadApplicationTask.execute();
         }
     }
 
-    private boolean UserHasApplicationInView(ProfileApplicationController pac, Application app, Profile user)
+    private void setListeners() {
+        listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppImageView appImageView = (AppImageView) v;
+                appImageView.toggle();
+                ProfileApplicationController pac = new ProfileApplicationController(context);
+                AppInfo app = appInfos.get(v.getTag().toString());
+
+                if(userHasApplicationInView(pac, app.getApp(), currentUser))
+                {
+                    pac.removeProfileApplicationByProfileAndApplication(app.getApp(), currentUser);
+                }
+                else
+                {
+                    ProfileApplication pa = new ProfileApplication(currentUser.getId(), app.getApp().getId());
+                    pac.insertProfileApplication(pa);
+                }
+            }
+        };
+    }
+
+    private boolean userHasApplicationInView(ProfileApplicationController pac, Application app, Profile user)
     {
         List<ProfileApplication> profileApplications = pac.getListOfProfileApplicationsByProfileId(user);
         ProfileApplication thisPA = pac.getProfileApplicationByProfileIdAndApplicationId(app,user);
@@ -130,9 +130,9 @@ public class GirafFragment extends AppContainerFragment {
             return false;
     }
 
-    class LoadGirafApplicationTask extends LoadApplicationTask {
+    class loadGirafApplicationTask extends LoadApplicationTask {
 
-        public LoadGirafApplicationTask(Context context, Profile currentUser, Profile guardian, LinearLayout targetLayout, int iconSize, View.OnClickListener onClickListener) {
+        public loadGirafApplicationTask(Context context, Profile currentUser, Profile guardian, LinearLayout targetLayout, int iconSize, View.OnClickListener onClickListener) {
             super(context, currentUser, guardian, targetLayout, iconSize, onClickListener);
         }
 
