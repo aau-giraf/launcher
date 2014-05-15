@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.DragEvent;
@@ -75,7 +76,8 @@ public class HomeActivity extends Activity {
     private int mIconSize;
 
 	private GWidgetUpdater mWidgetUpdater;
-    private GProfileSelector mProfileSelectorWidget;
+    private GWidgetProfileSelection mWidgetProfileSelection;
+    private GProfileSelector mProfileSelectorDialog;
     private GDialog mLogoutDialog;
 
 	private RelativeLayout mHomeDrawerView;
@@ -199,8 +201,11 @@ public class HomeActivity extends Activity {
 		super.onResume();
         if(mIsAppsContainerInitialized)
             reloadApplications();
+        //startObservingApps();
         if(mWidgetUpdater != null)
 		    mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_START);
+
+
 	}
 
     /**
@@ -424,9 +429,9 @@ public class HomeActivity extends Activity {
         /*Setup the profile selector dialog. If the current user is not a guardian, the guardian is used
           as the current user.*/
         if(mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
-            mProfileSelectorWidget = new GProfileSelector(mContext, mLoggedInGuardian, mCurrentUser);
+            mProfileSelectorDialog = new GProfileSelector(mContext, mLoggedInGuardian, mCurrentUser);
         else
-            mProfileSelectorWidget = new GProfileSelector(mContext, mLoggedInGuardian, null);
+            mProfileSelectorDialog = new GProfileSelector(mContext, mLoggedInGuardian, null);
 
         //Set up widget updater, which updates the widget's view regularly, according to its status.
 		mWidgetUpdater = new GWidgetUpdater();
@@ -448,7 +453,7 @@ public class HomeActivity extends Activity {
         profileSelectionWidget.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mProfileSelectorWidget.show();
+                mProfileSelectorDialog.show();
             }
         });
 
@@ -480,17 +485,17 @@ public class HomeActivity extends Activity {
      * listener is needed, and the app container has to be reloaded.
      * */
     private void updatesProfileSelector(){
-        mProfileSelectorWidget.setOnListItemClick(new AdapterView.OnItemClickListener() {
+        mProfileSelectorDialog.setOnListItemClick(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 ProfileController pc = new ProfileController(mContext);
                 mCurrentUser = pc.getProfileById((int) l);
-                mProfileSelectorWidget.dismiss();
+                mProfileSelectorDialog.dismiss();
 
                 if (mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
-                    mProfileSelectorWidget = new GProfileSelector(mContext, mLoggedInGuardian, mCurrentUser);
+                    mProfileSelectorDialog = new GProfileSelector(mContext, mLoggedInGuardian, mCurrentUser);
                 else
-                    mProfileSelectorWidget = new GProfileSelector(mContext, mLoggedInGuardian, null);
+                    mProfileSelectorDialog = new GProfileSelector(mContext, mLoggedInGuardian, null);
 
                 updatesProfileSelector();
 
