@@ -23,7 +23,7 @@ public class AppManagementSettings extends Fragment {
     private static final String MARKET_SEARCH_APP_URI = "market://search?q=pub:";
     private static final String MARKET_SEARCH_WEB_URI = "http://play.google.com/store/search?q=pub:";
     //TODO: Remember to change our publisher name when Giraf has been published on Google Play
-    private static final String PUBLISHER_NAME = "AAU Giraf";
+    private static final String PUBLISHER_NAME = "Giraf Autism Apps";
 
     private Activity mActivity;
     private FragmentManager mFragManager;
