@@ -49,6 +49,12 @@ public class SettingsListAdapter extends BaseAdapter {
         return position;
     }
 
+    /**
+     * Used to set the last selected item in the adapter.
+     * Can be used when switching fragment in the ListView and the last selected item
+     * should be marked with seperate backgroundcolor and shadow.
+     * @param position Position in the ListView of the current item.
+     */
     public void setSelected(int position) {
         // Position in the view implementing the adapter
         mLastSelectedItem = position;
