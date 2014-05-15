@@ -36,11 +36,6 @@ public class AppContainerFragment extends Fragment{
         return view;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
     /**
      * Resets loadedApps variable to loadApplications once again
      */
