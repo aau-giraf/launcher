@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.DragEvent;
@@ -515,7 +514,7 @@ public class HomeActivity extends Activity {
          */
         @Override
         public void run() {
-            List<Application> girafAppsList = ApplicationControlUtility.getAppsAvailableForUser(mContext, mCurrentUser); // For home activity
+            List<Application> girafAppsList = ApplicationControlUtility.getAvailableGirafAppsForUser(mContext, mCurrentUser); // For home activity
             SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(mContext, mCurrentUser);
             Set<String> androidAppsPackagenames = prefs.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
             List<Application> androidAppsList = ApplicationControlUtility.convertPackageNamesToApplications(mContext, androidAppsPackagenames);
@@ -573,7 +572,7 @@ public class HomeActivity extends Activity {
         @Override
         protected HashMap<String, AppInfo> doInBackground(Application... applications) {
             HashMap<String, AppInfo> appInfos;
-            List<Application> girafAppsList = ApplicationControlUtility.getAppsAvailableForUser(context, currentUser); // For home activity
+            List<Application> girafAppsList = ApplicationControlUtility.getAvailableGirafAppsForUser(context, currentUser); // For home activity
             SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(context, currentUser);
             Set<String> androidAppsPackagenames = prefs.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
             List<Application> androidAppsList = ApplicationControlUtility.convertPackageNamesToApplications(context, androidAppsPackagenames);

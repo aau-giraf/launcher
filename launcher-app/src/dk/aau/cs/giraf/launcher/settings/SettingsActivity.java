@@ -81,7 +81,7 @@ public class SettingsActivity extends Activity
         // Clone the input list to be able to remove invalid apps
         ArrayList<SettingsListItem> mAvailableSettingsAppList = (ArrayList<SettingsListItem>) list.clone();
         // Get all installed giraf apps
-        List<ResolveInfo> installedGirafApps = ApplicationControlUtility.getGirafAppsInstalledOnDevice(this);
+        List<ResolveInfo> installedGirafApps = ApplicationControlUtility.getGirafAppsOnDeviceAsResolveInfoList(this);
 
         for (SettingsListItem settingsApp : list) {
             for (ResolveInfo installedApp : installedGirafApps) {
