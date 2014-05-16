@@ -137,8 +137,7 @@ public class AuthenticationActivity extends CaptureActivity {
 	 * @param barcode A greyscale bitmap of the camera data which was decoded.
 	 */
 	@Override
-	public void handleDecode(Result rawResult, Bitmap barcode)
-	{
+	public void handleDecode(Result rawResult, Bitmap barcode){
         try {
             Helper helper = new Helper(this);
             Profile profile = helper.profilesHelper.authenticateProfile(rawResult.getText());
