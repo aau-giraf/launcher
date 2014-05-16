@@ -58,7 +58,7 @@ public class HomeActivity extends Activity {
     private Profile mLoggedInGuardian;
 	private Profile mCurrentUser;
 	private Helper mHelper;
-    private HomeActivityAppTask homeActivityAppTask;
+    private LoadHomeActivityApplicationTask loadHomeActivityApplicationTask;
 
     private HashMap<String, AppInfo> mCurrentLoadedApps;
 
@@ -178,8 +178,8 @@ public class HomeActivity extends Activity {
         if(mWidgetUpdater != null)
 		    mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_STOP);
 
-        if(homeActivityAppTask != null)
-            homeActivityAppTask.cancel(true);
+        if(loadHomeActivityApplicationTask != null)
+            loadHomeActivityApplicationTask.cancel(true);
 	}
 
     /**
@@ -221,8 +221,8 @@ public class HomeActivity extends Activity {
      */
     private void loadApplications(){
         updateIconSize();
-        homeActivityAppTask = new HomeActivityAppTask(mContext, mCurrentUser, mLoggedInGuardian, mAppsContainer, mIconSize, null);
-        homeActivityAppTask.execute();
+        loadHomeActivityApplicationTask = new LoadHomeActivityApplicationTask(mContext, mCurrentUser, mLoggedInGuardian, mAppsContainer, mIconSize, null);
+        loadHomeActivityApplicationTask.execute();
         mIsAppsContainerInitialized = true;
     }
 
@@ -539,7 +539,7 @@ public class HomeActivity extends Activity {
      * However, since there are some special things that need to be handled in the case of all applications,
      * we must inherit the class, override it's methods and do what we need to do in addition to the superclass
      */
-    private class HomeActivityAppTask extends LoadApplicationTask {
+    private class LoadHomeActivityApplicationTask extends LoadApplicationTask {
 
         /**
          * The contructor of the class
@@ -550,7 +550,7 @@ public class HomeActivity extends Activity {
          * @param iconSize The size the icons should have
          * @param onClickListener the onClickListener that each created app should have. In this case we feed it the global variable listener
          */
-        public HomeActivityAppTask(Context context, Profile currentUser, Profile guardian, LinearLayout targetLayout, int iconSize, View.OnClickListener onClickListener) {
+        public LoadHomeActivityApplicationTask(Context context, Profile currentUser, Profile guardian, LinearLayout targetLayout, int iconSize, View.OnClickListener onClickListener) {
             super(context, currentUser, guardian, targetLayout, iconSize, onClickListener);
         }
 

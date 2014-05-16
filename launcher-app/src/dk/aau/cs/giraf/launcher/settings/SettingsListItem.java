@@ -14,14 +14,14 @@ public class SettingsListItem {
     Fragment mAppFragment;
     Intent mIntent;
 
-    private SettingsListItem(String _packageName, String _appName, Drawable _appIcon,
-                             Fragment _fragment, Intent _intent)
+    private SettingsListItem(String packageName, String appName, Drawable appIcon,
+                             Fragment fragment, Intent intent)
     {
-        this.mPackageName = _packageName;
-        this.mAppName = _appName;
-        this.mAppIcon = _appIcon;
-        this.mAppFragment = _fragment;
-        this.mIntent = _intent;
+        this.mPackageName = packageName;
+        this.mAppName = appName;
+        this.mAppIcon = appIcon;
+        this.mAppFragment = fragment;
+        this.mIntent = intent;
     }
 
     /**
@@ -30,13 +30,13 @@ public class SettingsListItem {
      * inside SettingsActivity by package name with custom name and icon.
      * @see dk.aau.cs.giraf.launcher.settings.SettingsActivity
      * @see dk.aau.cs.giraf.launcher.settings.SettingsListAdapter
-     * @param _packageName Package name of the application to add.
-     * @param _appName Name of the application.
-     * @param _appIcon Icon of the application to be showed in ListView.
+     * @param packageName Package name of the application to add.
+     * @param appName Name of the application.
+     * @param appIcon Icon of the application to be showed in ListView.
      * @param _fragment The fragment to be started by FragmentManager.
      */
-    public SettingsListItem(String _packageName, String _appName, Drawable _appIcon, Fragment _fragment){
-        this(_packageName, _appName, _appIcon, _fragment, null);
+    public SettingsListItem(String packageName, String appName, Drawable appIcon, Fragment _fragment){
+        this(packageName, appName, appIcon, _fragment, null);
     }
 
     /**
@@ -44,13 +44,13 @@ public class SettingsListItem {
      * This constructor can be used to add an external application by package name
      * with custom name and icon started through an intent.
      * @see dk.aau.cs.giraf.launcher.settings.SettingsListAdapter
-     * @param _packageName Package name of the application to add.
-     * @param _appName Name of the application.
-     * @param _appIcon Icon of the application to be showed in ListView.
-     * @param _intent The intent to be started as a new activity.
+     * @param packageName Package name of the application to add.
+     * @param appName Name of the application.
+     * @param appIcon Icon of the application to be showed in ListView.
+     * @param intent The intent to be started as a new activity.
      */
-    public SettingsListItem(String _packageName, String _appName, Drawable _appIcon, Intent _intent){
-        this(_packageName, _appName, _appIcon, null, _intent);
+    public SettingsListItem(String packageName, String appName, Drawable appIcon, Intent intent){
+        this(packageName, appName, appIcon, null, intent);
     }
 
     /**
@@ -59,12 +59,12 @@ public class SettingsListItem {
      * inside SettingsActivity with custom name and icon.
      * @see dk.aau.cs.giraf.launcher.settings.SettingsActivity
      * @see dk.aau.cs.giraf.launcher.settings.SettingsListAdapter
-     * @param _appName Name of the application.
-     * @param _appIcon Icon of the application to be showed in ListView.
-     * @param _fragment The fragment to be started by FragmentManager.
+     * @param appName Name of the application.
+     * @param appIcon Icon of the application to be showed in ListView.
+     * @param fragment The fragment to be started by FragmentManager.
      */
-    public SettingsListItem(String _appName, Drawable _appIcon, Fragment _fragment){
-        this(null, _appName, _appIcon, _fragment, null);
+    public SettingsListItem(String appName, Drawable appIcon, Fragment fragment){
+        this(null, appName, appIcon, fragment, null);
     }
 
     /**
@@ -72,11 +72,11 @@ public class SettingsListItem {
      * This constructor can be used when adding an external application
      * with custom name and icon.
      * @see dk.aau.cs.giraf.launcher.settings.SettingsListAdapter
-     * @param _appName Name of the application.
-     * @param _appIcon Icon of the application to be showed in ListView.
-     * @param _intent The intent to be started as a new activity.
+     * @param appName Name of the application.
+     * @param appIcon Icon of the application to be showed in ListView.
+     * @param intent The intent to be started as a new activity.
      */
-    public SettingsListItem(String _appName, Drawable _appIcon, Intent _intent) {
-        this(null, _appName, _appIcon, null, _intent);
+    public SettingsListItem(String appName, Drawable appIcon, Intent intent) {
+        this(null, appName, appIcon, null, intent);
     }
 }
