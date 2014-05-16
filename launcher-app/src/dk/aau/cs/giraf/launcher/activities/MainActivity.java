@@ -256,7 +256,6 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            //findViewById(R.id.giraficon).clearAnimation();
             startNextActivity();
         }
     }
