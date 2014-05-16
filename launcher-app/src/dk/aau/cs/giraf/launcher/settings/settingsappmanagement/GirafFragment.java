@@ -52,6 +52,13 @@ public class GirafFragment extends AppContainerFragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (haveAppsBeenAdded)
+            startObservingApps();
+    }
+
     /**
      * Handles what happens when the fragment is paused
      * If the fragment is still loadapplications in the ASyncTask, it cancels the task
@@ -193,7 +200,6 @@ public class GirafFragment extends AppContainerFragment {
          */
         @Override
         protected HashMap<String, AppInfo> doInBackground(Application... applications) {
-            Log.d(Constants.ERROR_TAG, "Thread says working");
             apps = ApplicationControlUtility.getGirafAppsOnDeviceButLauncherAsApplicationList(context);
             applications = apps.toArray(applications);
             appInfos = super.doInBackground(applications);

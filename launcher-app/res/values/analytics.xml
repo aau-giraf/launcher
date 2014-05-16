@@ -10,6 +10,7 @@
     <!--Enable automatic exception tracking-->
     <bool name="ga_reportUncaughtExceptions">true</bool>
 
-    <!--Enable debug mode - Useful when doing debugging and testing new implementation -->
+    <!--Enable debug mode - Useful when doing debugging and testing new implementation.
+     When this is set to true it is no data is sent to Google Analytics -->
     <bool name="ga_dryRun">true</bool>
 </resources>
