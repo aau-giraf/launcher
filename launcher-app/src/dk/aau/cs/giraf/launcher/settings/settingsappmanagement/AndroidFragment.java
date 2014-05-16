@@ -58,6 +58,14 @@ public class AndroidFragment extends AppContainerFragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (haveAppsBeenAdded){
+            startObservingApps();
+        }
+    }
+
     /**
      * Handles what happens when the fragment is paused
      * It stops observing apps, so it doesnt try an update while paused.

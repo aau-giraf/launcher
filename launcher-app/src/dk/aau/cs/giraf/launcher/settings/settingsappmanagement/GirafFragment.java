@@ -52,6 +52,13 @@ public class GirafFragment extends AppContainerFragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (haveAppsBeenAdded)
+            startObservingApps();
+    }
+
     /**
      * Handles what happens when the fragment is paused
      * If the fragment is still loadapplications in the ASyncTask, it cancels the task

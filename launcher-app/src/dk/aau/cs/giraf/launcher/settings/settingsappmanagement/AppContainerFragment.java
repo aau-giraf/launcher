@@ -4,13 +4,11 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 
 import java.util.HashMap;
 import java.util.List;
@@ -47,10 +45,15 @@ public abstract class AppContainerFragment extends Fragment{
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.settings_appfragment_appcontainer,
-                container, false);
-        context = getActivity();
-        currentUser = mCallback.getSelectedProfile();
+        View view;
+        if (appView == null){
+            view = inflater.inflate(R.layout.settings_appfragment_appcontainer,
+                    container, false);
+            context = getActivity();
+            currentUser = mCallback.getSelectedProfile();
+        } else {
+            view = appView.getRootView();
+        }
 
         return view;
     }
@@ -77,13 +80,6 @@ public abstract class AppContainerFragment extends Fragment{
                 }
             });
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if(haveAppsBeenAdded)
-            reloadApplications();
     }
 
     /**
