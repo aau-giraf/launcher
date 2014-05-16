@@ -24,6 +24,18 @@
     	    android:layout_centerVertical="true"
     	    android:src="@drawable/giraf_loading" />
 
+    <TextView
+        android:id="@+id/welcome_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_below="@+id/giraficon"
+        android:layout_marginTop="20dip"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@android:color/background_dark"
+        android:text="Velkommen til Giraf!"/>
+
     	<!-- <Button
     	    android:id="@+id/button2"
     	    android:layout_width="wrap_content"

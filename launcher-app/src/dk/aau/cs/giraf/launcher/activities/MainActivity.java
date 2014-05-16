@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.TextView;
 
 import java.util.Date;
 
@@ -26,6 +28,8 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
 public class MainActivity extends Activity implements Animation.AnimationListener{
     private Context mContext;
     private int oldSessionGuardianID = -1;
+    Animation startingAnimation;
+    Animation loadAnimation;
 
     /* ************* DEBUGGING MODE ************* */
     // TODO: ONLY USED FOR DEBUGGING PURPOSES!!!
@@ -33,7 +37,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      * If {@code true}, the Launcher is stated in debugging mode, where the splash screen and
      * authentication is skipped.
      */
-    private final boolean DEBUG_MODE = true;
+    private final boolean DEBUG_MODE = false;
 
     /**
      * If {@code true}, the authentication screen is shown, despite debugging mode. Has no
@@ -45,7 +49,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      * If {@code true}, the splash screen is shown, despite debugging mode. Has no
      * effect if {@code DEBUG_MODE} is {@code false}.
      */
-    private final boolean SKIP_SPLASH_SCREEN = true;
+    private final boolean SKIP_SPLASH_SCREEN = false;
 
     /**
      * If {@code true}, Launcher automatically logs in with a child profile. If {@code false},
@@ -67,14 +71,15 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 
-        boolean showAnimation = false;
+        boolean showAnimation = true;
 
 	    setContentView(R.layout.logo);
 
         mContext = this.getApplicationContext();
 
         //Load the splash animation
-        Animation logoAnimation = AnimationUtils.loadAnimation(mContext, R.animator.rotatelogo);
+        startingAnimation = AnimationUtils.loadAnimation(mContext, R.animator.start_logo_animation);
+        loadAnimation = AnimationUtils.loadAnimation(mContext, R.animator.rotatelogo);
 
         //Load the preference determining whether the animation should be shown
         findOldSession();
@@ -91,42 +96,35 @@ public class MainActivity extends Activity implements Animation.AnimationListene
             startNextActivity();
         }
         else {
-            logoAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
+            startingAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
+            loadAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
         }
 
-        Helper helper = LauncherUtility.getOasisHelper(mContext);
-        int size = helper.profilesHelper.getProfiles().size();
-        if (size <= 0) {
-            helper.CreateDummyData();
-        }
-
-        findViewById(R.id.giraficon).startAnimation(logoAnimation);
-        logoAnimation.setAnimationListener(this);
+        findViewById(R.id.giraficon).startAnimation(startingAnimation);
+        startingAnimation.setAnimationListener(this);
 	}
-
-    /**
-     * Called by the system. Starts the next activity (through {@link MainActivity#startNextActivity()}
-     * when the animation has ended.
-     *
-     * @param animation Instance of the ended animation. Not used.
-     */
-    @Override
-    public void onAnimationEnd(Animation animation) {
-        // After completing the animation, check for session and go to the correct activity.
-        startNextActivity();
-    }
-
-    // Necessary for the AnimationListener interface
-    @Override
-    public void onAnimationRepeat(Animation animation) {}
-
-    // Necessary for the AnimationListener interface
-    @Override
-    public void onAnimationStart(Animation animation) {}
 
     @Override
     public void onBackPressed() {
         //Do nothing, as the user should not be able to back out of this activity
+    }
+
+    @Override
+    public void onAnimationStart(Animation animation) {
+
+    }
+
+    @Override
+    public void onAnimationEnd(Animation animation) {
+        TextView welcomeText = (TextView) findViewById(R.id.welcome_text);
+        welcomeText.setText("Henter data...");
+        LoadDataTask loadDataTask = new LoadDataTask();
+        loadDataTask.execute(this);
+    }
+
+    @Override
+    public void onAnimationRepeat(Animation animation) {
+
     }
 
     /**
@@ -139,6 +137,8 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      * @see dk.aau.cs.giraf.launcher.helper.LauncherUtility#sessionExpired(android.content.Context) */
     public void startNextActivity(){
         Intent intent;
+        TextView welcomeText = (TextView) findViewById(R.id.welcome_text);
+        welcomeText.setText("Klar!");
 
         if (DEBUG_MODE && SKIP_AUTHENTICATION){
             intent = skipAuthentication(DEBUG_AS_CHILD);
@@ -200,6 +200,34 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         } else {
             SharedPreferences sharedPreferences = getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
             oldSessionGuardianID = sharedPreferences.getInt(Constants.GUARDIAN_ID, -1);
+        }
+    }
+
+    private class LoadDataTask extends AsyncTask<Activity, View, Void>
+    {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            findViewById(R.id.giraficon).startAnimation(loadAnimation);
+
+        }
+
+        @Override
+        protected Void doInBackground(Activity... activities) {
+
+            Helper helper = LauncherUtility.getOasisHelper(mContext);
+            int size = helper.profilesHelper.getProfiles().size();
+            if (size <= 0) {
+                helper.CreateDummyData();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            findViewById(R.id.giraficon).clearAnimation();
+            startNextActivity();
         }
     }
 }
