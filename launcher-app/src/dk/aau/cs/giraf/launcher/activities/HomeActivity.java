@@ -478,8 +478,7 @@ public class HomeActivity extends Activity {
      * Updates the ProfileSelector. It is needed when a new user has been selected, as a different
      * listener is needed, and the app container has to be reloaded.
      * */
-    private void updatesProfileSelector()
-    {
+    private void updatesProfileSelector(){
         mProfileSelectorDialog.setOnListItemClick(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -492,8 +491,7 @@ public class HomeActivity extends Activity {
                 else
                     mProfileSelectorDialog = new GProfileSelector(mContext, mLoggedInGuardian, null);
 
-                Bitmap newProfileImage = mCurrentUser.getImage();
-                mWidgetProfileSelection.setImageBitmap(newProfileImage);
+                mWidgetProfileSelection.setImageBitmap(mCurrentUser.getImage());
 
                 updatesProfileSelector();
 
