@@ -258,6 +258,12 @@ public abstract class LauncherUtility {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, i, context.getResources().getDisplayMetrics());
     }
 
+    /**
+     * This function tries generates an OasisLib Helper, based on the current context.
+     * If it succeeds, returns the helper, otherwise sends information to Google Analytics about the error and return null
+     * @param context The context of the current activity
+     * @return The generated helper
+     */
     public static Helper getOasisHelper(Context context) {
         Helper helper = null;
         try {
@@ -269,6 +275,13 @@ public abstract class LauncherUtility {
         return helper;
     }
 
+    /**
+     * This function returns substring of the correct preference string based on the user profile.
+     * Checks for the role and appends the correct role prefix to the profiles ID.
+     * This is used to find out which settings file to read.
+     * @param profile The profile to generate a string for
+     * @return The substring generated.
+     */
     public static String getSharedPreferenceUser(Profile profile){
         String fileName = "";
         switch (profile.getRole()){
@@ -293,17 +306,41 @@ public abstract class LauncherUtility {
         return  fileName;
     }
 
+    /**
+     * This function returns substring of the correct preference string based on the user profile.
+     * This user profile is extracted from the context given.
+     * Checks for the role and appends the correct role prefix to the profiles ID.
+     * This is used to find out which settings file to read.
+     * @param context The context of the current activity
+     * @return The substring generated.
+     */
     public static String getSharedPreferenceUserFromContext(Context context){
         Profile currentUser = getCurrentUser(context);
         return getSharedPreferenceUser(currentUser);
     }
 
+    /**
+     * This function retrives the shared preferences for the given user.
+     * it uses calls to other functions to generate the correct filename string and
+     * subsequently retrieves the preferences from the context given
+     * @param context The context of the current activity
+     * @param profile The profile we are retrieving settings for
+     * @return The settings for the given user in the given context.
+     */
     public static SharedPreferences getSharedPreferencesForCurrentUser(Context context, Profile profile){
         String fileName = Constants.TAG + ".";
         fileName += getSharedPreferenceUser(profile);
         return context.getSharedPreferences(fileName, Context.MODE_PRIVATE);
     }
 
+    /**
+     * This function retrives the shared preferences for the given user.
+     * Finds the user based on the given context.
+     * it uses calls to other functions to generate the correct filename string and
+     * subsequently retrieves the preferences from the context given
+     * @param context The context of the current activity
+     * @return The settings for the user in the given context.
+     */
     public static SharedPreferences getSharedPreferencesForCurrentUser(Context context){
         Profile currentUser = getCurrentUser(context);
         return getSharedPreferencesForCurrentUser(context, currentUser);
