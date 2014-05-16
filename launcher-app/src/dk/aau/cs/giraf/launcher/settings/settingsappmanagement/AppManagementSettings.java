@@ -100,10 +100,15 @@ public class AppManagementSettings extends Fragment {
         /** Attempt to open the Play Store. If it is not installed on the device, open Play Store in the browser instead.*/
         googlePlayButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                // Try to start the Google Play app
                 try {
-                    launchPlayStore();
+                    Intent intent = new Intent();
+                    intent.setData(Uri.parse(MARKET_SEARCH_APP_URI + PUBLISHER_NAME));
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                // If Google Play is not found, parse the url for Google Play website
                 } catch (android.content.ActivityNotFoundException e) {
-                    e.printStackTrace();
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MARKET_SEARCH_WEB_URI + PUBLISHER_NAME)));
                 }
             }
         });
@@ -132,54 +137,5 @@ public class AppManagementSettings extends Fragment {
         googlePlayButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
 
         clickedButton.setBackgroundResource(android.R.color.holo_orange_light);
-    }
-
-    /**
-     * This function opens the Play Store for the user
-     */
-    public void launchPlayStore()
-    {
-        // look for intent able to process 'market://' uris
-        Intent market = new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=dummy"));
-
-        PackageManager packageManager = getActivity().getPackageManager();
-
-        ComponentName playStoreComponentName=null;
-
-        for(ResolveInfo resolveInfo : packageManager.queryIntentActivities(market, 0))
-        {
-            ActivityInfo activityInfo = resolveInfo.activityInfo;
-
-            String packageName = activityInfo.applicationInfo.packageName;
-
-            // looking for "com.android.vending", "com.google.android.finsky.activities.MainActivity"
-            if (!packageName.contains("android"))// || !activityInfo.name.contains("android"))
-                continue;
-
-            // appname should be 'Play Store'
-            // String appName = resolveInfo.loadLabel(packageManager).toString();
-            playStoreComponentName =  new ComponentName(packageName, activityInfo.name);
-            break;
-        }
-
-        if(playStoreComponentName!=null)
-        {
-            Intent intent = new Intent();
-            intent.setComponent(playStoreComponentName);
-            intent.setData(Uri.parse("market://"));
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NO_ANIMATION);
-
-            // launch Google Play Store app :-)
-            startActivity(intent);
-        }
-        else
-        {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://play.google.com/"));
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NO_ANIMATION);
-
-            // fallback -> web browser
-            startActivity(intent);
-        }
     }
 }
