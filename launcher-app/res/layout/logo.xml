@@ -31,9 +31,10 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_below="@+id/giraficon"
-        android:layout_marginTop="20dip"
+        android:layout_marginTop="35dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@android:color/background_dark"
+        android:textColor="@color/giraf_loading_textColor"
+        android:textStyle="bold"
         android:text="Velkommen til Giraf!"/>
 
     	<!-- <Button
