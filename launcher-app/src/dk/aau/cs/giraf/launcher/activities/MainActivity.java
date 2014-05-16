@@ -43,7 +43,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      * If {@code true}, the authentication screen is shown, despite debugging mode. Has no
      * effect if {@code DEBUG_MODE} is {@code false}.
      */
-    private final boolean SKIP_AUTHENTICATION = true;
+    private final boolean SKIP_AUTHENTICATION = false;
 
     /**
      * If {@code true}, the splash screen is shown, despite debugging mode. Has no
