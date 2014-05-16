@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 
 import java.util.HashMap;
@@ -65,6 +64,7 @@ public class GirafFragment extends AppContainerFragment {
 
         if(appsUpdater != null){
             appsUpdater.cancel();
+
             Log.d(Constants.ERROR_TAG, "Applications are no longer observed.");
         }
     }
@@ -143,8 +143,14 @@ public class GirafFragment extends AppContainerFragment {
      */
     private void startObservingApps() {
         appsUpdater = new Timer();
+
         AppsObserver timerTask = new AppsObserver();
-        appsUpdater.scheduleAtFixedRate(timerTask, 5000, 5000);
+
+        try{
+            appsUpdater.scheduleAtFixedRate(timerTask, 5000, 5000);
+        } catch (IllegalStateException e){
+            Log.e(Constants.ERROR_TAG, "Timer was already canceled:" + e.getMessage());
+        }
 
         Log.d(Constants.ERROR_TAG, "Applications are being observed.");
     }
@@ -225,6 +231,5 @@ public class GirafFragment extends AppContainerFragment {
             }
             Log.d(Constants.ERROR_TAG, "Applications checked");
         }
-
     }
 }

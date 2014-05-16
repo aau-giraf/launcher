@@ -24,7 +24,6 @@ import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
-import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 import dk.aau.cs.giraf.oasis.lib.controllers.ProfileApplicationController;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -55,7 +54,9 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
     @Override
     protected void onPreExecute() {
         Log.d(Constants.ERROR_TAG, "Thread says hello");
-        hideNoAppsMessage();
+
+        changeVisibilityOfNoAppsMessage(View.GONE);
+
         progressbar = new ProgressBar(context);
         progressbar.setVisibility(View.VISIBLE);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(100,100);
@@ -154,21 +155,17 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
 
         progressbar.setVisibility(View.GONE);
 
-        try {
-            if(appRowsToAdd.size() > 0)
-            {
-                hideNoAppsMessage();
+        if(appRowsToAdd.size() > 0)
+        {
+            changeVisibilityOfNoAppsMessage(View.GONE);
 
-                for(LinearLayout row : appRowsToAdd){
-                    targetLayout.addView(row);
-                }
+            for(LinearLayout row : appRowsToAdd){
+                targetLayout.addView(row);
             }
-            else
-            {
-                showNoAppsMessage();
-            }
-        } catch (NullPointerException e){
-            e.printStackTrace();
+        }
+        else
+        {
+            changeVisibilityOfNoAppsMessage(View.VISIBLE);
         }
 
         removeStrayProgressbars();
@@ -214,18 +211,15 @@ public class LoadApplicationTask extends AsyncTask<Application, View, HashMap<St
         }
     }
 
-    private void hideNoAppsMessage() {
+    private void changeVisibilityOfNoAppsMessage(int visibility){
+        View noAppsTextView;
         if(context instanceof SettingsActivity)
-            ((Activity) context).findViewById(R.id.no_apps_textview).setVisibility(View.GONE);
+            noAppsTextView = ((Activity) context).findViewById(R.id.no_apps_textview);
         else
-            ((Activity) context).findViewById(R.id.noAppsMessage).setVisibility(View.GONE);
-    }
+            noAppsTextView = ((Activity) context).findViewById(R.id.noAppsMessage);
 
-    private void showNoAppsMessage() {
-        if(context instanceof SettingsActivity)
-            ((Activity) context).findViewById(R.id.no_apps_textview).setVisibility(View.VISIBLE);
-        else
-            ((Activity) context).findViewById(R.id.noAppsMessage).setVisibility(View.VISIBLE);
+        if (noAppsTextView != null)
+            noAppsTextView.setVisibility(visibility);
     }
 
     private boolean UserHasGirafApplicationInView(ProfileApplicationController pac, Application app, Profile user){
