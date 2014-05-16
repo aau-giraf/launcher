@@ -104,16 +104,24 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         startingAnimation.setAnimationListener(this);
 	}
 
+    /**
+     * Overrides the backbutton to do nothing, as the user should not be able to back out of this activity
+     */
     @Override
-    public void onBackPressed() {
-        //Do nothing, as the user should not be able to back out of this activity
-    }
+    public void onBackPressed() {}
 
+    /**
+     * Must be overridden to implement AnimationListener.
+     * We do not need it for anything, though.
+     * @param animation The animation the function should act upon.
+     */
     @Override
-    public void onAnimationStart(Animation animation) {
+    public void onAnimationStart(Animation animation) {}
 
-    }
-
+    /**
+     * Changed the welcome text to a "fetching data" text and makes the application start loading data.
+     * @param animation The animation the function should act upon.
+     */
     @Override
     public void onAnimationEnd(Animation animation) {
         TextView welcomeText = (TextView) findViewById(R.id.welcome_text);
@@ -122,10 +130,13 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         loadDataTask.execute(this);
     }
 
+    /**
+     * Must be overridden to implement AnimationListener.
+     * We do not need it for anything, though.
+     * @param animation The animation the function should act upon.
+     */
     @Override
-    public void onAnimationRepeat(Animation animation) {
-
-    }
+    public void onAnimationRepeat(Animation animation) {}
 
     /**
      * Launches the next relevant activity, according to the current debugging mode, and to
@@ -194,6 +205,10 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         return intent;
     }
 
+    /**
+     * Looks for a previously loaded session.
+     * Loads the sharedpreferences if one exists
+     */
     private void findOldSession() {
         if (LauncherUtility.sessionExpired(mContext)) {
             oldSessionGuardianID = -1;
@@ -203,15 +218,26 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         }
     }
 
+    /**
+     * This class is used to load in data in a thread running asynchronously with the UI thread.
+     */
     private class LoadDataTask extends AsyncTask<Activity, View, Void>
     {
+        /**
+         * Starts the loadinganimation before we start loading data
+         */
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             findViewById(R.id.giraficon).startAnimation(loadAnimation);
-
         }
 
+        /**
+         * Looks if data has already been loaded.
+         * If yes, continue, otherwise, startloading data
+         * @param activities This is not used for anything
+         * @return
+         */
         @Override
         protected Void doInBackground(Activity... activities) {
 
@@ -223,10 +249,13 @@ public class MainActivity extends Activity implements Animation.AnimationListene
             return null;
         }
 
+        /**
+         * Starts the next activity once the data has been loaded.
+         * @param aVoid This is not used for anything
+         */
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            findViewById(R.id.giraficon).clearAnimation();
             startNextActivity();
         }
     }

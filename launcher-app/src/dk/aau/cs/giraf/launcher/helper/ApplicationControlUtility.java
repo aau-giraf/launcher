@@ -29,11 +29,11 @@ public class ApplicationControlUtility {
      * @param user    The user to find apps for.
      * @return List of apps that are usable by this user on this device.
      */
-    public static List<Application> getAppsAvailableForUser(Context context, Profile user) {
+    public static List<Application> getAvailableGirafAppsForUser(Context context, Profile user) {
         Helper helper = LauncherUtility.getOasisHelper(context);
 
         List<Application> userApps = helper.applicationHelper.getApplicationsByProfile(user);
-        List<Application> deviceApps = getAvailableGirafApps(context);
+        List<Application> deviceApps = getGirafAppsOnDeviceAsApplicationList(context);
 
         if (userApps.isEmpty() || deviceApps.isEmpty()) {
             return new ArrayList<Application>();
@@ -56,11 +56,11 @@ public class ApplicationControlUtility {
      * @param context Context of the current activity.
      * @return List of apps available for use on the device.
      */
-    private static List<Application> getAvailableGirafApps(Context context) {
+    private static List<Application> getGirafAppsOnDeviceAsApplicationList(Context context) {
         Helper helper = LauncherUtility.getOasisHelper(context);
 
         List<Application> dbApps = helper.applicationHelper.getApplications();
-        List<ResolveInfo> deviceApps = getGirafAppsInstalledOnDevice(context);
+        List<ResolveInfo> deviceApps = getGirafAppsOnDeviceAsResolveInfoList(context);
 
         if (dbApps.isEmpty() || deviceApps.isEmpty()) {
             return new ArrayList<Application>();
@@ -82,11 +82,11 @@ public class ApplicationControlUtility {
      * @param context Context of the current activity.
      * @return List of apps available for use on the device.
      */
-    public static List<Application> getAvailableGirafAppsButLauncher(Context context) {
+    public static List<Application> getGirafAppsOnDeviceButLauncherAsApplicationList(Context context) {
         Helper helper = LauncherUtility.getOasisHelper(context);
 
         List<Application> dbApps = helper.applicationHelper.getApplications();
-        List<ResolveInfo> deviceApps = getGirafAppsInstalledOnDevice(context);
+        List<ResolveInfo> deviceApps = getGirafAppsOnDeviceAsResolveInfoList(context);
 
         if (dbApps.isEmpty() || deviceApps.isEmpty()) {
             return new ArrayList<Application>();
@@ -110,8 +110,8 @@ public class ApplicationControlUtility {
      * @param context Context of the current activity.
      * @return List of GIRAF apps.
      */
-    public static List<ResolveInfo> getGirafAppsInstalledOnDevice(Context context) {
-        List<ResolveInfo> systemApps = getAppsInstalledOnDevice(context);
+    public static List<ResolveInfo> getGirafAppsOnDeviceAsResolveInfoList(Context context) {
+        List<ResolveInfo> systemApps = getAllAppsOnDeviceAsResolveInfoList(context);
 
         if (systemApps.isEmpty()) {
             return systemApps;
@@ -134,7 +134,7 @@ public class ApplicationControlUtility {
      * @param context Context of the current activity.
      * @return List of apps.
      */
-    public static List<ResolveInfo> getAppsInstalledOnDevice(Context context) {
+    public static List<ResolveInfo> getAllAppsOnDeviceAsResolveInfoList(Context context) {
         Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
 
@@ -147,8 +147,8 @@ public class ApplicationControlUtility {
      * @param context The context of the current activity
      * @return
      */
-    public static List<Application> getAndroidAppsAsApplicationList(Context context){
-        List<ResolveInfo> allApps = getAppsInstalledOnDevice(context);
+    public static List<Application> getAndroidAppsOnDeviceAsApplicationList(Context context){
+        List<ResolveInfo> allApps = getAllAppsOnDeviceAsResolveInfoList(context);
         List<Application> result = new ArrayList<Application>();
         PackageManager packageManager = context.getPackageManager();
 
@@ -198,7 +198,7 @@ public class ApplicationControlUtility {
     }
 
     /**
-     * Checks whether a list of GIRAF apps installed on the system contains a specified app.
+     * Checks whether a list of apps installed on the system contains a specified app.
      *
      * @param systemApps List of apps (as Apps) to check.
      * @param app        The app to check for.
@@ -209,7 +209,7 @@ public class ApplicationControlUtility {
     }
 
     /**
-     * Checks whether a list of GIRAF apps installed on the system contains a specified app.
+     * Checks whether a list of apps installed on the system contains a specified app.
      *
      * @param systemApps  List of apps (as Apps) to check.
      * @param packageName Package name of the app to check for.
@@ -225,8 +225,14 @@ public class ApplicationControlUtility {
         return false;
     }
 
+    /**
+     * This function convert a list of Package names to a list of Applications.
+     * @param context The context of the current activity
+     * @param packageNames The list of Package names to be converted into Applications
+     * @return
+     */
     public static List<Application> convertPackageNamesToApplications(Context context, Set<String> packageNames){
-        List<ResolveInfo> allApps = getAppsInstalledOnDevice(context);
+        List<ResolveInfo> allApps = getAllAppsOnDeviceAsResolveInfoList(context);
         List<Application> selectedApps = new ArrayList<Application>();
         PackageManager packageManager = context.getPackageManager();
 

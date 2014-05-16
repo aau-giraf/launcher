@@ -114,7 +114,6 @@ public class AndroidFragment extends AppContainerFragment {
      * The listener is the OnClickListener that all the AppImageViews created need to implement to make them
      * selectable and deselectable by the user.
      */
-
     private void setListeners(){
         listener = new View.OnClickListener() {
             @Override
@@ -197,7 +196,7 @@ public class AndroidFragment extends AppContainerFragment {
          */
         @Override
         protected HashMap<String, AppInfo> doInBackground(Application... applications) {
-            applications = ApplicationControlUtility.getAndroidAppsAsApplicationList(context).toArray(applications);
+            applications = ApplicationControlUtility.getAndroidAppsOnDeviceAsApplicationList(context).toArray(applications);
             appInfos = super.doInBackground(applications);
 
             return appInfos;
@@ -222,7 +221,7 @@ public class AndroidFragment extends AppContainerFragment {
 
         @Override
         public void run() {
-            apps = ApplicationControlUtility.getAndroidAppsAsApplicationList(context);
+            apps = ApplicationControlUtility.getAndroidAppsOnDeviceAsApplicationList(context);
             if (loadedApps == null || loadedApps.size() != apps.size()){
                 ((Activity)context).runOnUiThread(new Runnable() {
                     @Override

@@ -7,7 +7,6 @@ import android.graphics.drawable.Drawable;
 import java.util.List;
 
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
-import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 
 public class AppInfo extends Application {
@@ -88,7 +87,7 @@ public class AppInfo extends Application {
     public void loadIcon(Context context) {
         // Is supposed to allow for custom icons, but does not currently support this.
 
-        List<ResolveInfo> systemApps = ApplicationControlUtility.getAppsInstalledOnDevice(context);
+        List<ResolveInfo> systemApps = ApplicationControlUtility.getAllAppsOnDeviceAsResolveInfoList(context);
 
         for (ResolveInfo app : systemApps) {
             if (app.activityInfo.name.equals(this.getActivity())) {

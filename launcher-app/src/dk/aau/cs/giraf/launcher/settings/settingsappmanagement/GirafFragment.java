@@ -194,7 +194,7 @@ public class GirafFragment extends AppContainerFragment {
         @Override
         protected HashMap<String, AppInfo> doInBackground(Application... applications) {
             Log.d(Constants.ERROR_TAG, "Thread says working");
-            apps = ApplicationControlUtility.getAvailableGirafAppsButLauncher(context);
+            apps = ApplicationControlUtility.getGirafAppsOnDeviceButLauncherAsApplicationList(context);
             applications = apps.toArray(applications);
             appInfos = super.doInBackground(applications);
 
@@ -220,7 +220,7 @@ public class GirafFragment extends AppContainerFragment {
 
         @Override
         public void run() {
-            apps = ApplicationControlUtility.getAvailableGirafAppsButLauncher(context);
+            apps = ApplicationControlUtility.getGirafAppsOnDeviceButLauncherAsApplicationList(context);
             if (loadedApps == null || loadedApps.size() != apps.size()){
                 ((Activity)context).runOnUiThread(new Runnable() {
                     @Override
