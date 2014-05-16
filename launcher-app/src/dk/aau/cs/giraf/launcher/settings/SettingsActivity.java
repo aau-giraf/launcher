@@ -31,6 +31,10 @@ public class SettingsActivity extends Activity
         implements SettingsListFragment.SettingsListFragmentListener,
         AppsFragmentInterface {
 
+    private FragmentManager mFragManager;
+    private Fragment mActiveFragment;
+    private Profile mCurrentUser;
+
     /**
      * Global variable containing giraf applications with settings.
      * ALL apps with settings are added to this list, which is
@@ -66,10 +70,41 @@ public class SettingsActivity extends Activity
         mFragManager.beginTransaction().add(R.id.settingsContainer, mActiveFragment)
                 .commit();
     }
-    private FragmentManager mFragManager;
-    private Fragment mActiveFragment;
 
-    private Profile mCurrentUser;
+
+    @Override
+    public ArrayList<SettingsListItem> getInstalledSettingsApps(){
+        mAppList = new ArrayList<SettingsListItem>();
+
+        // Launcher
+        addApplicationByPackageName("dk.aau.cs.giraf.launcher",
+                new SettingsLauncher(LauncherUtility.getSharedPreferenceUser(mCurrentUser)));
+
+        // Application management
+        addApplicationByName(getString(R.string.apps_list_label),
+                new AppManagementSettings(), getResources().getDrawable(R.drawable.ic_apps));
+
+        /************************************************
+         *** Add applications in the giraf suite below ***
+         *************************************************/
+        // TODO: Add giraf applications with settings here
+
+        // Cars
+        addApplicationByPackageName("dk.aau.cs.giraf.cars");
+
+        // Zebra
+        addApplicationByPackageName("dk.aau.cs.giraf.zebra");
+
+        /*************************************************
+         *** Add applications in the giraf suite above ***
+         *************************************************/
+
+        // Native android settings - add last
+        addAndroidSettings();
+
+        // Only add the apps available on the device
+        return removeNonGirafApps(mAppList);
+    }
 
     /**
      * Filter an existing list of applications to remove apps that are not valid giraf apps or
@@ -126,7 +161,7 @@ public class SettingsActivity extends Activity
 
         if (appInfo != null) {
             // Extract name of application
-            final String appName = setCorrectCase(pm.getApplicationLabel(appInfo).toString());
+            final String appName = pm.getApplicationLabel(appInfo).toString();
             // Extract icon of application
             final Drawable appIcon = pm.getApplicationIcon(appInfo);
 
@@ -175,7 +210,7 @@ public class SettingsActivity extends Activity
         if(intent.resolveActivity(pm) != null) {
             if (appInfo != null) {
                 // Extract name of application
-                final String appName = setCorrectCase(pm.getApplicationLabel(appInfo).toString());
+                final String appName = pm.getApplicationLabel(appInfo).toString();
                 // Extract icon of application
                 final Drawable appIcon = pm.getApplicationIcon(appInfo);
 
@@ -204,7 +239,7 @@ public class SettingsActivity extends Activity
      */
     private void addApplicationByName(String appName, Fragment fragment, Drawable icon) {
         SettingsListItem item = new SettingsListItem(
-                setCorrectCase(appName),
+                appName,
                 icon,
                 fragment
         );
@@ -220,7 +255,7 @@ public class SettingsActivity extends Activity
      */
     private void addApplicationByName(String appName, Intent intent, Drawable icon) {
         SettingsListItem item = new SettingsListItem(
-                setCorrectCase(appName),
+                appName,
                 icon,
                 intent
         );
@@ -239,51 +274,6 @@ public class SettingsActivity extends Activity
 
         addApplicationByName(getResources().getString(R.string.giraf_settings_name),
                 androidSettingsIntent, getResources().getDrawable(R.drawable.ic_android));
-    }
-
-    /**
-     * Helper method to make application name casing consistent throughout the list.
-     * @param name String to change.
-     * @return A string with correct casing.
-     */
-    private String setCorrectCase(String name) {
-        // Set first character uppercase and following to lowercase
-        return name.substring(0, 1).toUpperCase()
-                + name.substring(1).toLowerCase();
-    }
-
-    @Override
-    public ArrayList<SettingsListItem> getInstalledSettingsApps(){
-        mAppList = new ArrayList<SettingsListItem>();
-
-        // Launcher
-        addApplicationByPackageName("dk.aau.cs.giraf.launcher",
-                new SettingsLauncher(LauncherUtility.getSharedPreferenceUser(mCurrentUser)));
-
-        // Application management
-        addApplicationByName(getString(R.string.apps_list_label),
-                new AppManagementSettings(), getResources().getDrawable(R.drawable.ic_apps));
-
-        /************************************************
-         *** Add applications in the giraf suite below ***
-         *************************************************/
-        // TODO: Add giraf applications with settings here
-
-        // Cars
-        addApplicationByPackageName("dk.aau.cs.giraf.cars");
-
-        // Zebra
-        addApplicationByPackageName("dk.aau.cs.giraf.zebra");
-
-        /*************************************************
-         *** Add applications in the giraf suite above ***
-         *************************************************/
-
-        // Native android settings - add last
-        addAndroidSettings();
-
-        // Only add the apps available on the device
-        return removeNonGirafApps(mAppList);
     }
 
     @Override
