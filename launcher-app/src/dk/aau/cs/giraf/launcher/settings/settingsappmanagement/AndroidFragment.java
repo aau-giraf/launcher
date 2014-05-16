@@ -116,7 +116,6 @@ public class AndroidFragment extends AppContainerFragment {
      * The listener is the OnClickListener that all the AppImageViews created need to implement to make them
      * selectable and deselectable by the user.
      */
-
     private void setListeners(){
         listener = new View.OnClickListener() {
             @Override

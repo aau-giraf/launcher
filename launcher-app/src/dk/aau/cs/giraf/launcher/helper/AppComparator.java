@@ -17,6 +17,10 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 public class AppComparator implements Comparator<Object> {
     private Context context;
 
+    /**
+     * The constructor for the class
+     * @param context The context of the current activity
+     */
     public AppComparator(Context context){
         this.context = context;
     }

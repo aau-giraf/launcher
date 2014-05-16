@@ -478,8 +478,7 @@ public class HomeActivity extends Activity {
      * Updates the ProfileSelector. It is needed when a new user has been selected, as a different
      * listener is needed, and the app container has to be reloaded.
      * */
-    private void updatesProfileSelector()
-    {
+    private void updatesProfileSelector(){
         mProfileSelectorDialog.setOnListItemClick(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -492,8 +491,7 @@ public class HomeActivity extends Activity {
                 else
                     mProfileSelectorDialog = new GProfileSelector(mContext, mLoggedInGuardian, null);
 
-                Bitmap newProfileImage = mCurrentUser.getImage();
-                mWidgetProfileSelection.setImageBitmap(newProfileImage);
+                mWidgetProfileSelection.setImageBitmap(mCurrentUser.getImage());
 
                 updatesProfileSelector();
 
@@ -510,6 +508,11 @@ public class HomeActivity extends Activity {
      */
     private class AppsObserver extends TimerTask {
 
+        /**
+         * The main method of the apps observer.
+         * Retrieves the apps that should be displayed and compares them with the ones that are currently being displayed.
+         * Runs loadApplications() if there are differences.
+         */
         @Override
         public void run() {
             List<Application> girafAppsList = ApplicationControlUtility.getAppsAvailableForUser(mContext, mCurrentUser); // For home activity
@@ -531,12 +534,28 @@ public class HomeActivity extends Activity {
 
     }
 
+    /**
+     * This class carries out all the work of populating the appView with clickable applications.
+     * It inherits from LoadApplicationTask, which does most of the work.
+     * However, since there are some special things that need to be handled in the case of all applications,
+     * we must inherit the class, override it's methods and do what we need to do in addition to the superclass
+     */
     private class HomeActivityAppTask extends LoadApplicationTask {
 
+        /**
+         * The contructor of the class
+         * @param context The context of the current activity
+         * @param currentUser The current user (if the current user is a guardian, this is set to null)
+         * @param guardian The guardian of the current user (or just the current user, if the user is a guardian)
+         * @param targetLayout The layout to be populated with AppImageViews
+         * @param iconSize The size the icons should have
+         * @param onClickListener the onClickListener that each created app should have. In this case we feed it the global variable listener
+         */
         public HomeActivityAppTask(Context context, Profile currentUser, Profile guardian, LinearLayout targetLayout, int iconSize, View.OnClickListener onClickListener) {
             super(context, currentUser, guardian, targetLayout, iconSize, onClickListener);
         }
 
+        /** We override onPreExecute to cancel the AppObserver if it is running*/
         @Override
         protected void onPreExecute() {
             if (mAppsUpdater != null)
@@ -545,6 +564,12 @@ public class HomeActivity extends Activity {
             super.onPreExecute();
         }
 
+        /**
+         * This method needs to be overridden since we need to inform the superclass of exactly which apps should be generated.
+         * In this case it is both Giraf and Android applications.
+         * @param applications the applications that the task should generate AppImageViews for
+         * @return The Hashmap of AppInfos that describe the added applications.
+         */
         @Override
         protected HashMap<String, AppInfo> doInBackground(Application... applications) {
             HashMap<String, AppInfo> appInfos;
@@ -560,6 +585,7 @@ public class HomeActivity extends Activity {
             return appInfos;
         }
 
+        /**Once we have loaded applications, we start observing for new apps*/
         @Override
         protected void onPostExecute(HashMap<String, AppInfo> appInfos) {
             super.onPostExecute(appInfos);

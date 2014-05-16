@@ -3,6 +3,7 @@ package dk.aau.cs.giraf.launcher.settings;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.ActivityNotFoundException;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.sax.StartElementListener;
 import android.support.v4.app.NotificationCompat;
@@ -106,6 +107,9 @@ public class SettingsListFragment extends Fragment {
         // Set listerners for loaded user interface components
         setListeners();
 
+        //Load the correct profile picture for the choosen profile
+        mProfileButton.setImageBitmap(mCurrentUser.getImage());
+
         return view;
     }
 
@@ -192,8 +196,7 @@ public class SettingsListFragment extends Fragment {
      * This is used to set the onClickListener for a new ProfileSelector
      * It must be used everytime a new selector is set.
      * */
-    private void setProfileSelectorClickListener()
-    {
+    private void setProfileSelectorClickListener(){
         // Handles a selection returned from the profile select dialog
         mProfileSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
             @Override
@@ -214,6 +217,8 @@ public class SettingsListFragment extends Fragment {
                 mCallback.setCurrentUser(mCurrentUser);
                 // Reload activity to reflect different user settings
                 mCallback.reloadActivity();
+                mProfileButton.setImageBitmap(mCurrentUser.getImage());
+
 
                 // Call this method again to set listerners for the newly selected profile
                 setProfileSelectorClickListener();
