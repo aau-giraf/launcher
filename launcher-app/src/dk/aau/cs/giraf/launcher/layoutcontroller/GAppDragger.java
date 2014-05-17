@@ -4,12 +4,30 @@ import android.view.DragEvent;
 import android.view.View;
 import android.view.View.OnDragListener;
 
+/**
+ * This class was used for the colors in the drawer.
+ * The colors needed to be draggable and the apps in HomeActivity needed to handle that
+ * the apps in HomeActivity used to implement this class for that purpose.
+ * However, because we have disabled the dragging of colors, it is no longer needed.
+ * We have left the code intact, if a future group would wish or need to reimplement the feature.
+ */
 public class GAppDragger implements OnDragListener {
 
+    /**
+     * The variables used by the class.
+     */
     private int newColor;
     private long currentViewId;
 
 
+    /**
+     * This is the main function we need to override to handle the dropping of colors on the apps.
+     * When the entering and exiting the AppImageView, the AppImageView is scaled to provide visual feedback to the user.
+     * When dropped the drag on the AppImageView, the AppImageView given the dragged color.
+     * @param view The view, in this case the AppImageView, that we are handling
+     * @param drawEvent The event that fired the functioncall
+     * @return whether the event succeeded or not.
+     */
 	@Override
 	public boolean onDrag(View view, DragEvent drawEvent) {
 		switch(drawEvent.getAction()){
