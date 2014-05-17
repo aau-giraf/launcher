@@ -19,6 +19,11 @@ import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
+/**
+ * This class was used to add an adapter to the AppImageViews in HomeActivity
+ * It was used to handle the dragging of colors over the apps, which was disabled, since the clients did not want it
+ * We still kept the classes, just in case future groups would want or need to reenable it.
+ */
 public class AppAdapter extends ArrayAdapter<AppInfo> {
 
     Context mContext;
@@ -37,6 +42,13 @@ public class AppAdapter extends ArrayAdapter<AppInfo> {
         this.mApps = apps;
     }
 
+    /**
+     * This function is overridden to add more infomation to the view affected by the adapter
+     * @param position the position of the view
+     * @param convertView the converted view
+     * @param parent the parent of the view
+     * @return
+     */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
