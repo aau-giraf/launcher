@@ -9,11 +9,20 @@ import java.util.List;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 
+/**
+ * The Application class from OasisLib is extended, since Launcher requires some additional information.
+ * This includes the icon and background color of an app, along with methods for getting and setting these.
+ *
+ */
 public class AppInfo extends Application {
 
     /** The application icon. */
     private Drawable mIcon;
 
+    /**
+     * This function returns the application that this AppInfo extends.
+     * @return The Application of the AppInfo.
+     */
     public Application getApp() {
         return this;
     }
@@ -96,6 +105,4 @@ public class AppInfo extends Application {
             }
         }
     }
-
-
 }
