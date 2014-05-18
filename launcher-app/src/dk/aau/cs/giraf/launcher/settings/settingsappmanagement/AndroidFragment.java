@@ -58,6 +58,9 @@ public class AndroidFragment extends AppContainerFragment {
         return view;
     }
 
+    /**
+     * We override onResume to make the observer start observing apps.
+     */
     @Override
     public void onResume() {
         super.onResume();
