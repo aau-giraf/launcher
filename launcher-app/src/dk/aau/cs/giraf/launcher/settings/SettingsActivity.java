@@ -31,6 +31,9 @@ public class SettingsActivity extends Activity
         implements SettingsListFragment.SettingsListFragmentListener,
         AppsFragmentInterface {
 
+    /**
+     * The variables mostly used inside the class
+     */
     private FragmentManager mFragManager;
     private Fragment mActiveFragment;
     private Profile mCurrentUser;
@@ -50,6 +53,12 @@ public class SettingsActivity extends Activity
      */
     private static final String SETTINGS_INTENT = ".SETTINGSACTIVITY";
 
+    /**
+     * The onCreate method must be overridden as usual, and initialized most of the variables needed by the Activity.
+     * In particular, because te SettingsActivity mostly handles Fragments, it initializes the FragmentManager and
+     * loads the first fragment needed to be displayed: The first settingsitem in the list.
+     * @param savedInstanceState The previously saved InstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +80,13 @@ public class SettingsActivity extends Activity
                 .commit();
     }
 
-
+    /**
+     * This function gets the elements that should be added to the list of items in the left side
+     * Firstly, it gets the settings for Launcher itself, along with the "Apps" menu, where users select or deselect apps.
+     * Finally, gets the currently installed apps that have settings to be shown in SettingsActivity.
+     * Currently, these apps are only "Cars" (Stemmespillet) and "Zebra" (Sekvens).
+     * @return an Array consisting of the SettingsListitems that should be put into the left scrollview.
+     */
     @Override
     public ArrayList<SettingsListItem> getInstalledSettingsApps(){
         mAppList = new ArrayList<SettingsListItem>();
@@ -276,6 +291,10 @@ public class SettingsActivity extends Activity
                 androidSettingsIntent, getResources().getDrawable(R.drawable.ic_android));
     }
 
+    /**
+     * This function replaces the currently activity fragment in the FragmentManager with a new one
+     * @param fragment the fragement that should now be displayed.
+     */
     @Override
     public void setActiveFragment(Fragment fragment) {
         // Only add new transaction if the user clicked a non-active fragment
@@ -290,9 +309,13 @@ public class SettingsActivity extends Activity
         }
     }
 
+    /**
+     * This function finishes the current instance of SettingsActivity and starts a new instance of it.
+     * Because it is used when switching to a new user, it needs to be overridden,
+     * so the currentUser of the new SettingsActivity is the new user chosen.
+     */
     @Override
-    public void reloadActivity()
-    {
+    public void reloadActivity(){
         // Get the intent of SettingsActivity
         Intent intent = SettingsActivity.this.getIntent();
 
@@ -307,11 +330,19 @@ public class SettingsActivity extends Activity
         startActivity(intent);
     }
 
+    /**
+     * Sets the current profile
+     * @param profile The selected profile.
+     */
     @Override
     public void setCurrentUser(Profile profile) {
             mCurrentUser = profile;
     }
 
+    /**
+     * Gets the currently selected profile
+     * @return the currently selected profile.
+     */
     @Override
     public Profile getSelectedProfile() {
         return mCurrentUser;
