@@ -14,10 +14,17 @@ import java.util.ArrayList;
 
 /**
  * Custom adapter to ListView.
+ * The ListView is the one on the left side of SettingsActivity.
+ * Because this ListView does a number of different things, depending on the contents of each SettingsListItem,
+ * This adapter needs to handle many cases.
+ * Furthermore, it also handles the shadowing and selecting animations, giving the user visual feedback from actions.
  * @see SettingsListFragment
  */
 public class SettingsListAdapter extends BaseAdapter {
 
+    /**
+     * The variables needed by the adapter
+     */
     private Activity mActivity;
     private LayoutInflater mInflater;
 
@@ -28,6 +35,12 @@ public class SettingsListAdapter extends BaseAdapter {
     // Ensures the first item in the associated ListView is selected at first startup
     private static int mLastSelectedItem = 0;
 
+    /**
+     * The constructor for the class
+     * @param activity The activity that contains the ListView
+     * @param listView The ListView to be inflated
+     * @param list the list of SettingsListItems that should populate the ListView.
+     */
     public SettingsListAdapter(Activity activity, ListView listView, ArrayList<SettingsListItem> list) {
         mActivity = activity;
         mApplicationList = list;
@@ -37,14 +50,28 @@ public class SettingsListAdapter extends BaseAdapter {
         mInflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
+    /**
+     * This function returns the amount of applications in the list of applications.
+     * @return The amount of applications in the list of applications
+     */
     public int getCount() {
         return mApplicationList.size();
     }
 
+    /**
+     * Gets the item at a certain position.
+     * @param position the position of the item
+     * @return The item at the given position.
+     */
     public Object getItem(int position) {
         return mApplicationList.get(position);
     }
 
+    /**
+     * returns the position of the item.
+     * @param position the position of the item
+     * @return the position of the item
+     */
     public long getItemId(int position) {
         return position;
     }
