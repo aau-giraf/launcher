@@ -7,30 +7,59 @@ import android.widget.RelativeLayout;
 import dk.aau.cs.giraf.launcher.R;
 
 /**
- * Created by Vagner on 28-02-14.
+ * In order to easily handle the animation of the drawer, we extended the native RelativeLayout,
+ * to handle the additional animations that the drawer needed.
+ * The SideBarLayout class is currently not used, since the drawer itself was disabled
  */
 public class SideBarLayout extends RelativeLayout {
 
+    /**
+     * A boolean variable to keep track of which way we should do the translateanimation
+     * if true, translate right, else, translate left.
+     */
     public boolean isSideBarHidden = true;
 
-    public SideBarLayout(Context context)
-    {
+    /**
+     * A constructor of the Layout
+     * @param context The context of the current Activity
+     */
+    public SideBarLayout(Context context){
         super(context);
     }
-    public SideBarLayout(Context context, AttributeSet attrs)
-    {
+
+    /**
+     * A constructor of the Layout. Must be implemented when extending a RelativeLayout
+     * @param context The context of the current Activity
+     * @param attrs The attributes the layout should have
+     */
+    public SideBarLayout(Context context, AttributeSet attrs){
         super(context, attrs);
     }
+
+    /**
+     * A constructor of the Layout. Must be implemented when extending a RelativeLayout
+     * @param context The context of the current Activity
+     * @param attrs The attributes the layout should have
+     * @param defStyle The style the layout should have
+     */
     public SideBarLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
+    /**
+     * Describes what should happen when the translate animation of the layout begins
+     * Brings the layout to the front
+     */
     @Override
     protected void onAnimationStart() {
         super.onAnimationStart();
         this.bringToFront();
     }
 
+    /**
+     * Describes what should happen when the translate animation ends.
+     * sets the new parameters of the layout, depending on if the drawer was brough into view or out of view.
+     */
     @Override
     protected void onAnimationEnd() {
         super.onAnimationEnd();
