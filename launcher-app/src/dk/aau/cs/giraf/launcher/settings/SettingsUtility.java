@@ -10,10 +10,6 @@ import android.view.ViewGroup;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 
 /**
- * Created by Frederik on 29-04-14.
- */
-
-/**
  * Helper methods used to handle saving of settings for each user
  * to their own preference file.
  */

@@ -5,18 +5,34 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 
 /**
- * Created by Stefan on 25-04-14.
+ * An instance of this class is an item on the list of settings to the left in SettingsActivity.
+ * It contains much additional information needed to handle the settings of the contents of the item.
  */
 public class SettingsListItem {
+
+    /**
+     * The variables needed by the class.
+     * The packagename of the application this item is hosting.
+     * The name of the application this item is hosting.
+     * The icon of the application this item is hosting.
+     * The Fragment that should be loaded when this item is pressed.
+     * The intent that should be launched when this item is pressed.
+     */
     String mPackageName;
     String mAppName;
     Drawable mAppIcon;
     Fragment mAppFragment;
     Intent mIntent;
 
-    private SettingsListItem(String packageName, String appName, Drawable appIcon,
-                             Fragment fragment, Intent intent)
-    {
+    /**
+     * the constructor of the class
+     * @param packageName Package name of the application to add.
+     * @param appName Name of the application.
+     * @param appIcon Icon of the application to be showed in ListView.
+     * @param fragment The fragment to be started by FragmentManager.
+     * @param intent The intent to be started as a new activity.
+     */
+    private SettingsListItem(String packageName, String appName, Drawable appIcon, Fragment fragment, Intent intent){
         this.mPackageName = packageName;
         this.mAppName = appName;
         this.mAppIcon = appIcon;
