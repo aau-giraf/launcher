@@ -21,8 +21,23 @@ import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.oasis.lib.controllers.ProfileController;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
+/**
+ * This fragment contains all of the elements on the left side of SettingsActivity.
+ * This includes both the ListView with the tabs for all the different settings and
+ * the Profile selector in the top left corner.
+ */
 public class SettingsListFragment extends Fragment {
 
+    /**
+     * The variables of the class.
+     * mSettingsListView is the ListView containing all the SettingsListItems. @see dk.aau.cs.giraf.launcher.settings.SettingsListItem
+     * mProfileName is the textView below the profile selector, showing the name of the current user
+     * mAdapter is the SettingsListAdapter attached to the ListView.
+     * mProfileButton is the ProfileSelector widget button, created by the GUI group. @see dk.aau.cs.giraf.gui.GWidgetProfileSelection
+     * mLoggedInGuardian is the currently logged in guardian and, if the current user is a child, the guardian of that child.
+     * mCurrentUser is the current user.
+     * mProfileSelector is the ProfileSelector Widget itself, not the button.@see dk.aau.cs.giraf.gui.GProfileSelector
+     */
     private ListView mSettingsListView;
     private TextView mProfileName;
     private SettingsListAdapter mAdapter;
@@ -68,6 +83,15 @@ public class SettingsListFragment extends Fragment {
         public void setCurrentUser(Profile profile);
     }
 
+    /**
+     * In OnCreateView we initialize most of the varibles needed by the class.
+     * We do it in onCreateView instead of in OnCreate, since we are working with a Fragment and not an Activity.
+     * More information about what exactly it does can be found in comments inside.
+     * @param inflater The inflator used to inflate the layout
+     * @param container The container to be inflated
+     * @param savedInstanceState The previously SavedInstanceState
+     * @return The created View.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.settings_fragment_list, container, false);
@@ -113,11 +137,14 @@ public class SettingsListFragment extends Fragment {
         return view;
     }
 
+    /**
+     * This makes sure that the container activity has implemented
+     * the callback interface. If not, it throws an exception
+     * @param activity The activity being attached
+     */
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        // This makes sure that the container activity has implemented
-        // the callback interface. If not, it throws an exception
         try {
             mCallback = (SettingsListFragmentListener) activity;
         } catch (ClassCastException e) {
@@ -126,19 +153,24 @@ public class SettingsListFragment extends Fragment {
         }
     }
 
+    /**
+     * Set the selection in the adapter when the activity is created/reloaded
+     * This is important when reloading the activity to show settings for
+     * selected user.
+     * @param savedInstanceState The previously SavedInstanceState
+     */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // Set the selection in the adapter when the activity is created/reloaded
-        // This is important when reloading the activity to show settings for
-        // selected user.
         mAdapter.setSelected(0);
     }
 
+    /**
+     * If the activity should be garbage collected, the adapter should retain its selection
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // If the activity should be garbage collected, the adapter should retain its selection
         mAdapter.setSelected(0);
     }
 
