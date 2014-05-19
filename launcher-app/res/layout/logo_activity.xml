@@ -10,12 +10,6 @@
             android:layout_height="match_parent"
             layout="@layout/debug_mode" />
 
-    <!-- <dk.aau.cs.giraf.gui.GButton
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button" /> -->
-
     	<ImageView
     	    android:id="@+id/giraficon"
     	    android:layout_width="wrap_content"
@@ -36,15 +30,5 @@
         android:textColor="@color/giraf_loading_textColor"
         android:textStyle="bold"
         android:text="Velkommen til Giraf!"/>
-
-    	<!-- <Button
-    	    android:id="@+id/button2"
-    	    android:layout_width="wrap_content"
-    	    android:layout_height="wrap_content"
-    	    android:layout_alignParentBottom="true"
-    	    android:layout_marginBottom="50dp"
-    	    android:layout_marginLeft="153dp"
-    	    android:layout_toRightOf="@+id/button1"
-    	    android:text="Button" />-->
 
 </RelativeLayout>
