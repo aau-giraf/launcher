@@ -18,21 +18,23 @@ import dk.aau.cs.giraf.launcher.helper.AppViewCreationUtility;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 
 /**
- * Created by Frederik on 24-04-14.
+ * Custom preference class for the launcher settings. This preference provides a seeking bar and an
+ * example icon to illustrate the chosen size.
  */
 public class IconResizer extends Preference implements SeekBar.OnSeekBarChangeListener {
-    private final String TAG = getClass().getName();
+    private final String TAG = getClass().getName(); // Error tag - maybe use the one from constants instead
 
-    private static final String ANDROIDNS="http://schemas.android.com/apk/res/android";
-    private static final String APPLICATIONNS="http://giraf.cs.aau.dk";
+    // Namespaces for preference properties
+    private static final String ANDROIDNS = "http://schemas.android.com/apk/res/android";
+    private static final String APPLICATIONNS = "http://giraf.cs.aau.dk";
+
+    // default value for the starting position of the seeking bar, if not set in the preference xml
     private static final int DEFAULT_VALUE = 50;
-    private static final int APP_MAX_SIZE = 200;
-    private static final int ICON_MAX_SIZE = 120;
 
     private Context mContext;
-    private int mMaxValue      = 100;
-    private int mMinValue      = 0;
-    private int mInterval      = 1;
+    private int mMaxValue      = 100; // Max value for the seeking bar in units
+    private int mMinValue      = 0; // Min value for the seeking bar in units
+    private int mInterval      = 1; // each unit is 1 percent
     private int mCurrentValue;
     private String mUnitsLeft  = "";
     private String mUnitsRight = "";
@@ -40,18 +42,25 @@ public class IconResizer extends Preference implements SeekBar.OnSeekBarChangeLi
     private Bitmap mAppBitmap;
     private ImageView mAppImageView;
 
+    // constructor inherited from superclass
     public IconResizer(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
         initPreference(context, attrs);
     }
 
+    // constructor inherited from superclass
     public IconResizer(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         mContext = context;
         initPreference(context, attrs);
     }
 
+    /**
+     * Initialize the fields of this class with values from the xml file.
+     * @param context The context of the fragment which contains this setting.
+     * @param attrs Attributes for this preference set in the xml file.
+     */
     private void initPreference(Context context, AttributeSet attrs) {
         setValuesFromXml(attrs);
         mSeekBar = new SeekBar(context, attrs);
@@ -61,6 +70,10 @@ public class IconResizer extends Preference implements SeekBar.OnSeekBarChangeLi
         setWidgetLayoutResource(R.layout.icon_resize_component);
     }
 
+    /**
+     * Initializes fields with values from the xml file.
+     * @param attrs See {@link dk.aau.cs.giraf.launcher.settings.components.IconResizer#initPreference(android.content.Context, android.util.AttributeSet)}.
+     */
     private void setValuesFromXml(AttributeSet attrs) {
         mMaxValue = attrs.getAttributeIntValue(ANDROIDNS, "max", 100);
         mMinValue = attrs.getAttributeIntValue(APPLICATIONNS, "min", 0);
@@ -79,6 +92,14 @@ public class IconResizer extends Preference implements SeekBar.OnSeekBarChangeLi
         }
     }
 
+    /**
+     * Retrives a value from the XML file based on the namespace and name of the attribute.
+     * @param attrs See {@link dk.aau.cs.giraf.launcher.settings.components.IconResizer#initPreference(android.content.Context, android.util.AttributeSet)}.
+     * @param namespace The Namespace in which the attribute is defined.
+     * @param name Attribute name.
+     * @param defaultValue If the attribute is not found, this will be the value.
+     * @return The attribute value of the given attribute as a string.
+     */
     private String getAttributeStringValue(AttributeSet attrs, String namespace, String name, String defaultValue) {
         String value = attrs.getAttributeValue(namespace, name);
         if(value == null)
@@ -99,6 +120,11 @@ public class IconResizer extends Preference implements SeekBar.OnSeekBarChangeLi
         return view;
     }
 
+    /**
+     * Ensures that we do not have multiple seeking bars in the view at the same time.
+     * So before we add our seeking bar we clear the container for any views which may be present.
+     * @param view The view where the preferences are bound on.
+     */
     @Override
     public void onBindView(View view) {
         super.onBindView(view);
@@ -133,23 +159,13 @@ public class IconResizer extends Preference implements SeekBar.OnSeekBarChangeLi
     }
 
     /**
-     * Update a SeekBarPreference view with our current state
-     * @param view
+     * Update a SeekBarPreference view with our current state. That is the new value of which the
+     * seeking preference is set to.
+     * @param view The view is passed on to get references to other elements.
      */
     protected void updateView(View view) {
         try {
-            //TextView mStatusText = (TextView) view.findViewById(R.id.seekBarPrefValue);
-
-            //mStatusText.setText(String.valueOf(mCurrentValue));
-            //mStatusText.setMinimumWidth(30);
-
             mSeekBar.setProgress(mCurrentValue - mMinValue);
-
-            /*TextView unitsRight = (TextView)view.findViewById(R.id.seekBarPrefUnitsRight);
-            unitsRight.setText(mUnitsRight);
-
-            TextView unitsLeft = (TextView)view.findViewById(R.id.seekBarPrefUnitsLeft);
-            unitsLeft.setText(mUnitsLeft);*/
 
             View appView = view.findViewById(R.id.app_bg);
             if (mAppBitmap == null){
@@ -164,10 +180,18 @@ public class IconResizer extends Preference implements SeekBar.OnSeekBarChangeLi
         }
     }
 
+    /**
+     * When the user changes the value of the seeking bar this function is called. It is responsible
+     * for representing the changes in the UI.
+     * @param seekBar The seeking bar which needs to be updated.
+     * @param progress The change in progress.
+     * @param fromUser Indicates if the change was initiated by a user, the true else false.
+     */
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         int newValue = progress + mMinValue;
 
+        // Ensure that the new value is within bounds of the min and max
         if(newValue > mMaxValue)
             newValue = mMaxValue;
         else if(newValue < mMinValue)
@@ -194,6 +218,10 @@ public class IconResizer extends Preference implements SeekBar.OnSeekBarChangeLi
         persistInt(newValue);
     }
 
+    /**
+     * Updates the size of the icon to represent the chosen value.
+     * @param newValue The value which the icon should be scaled to.
+     */
     private void updateAppSize(int newValue){
         int dpValue = LauncherUtility.intToDP(mContext, newValue);
         mAppImageView.setImageBitmap(mAppBitmap);
@@ -201,17 +229,6 @@ public class IconResizer extends Preference implements SeekBar.OnSeekBarChangeLi
         params.width = dpValue;
         params.height = dpValue;
         mAppImageView.setLayoutParams(params);
-    }
-
-    public Bitmap getBitmapFromView(View view) {
-        Bitmap viewCapture = null;
-
-        view.setDrawingCacheEnabled(true);
-        view.buildDrawingCache();
-        viewCapture = view.getDrawingCache();
-        view.setDrawingCacheEnabled(false);
-
-        return viewCapture;
     }
 
     @Override
@@ -224,8 +241,7 @@ public class IconResizer extends Preference implements SeekBar.OnSeekBarChangeLi
 
     @Override
     protected Object onGetDefaultValue(TypedArray ta, int index){
-        int defaultValue = ta.getInt(index, DEFAULT_VALUE);
-        return defaultValue;
+        return ta.getInt(index, DEFAULT_VALUE);
     }
 
     @Override
