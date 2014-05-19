@@ -103,7 +103,7 @@ public class AppViewCreationUtility {
                 @Override
                 public void onClick(View v) {
                     try {
-                        Animation animation = AnimationUtils.loadAnimation(v.getContext(), R.anim.app_pressed_animation);
+                        Animation animation = AnimationUtils.loadAnimation(v.getContext(), R.animator.app_pressed_animation);
                         v.startAnimation(animation);
                     } catch (NullPointerException e){
                         // could not get context, no animation.
