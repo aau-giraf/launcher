@@ -16,8 +16,7 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
 /**
  * This class contains functions that are used to either:
  *  1. Return lists of applications.
- *  2. Check if certain lists of applications live up to certain criteria
- *  3.
+ *  2. Check if certain lists of applications live up to certain criteria.
  */
 public class ApplicationControlUtility {
 
