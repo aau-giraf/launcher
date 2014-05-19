@@ -78,8 +78,8 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         mContext = this.getApplicationContext();
 
         //Load the splash animation
-        startingAnimation = AnimationUtils.loadAnimation(mContext, R.animator.start_logo_animation);
-        loadAnimation = AnimationUtils.loadAnimation(mContext, R.animator.rotatelogo);
+        startingAnimation = AnimationUtils.loadAnimation(mContext, R.animator.main_activity_rotatelogo_once);
+        loadAnimation = AnimationUtils.loadAnimation(mContext, R.animator.main_activity_rotatelogo_infinite);
 
         //Load the preference determining whether the animation should be shown
         findOldSession();
