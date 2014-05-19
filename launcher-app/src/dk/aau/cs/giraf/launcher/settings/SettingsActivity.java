@@ -19,12 +19,12 @@ import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
+import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementFragment;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
-import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementSettings;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 /**
- * Activity responsible for handling Launcher settings and starting
+ * Activity responsible for handling Launcher settings_activity and starting
  * other setting-related activities.
  */
 public class SettingsActivity extends Activity
@@ -62,7 +62,7 @@ public class SettingsActivity extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.settings);
+        setContentView(R.layout.settings_activity);
 
         // Used to handle fragment changes within the containing View
         mFragManager = this.getFragmentManager();
@@ -70,7 +70,7 @@ public class SettingsActivity extends Activity
 
         // Check if the fragment already exists
         if (settingsFragment == null) {
-            // Select the first entry in the list of applications in settings
+            // Select the first entry in the list of applications in settings_activity
             SettingsListItem item = getInstalledSettingsApps().get(0);
             // Update active fragment with the first entry
             mActiveFragment = item.mAppFragment;
@@ -97,7 +97,7 @@ public class SettingsActivity extends Activity
 
         // Application management
         addApplicationByName(getString(R.string.apps_list_label),
-                new AppManagementSettings(), getResources().getDrawable(R.drawable.ic_apps));
+                new AppManagementFragment(), getResources().getDrawable(R.drawable.ic_apps));
 
         /************************************************
          *** Add applications in the giraf suite below ***
@@ -195,7 +195,7 @@ public class SettingsActivity extends Activity
      * Add settings from another giraf application.
      * The icon is automatically extracted from the package and the giraf intent action is
      * appended to query the intent-filter the application should implement
-     * to start its settings activity.
+     * to start its settings_activity.
      * @param packageName PackageName of the application to add.
      */
     private void addApplicationByPackageName(String packageName) {
@@ -218,7 +218,7 @@ public class SettingsActivity extends Activity
         // Add SETTINGS_INTENT key to package name to open the
         // settings of the application
         intent.setAction(packageName + SETTINGS_INTENT);
-        // Start as a new task to enable stepping back to settings
+        // Start as a new task to enable stepping back to settings_activity
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         // Check if the intent exists
@@ -284,7 +284,7 @@ public class SettingsActivity extends Activity
     private void addAndroidSettings() {
         // Get intent for Native Android Settings
         Intent androidSettingsIntent = new Intent(Settings.ACTION_SETTINGS);
-        // Start as a new task to enable stepping back to settings
+        // Start as a new task to enable stepping back to settings_activity
         androidSettingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         addApplicationByName(getResources().getString(R.string.giraf_settings_name),

@@ -3,11 +3,7 @@ package dk.aau.cs.giraf.launcher.settings.settingsappmanagement;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -23,7 +19,7 @@ import dk.aau.cs.giraf.launcher.R;
  * Also implements the buttons needed to switch between the two fragments
  * Finally, it also implements the button used to open the Play Store.
  */
-public class AppManagementSettings extends Fragment {
+public class AppManagementFragment extends Fragment {
 
     /** These strings are used for opening the Play Store, searching for the correct items*/
     private static final String MARKET_SEARCH_APP_URI = "market://search?q=pub:";
@@ -53,7 +49,7 @@ public class AppManagementSettings extends Fragment {
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.settings_appfragment,
+        View view = inflater.inflate(R.layout.settings_appmanagement,
                 container, false);
 
         this.setRetainInstance(true);
@@ -116,7 +112,7 @@ public class AppManagementSettings extends Fragment {
 
     /**
      * Replace active fragment by running the transaction in a new thread.
-     * Adds responsiveness when loading list of installed apps.
+     * Adds responsiveness when loading list of installed apps_container.
      * @param fragment
      */
     private void replaceFragment(final Fragment fragment){

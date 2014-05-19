@@ -68,6 +68,7 @@ public class SettingsListAdapter extends BaseAdapter {
     }
 
     /**
+     * Must return position according to BaseAdapter.
      * returns the position of the item.
      * @param position the position of the item
      * @return the position of the item

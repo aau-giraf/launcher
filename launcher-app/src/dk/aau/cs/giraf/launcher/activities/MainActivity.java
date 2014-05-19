@@ -36,15 +36,15 @@ public class MainActivity extends Activity implements Animation.AnimationListene
     // TODO: ONLY USED FOR DEBUGGING PURPOSES!!!
     /**
      * If {@code true}, the Launcher is stated in debugging mode, where the splash screen and
-     * authentication is skipped.
+     * authentication_activity is skipped.
      */
     private final boolean DEBUG_MODE = false;
 
     /**
-     * If {@code true}, the authentication screen is shown, despite debugging mode. Has no
+     * If {@code true}, the authentication_activity screen is shown, despite debugging mode. Has no
      * effect if {@code DEBUG_MODE} is {@code false}.
      */
-    private final boolean SKIP_AUTHENTICATION = false;
+    private final boolean SKIP_AUTHENTICATION = true;
 
     /**
      * If {@code true}, the splash screen is shown, despite debugging mode. Has no
@@ -74,7 +74,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 
         boolean showAnimation = true;
 
-	    setContentView(R.layout.logo);
+	    setContentView(R.layout.main_activity);
 
         mContext = this.getApplicationContext();
 
@@ -82,8 +82,8 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         new main(this).startSynch();
 
         //Load the splash animation
-        startingAnimation = AnimationUtils.loadAnimation(mContext, R.animator.start_logo_animation);
-        loadAnimation = AnimationUtils.loadAnimation(mContext, R.animator.rotatelogo);
+        startingAnimation = AnimationUtils.loadAnimation(mContext, R.animator.main_activity_rotatelogo_once);
+        loadAnimation = AnimationUtils.loadAnimation(mContext, R.animator.main_activity_rotatelogo_infinite);
 
         //Load the preference determining whether the animation should be shown
         findOldSession();
@@ -158,7 +158,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         if (DEBUG_MODE && SKIP_AUTHENTICATION){
             intent = skipAuthentication(DEBUG_AS_CHILD);
         }
-        //If no valid session is found, start authentication
+        //If no valid session is found, start authentication_activity
         else if (LauncherUtility.sessionExpired(mContext)) {
             intent = new Intent(mContext, AuthenticationActivity.class);
         }
@@ -182,7 +182,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 
     /**
      * Used for debugging mode.
-     * Overrides the authentication activity by authenticating a test profile, and creating an intent
+     * Overrides the authentication by authenticating a test profile, and creating an intent
      * for starting {@code HomeActivity}. The guardian profile used is 'Tony Stark', and the child profile used
      * is 'Johnathan Doerwald'.
      * @param asChild If {@code true}, a child profile is used for authentication. If {@code false}, a guardian

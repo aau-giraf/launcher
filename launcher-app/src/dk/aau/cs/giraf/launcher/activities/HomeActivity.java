@@ -90,7 +90,7 @@ public class HomeActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.home);
+		setContentView(R.layout.home_activity);
 
 		HomeActivity.mContext = this;
         mHelper = LauncherUtility.getOasisHelper(mContext);
@@ -201,7 +201,7 @@ public class HomeActivity extends Activity {
 	}
 
     /**
-     * Does nothing, to prevent the user from returning to the authentication or native OS.
+     * Does nothing, to prevent the user from returning to the authentication_activity or native OS.
      */
     @Override
     public void onBackPressed() {
@@ -514,7 +514,7 @@ public class HomeActivity extends Activity {
          */
         @Override
         public void run() {
-            List<Application> girafAppsList = ApplicationControlUtility.getAvailableGirafAppsForUser(mContext, mCurrentUser); // For home activity
+            List<Application> girafAppsList = ApplicationControlUtility.getAvailableGirafAppsForUser(mContext, mCurrentUser); // For home_activity activity
             SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(mContext, mCurrentUser);
             Set<String> androidAppsPackagenames = prefs.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
             List<Application> androidAppsList = ApplicationControlUtility.convertPackageNamesToApplications(mContext, androidAppsPackagenames);
@@ -572,7 +572,7 @@ public class HomeActivity extends Activity {
         @Override
         protected HashMap<String, AppInfo> doInBackground(Application... applications) {
             HashMap<String, AppInfo> appInfos;
-            List<Application> girafAppsList = ApplicationControlUtility.getAvailableGirafAppsForUser(context, currentUser); // For home activity
+            List<Application> girafAppsList = ApplicationControlUtility.getAvailableGirafAppsForUser(context, currentUser); // For home_activity
             SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(context, currentUser);
             Set<String> androidAppsPackagenames = prefs.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
             List<Application> androidAppsList = ApplicationControlUtility.convertPackageNamesToApplications(context, androidAppsPackagenames);
@@ -584,7 +584,7 @@ public class HomeActivity extends Activity {
             return appInfos;
         }
 
-        /**Once we have loaded applications, we start observing for new apps*/
+        /** Once we have loaded applications, we start observing for new apps */
         @Override
         protected void onPostExecute(HashMap<String, AppInfo> appInfos) {
             super.onPostExecute(appInfos);

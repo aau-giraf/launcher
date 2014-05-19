@@ -25,7 +25,7 @@ public class ApplicationControlUtility {
     /**
      * Gets the GIRAF apps that are usable by the given user, relative to their settings and the system they're logged in on.
      * @param context Context of the current activity.
-     * @param user    The user to find apps for.
+     * @param user    The user to find apps_container for.
      * @return List of apps that are usable by this user on this device.
      */
     public static List<Application> getAvailableGirafAppsForUser(Context context, Profile user) {

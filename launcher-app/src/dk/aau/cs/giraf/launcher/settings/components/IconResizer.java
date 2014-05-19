@@ -67,7 +67,7 @@ public class IconResizer extends Preference implements SeekBar.OnSeekBarChangeLi
         mSeekBar.setMax(mMaxValue - mMinValue);
         mSeekBar.setOnSeekBarChangeListener(this);
 
-        setWidgetLayoutResource(R.layout.icon_resize);
+        setWidgetLayoutResource(R.layout.icon_resize_component);
     }
 
     /**

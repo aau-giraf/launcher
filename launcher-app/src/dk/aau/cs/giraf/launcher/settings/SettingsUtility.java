@@ -22,7 +22,7 @@ public class SettingsUtility {
 
     /**
      * Get launcher settings for a specific user.
-     * Settings are saved in a seperate file for each user to fx save selected Android apps
+     * Settings are saved in a separate file for each user to fx save selected Android apps
      * available on current device.
      * @param user String used to identify user.
      * @return A preference file for the user.
@@ -33,7 +33,7 @@ public class SettingsUtility {
 
     /**
      * Get launcher settings for a specific user.
-     * Settings are saved in a seperate file for each user to fx save selected Android apps
+     * Settings are saved in a separate file for each user to fx save selected Android apps
      * available on current device.
      * @param context Current context.
      * @param user String used to identify user.
