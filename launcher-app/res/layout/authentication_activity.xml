@@ -64,7 +64,7 @@
             <include
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    layout="@layout/debug_mode" />
+                    layout="@layout/debug_mode_overlay" />
 
         </FrameLayout>
 
