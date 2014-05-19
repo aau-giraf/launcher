@@ -38,7 +38,7 @@ public class ApplicationControlUtility {
             return new ArrayList<Application>();
         }
 
-        // Remove all apps from user's list of apps that are not installed on the device and exclude the launcher it self.
+        // Remove from the list, all apps that are not installed on the device and exclude the launcher itself.
         for (int i = 0; i < userApps.size(); i++) {
             if (!doesApplicationListContainApp(deviceApps, userApps.get(i)) || userApps.get(i).getPackage().equals("dk.aau.cs.giraf.launcher")) {
                 userApps.remove(i);
