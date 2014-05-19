@@ -56,7 +56,7 @@ public class AppAdapter extends ArrayAdapter<AppInfo> {
 
         if (convertView == null) {
             final LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.apps, parent, false);
+            convertView = inflater.inflate(R.layout.apps_container, parent, false);
         }
 
         ImageView appIconView = (ImageView) convertView.findViewById(R.id.app_icon);

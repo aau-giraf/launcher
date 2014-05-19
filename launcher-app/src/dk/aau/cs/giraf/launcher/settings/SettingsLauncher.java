@@ -1,13 +1,9 @@
 package dk.aau.cs.giraf.launcher.settings;
 
 import android.os.Bundle;
-import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.preference.SwitchPreference;
 
 import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
-import dk.aau.cs.giraf.launcher.settings.components.IconResizer;
 
 /**
  * This fragment contains the settings for Launcher itself, meaning the iconsize and
@@ -36,6 +32,6 @@ public class SettingsLauncher extends PreferenceFragment {
 
         this.getPreferenceManager().setSharedPreferencesName(SettingsUtility.getLauncherSettingsTag(userPart));
 
-        addPreferencesFromResource(R.layout.launcher_settings);
+        addPreferencesFromResource(R.layout.settings_launcher);
     }
 }

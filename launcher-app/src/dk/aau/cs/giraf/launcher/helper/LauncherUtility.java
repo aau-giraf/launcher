@@ -207,10 +207,10 @@ public abstract class LauncherUtility {
     }
 
     /**
-     * Logs the current guardian out and launches the authentication activity.
+     * Logs the current guardian out and launches the authentication_activity.
      *
      * @param context Context of the current activity.
-     * @return The intent required to launch authentication.
+     * @return The intent required to launch authentication_activity.
      */
     public static Intent logOutIntent(Context context) {
         clearAuthData(context);

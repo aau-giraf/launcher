@@ -47,7 +47,7 @@ public abstract class AppContainerFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view;
         if (appView == null){
-            view = inflater.inflate(R.layout.settings_appfragment_appcontainer,
+            view = inflater.inflate(R.layout.settings_appmanagement_appcontainer,
                     container, false);
             context = getActivity();
             currentUser = mCallback.getSelectedProfile();

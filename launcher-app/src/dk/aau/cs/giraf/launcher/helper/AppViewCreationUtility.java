@@ -24,7 +24,6 @@ import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.GAppDragger;
-import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
@@ -68,7 +67,7 @@ public class AppViewCreationUtility {
      */
     private static View addContentToView(Context context, LinearLayout targetLayout, String appName, Drawable appIcon){
         final LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
-        View targetView = inflater.inflate(R.layout.apps, targetLayout, false);
+        View targetView = inflater.inflate(R.layout.apps_container, targetLayout, false);
 
         ImageView appIconView = (ImageView) targetView.findViewById(R.id.app_icon);
         TextView appTextView = (TextView) targetView.findViewById(R.id.app_text);

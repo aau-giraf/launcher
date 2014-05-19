@@ -16,7 +16,6 @@ import android.widget.SeekBar;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.AppViewCreationUtility;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
-import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 
 /**
  * Created by Frederik on 24-04-14.
@@ -59,7 +58,7 @@ public class IconResizer extends Preference implements SeekBar.OnSeekBarChangeLi
         mSeekBar.setMax(mMaxValue - mMinValue);
         mSeekBar.setOnSeekBarChangeListener(this);
 
-        setWidgetLayoutResource(R.layout.icon_resize);
+        setWidgetLayoutResource(R.layout.icon_resize_component);
     }
 
     private void setValuesFromXml(AttributeSet attrs) {

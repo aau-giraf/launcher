@@ -54,7 +54,7 @@ public class AuthenticationActivity extends CaptureActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.authentication);
+		setContentView(R.layout.authentication_activity);
 
 		mContext = this;
 		mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);		
@@ -70,7 +70,7 @@ public class AuthenticationActivity extends CaptureActivity {
 		mGLoginButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// If the authentication activity was not launched by the launcher...
+				// If authentication_activity was not launched by the launcher...
 				if (!getIntent().hasCategory("dk.aau.cs.giraf.launcher.GIRAF")) {
                     LauncherUtility.saveLogInData(mContext, mPreviousProfile.getId(), new Date().getTime());
 					startActivity(mHomeIntent);
