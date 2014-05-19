@@ -20,6 +20,7 @@ import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.controllers.ProfileController;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.oasis.localdb.main;
 
 /**
  * Displays the splash logo of Launcher, and then starts {@link dk.aau.cs.giraf.launcher.activities.AuthenticationActivity}.
@@ -76,6 +77,9 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 	    setContentView(R.layout.logo);
 
         mContext = this.getApplicationContext();
+
+        // Start the remote syncing service
+        new main(this).startSynch();
 
         //Load the splash animation
         startingAnimation = AnimationUtils.loadAnimation(mContext, R.animator.start_logo_animation);
@@ -240,12 +244,15 @@ public class MainActivity extends Activity implements Animation.AnimationListene
          */
         @Override
         protected Void doInBackground(Activity... activities) {
-
+/*
             Helper helper = LauncherUtility.getOasisHelper(mContext);
             int size = helper.profilesHelper.getProfiles().size();
             if (size <= 0) {
-                helper.CreateDummyData();
-            }
+                //helper.CreateDummyData();
+            }*/
+
+
+
             return null;
         }
 

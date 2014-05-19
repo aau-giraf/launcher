@@ -41,11 +41,11 @@ import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.SideBarLayout;
 import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
+import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.controllers.ProfileController;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
-import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 
 /**
  * The primary activity of Launcher. Allows the user to start other GIRAF apps and access the settings
@@ -104,13 +104,13 @@ public class HomeActivity extends Activity {
 		//loadHomeDrawerColorGrid();    //Temporarily disabled, see JavaDoc.
         setupLogoutDialog();
 
-        // Start logging this activity
-        EasyTracker.getInstance(this).activityStart(this);
-
         // Show warning if DEBUG_MODE is true
         if (LauncherUtility.isDebugging()) {
             LauncherUtility.showDebugInformation(this);
         }
+
+        // Start logging this activity
+        EasyTracker.getInstance(this).activityStart(this);
 	}
 
     /**

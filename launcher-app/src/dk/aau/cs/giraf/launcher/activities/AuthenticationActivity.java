@@ -165,6 +165,7 @@ public class AuthenticationActivity extends CaptureActivity {
             }
         } catch (Exception e) {
             Toast.makeText(this, getString(R.string.could_not_verify_msg), Toast.LENGTH_LONG).show();
+            e.printStackTrace();
         }
 
 		/*

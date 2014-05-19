@@ -70,6 +70,8 @@
             android:enabled="true"
             android:exported="true">
         </provider>
+
+        <service android:name="dk.aau.cs.giraf.oasis.localdb.DownloadService" />
     </application>
 
 </manifest>
