@@ -20,5 +20,4 @@
     <string name="apps_loaded_message">Alle applikationer hentet!</string>
     <string name="activity_not_found_msg">Applikationen kunne ikke startes.</string>
     <string name="could_not_verify_msg">Kunne ikke verificere brugeren.</string>
-    <string name="settings_activity_not_found_msg">Indstillingsmenuen kunne ikke åbnes for den valgte bruger.</string>
 </resources>
