@@ -281,9 +281,9 @@ public abstract class LauncherUtility {
                     fileName += "u";
                     break;
             }
+            fileName += String.valueOf(profile.getId());
         }
 
-        fileName += String.valueOf(profile.getId());
         return  fileName;
     }
 
