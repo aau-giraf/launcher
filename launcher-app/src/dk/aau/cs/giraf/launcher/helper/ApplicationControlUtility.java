@@ -94,7 +94,7 @@ public class ApplicationControlUtility {
         //TODO: Launcher name should not be hardcoded!
         for (int i = 0; i < dbApps.size(); i++) {
             String name = dbApps.get(i).getName();
-            if (!doesResolveInfoListContainApp(deviceApps, dbApps.get(i)) || name.equals("Launcher")) {
+            if (!doesResolveInfoListContainApp(deviceApps, dbApps.get(i)) || name.toLowerCase().equals("giraf")) {
                 dbApps.remove(i);
                 i--;
             }
