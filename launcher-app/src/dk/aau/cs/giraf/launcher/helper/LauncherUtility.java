@@ -2,24 +2,12 @@ package dk.aau.cs.giraf.launcher.helper;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.RoundRectShape;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,23 +16,12 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.google.analytics.tracking.android.StandardExceptionParser;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
 
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.AuthenticationActivity;
-import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
-import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
-import dk.aau.cs.giraf.launcher.layoutcontroller.GAppDragger;
 import dk.aau.cs.giraf.oasis.lib.Helper;
-import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
-import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
-
-import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 /**
  * <Code>LauncherUtility</Code> contains static methods related to running the Launcher,
@@ -284,22 +261,26 @@ public abstract class LauncherUtility {
      */
     public static String getSharedPreferenceUser(Profile profile){
         String fileName = "";
-        switch (profile.getRole()){
-            case GUARDIAN:
-                fileName += "g";
-                break;
-            case CHILD:
-                fileName += "c";
-                break;
-            case ADMIN:
-                fileName += "a";
-                break;
-            case PARENT:
-                fileName += "p";
-                break;
-            default: // File type is unknown
-                fileName += "u";
-                break;
+        if (profile == null)
+            fileName += "u";
+        else {
+            switch (profile.getRole()){
+                case GUARDIAN:
+                    fileName += "g";
+                    break;
+                case CHILD:
+                    fileName += "c";
+                    break;
+                case ADMIN:
+                    fileName += "a";
+                    break;
+                case PARENT:
+                    fileName += "p";
+                    break;
+                default: // File type is unknown
+                    fileName += "u";
+                    break;
+            }
         }
 
         fileName += String.valueOf(profile.getId());
