@@ -39,7 +39,7 @@ import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
-import dk.aau.cs.giraf.launcher.layoutcontroller.SideBarLayout;
+import dk.aau.cs.giraf.launcher.layoutcontroller.DrawerLayout;
 import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
 import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 import dk.aau.cs.giraf.oasis.lib.Helper;
@@ -72,9 +72,9 @@ public class HomeActivity extends Activity {
     private GProfileSelector mProfileSelectorDialog;
     private GDialog mLogoutDialog;
 
-	private RelativeLayout mHomeDrawerView;
-    private RelativeLayout mHomeBarLayout;
-    private SideBarLayout mSideBarView;
+	private RelativeLayout mDrawerContentView;
+    private RelativeLayout mSidebarView;
+    private DrawerLayout mDrawerView;
     private LinearLayout mAppsContainer;
     private ScrollView mAppsScrollView;
     private Timer mAppsUpdater;
@@ -230,8 +230,8 @@ public class HomeActivity extends Activity {
      * Initialises the member views of the activity.
      */
     private void loadViews() {
-        mHomeBarLayout = (RelativeLayout) this.findViewById(R.id.HomeBarLayout);
-        mSideBarView = (SideBarLayout)this.findViewById(R.id.SideBarLayout);
+        mSidebarView = (RelativeLayout) this.findViewById(R.id.SidebarView);
+        mDrawerView = (DrawerLayout)this.findViewById(R.id.DrawerView);
         mAppsContainer = (LinearLayout)this.findViewById(R.id.appContainer);
         mAppsScrollView = (ScrollView) this.findViewById(R.id.appScrollView);
     }
@@ -262,7 +262,7 @@ public class HomeActivity extends Activity {
 	private void loadDrawer() {
 		// If result = true, the onTouch-function will be run again.
 
-		mHomeBarLayout.setOnTouchListener(new View.OnTouchListener() {
+		mSidebarView.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
             public boolean onTouch(View v, MotionEvent e) {
@@ -302,7 +302,7 @@ public class HomeActivity extends Activity {
 
         // This closes the drawer after starting to drag a color and
         // opens it again once you stop dragging.
-        mHomeBarLayout.setOnDragListener(new View.OnDragListener() {
+        mSidebarView.setOnDragListener(new View.OnDragListener() {
             int offset = 0;
 
             @Override
@@ -328,16 +328,16 @@ public class HomeActivity extends Activity {
     private void popBackDrawer(){
         int to;
 
-        if(!mSideBarView.isSideBarHidden)
+        if(!mDrawerView.isSideBarHidden)
         {
-            to = -mHomeDrawerView.getWidth();
+            to = -mDrawerContentView.getWidth();
 
             // then animate the view translating from (0, 0)
             TranslateAnimation ta = new TranslateAnimation(0, to, 0, 0);
             ta.setDuration(500);
 
             if(!mDrawerAnimationRunning){
-                mSideBarView.startAnimation(ta);
+                mDrawerView.startAnimation(ta);
                 mDrawerAnimationRunning = true;
             }
 
@@ -347,7 +347,7 @@ public class HomeActivity extends Activity {
                 public void onAnimationStart(Animation animation) {
                         // Sets the left margin of the scrollview based on the width of the homebar
                         mAppsScrollViewParams = new RelativeLayout.LayoutParams(mAppsScrollView.getLayoutParams());
-                        mAppsScrollViewParams.leftMargin = mHomeBarLayout.getWidth();
+                        mAppsScrollViewParams.leftMargin = mSidebarView.getWidth();
                         mAppsScrollView.setLayoutParams(mAppsScrollViewParams);
                 }
 
@@ -369,16 +369,16 @@ public class HomeActivity extends Activity {
     private void placeDrawer(){
         int to;
 
-        if(mSideBarView.isSideBarHidden)
-            to = mHomeDrawerView.getWidth();
+        if(mDrawerView.isSideBarHidden)
+            to = mDrawerContentView.getWidth();
         else
-            to = -mHomeDrawerView.getWidth();
+            to = -mDrawerContentView.getWidth();
 
         // then animate the view translating from (0, 0)
         TranslateAnimation ta = new TranslateAnimation(0, to, 0, 0);
         ta.setDuration(500);
         if(!mDrawerAnimationRunning){
-            mSideBarView.startAnimation(ta);
+            mDrawerView.startAnimation(ta);
             mDrawerAnimationRunning = true;
         }
 
@@ -389,7 +389,7 @@ public class HomeActivity extends Activity {
 
                 // Sets the left margin of the scrollview based on the width of the homebar
                 mAppsScrollViewParams = new RelativeLayout.LayoutParams(mAppsScrollView.getLayoutParams());
-                mAppsScrollViewParams.leftMargin = mHomeBarLayout.getWidth();
+                mAppsScrollViewParams.leftMargin = mSidebarView.getWidth();
                 mAppsScrollView.setLayoutParams(mAppsScrollViewParams);
             }
 
@@ -416,7 +416,7 @@ public class HomeActivity extends Activity {
         GWidgetLogout logoutWidget = (GWidgetLogout) findViewById(R.id.logoutwidget);
         mWidgetProfileSelection = (GWidgetProfileSelection) findViewById(R.id.profile_widget);
         GButtonSettings settingsButton = (GButtonSettings) findViewById(R.id.settingsbutton);
-		mHomeDrawerView = (RelativeLayout) findViewById(R.id.HomeDrawer);
+		mDrawerContentView = (RelativeLayout) findViewById(R.id.DrawerContentView);
 
         /*Setup the profile selector dialog. If the current user is not a guardian, the guardian is used
           as the current user.*/
