@@ -110,6 +110,7 @@ public class SettingsListAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.appIcon = (ImageView)convertView.findViewById(R.id.settingsListAppLogo);
             holder.appName = (TextView)convertView.findViewById(R.id.settingsListAppName);
+            holder.summary = (TextView)convertView.findViewById(R.id.settingsListSummary);
             holder.shadowTop = convertView.findViewById(R.id.settingsListRowShadowBelow);
             holder.shadowBottom = convertView.findViewById(R.id.settingsListRowShadowAbove);
             holder.shadowRight = convertView.findViewById(R.id.settingsListRowShadowRight);
@@ -128,6 +129,7 @@ public class SettingsListAdapter extends BaseAdapter {
         // Set the visibility of the right shadow of current view
         if (position == mLastSelectedItem) {
             setShadowVisibility(holder.shadowRight, false);
+            holder.summary.setVisibility(View.GONE);
             // Set the selected item in the ListView coming from the constructor
             // Minimizes the use of findViewById
             mListView.setItemChecked(position, true);
@@ -151,6 +153,11 @@ public class SettingsListAdapter extends BaseAdapter {
         holder.appIcon.setBackgroundDrawable(item.mAppIcon);
         holder.appName.setText(item.mAppName);
 
+        if (item.mSummary != null && position != mLastSelectedItem) {
+            holder.summary.setText(item.mSummary);
+            holder.summary.setVisibility(View.VISIBLE);
+        }
+
         return convertView;
     }
 
@@ -170,9 +177,10 @@ public class SettingsListAdapter extends BaseAdapter {
     /**
      * Class used in the adapter to hold a reference to each view in a list item (row)
      */
-    private static class ViewHolder {
+    private class ViewHolder {
         public ImageView appIcon;
         public TextView appName;
+        public TextView summary;
         public View shadowTop;
         public View shadowBottom;
         public View shadowRight;

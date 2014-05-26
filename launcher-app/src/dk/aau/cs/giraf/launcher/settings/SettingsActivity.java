@@ -93,11 +93,13 @@ public class SettingsActivity extends Activity
 
         // Launcher
         addApplicationByPackageName("dk.aau.cs.giraf.launcher",
-                new SettingsLauncher(LauncherUtility.getSharedPreferenceUser(mCurrentUser)));
+                new SettingsLauncher(LauncherUtility.getSharedPreferenceUser(mCurrentUser)),
+                "Klik for at vælge indstillinger for hjemmeskærmen");
 
         // Application management
         addApplicationByName(getString(R.string.apps_list_label),
-                new AppManagementFragment(), getResources().getDrawable(R.drawable.ic_apps));
+                new AppManagementFragment(), getResources().getDrawable(R.drawable.ic_apps),
+                "Klik for at installere og vælge apps for profiler");
 
         /************************************************
          *** Add applications in the giraf suite below ***
@@ -105,10 +107,10 @@ public class SettingsActivity extends Activity
         // TODO: Add giraf applications with settings here
 
         // Cars
-        addApplicationByPackageName("dk.aau.cs.giraf.cars");
+        addApplicationByPackageName("dk.aau.cs.giraf.cars", "Klik for at åbne indstillinger");
 
         // Zebra
-        addApplicationByPackageName("dk.aau.cs.giraf.zebra");
+        addApplicationByPackageName("dk.aau.cs.giraf.zebra", "Klik for at åbne indstillinger");
 
         /*************************************************
          *** Add applications in the giraf suite above ***
@@ -160,7 +162,7 @@ public class SettingsActivity extends Activity
      * @param packageName PackageName of the application to add.
      * @param fragment Fragment with settings that should be started.
      */
-    private void addApplicationByPackageName(String packageName, Fragment fragment) {
+    private void addApplicationByPackageName(String packageName, Fragment fragment, String summary) {
         // Get the package manager to query package name
         final PackageManager pm = getApplicationContext().getPackageManager();
         // New container for application we want to add, initially null
@@ -184,7 +186,8 @@ public class SettingsActivity extends Activity
                     packageName,
                     appName,
                     appIcon,
-                    fragment
+                    fragment,
+                    summary
             );
             // Add item to the list of applications
             mAppList.add(item);
@@ -198,7 +201,7 @@ public class SettingsActivity extends Activity
      * to start its settings_activity.
      * @param packageName PackageName of the application to add.
      */
-    private void addApplicationByPackageName(String packageName) {
+    private void addApplicationByPackageName(String packageName, String summary) {
         // Get the package manager to query package name
         final PackageManager pm = getApplicationContext().getPackageManager();
         // New container for application we want to add, initially null
@@ -238,7 +241,8 @@ public class SettingsActivity extends Activity
                         packageName,
                         appName,
                         appIcon,
-                        intent
+                        intent,
+                        summary
                 );
                 // Add item to the list of applications
                 mAppList.add(item);
@@ -252,11 +256,12 @@ public class SettingsActivity extends Activity
      * @param fragment Fragment with settings that should be started.
      * @param icon Custom icon to add to list entry.
      */
-    private void addApplicationByName(String appName, Fragment fragment, Drawable icon) {
+    private void addApplicationByName(String appName, Fragment fragment, Drawable icon, String summary) {
         SettingsListItem item = new SettingsListItem(
                 appName,
                 icon,
-                fragment
+                fragment,
+                summary
         );
         // Add item to the list of applications
         mAppList.add(item);
@@ -268,11 +273,12 @@ public class SettingsActivity extends Activity
      * @param intent Intent of the app to start.
      * @param icon Custom icon to add to list entry.
      */
-    private void addApplicationByName(String appName, Intent intent, Drawable icon) {
+    private void addApplicationByName(String appName, Intent intent, Drawable icon, String summary) {
         SettingsListItem item = new SettingsListItem(
                 appName,
                 icon,
-                intent
+                intent,
+                summary
         );
         // Add item to the list of applications
         mAppList.add(item);
@@ -288,7 +294,8 @@ public class SettingsActivity extends Activity
         androidSettingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         addApplicationByName(getResources().getString(R.string.giraf_settings_name),
-                androidSettingsIntent, getResources().getDrawable(R.drawable.ic_android));
+                androidSettingsIntent, getResources().getDrawable(R.drawable.ic_android),
+                "Klik for at åbne system indstillinger");
     }
 
     /**

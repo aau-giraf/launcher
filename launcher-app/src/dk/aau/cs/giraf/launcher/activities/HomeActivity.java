@@ -13,6 +13,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -73,13 +74,11 @@ public class HomeActivity extends Activity {
     private GDialog mLogoutDialog;
 
 	private RelativeLayout mHomeDrawerView;
-    private RelativeLayout mHomeBarLayout;
+    private RelativeLayout mHomeBarView;
     private SideBarLayout mSideBarView;
     private LinearLayout mAppsContainer;
     private ScrollView mAppsScrollView;
     private Timer mAppsUpdater;
-
-    private RelativeLayout.LayoutParams mAppsScrollViewParams;
 
     /**
      * Sets up the activity. Specifically view variables are instantiated, the login button listener
@@ -101,7 +100,6 @@ public class HomeActivity extends Activity {
         loadViews();
 		//loadDrawer();                 //Temporarily disabled, see JavaDoc.
 		loadWidgets();
-		//loadHomeDrawerColorGrid();    //Temporarily disabled, see JavaDoc.
         setupLogoutDialog();
 
         // Show warning if DEBUG_MODE is true
@@ -196,8 +194,6 @@ public class HomeActivity extends Activity {
         //startObservingApps();
         if(mWidgetUpdater != null)
 		    mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_START);
-
-
 	}
 
     /**
@@ -230,7 +226,7 @@ public class HomeActivity extends Activity {
      * Initialises the member views of the activity.
      */
     private void loadViews() {
-        mHomeBarLayout = (RelativeLayout) this.findViewById(R.id.HomeBarLayout);
+        mHomeBarView = (RelativeLayout) this.findViewById(R.id.HomeBarLayout);
         mSideBarView = (SideBarLayout)this.findViewById(R.id.SideBarLayout);
         mAppsContainer = (LinearLayout)this.findViewById(R.id.appContainer);
         mAppsScrollView = (ScrollView) this.findViewById(R.id.appScrollView);
@@ -262,7 +258,7 @@ public class HomeActivity extends Activity {
 	private void loadDrawer() {
 		// If result = true, the onTouch-function will be run again.
 
-		mHomeBarLayout.setOnTouchListener(new View.OnTouchListener() {
+		mHomeBarView.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
             public boolean onTouch(View v, MotionEvent e) {
@@ -302,7 +298,7 @@ public class HomeActivity extends Activity {
 
         // This closes the drawer after starting to drag a color and
         // opens it again once you stop dragging.
-        mHomeBarLayout.setOnDragListener(new View.OnDragListener() {
+        mHomeBarView.setOnDragListener(new View.OnDragListener() {
             int offset = 0;
 
             @Override
@@ -342,13 +338,9 @@ public class HomeActivity extends Activity {
             }
 
             ta.setAnimationListener(new TranslateAnimation.AnimationListener() {
-
                 @Override
                 public void onAnimationStart(Animation animation) {
-                        // Sets the left margin of the scrollview based on the width of the homebar
-                        mAppsScrollViewParams = new RelativeLayout.LayoutParams(mAppsScrollView.getLayoutParams());
-                        mAppsScrollViewParams.leftMargin = mHomeBarLayout.getWidth();
-                        mAppsScrollView.setLayoutParams(mAppsScrollViewParams);
+                    mAppsScrollView.setLeft(mHomeBarView.getWidth());
                 }
 
                 @Override
@@ -383,14 +375,9 @@ public class HomeActivity extends Activity {
         }
 
         ta.setAnimationListener(new TranslateAnimation.AnimationListener() {
-
             @Override
             public void onAnimationStart(Animation animation) {
-
-                // Sets the left margin of the scrollview based on the width of the homebar
-                mAppsScrollViewParams = new RelativeLayout.LayoutParams(mAppsScrollView.getLayoutParams());
-                mAppsScrollViewParams.leftMargin = mHomeBarLayout.getWidth();
-                mAppsScrollView.setLayoutParams(mAppsScrollViewParams);
+                mAppsScrollView.setLeft(mHomeBarView.getWidth());
             }
 
             @Override

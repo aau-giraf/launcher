@@ -28,27 +28,17 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
  */
 public class SettingsListFragment extends Fragment {
 
-    /**
-     * The variables of the class.
-     * mSettingsListView is the ListView containing all the SettingsListItems. @see dk.aau.cs.giraf.launcher.settings.SettingsListItem
-     * mProfileName is the textView below the profile selector, showing the name of the current user
-     * mAdapter is the SettingsListAdapter attached to the ListView.
-     * mProfileButton is the ProfileSelector widget button, created by the GUI group. @see dk.aau.cs.giraf.gui.GWidgetProfileSelection
-     * mLoggedInGuardian is the currently logged in guardian and, if the current user is a child, the guardian of that child.
-     * mCurrentUser is the current user.
-     * mProfileSelector is the ProfileSelector Widget itself, not the button.@see dk.aau.cs.giraf.gui.GProfileSelector
-     */
     private ListView mSettingsListView;
     private TextView mProfileName;
     private SettingsListAdapter mAdapter;
     private GWidgetProfileSelection mProfileButton;
 
     private Profile mLoggedInGuardian;
-    public static Profile mCurrentUser;
+    private Profile mCurrentUser;
     private GProfileSelector mProfileSelector;
 
     // Callback to containing Activity implementing the SettingsListFragmentListener interface
-    public SettingsListFragmentListener mCallback;
+    private SettingsListFragmentListener mCallback;
 
     /**
      * Interface to be implemented by the activity supporting callbacks from this fragment.

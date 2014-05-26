@@ -20,6 +20,7 @@ public class SettingsListItem {
      */
     String mPackageName;
     String mAppName;
+    String mSummary;
     Drawable mAppIcon;
     Fragment mAppFragment;
     Intent mIntent;
@@ -27,17 +28,18 @@ public class SettingsListItem {
     /**
      * the constructor of the class
      * @param packageName Package name of the application to add.
-     * @param appName Name of the application.
+     * @param appName Name of the application.By using
      * @param appIcon Icon of the application to be showed in ListView.
      * @param fragment The fragment to be started by FragmentManager.
      * @param intent The intent to be started as a new activity.
      */
-    private SettingsListItem(String packageName, String appName, Drawable appIcon, Fragment fragment, Intent intent){
+    private SettingsListItem(String packageName, String appName, Drawable appIcon, Fragment fragment, Intent intent, String summary){
         this.mPackageName = packageName;
         this.mAppName = appName;
         this.mAppIcon = appIcon;
         this.mAppFragment = fragment;
         this.mIntent = intent;
+        this.mSummary = summary;
     }
 
     /**
@@ -51,8 +53,8 @@ public class SettingsListItem {
      * @param appIcon Icon of the application to be showed in ListView.
      * @param _fragment The fragment to be started by FragmentManager.
      */
-    public SettingsListItem(String packageName, String appName, Drawable appIcon, Fragment _fragment){
-        this(packageName, appName, appIcon, _fragment, null);
+    public SettingsListItem(String packageName, String appName, Drawable appIcon, Fragment _fragment, String summaary ){
+        this(packageName, appName, appIcon, _fragment, null, summaary);
     }
 
     /**
@@ -65,8 +67,8 @@ public class SettingsListItem {
      * @param appIcon Icon of the application to be showed in ListView.
      * @param intent The intent to be started as a new activity.
      */
-    public SettingsListItem(String packageName, String appName, Drawable appIcon, Intent intent){
-        this(packageName, appName, appIcon, null, intent);
+    public SettingsListItem(String packageName, String appName, Drawable appIcon, Intent intent, String summary){
+        this(packageName, appName, appIcon, null, intent, summary);
     }
 
     /**
@@ -79,8 +81,8 @@ public class SettingsListItem {
      * @param appIcon Icon of the application to be showed in ListView.
      * @param fragment The fragment to be started by FragmentManager.
      */
-    public SettingsListItem(String appName, Drawable appIcon, Fragment fragment){
-        this(null, appName, appIcon, fragment, null);
+    public SettingsListItem(String appName, Drawable appIcon, Fragment fragment, String summary){
+        this(null, appName, appIcon, fragment, null, summary);
     }
 
     /**
@@ -92,7 +94,7 @@ public class SettingsListItem {
      * @param appIcon Icon of the application to be showed in ListView.
      * @param intent The intent to be started as a new activity.
      */
-    public SettingsListItem(String appName, Drawable appIcon, Intent intent) {
-        this(null, appName, appIcon, null, intent);
+    public SettingsListItem(String appName, Drawable appIcon, Intent intent, String summary) {
+        this(null, appName, appIcon, null, intent, summary);
     }
 }

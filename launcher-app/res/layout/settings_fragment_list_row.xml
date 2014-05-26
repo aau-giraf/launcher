@@ -19,16 +19,33 @@
                 android:layout_marginRight="@dimen/giraf_settings_list_row_imageView_marginRight">
         </ImageView>
 
-        <TextView
-                android:id="@+id/settingsListAppName"
-                android:layout_toRightOf="@id/settingsListAppLogo"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:textColor="@android:color/black"
-                android:text="@string/giraf_settings_name"
-                android:textAppearance="?android:textAppearanceLarge" >
-        </TextView>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_toRightOf="@id/settingsListAppLogo">
+
+                <TextView
+                    android:id="@+id/settingsListAppName"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="@android:color/black"
+                    android:text="@string/giraf_settings_name"
+                    android:textAppearance="?android:textAppearanceLarge" >
+                </TextView>
+
+                <TextView
+                    android:id="@+id/settingsListSummary"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="@android:color/secondary_text_light"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:visibility="gone">
+                </TextView>
+
+            </LinearLayout>
 
     </LinearLayout>
 
