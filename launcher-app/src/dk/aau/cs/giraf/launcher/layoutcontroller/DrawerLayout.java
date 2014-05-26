@@ -9,9 +9,9 @@ import dk.aau.cs.giraf.launcher.R;
 /**
  * In order to easily handle the animation of the drawer, we extended the native RelativeLayout,
  * to handle the additional animations that the drawer needed.
- * The SideBarLayout class is currently not used, since the drawer itself was disabled
+ * The DrawerLayout class is currently not used, since the drawer itself was disabled
  */
-public class SideBarLayout extends RelativeLayout {
+public class DrawerLayout extends RelativeLayout {
 
     /**
      * A boolean variable to keep track of which way we should do the translateanimation
@@ -23,7 +23,7 @@ public class SideBarLayout extends RelativeLayout {
      * A constructor of the Layout
      * @param context The context of the current Activity
      */
-    public SideBarLayout(Context context){
+    public DrawerLayout(Context context){
         super(context);
     }
 
@@ -32,7 +32,7 @@ public class SideBarLayout extends RelativeLayout {
      * @param context The context of the current Activity
      * @param attrs The attributes the layout should have
      */
-    public SideBarLayout(Context context, AttributeSet attrs){
+    public DrawerLayout(Context context, AttributeSet attrs){
         super(context, attrs);
     }
 
@@ -42,7 +42,7 @@ public class SideBarLayout extends RelativeLayout {
      * @param attrs The attributes the layout should have
      * @param defStyle The style the layout should have
      */
-    public SideBarLayout(Context context, AttributeSet attrs, int defStyle) {
+    public DrawerLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
@@ -64,8 +64,8 @@ public class SideBarLayout extends RelativeLayout {
     protected void onAnimationEnd() {
         super.onAnimationEnd();
 
-        SideBarLayout.LayoutParams params = (SideBarLayout.LayoutParams) this.getLayoutParams();
-        RelativeLayout homeDrawer = (RelativeLayout) findViewById(R.id.HomeDrawer);
+        DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams) this.getLayoutParams();
+        RelativeLayout homeDrawer = (RelativeLayout) findViewById(R.id.DrawerContentView);
 
         if (isSideBarHidden) {
             params.leftMargin = homeDrawer.getLeft();
