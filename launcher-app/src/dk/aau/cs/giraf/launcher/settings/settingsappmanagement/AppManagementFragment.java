@@ -61,8 +61,7 @@ public class AppManagementFragment extends Fragment {
         androidAppsButton = (Button)view.findViewById(R.id.settings_android_button);
         googlePlayButton = (Button)view.findViewById(R.id.settings_googleplay_button);
         this.setButtonListeners();
-        fragmentManager = this.getFragmentManager();
-        fragmentContainer = fragmentManager.findFragmentById(R.id.app_settings_fragmentlayout);
+        fragmentManager = this.getChildFragmentManager();
 
         /** Choose the GIRAF pane and set the GIRAF button when the fragment has loaded.*/
         fragmentContainer = girafFragment;

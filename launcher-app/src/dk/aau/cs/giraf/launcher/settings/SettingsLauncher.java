@@ -11,14 +11,17 @@ import dk.aau.cs.giraf.launcher.R;
  */
 public class SettingsLauncher extends PreferenceFragment {
 
-    private String userPart;
+    private static final String TEXT_STRING_TAG = "content";
 
-    /**
-     * The contructor for the class
-     * @param userPart The userpart of the sharedpreferences
-     */
-    public SettingsLauncher(String userPart){
-        this.userPart = userPart;
+    public static SettingsLauncher newInstance(final String text)
+    {
+        SettingsLauncher newFragment = new SettingsLauncher();
+
+        Bundle args = new Bundle();
+        args.putString(TEXT_STRING_TAG, text);
+        newFragment.setArguments(args);
+
+        return newFragment;
     }
 
     /**
@@ -30,7 +33,17 @@ public class SettingsLauncher extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.getPreferenceManager().setSharedPreferencesName(SettingsUtility.getLauncherSettingsTag(userPart));
+        final Bundle arguments = getArguments();
+
+        if (arguments != null)
+        {
+            final String text = arguments.getString(TEXT_STRING_TAG);
+
+            if (text != null)
+            {
+                this.getPreferenceManager().setSharedPreferencesName(SettingsUtility.getLauncherSettingsTag(text));
+            }
+        }
 
         addPreferencesFromResource(R.layout.settings_launcher);
     }

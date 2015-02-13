@@ -43,7 +43,7 @@ public class AppViewCreationUtility {
      * @param context The context of the current activity
      * @param appsList The array of accessible apps
      */
-    public static HashMap<String,AppInfo> updateAppInfoHashMap(Context context, Application[] appsList) {
+    public synchronized static HashMap<String,AppInfo> updateAppInfoHashMap(Context context, Application[] appsList) {
         mAppInfoHashMap = new HashMap<String,AppInfo>();
 
         for (Application app : appsList) {
@@ -86,7 +86,7 @@ public class AppViewCreationUtility {
      * @param targetLayout The layout we want to add the AppImageView to.
      * @return
      */
-    protected static AppImageView createAppImageView(Context context, final Profile currentUser, final Profile guardian, AppInfo appInfo, LinearLayout targetLayout, View.OnClickListener listener) {
+    protected synchronized static AppImageView createAppImageView(Context context, final Profile currentUser, final Profile guardian, AppInfo appInfo, LinearLayout targetLayout, View.OnClickListener listener) {
 
         AppImageView appImageView = new AppImageView(context);
         View appView = addContentToView(context, targetLayout, appInfo.getName(), appInfo.getIconImage());
@@ -108,9 +108,23 @@ public class AppViewCreationUtility {
                     } catch (NullPointerException e){
                         // could not get context, no animation.
                     }
-                    AppInfo app = mAppInfoHashMap.get((String) v.getTag());
-                    Intent intent = new Intent(Intent.ACTION_MAIN);
+
+                    AppInfo app = null;
+
+                    synchronized(this) {
+
+
+                        app = mAppInfoHashMap.get((String) v.getTag());
+                    }
+
+                        Intent intent = new Intent(Intent.ACTION_MAIN);
                     intent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+                    if(app == null)
+                    {
+                        String dyld = this.toString();
+                    }
+
                     intent.setComponent(new ComponentName(app.getPackage(), app.getActivity()));
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                             | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);

@@ -27,7 +27,7 @@ import dk.aau.cs.giraf.oasis.localdb.main;
  * Provides variables for enabling debug mode before compilation.
  */
 public class MainActivity extends Activity implements Animation.AnimationListener{
-    private Context mContext;
+    //private Context mContext;
     private int oldSessionGuardianID = -1;
     Animation startingAnimation;
     Animation loadAnimation;
@@ -38,7 +38,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      * If {@code true}, the Launcher is stated in debugging mode, where the splash screen and
      * authentication_activity is skipped.
      */
-    private final boolean DEBUG_MODE = false;
+    private final boolean DEBUG_MODE = true;
 
     /**
      * If {@code true}, the authentication_activity screen is shown, despite debugging mode. Has no
@@ -50,7 +50,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      * If {@code true}, the splash screen is shown, despite debugging mode. Has no
      * effect if {@code DEBUG_MODE} is {@code false}.
      */
-    private final boolean SKIP_SPLASH_SCREEN = false;
+    private final boolean SKIP_SPLASH_SCREEN = true;
 
     /**
      * If {@code true}, Launcher automatically logs in with a child profile. If {@code false},
@@ -76,20 +76,20 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 
 	    setContentView(R.layout.main_activity);
 
-        mContext = this.getApplicationContext();
+        //mContext = this.getApplicationContext();
 
         // Start the remote syncing service
         new main(this).startSynch();
 
         //Load the splash animation
-        startingAnimation = AnimationUtils.loadAnimation(mContext, R.animator.main_activity_rotatelogo_once);
-        loadAnimation = AnimationUtils.loadAnimation(mContext, R.animator.main_activity_rotatelogo_infinite);
+        startingAnimation = AnimationUtils.loadAnimation(this, R.animator.main_activity_rotatelogo_once);
+        loadAnimation = AnimationUtils.loadAnimation(this, R.animator.main_activity_rotatelogo_infinite);
 
         //Load the preference determining whether the animation should be shown
         findOldSession();
         if (oldSessionGuardianID != -1) {
-            Profile oldSessionProfile = new ProfileController(mContext).getProfileById(oldSessionGuardianID);
-            SharedPreferences prefs = SettingsUtility.getLauncherSettings(mContext, LauncherUtility.getSharedPreferenceUser(oldSessionProfile));
+            Profile oldSessionProfile = new ProfileController(this).getProfileById(oldSessionGuardianID);
+            SharedPreferences prefs = SettingsUtility.getLauncherSettings(this, LauncherUtility.getSharedPreferenceUser(oldSessionProfile));
             showAnimation = prefs.getBoolean(getString(R.string.show_animation_preference_key), true);
         }
 
@@ -159,12 +159,12 @@ public class MainActivity extends Activity implements Animation.AnimationListene
             intent = skipAuthentication(DEBUG_AS_CHILD);
         }
         //If no valid session is found, start authentication_activity
-        else if (LauncherUtility.sessionExpired(mContext)) {
-            intent = new Intent(mContext, AuthenticationActivity.class);
+        else if (LauncherUtility.sessionExpired(this)) {
+            intent = new Intent(this, AuthenticationActivity.class);
         }
         //If a valid session is found, pass the profile ID along with the intent.
         else {
-            intent = new Intent(mContext, HomeActivity.class);
+            intent = new Intent(this, HomeActivity.class);
 
             SharedPreferences sharedPreferences = getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
             int guardianID = sharedPreferences.getInt(Constants.GUARDIAN_ID, -1);
@@ -190,7 +190,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      * @return An intent for starting {@code MainActivity} with the authenticated profile ID as an extra.
      */
     private Intent skipAuthentication(boolean asChild) {
-        Helper helper = LauncherUtility.getOasisHelper(mContext);
+        Helper helper = LauncherUtility.getOasisHelper(this);
         Profile profile;
 
         //Get the relevant profile info.
@@ -198,14 +198,15 @@ public class MainActivity extends Activity implements Animation.AnimationListene
             profile = helper.profilesHelper.authenticateProfile("childqkxlnftvxquwrwcdloaumdhzkgyglezzsebpvnethrlstvmlorrolymdynjcyonkrtvcuagwigdqqkftsxxhklcnbhznthcqjxnjzzdoqvmfdlxrudcyakvrnfcbohdumawlwmfndjascmvrsoxfjgwzhdvcvqcroxoyjeazmxtrjtlkldoevgdrqvgfbklhtgm");
         }
         else {
-            profile = helper.profilesHelper.authenticateProfile("jkkxlagqyrztlrexhzofekyzrnppajeobqxcmunkqhsbrgpxdtqgygnmbhrgnpphaxsjshlpupgakmirhpyfaivvtpynqarxsghhilhkqvpelpreevykxurtppcggkzfaepihlodgznrmbrzgqucstflhmndibuymmvwauvdlyqnnlxkurinuypmqypspmkqavuhfwsh");
+            //profile = helper.profilesHelper.authenticateProfile("jkkxlagqyrztlrexhzofekyzrnppajeobqxcmunkqhsbrgpxdtqgygnmbhrgnpphaxsjshlpupgakmirhpyfaivvtpynqarxsghhilhkqvpelpreevykxurtppcggkzfaepihlodgznrmbrzgqucstflhmndibuymmvwauvdlyqnnlxkurinuypmqypspmkqavuhfwsh");
+            profile = helper.profilesHelper.authenticateProfile("d74ecba82569eafc763256e45a126b4ce882f8a81327f28a380faa13eb2ec8f3");
         }
 
-        Intent intent = new Intent(mContext, HomeActivity.class);
+        Intent intent = new Intent(this, HomeActivity.class);
 
         //Add the profile ID to the intent, and save information on the session.
         intent.putExtra(Constants.GUARDIAN_ID, profile.getId());
-        LauncherUtility.saveLogInData(mContext, profile.getId(), new Date().getTime());
+        LauncherUtility.saveLogInData(this, profile.getId(), new Date().getTime());
         return intent;
     }
 
@@ -214,7 +215,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      * Loads the sharedpreferences if one exists
      */
     private void findOldSession() {
-        if (LauncherUtility.sessionExpired(mContext)) {
+        if (LauncherUtility.sessionExpired(this)) {
             oldSessionGuardianID = -1;
         } else {
             SharedPreferences sharedPreferences = getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);

@@ -38,7 +38,6 @@ public class AuthenticationActivity extends CaptureActivity {
 	private GButton mGLoginButton;
 	private TextView mLoginNameView;
 	private TextView mInfoView;
-	private Context mContext;
 	private Vibrator mVibrator;
 	private Profile mPreviousProfile;
     private View mCameraFeed;
@@ -56,7 +55,7 @@ public class AuthenticationActivity extends CaptureActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.authentication_activity);
 
-		mContext = this;
+		//mContext = this;
 		mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);		
 		mGLoginButton = (GButton)this.findViewById(R.id.loginGButton);
 		mLoginNameView = (TextView)this.findViewById(R.id.loginname);
@@ -72,7 +71,7 @@ public class AuthenticationActivity extends CaptureActivity {
 			public void onClick(View v) {
 				// If authentication_activity was not launched by the launcher...
 				if (!getIntent().hasCategory("dk.aau.cs.giraf.launcher.GIRAF")) {
-                    LauncherUtility.saveLogInData(mContext, mPreviousProfile.getId(), new Date().getTime());
+                    LauncherUtility.saveLogInData(AuthenticationActivity.this, mPreviousProfile.getId(), new Date().getTime());
 					startActivity(mHomeIntent);
 				}
 			}

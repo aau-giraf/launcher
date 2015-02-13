@@ -93,7 +93,7 @@ public class SettingsActivity extends Activity
 
         // Launcher
         addApplicationByPackageName("dk.aau.cs.giraf.launcher",
-                new SettingsLauncher(LauncherUtility.getSharedPreferenceUser(mCurrentUser)),
+                SettingsLauncher.newInstance(LauncherUtility.getSharedPreferenceUser(mCurrentUser)),
                 "Klik for at vælge indstillinger for hjemmeskærmen");
 
         // Application management
