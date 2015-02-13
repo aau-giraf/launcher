@@ -68,11 +68,14 @@ public class GirafFragment extends AppContainerFragment {
      * It stops observing apps, so it doesnt try an update while paused.
      */
     @Override
-    public void onPause() {
+    public void onPause()
+    {
         super.onPause();
-        loadApplicationTask.cancel(true);
 
-        if(appsUpdater != null){
+        if(loadApplicationTask != null) {
+            loadApplicationTask.cancel(true);
+        }
+        if(appsUpdater != null) {
             appsUpdater.cancel();
 
             Log.d(Constants.ERROR_TAG, "Applications are no longer observed.");

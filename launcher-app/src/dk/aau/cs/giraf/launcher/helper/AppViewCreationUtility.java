@@ -111,7 +111,7 @@ public class AppViewCreationUtility {
 
                     AppInfo app = null;
 
-                    synchronized(this) {
+                    synchronized(AppViewCreationUtility.class) {
 
 
                         app = mAppInfoHashMap.get((String) v.getTag());
