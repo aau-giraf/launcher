@@ -33,7 +33,6 @@ public abstract class AppContainerFragment extends Fragment{
     protected List<Application> apps;
     protected LinearLayout appView;
     protected boolean haveAppsBeenAdded = false;
-    protected Context context;
 
     /**
      * Because we are dealing with a Fragment, OnCreateView is where most of the variables are set.
@@ -49,7 +48,7 @@ public abstract class AppContainerFragment extends Fragment{
         if (appView == null){
             view = inflater.inflate(R.layout.settings_appmanagement_appcontainer,
                     container, false);
-            context = getActivity();
+
             currentUser = mCallback.getSelectedProfile();
         } else {
             view = appView.getRootView();
@@ -88,7 +87,7 @@ public abstract class AppContainerFragment extends Fragment{
      * @param activity
      */
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(final Activity activity) {
         super.onAttach(activity);
         try {
             mCallback = (AppsFragmentInterface) activity;

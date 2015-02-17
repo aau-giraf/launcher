@@ -115,7 +115,7 @@ public class AndroidFragment extends AppContainerFragment {
      */
     @Override
     public void loadApplications(){
-           loadApplicationsTask = new LoadAndroidApplicationTask(context, currentUser, null, appView, 110, listener);
+           loadApplicationsTask = new LoadAndroidApplicationTask(getActivity(), currentUser, null, appView, 110, listener);
            loadApplicationsTask.execute();
 
     }
@@ -232,9 +232,10 @@ public class AndroidFragment extends AppContainerFragment {
 
         @Override
         public void run() {
-            apps = ApplicationControlUtility.getAndroidAppsOnDeviceAsApplicationList(context);
-            if (loadedApps == null || loadedApps.size() != apps.size()){
-                ((Activity)context).runOnUiThread(new Runnable() {
+            apps = ApplicationControlUtility.getAndroidAppsOnDeviceAsApplicationList(getActivity());
+            if (loadedApps == null || loadedApps.size() != apps.size())
+            {
+                getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         loadApplications();

@@ -105,7 +105,7 @@ public class GirafFragment extends AppContainerFragment {
         if (loadedApps == null || loadedApps.size() != apps.size()){
             //Remember that the apps have been added, so they are not added again by the listener
 
-            loadApplicationTask = new loadGirafApplicationTask(context, currentUser, null, appView, 110, listener);
+            loadApplicationTask = new loadGirafApplicationTask(getActivity(), currentUser, null, appView, 110, listener);
             loadApplicationTask.execute();
         }
     }
@@ -121,7 +121,7 @@ public class GirafFragment extends AppContainerFragment {
             public void onClick(View v) {
                 AppImageView appImageView = (AppImageView) v;
                 appImageView.toggle();
-                ProfileApplicationController pac = new ProfileApplicationController(context);
+                ProfileApplicationController pac = new ProfileApplicationController(getActivity());
                 AppInfo app = appInfos.get(v.getTag().toString());
 
                 if(userHasApplicationInView(pac, app.getApp(), currentUser))
@@ -232,9 +232,9 @@ public class GirafFragment extends AppContainerFragment {
 
         @Override
         public void run() {
-            apps = ApplicationControlUtility.getGirafAppsOnDeviceButLauncherAsApplicationList(context);
+            apps = ApplicationControlUtility.getGirafAppsOnDeviceButLauncherAsApplicationList(getActivity());
             if (loadedApps == null || loadedApps.size() != apps.size()){
-                ((Activity)context).runOnUiThread(new Runnable() {
+                getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         loadApplications();
