@@ -26,7 +26,6 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
  */
 public class AppAdapter extends ArrayAdapter<AppInfo> {
 
-    private final Context mContext;
     private final ArrayList<AppInfo> mApps;
 
     /**
@@ -35,10 +34,8 @@ public class AppAdapter extends ArrayAdapter<AppInfo> {
      * @param context Context the adapter is created in.
      * @param apps    The apps to show.
      */
-    public AppAdapter(Context context, ArrayList<AppInfo> apps) {
+    public AppAdapter(final Context context, final ArrayList<AppInfo> apps) {
         super(context, 0, apps);
-
-        this.mContext = context;
         this.mApps = apps;
     }
 
@@ -55,7 +52,7 @@ public class AppAdapter extends ArrayAdapter<AppInfo> {
         final AppInfo appInfo = mApps.get(position);
 
         if (convertView == null) {
-            final LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.apps_container, parent, false);
         }
 
