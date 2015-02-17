@@ -26,8 +26,8 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
  */
 public class AppAdapter extends ArrayAdapter<AppInfo> {
 
-    Context mContext;
-    ArrayList<AppInfo> mApps;
+    private final Context mContext;
+    private final ArrayList<AppInfo> mApps;
 
     /**
      * Constructs a new adapter to handle the presentation of apps in the launcher.

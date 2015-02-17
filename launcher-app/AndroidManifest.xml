@@ -3,6 +3,9 @@
     package="dk.aau.cs.giraf.launcher"
     android:versionCode="5"
     android:versionName="2.2">
+    <!--
+    <uses-sdk/> is defined in build.gralde
+         -->
 
     <uses-permission android:name="dk.aau.cs.giraf.oasis.app"/>
     <uses-permission android:name="android.permission.CAMERA" />

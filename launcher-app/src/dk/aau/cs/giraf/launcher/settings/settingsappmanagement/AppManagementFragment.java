@@ -48,8 +48,8 @@ public class AppManagementFragment extends Fragment {
      * @return the inflated view.
      */
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.settings_appmanagement,
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+        final View view = inflater.inflate(R.layout.settings_appmanagement,
                 container, false);
 
         this.setRetainInstance(true);
