@@ -54,8 +54,6 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
  */
 public class HomeActivity extends Activity {
 
-	private static Context mContext;
-
     private Profile mLoggedInGuardian;
 	private Profile mCurrentUser;
 	private Helper mHelper;
@@ -91,8 +89,7 @@ public class HomeActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home_activity);
 
-		HomeActivity.mContext = this;
-        mHelper = LauncherUtility.getOasisHelper(mContext);
+        mHelper = LauncherUtility.getOasisHelper(this);
 
         mCurrentUser = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
         mLoggedInGuardian = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
@@ -217,7 +214,7 @@ public class HomeActivity extends Activity {
      */
     private void loadApplications(){
         updateIconSize();
-        loadHomeActivityApplicationTask = new LoadHomeActivityApplicationTask(mContext, mCurrentUser, mLoggedInGuardian, mAppsContainer, mIconSize, null);
+        loadHomeActivityApplicationTask = new LoadHomeActivityApplicationTask(this, mCurrentUser, mLoggedInGuardian, mAppsContainer, mIconSize, null);
         loadHomeActivityApplicationTask.execute();
         mIsAppsContainerInitialized = true;
     }
@@ -236,17 +233,17 @@ public class HomeActivity extends Activity {
      * Initialises the logout dialog.
      */
     private void setupLogoutDialog() {
-        String logoutHeadline = mContext.getResources().getString(R.string.Log_out);
-        String logoutDescription = mContext.getResources().getString(R.string.Log_out_description);
-        mLogoutDialog = new GDialogMessage(mContext, R.drawable.large_switch_profile, logoutHeadline, logoutDescription, new View.OnClickListener() {
+        String logoutHeadline = this.getResources().getString(R.string.Log_out);
+        String logoutDescription = this.getResources().getString(R.string.Log_out_description);
+        mLogoutDialog = new GDialogMessage(this, R.drawable.large_switch_profile, logoutHeadline, logoutDescription, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(LauncherUtility.logOutIntent(mContext));
+                startActivity(LauncherUtility.logOutIntent(HomeActivity.this));
                 mLogoutDialog.dismiss();
-                ((Activity) mContext).finish();
+                HomeActivity.this.finish();
             }
         });
-        mLogoutDialog.setOwnerActivity((Activity) mContext);
+        mLogoutDialog.setOwnerActivity(this);
     }
 
 	/**
@@ -410,9 +407,9 @@ public class HomeActivity extends Activity {
         /*Setup the profile selector dialog. If the current user is not a guardian, the guardian is used
           as the current user.*/
         if(mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
-            mProfileSelectorDialog = new GProfileSelector(mContext, mLoggedInGuardian, mCurrentUser);
+            mProfileSelectorDialog = new GProfileSelector(this, mLoggedInGuardian, mCurrentUser);
         else
-            mProfileSelectorDialog = new GProfileSelector(mContext, mLoggedInGuardian, null);
+            mProfileSelectorDialog = new GProfileSelector(this, mLoggedInGuardian, null);
 
         //Set up widget updater, which updates the widget's view regularly, according to its status.
 		mWidgetUpdater = new GWidgetUpdater();
@@ -420,7 +417,7 @@ public class HomeActivity extends Activity {
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, SettingsActivity.class);
+                Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
                 intent.putExtra(Constants.GUARDIAN_ID, mLoggedInGuardian.getId());
                 if(mCurrentUser.getRole() == Profile.Roles.GUARDIAN)
                     intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
@@ -458,7 +455,7 @@ public class HomeActivity extends Activity {
      * PreferenceFragment. The size is saved in {@link HomeActivity#mIconSize}.
      */
     private void updateIconSize() {
-        SharedPreferences prefs = SettingsUtility.getLauncherSettings(mContext, LauncherUtility.getSharedPreferenceUser(mCurrentUser));
+        SharedPreferences prefs = SettingsUtility.getLauncherSettings(this, LauncherUtility.getSharedPreferenceUser(mCurrentUser));
         mIconSize = prefs.getInt(getString(R.string.icon_size_preference_key), 200);
     }
 
@@ -470,14 +467,14 @@ public class HomeActivity extends Activity {
         mProfileSelectorDialog.setOnListItemClick(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                ProfileController pc = new ProfileController(mContext);
+                ProfileController pc = new ProfileController(HomeActivity.this);
                 mCurrentUser = pc.getProfileById((int) l);
                 mProfileSelectorDialog.dismiss();
 
                 if (mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
-                    mProfileSelectorDialog = new GProfileSelector(mContext, mLoggedInGuardian, mCurrentUser);
+                    mProfileSelectorDialog = new GProfileSelector(HomeActivity.this, mLoggedInGuardian, mCurrentUser);
                 else
-                    mProfileSelectorDialog = new GProfileSelector(mContext, mLoggedInGuardian, null);
+                    mProfileSelectorDialog = new GProfileSelector(HomeActivity.this, mLoggedInGuardian, null);
 
                 mWidgetProfileSelection.setImageBitmap(mCurrentUser.getImage());
 
@@ -503,10 +500,10 @@ public class HomeActivity extends Activity {
          */
         @Override
         public void run() {
-            List<Application> girafAppsList = ApplicationControlUtility.getAvailableGirafAppsForUser(mContext, mCurrentUser); // For home_activity activity
-            SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(mContext, mCurrentUser);
+            List<Application> girafAppsList = ApplicationControlUtility.getAvailableGirafAppsForUser(HomeActivity.this, mCurrentUser); // For home_activity activity
+            SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(HomeActivity.this, mCurrentUser);
             Set<String> androidAppsPackagenames = prefs.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
-            List<Application> androidAppsList = ApplicationControlUtility.convertPackageNamesToApplications(mContext, androidAppsPackagenames);
+            List<Application> androidAppsList = ApplicationControlUtility.convertPackageNamesToApplications(HomeActivity.this, androidAppsPackagenames);
             girafAppsList.addAll(androidAppsList);
             if (mCurrentLoadedApps == null || mCurrentLoadedApps.size() != girafAppsList.size()){
                 // run this on UI thread since UI might need to get updated
