@@ -256,6 +256,7 @@ public class HomeActivity extends Activity {
      * You can read more in the report about the Launcher from 2014.
 	 */
 	private void loadDrawer() {
+        /*
 		// If result = true, the onTouch-function will be run again.
 		mSidebarView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -274,6 +275,7 @@ public class HomeActivity extends Activity {
                 return result;
             }
         });
+        */
 
         mAppsScrollView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -293,6 +295,7 @@ public class HomeActivity extends Activity {
             }
         });
 
+        /*
         // This closes the drawer after starting to drag a color and
         // opens it again once you stop dragging.
         mSidebarView.setOnDragListener(new View.OnDragListener() {
@@ -312,6 +315,7 @@ public class HomeActivity extends Activity {
                 return result;
             }
         });
+        */
 	}
 
     /**
