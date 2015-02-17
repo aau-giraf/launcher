@@ -17,12 +17,9 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
-        android:icon="@drawable/ic_giraf"
-        android:label="@string/application_name"
         android:allowBackup="true">
         <activity
             android:name=".activities.MainActivity"
-            android:label="@string/application_name"
             android:screenOrientation="landscape"
             android:noHistory="true"
             android:theme="@android:style/Theme.NoTitleBar">
