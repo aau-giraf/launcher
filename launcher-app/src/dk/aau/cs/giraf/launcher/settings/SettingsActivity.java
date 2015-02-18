@@ -7,16 +7,13 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.Settings;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementFragment;
@@ -62,6 +59,7 @@ public class SettingsActivity extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.settings_activity);
 
         // Used to handle fragment changes within the containing View
@@ -71,13 +69,15 @@ public class SettingsActivity extends Activity
         // Check if the fragment already exists
         if (settingsFragment == null) {
             // Select the first entry in the list of applications in settings_activity
-            SettingsListItem item = getInstalledSettingsApps().get(0);
+            // The first entry is always the general settings
+            FragmentSettingsListItem item = (FragmentSettingsListItem) getInstalledSettingsApps().get(0);
+
             // Update active fragment with the first entry
-            mActiveFragment = item.mAppFragment;
+            mActiveFragment = item.fragment;
+
+            // Load the fragment just selected into view
+            mFragManager.beginTransaction().add(R.id.settingsContainer, mActiveFragment).commit();
         }
-        // Load the fragment just selected into view
-        mFragManager.beginTransaction().add(R.id.settingsContainer, mActiveFragment)
-                .commit();
     }
 
     /**
@@ -94,12 +94,12 @@ public class SettingsActivity extends Activity
         // Launcher
         addApplicationByPackageName("dk.aau.cs.giraf.launcher",
                 SettingsLauncher.newInstance(LauncherUtility.getSharedPreferenceUser(mCurrentUser)),
-                "Klik for at vælge indstillinger for hjemmeskærmen");
+                getString(R.string.settings_tablist_general));
 
         // Application management
-        addApplicationByName(getString(R.string.apps_list_label),
-                new AppManagementFragment(), getResources().getDrawable(R.drawable.ic_apps),
-                "Klik for at installere og vælge apps for profiler");
+        addApplicationByTitle(getString(R.string.settings_tablist_applications),
+                new AppManagementFragment(),
+                getResources().getDrawable(R.drawable.ic_apps));
 
         /************************************************
          *** Add applications in the giraf suite below ***
@@ -107,54 +107,26 @@ public class SettingsActivity extends Activity
         // TODO: Add giraf applications with settings here
 
         // Cars
-        addApplicationByPackageName("dk.aau.cs.giraf.cars", "Klik for at åbne indstillinger");
+        addApplicationByPackageName("dk.aau.cs.giraf.cars", null);
 
         // Zebra
-        addApplicationByPackageName("dk.aau.cs.giraf.zebra", "Klik for at åbne indstillinger");
+        addApplicationByPackageName("dk.aau.cs.giraf.zebra", null);
 
         /*************************************************
          *** Add applications in the giraf suite above ***
          *************************************************/
 
-        // Native android settings - add last
-        addAndroidSettings();
+        // Get intent for Native Android Settings
+        Intent androidSettingsIntent = new Intent(Settings.ACTION_SETTINGS);
 
-        // Only add the apps available on the device
-        return removeNonGirafApps(mAppList);
-    }
+        // Start as a new task to enable stepping back to settings_activity
+        androidSettingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-    /**
-     * Filter an existing list of applications to remove apps that are not valid giraf apps or
-     * apps that are not available on the device.
-     * @param list List to remove invalid apps from.
-     * @return A new list of valid (available) apps.
-     */
-    private ArrayList<SettingsListItem> removeNonGirafApps(ArrayList<SettingsListItem> list) {
-        // Clone the input list to be able to remove invalid apps
-        ArrayList<SettingsListItem> mAvailableSettingsAppList = (ArrayList<SettingsListItem>) list.clone();
-        // Get all installed giraf apps
-        List<ResolveInfo> installedGirafApps = ApplicationControlUtility.getGirafAppsOnDeviceAsResolveInfoList(this);
+        addApplicationByTitle(getResources().getString(R.string.settings_tablist_tablet),
+                androidSettingsIntent, getResources().getDrawable(R.drawable.ic_android));
 
-        for (SettingsListItem settingsApp : list) {
-            for (ResolveInfo installedApp : installedGirafApps) {
-                // Get the package name of each application
-                String installedAppName = installedApp.activityInfo.applicationInfo.packageName.toLowerCase();
-
-                // Only add to app to settings if not already in the list of available apps
-                if (!mAvailableSettingsAppList.contains(settingsApp)) {
-
-                    // Add app to settings if it is installed
-                    if (settingsApp.mPackageName != null && installedAppName.contains(settingsApp.mPackageName.toLowerCase())) {
-                        mAvailableSettingsAppList.add(settingsApp);
-                    // Otherwise it has been added by name and is started through fragment/intent
-                    } else if (settingsApp.mAppName != null && (settingsApp.mAppFragment != null || settingsApp.mIntent != null)) {
-                        mAvailableSettingsAppList.add(settingsApp);
-                    }
-                }
-            }
-        }
-        // Return the list containing apps available on the device (giraf and other)
-        return mAvailableSettingsAppList;
+        // Return all applications
+        return mAppList;
     }
 
     /**
@@ -162,33 +134,47 @@ public class SettingsActivity extends Activity
      * @param packageName PackageName of the application to add.
      * @param fragment Fragment with settings that should be started.
      */
-    private void addApplicationByPackageName(String packageName, Fragment fragment, String summary) {
+    private void addApplicationByPackageName(String packageName, Fragment fragment, String alias) {
         // Get the package manager to query package name
         final PackageManager pm = getApplicationContext().getPackageManager();
+
         // New container for application we want to add, initially null
         ApplicationInfo appInfo = null;
 
         try {
             // Check if the package name exists on the device
             appInfo = pm.getApplicationInfo(packageName, 0);
-        } catch (final PackageManager.NameNotFoundException e) {
+        }
+        catch (final PackageManager.NameNotFoundException e) {
             // Don't throw exception, just print stack trace
             e.printStackTrace();
+
+            // The package did not exist, just return
+            return;
         }
 
         if (appInfo != null) {
-            // Extract name of application
-            final String appName = pm.getApplicationLabel(appInfo).toString();
+            String title;
+
+            // Test if the provided alias is set
+            if (alias == null || alias.isEmpty()) {
+                // Extract name of application
+                title = pm.getApplicationLabel(appInfo).toString();
+            }
+            else {
+                title = alias;
+            }
+
             // Extract icon of application
             final Drawable appIcon = pm.getApplicationIcon(appInfo);
 
-            SettingsListItem item = new SettingsListItem(
-                    packageName,
-                    appName,
+            // Create the item
+            FragmentSettingsListItem item = new FragmentSettingsListItem(
+                    title,
                     appIcon,
-                    fragment,
-                    summary
+                    fragment
             );
+
             // Add item to the list of applications
             mAppList.add(item);
         }
@@ -201,49 +187,67 @@ public class SettingsActivity extends Activity
      * to start its settings_activity.
      * @param packageName PackageName of the application to add.
      */
-    private void addApplicationByPackageName(String packageName, String summary) {
+    private void addApplicationByPackageName(String packageName, String alias) {
         // Get the package manager to query package name
         final PackageManager pm = getApplicationContext().getPackageManager();
+
         // New container for application we want to add, initially null
         ApplicationInfo appInfo = null;
 
         try {
             // Check if the package name exists on the device
             appInfo = pm.getApplicationInfo(packageName, 0);
-        } catch (final PackageManager.NameNotFoundException e) {
+        }
+        catch (final PackageManager.NameNotFoundException e) {
             // Don't throw exception, just print stack trace
             e.printStackTrace();
+
             // The package does not exist, return
             return;
         }
 
+        // Create new empty intent
         Intent intent = new Intent();
+
         // Add SETTINGS_INTENT key to package name to open the
         // settings of the application
         intent.setAction(packageName + SETTINGS_INTENT);
+
         // Start as a new task to enable stepping back to settings_activity
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         // Check if the intent exists
         if(intent.resolveActivity(pm) != null) {
             if (appInfo != null) {
-                // Extract name of application
-                final String appName = pm.getApplicationLabel(appInfo).toString();
+                String title;
+
+                // Test if the provided alias is set
+                if (alias == null || alias.isEmpty()) {
+                    // Extract name of application
+                    title = pm.getApplicationLabel(appInfo).toString();
+                } else {
+                    title = alias;
+                }
+
                 // Extract icon of application
                 final Drawable appIcon = pm.getApplicationIcon(appInfo);
 
-                if (mCurrentUser.getRole() == Profile.Roles.CHILD) // A child profile has been selected, pass id
+                // A child profile has been selected, pass id
+                if (mCurrentUser.getRole() == Profile.Roles.CHILD) {
                     intent.putExtra(Constants.CHILD_ID, mCurrentUser.getId());
-                else // We are a guardian, do not add a child
+                }
+                // We are a guardian, do not add a child
+                else {
                     intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
+                }
 
-                SettingsListItem item = new SettingsListItem(
-                        packageName,
-                        appName,
+                // Create new item
+                IntentSettingsListItem item = new IntentSettingsListItem(
+                        title,
                         appIcon,
-                        intent,
-                        summary
+                        intent
                 );
+
                 // Add item to the list of applications
                 mAppList.add(item);
             }
@@ -252,50 +256,36 @@ public class SettingsActivity extends Activity
 
     /**
      * Add another application to the list by Intent.
-     * @param appName Name of the application to add.
+     * @param title Name of the application to add.
      * @param fragment Fragment with settings that should be started.
      * @param icon Custom icon to add to list entry.
      */
-    private void addApplicationByName(String appName, Fragment fragment, Drawable icon, String summary) {
-        SettingsListItem item = new SettingsListItem(
-                appName,
+    private void addApplicationByTitle(String title, Fragment fragment, Drawable icon) {
+        // Create the new item
+        FragmentSettingsListItem item = new FragmentSettingsListItem(
+                title,
                 icon,
-                fragment,
-                summary
+                fragment
         );
+
         // Add item to the list of applications
         mAppList.add(item);
     }
 
     /**
      * Add settings to be shown internally in Settings App with custom icon.
-     * @param appName Name of the application to add.
+     * @param title Name of the application to add.
      * @param intent Intent of the app to start.
      * @param icon Custom icon to add to list entry.
      */
-    private void addApplicationByName(String appName, Intent intent, Drawable icon, String summary) {
-        SettingsListItem item = new SettingsListItem(
-                appName,
+    private void addApplicationByTitle(String title, Intent intent, Drawable icon) {
+        IntentSettingsListItem item = new IntentSettingsListItem(
+                title,
                 icon,
-                intent,
-                summary
+                intent
         );
         // Add item to the list of applications
         mAppList.add(item);
-    }
-
-    /**
-     * Add an entry with native android settings to the list.
-     */
-    private void addAndroidSettings() {
-        // Get intent for Native Android Settings
-        Intent androidSettingsIntent = new Intent(Settings.ACTION_SETTINGS);
-        // Start as a new task to enable stepping back to settings_activity
-        androidSettingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        addApplicationByName(getResources().getString(R.string.giraf_settings_name),
-                androidSettingsIntent, getResources().getDrawable(R.drawable.ic_android),
-                "Klik for at åbne system indstillinger");
     }
 
     /**

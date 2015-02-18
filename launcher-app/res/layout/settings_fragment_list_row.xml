@@ -31,18 +31,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:textColor="@android:color/black"
-                    android:text="@string/giraf_settings_name"
+                    android:text="@string/settings_tablist_tablet"
                     android:textAppearance="?android:textAppearanceLarge" >
-                </TextView>
-
-                <TextView
-                    android:id="@+id/settingsListSummary"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:textColor="@android:color/secondary_text_light"
-                    android:textAppearance="?android:textAppearanceSmall"
-                    android:visibility="gone">
                 </TextView>
 
             </LinearLayout>

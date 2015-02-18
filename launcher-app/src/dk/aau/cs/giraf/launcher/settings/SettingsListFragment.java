@@ -3,10 +3,7 @@ package dk.aau.cs.giraf.launcher.settings;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.ActivityNotFoundException;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.sax.StartElementListener;
-import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -174,21 +171,23 @@ public class SettingsListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 SettingsListItem item = (SettingsListItem) parent.getAdapter().getItem(position);
+
                 // If the item contains a fragment, set it as active
-                if (item.mAppFragment != null) {
+                if (item instanceof FragmentSettingsListItem) {
                     // Notify class implementing the callback interface that a new fragment has been selected
-                    mCallback.setActiveFragment(item.mAppFragment);
+                    mCallback.setActiveFragment(((FragmentSettingsListItem) item).fragment);
+
                     // Update the adapter to reflect the selection
                     mAdapter.setSelected(position);
                 }
                 // Otherwise it must be an intent
-                else if (item.mIntent != null) {
+                else if (item instanceof IntentSettingsListItem) {
                     try {
                         // Start a new activity with the intent
-                        startActivity(item.mIntent);
+                        startActivity(((IntentSettingsListItem) item).intent);
                     }
                     // Handle exception if the intended activity can not be started.
-                    catch (ActivityNotFoundException ex) {
+                    catch (ActivityNotFoundException e) {
                         Toast.makeText(parent.getContext(), R.string.settings_activity_not_found_msg, Toast.LENGTH_SHORT).show();
                     }
                     finally {
