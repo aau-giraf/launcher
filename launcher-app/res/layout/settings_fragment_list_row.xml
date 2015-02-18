@@ -25,17 +25,17 @@
             android:orientation="vertical"
             android:layout_toRightOf="@id/settingsListAppLogo">
 
-                <TextView
-                    android:id="@+id/settingsListAppName"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:textColor="@android:color/black"
-                    android:text="@string/settings_tablist_tablet"
-                    android:textAppearance="?android:textAppearanceLarge" >
-                </TextView>
+            <TextView
+                android:id="@+id/settingsListAppName"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textColor="@android:color/black"
+                android:text="@string/settings_tablist_tablet"
+                android:textAppearance="?android:textAppearanceLarge" >
+            </TextView>
 
-            </LinearLayout>
+        </LinearLayout>
 
     </LinearLayout>
 

@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Build;
 import android.view.LayoutInflater;
@@ -49,8 +50,8 @@ public class AppManagementFragment extends Fragment {
      * @return the inflated view.
      */
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.settings_appmanagement,
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+        final View view = inflater.inflate(R.layout.settings_appmanagement,
                 container, false);
 
         this.setRetainInstance(true);
@@ -62,18 +63,20 @@ public class AppManagementFragment extends Fragment {
         androidAppsButton = (Button)view.findViewById(R.id.settings_android_button);
         googlePlayButton = (Button)view.findViewById(R.id.settings_googleplay_button);
         this.setButtonListeners();
+
+        /*
+        * getChildFragmentManager() only works with Build.VERSION_CODES.JELLY_BEAN_MR1 or higher
+        * */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             fragmentManager = this.getChildFragmentManager();
         } else {
             fragmentManager = this.getFragmentManager();
         }
 
-
         /** Choose the GIRAF pane and set the GIRAF button when the fragment has loaded.*/
         fragmentContainer = girafFragment;
         focusButton(girafAppsButton);
-        fragmentManager.beginTransaction().add(R.id.app_settings_fragmentlayout, fragmentContainer)
-                .commit();
+        fragmentManager.beginTransaction().add(R.id.app_settings_fragmentlayout, fragmentContainer).commit();
 
         return view;
     }

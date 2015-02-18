@@ -40,6 +40,7 @@ public class AppViewCreationUtility {
     /**
      * Loads the AppInfo object of app from the list, into the {@code mAppInfoHashMap} hash map, making
      * them accessible with only the ID string of the app.
+     * synchronized: Because mAppInfoHashMap is used on GUI thread and in LoadApplicationTask
      * @param context The context of the current activity
      * @param appsList The array of accessible apps
      */
@@ -86,7 +87,7 @@ public class AppViewCreationUtility {
      * @param targetLayout The layout we want to add the AppImageView to.
      * @return
      */
-    protected synchronized static AppImageView createAppImageView(Context context, final Profile currentUser, final Profile guardian, AppInfo appInfo, LinearLayout targetLayout, View.OnClickListener listener) {
+    protected static AppImageView createAppImageView(Context context, final Profile currentUser, final Profile guardian, AppInfo appInfo, LinearLayout targetLayout, View.OnClickListener listener) {
 
         AppImageView appImageView = new AppImageView(context);
         View appView = addContentToView(context, targetLayout, appInfo.getName(), appInfo.getIconImage());
@@ -111,19 +112,19 @@ public class AppViewCreationUtility {
 
                     AppInfo app = null;
 
-                    synchronized(AppViewCreationUtility.class) {
-
-
+                    /*
+                    * This block is synchronized on the AppViewCreationUtility class to prevent
+                    * race condtions where mAppInfoHashMap is reinitialized in the background with
+                    * updateAppInfoHashMap
+                    *
+                    * */
+                    synchronized(AppViewCreationUtility.class)
+                    {
                         app = mAppInfoHashMap.get((String) v.getTag());
                     }
 
                         Intent intent = new Intent(Intent.ACTION_MAIN);
                     intent.addCategory(Intent.CATEGORY_LAUNCHER);
-
-                    if(app == null)
-                    {
-                        String dyld = this.toString();
-                    }
 
                     intent.setComponent(new ComponentName(app.getPackage(), app.getActivity()));
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
