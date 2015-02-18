@@ -8,7 +8,7 @@
     <string name="giraf_applications_button">GIRAF</string>
     <string name="giraf_settings_profile_user">Aktive Bruger</string>
     <string name="apps_list_label">Apps</string>
-    <string name="settings_activity_not_found_msg">Indstillingsmenuen kunne ikke åbnes for den valgte bruger.</string>
+    <string name="settings_activity_not_found_msg">Indstillingsmenuen kunne ikke åbnes.</string>
 
     <!-- Launcher preference keys -->
     <string name="show_animation_preference_key">show_animation_preference</string>
