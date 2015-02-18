@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,7 +62,19 @@ public class AppManagementFragment extends Fragment {
         androidAppsButton = (Button)view.findViewById(R.id.settings_android_button);
         googlePlayButton = (Button)view.findViewById(R.id.settings_googleplay_button);
         this.setButtonListeners();
-        fragmentManager = this.getChildFragmentManager();
+
+        /*
+        * getChildFragmentManager() only works with Build.VERSION_CODES.JELLY_BEAN_MR1
+        * or higher
+        * */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+        {
+            fragmentManager = this.getChildFragmentManager();
+        }
+        else
+        {
+            fragmentManager = this.getFragmentManager();
+        }
 
         /** Choose the GIRAF pane and set the GIRAF button when the fragment has loaded.*/
         fragmentContainer = girafFragment;
