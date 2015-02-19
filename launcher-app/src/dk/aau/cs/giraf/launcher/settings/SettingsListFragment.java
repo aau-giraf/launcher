@@ -50,6 +50,13 @@ public class SettingsListFragment extends Fragment {
         public void setActiveFragment(Fragment fragment);
 
         /**
+         * Used when an item in the ListView has been clicked
+         * to send the to-be-active fragment back to the Activity.
+         * @param fragment
+         */
+        public void setActiveFragment(android.support.v4.app.Fragment fragment);
+
+        /**
          * Reloads the activity when user settings should be refreshed
          * based on a new profile selection.
          * @see SettingsListFragment
@@ -174,8 +181,20 @@ public class SettingsListFragment extends Fragment {
 
                 // If the item contains a fragment, set it as active
                 if (item instanceof FragmentSettingsListItem) {
+
+                    FragmentSettingsListItem fragmentItem = ((FragmentSettingsListItem) item);
+
                     // Notify class implementing the callback interface that a new fragment has been selected
-                    mCallback.setActiveFragment(((FragmentSettingsListItem) item).fragment);
+
+                    if(fragmentItem.fragment == null)
+                    {
+                        mCallback.setActiveFragment(fragmentItem.supportFragment);
+                    }
+                    else
+                    {
+                        mCallback.setActiveFragment(fragmentItem.fragment);
+                    }
+
 
                     // Update the adapter to reflect the selection
                     mAdapter.setSelected(position);

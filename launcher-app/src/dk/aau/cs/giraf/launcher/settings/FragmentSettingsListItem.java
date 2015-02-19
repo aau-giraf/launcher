@@ -5,7 +5,7 @@ import android.graphics.drawable.Drawable;
 
 public class FragmentSettingsListItem extends SettingsListItem {
     protected final Fragment fragment;
-
+    protected final android.support.v4.app.Fragment supportFragment;
     /**
      * Constructor for any item in the settings list
      *
@@ -16,5 +16,12 @@ public class FragmentSettingsListItem extends SettingsListItem {
     public FragmentSettingsListItem(String title, Drawable icon, Fragment fragment) {
         super(title, icon);
         this.fragment = fragment;
+        this.supportFragment = null;
+    }
+
+    public FragmentSettingsListItem(String title, Drawable icon, android.support.v4.app.Fragment fragment) {
+        super(title, icon);
+        this.fragment = null;
+        this.supportFragment = fragment;
     }
 }

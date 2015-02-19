@@ -33,7 +33,9 @@ public class SettingsActivity extends FragmentActivity
      * The variables mostly used inside the class
      */
     private FragmentManager mFragManager;
+    private android.support.v4.app.FragmentManager mSupportFragManager;
     private Fragment mActiveFragment;
+    private android.support.v4.app.Fragment mActiveSupportFragment;
     private Profile mCurrentUser;
 
     /**
@@ -55,6 +57,7 @@ public class SettingsActivity extends FragmentActivity
      * The onCreate method must be overridden as usual, and initialized most of the variables needed by the Activity.
      * In particular, because te SettingsActivity mostly handles Fragments, it initializes the FragmentManager and
      * loads the first fragment needed to be displayed: The first settingsitem in the list.
+     *
      * @param savedInstanceState The previously saved InstanceState
      */
     @Override
@@ -65,6 +68,7 @@ public class SettingsActivity extends FragmentActivity
 
         // Used to handle fragment changes within the containing View
         mFragManager = this.getFragmentManager();
+        mSupportFragManager = this.getSupportFragmentManager();
         Fragment settingsFragment = mFragManager.findFragmentById(R.id.settingsContainer);
 
         // Check if the fragment already exists
@@ -74,10 +78,17 @@ public class SettingsActivity extends FragmentActivity
             FragmentSettingsListItem item = (FragmentSettingsListItem) getInstalledSettingsApps().get(0);
 
             // Update active fragment with the first entry
-            mActiveFragment = item.fragment;
+            if (item.fragment != null) {
+                mActiveFragment = item.fragment;
+                // Load the fragment just selected into view
+                mFragManager.beginTransaction().add(R.id.settingsContainer, mActiveFragment).commit();
+            } else {
+                mActiveSupportFragment = item.supportFragment;
+                // Load the fragment just selected into view
+                mSupportFragManager.beginTransaction().add(R.id.settingsContainer, mActiveSupportFragment).commit();
+            }
 
-            // Load the fragment just selected into view
-            mFragManager.beginTransaction().add(R.id.settingsContainer, mActiveFragment).commit();
+
         }
     }
 
@@ -86,10 +97,11 @@ public class SettingsActivity extends FragmentActivity
      * Firstly, it gets the settings for Launcher itself, along with the "Apps" menu, where users select or deselect apps.
      * Finally, gets the currently installed apps that have settings to be shown in SettingsActivity.
      * Currently, these apps are only "Cars" (Stemmespillet) and "Zebra" (Sekvens).
+     *
      * @return an Array consisting of the SettingsListitems that should be put into the left scrollview.
      */
     @Override
-    public ArrayList<SettingsListItem> getInstalledSettingsApps(){
+    public ArrayList<SettingsListItem> getInstalledSettingsApps() {
         mAppList = new ArrayList<SettingsListItem>();
 
         // Launcher
@@ -132,8 +144,9 @@ public class SettingsActivity extends FragmentActivity
 
     /**
      * Add settings to be shown internally in Settings App.
+     *
      * @param packageName PackageName of the application to add.
-     * @param fragment Fragment with settings that should be started.
+     * @param fragment    Fragment with settings that should be started.
      */
     private void addApplicationByPackageName(String packageName, Fragment fragment, String alias) {
         // Get the package manager to query package name
@@ -145,8 +158,7 @@ public class SettingsActivity extends FragmentActivity
         try {
             // Check if the package name exists on the device
             appInfo = pm.getApplicationInfo(packageName, 0);
-        }
-        catch (final PackageManager.NameNotFoundException e) {
+        } catch (final PackageManager.NameNotFoundException e) {
             // Don't throw exception, just print stack trace
             e.printStackTrace();
 
@@ -161,8 +173,7 @@ public class SettingsActivity extends FragmentActivity
             if (alias == null || alias.isEmpty()) {
                 // Extract name of application
                 title = pm.getApplicationLabel(appInfo).toString();
-            }
-            else {
+            } else {
                 title = alias;
             }
 
@@ -186,6 +197,7 @@ public class SettingsActivity extends FragmentActivity
      * The icon is automatically extracted from the package and the giraf intent action is
      * appended to query the intent-filter the application should implement
      * to start its settings_activity.
+     *
      * @param packageName PackageName of the application to add.
      */
     private void addApplicationByPackageName(String packageName, String alias) {
@@ -198,8 +210,7 @@ public class SettingsActivity extends FragmentActivity
         try {
             // Check if the package name exists on the device
             appInfo = pm.getApplicationInfo(packageName, 0);
-        }
-        catch (final PackageManager.NameNotFoundException e) {
+        } catch (final PackageManager.NameNotFoundException e) {
             // Don't throw exception, just print stack trace
             e.printStackTrace();
 
@@ -255,9 +266,10 @@ public class SettingsActivity extends FragmentActivity
 
     /**
      * Add another application to the list by Intent.
-     * @param title Name of the application to add.
+     *
+     * @param title    Name of the application to add.
      * @param fragment Fragment with settings that should be started.
-     * @param icon Custom icon to add to list entry.
+     * @param icon     Custom icon to add to list entry.
      */
     private void addApplicationByTitle(String title, Fragment fragment, Drawable icon) {
         // Create the new item
@@ -272,10 +284,30 @@ public class SettingsActivity extends FragmentActivity
     }
 
     /**
+     * Add another application to the list by Intent.
+     *
+     * @param title    Name of the application to add.
+     * @param fragment Fragment with settings that should be started.
+     * @param icon     Custom icon to add to list entry.
+     */
+    private void addApplicationByTitle(String title, android.support.v4.app.Fragment fragment, Drawable icon) {
+        // Create the new item
+        FragmentSettingsListItem item = new FragmentSettingsListItem(
+                title,
+                icon,
+                fragment
+        );
+
+        // Add item to the list of applications
+        mAppList.add(item);
+    }
+
+    /**
      * Add settings to be shown internally in Settings App with custom icon.
-     * @param title Name of the application to add.
+     *
+     * @param title  Name of the application to add.
      * @param intent Intent of the app to start.
-     * @param icon Custom icon to add to list entry.
+     * @param icon   Custom icon to add to list entry.
      */
     private void addApplicationByTitle(String title, Intent intent, Drawable icon) {
         IntentSettingsListItem item = new IntentSettingsListItem(
@@ -289,12 +321,21 @@ public class SettingsActivity extends FragmentActivity
 
     /**
      * This function replaces the currently activity fragment in the FragmentManager with a new one
+     *
      * @param fragment the fragement that should now be displayed.
      */
     @Override
     public void setActiveFragment(Fragment fragment) {
         // Only add new transaction if the user clicked a non-active fragment
-        if (!mActiveFragment.equals(fragment)) {
+        if (mActiveFragment == null || !mActiveFragment.equals(fragment)) {
+
+            if(mActiveSupportFragment != null)
+            {
+                android.support.v4.app.FragmentTransaction ft = mSupportFragManager.beginTransaction();
+                ft.remove(mActiveSupportFragment);
+                ft.commit();
+            }
+
             FragmentTransaction ft = mFragManager.beginTransaction();
             // Replace the fragment in settingsContainer
             ft.replace(R.id.settingsContainer, fragment);
@@ -302,6 +343,36 @@ public class SettingsActivity extends FragmentActivity
 
             // Update active fragment after transaction has been committed
             mActiveFragment = fragment;
+            mActiveSupportFragment = null;
+        }
+    }
+
+    /**
+     * This function replaces the currently activity fragment in the FragmentManager with a new one
+     *
+     * @param fragment the fragement that should now be displayed.
+     */
+    @Override
+    public void setActiveFragment(android.support.v4.app.Fragment fragment) {
+
+        // Only add new transaction if the user clicked a non-active fragment
+        if (mActiveSupportFragment == null || !mActiveSupportFragment.equals(fragment))
+        {
+            if(mActiveFragment != null)
+            {
+                FragmentTransaction ft = mFragManager.beginTransaction();
+                ft.remove(mActiveFragment);
+                ft.commit();
+            }
+
+            android.support.v4.app.FragmentTransaction ft = mSupportFragManager.beginTransaction();
+            // Replace the fragment in settingsContainer
+            ft.replace(R.id.settingsContainer, fragment);
+            ft.commit();
+
+            // Update active fragment after transaction has been committed
+            mActiveFragment = null;
+            mActiveSupportFragment = fragment;
         }
     }
 
@@ -311,7 +382,7 @@ public class SettingsActivity extends FragmentActivity
      * so the currentUser of the new SettingsActivity is the new user chosen.
      */
     @Override
-    public void reloadActivity(){
+    public void reloadActivity() {
         // Get the intent of SettingsActivity
         Intent intent = SettingsActivity.this.getIntent();
 
@@ -328,15 +399,17 @@ public class SettingsActivity extends FragmentActivity
 
     /**
      * Sets the current profile
+     *
      * @param profile The selected profile.
      */
     @Override
     public void setCurrentUser(Profile profile) {
-            mCurrentUser = profile;
+        mCurrentUser = profile;
     }
 
     /**
      * Gets the currently selected profile
+     *
      * @return the currently selected profile.
      */
     @Override

@@ -1,6 +1,8 @@
 package dk.aau.cs.giraf.launcher.layoutcontroller;
 
 import android.app.ActionBar;
+import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,10 +12,17 @@ import android.widget.GridLayout;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 import dk.aau.cs.giraf.launcher.helper.AppViewCreationUtility;
+import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
+import dk.aau.cs.giraf.oasis.lib.controllers.ProfileApplicationController;
+import dk.aau.cs.giraf.oasis.lib.models.Application;
+import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.oasis.lib.models.ProfileApplication;
 
 /**
  * Created by Marhlder on 18-02-15.
@@ -23,6 +32,9 @@ public class AppsGridFragment extends Fragment {
     private static final String ROW_SIZE_INT_TAG = "ROW_SIZE_INT_TAG";
     private static final String COLUMN_SIZE_INT_TAG = "COLUMN_SIZE_INT_TAG";
     private static final String APPINFOS_PARCELABLE_TAG = "APPINFOS_PARCELABLE_TAG";
+
+    private ProfileApplicationController pac;
+    private Set<String> selectedApps;
 
     public static AppsGridFragment newInstance(final ArrayList<AppInfo> appInfos, final int rowSize, final int columnSize) {
         AppsGridFragment newFragment = new AppsGridFragment();
@@ -34,6 +46,15 @@ public class AppsGridFragment extends Fragment {
         newFragment.setArguments(args);
 
         return newFragment;
+    }
+
+    @Override
+    public void onAttach(Activity activity)
+    {
+        pac = new ProfileApplicationController(activity);
+        final Profile currentUser = ((HomeActivity)activity).getCurrentUser();
+        SharedPreferences preferences = LauncherUtility.getSharedPreferencesForCurrentUser(activity, currentUser);
+        selectedApps = preferences.getStringSet(activity.getResources().getString(R.string.selected_android_apps_key), new HashSet<String>());
     }
 
     @Override
@@ -59,13 +80,20 @@ public class AppsGridFragment extends Fragment {
                     final AppInfo currentAppInfo = appInfos.get(columnCounter + rowCounter * rowSize);
 
 
+
                     final HomeActivity activity = (HomeActivity)getActivity();
+                    final Profile currentUser = activity.getCurrentUser();
 
                     //Create a new AppImageView and set its properties
-                    AppImageView newAppView = AppViewCreationUtility.createAppImageView(getActivity(), activity.getCurrentUser(), activity.getLoggedInGuardian(), currentAppInfo, appsGridLayout, getOnClickListener());
+                    AppImageView newAppView = AppViewCreationUtility.createAppImageView(getActivity(), currentUser, activity.getLoggedInGuardian(), currentAppInfo, appsGridLayout, getOnClickListener());
                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
                     params.setMargins(2, 2, 2, 2);
                     newAppView.setLayoutParams(params);
+
+                    if (currentAppInfo != null && (doesProfileApplicationExist(pac, currentAppInfo.getApp(), currentUser) || selectedApps.contains(currentAppInfo.getActivity()))) {
+                        newAppView.setChecked(true);
+                    }
+
                     appsGridLayout.addView(newAppView, columnCounter + rowCounter * rowSize);
 
                 }
@@ -75,6 +103,21 @@ public class AppsGridFragment extends Fragment {
         }
 
         return appsGridLayout;
+    }
+
+    /**
+     * This function checks if the ProfileApplication consisting of the given application and the given user exists.
+     * If it does, it means the application was selected earlier by the user and should be marked as selected
+     *
+     * @param pac  The ProfileApplicationController used to retrieve the ProfileApplication
+     * @param app  The application to check for
+     * @param user The profile to check for
+     * @return true if the ProfileApplication exists, otherwise return false
+     */
+    private boolean doesProfileApplicationExist(ProfileApplicationController pac, Application app, Profile user) {
+        ProfileApplication thisPA = pac.getProfileApplicationByProfileIdAndApplicationId(app, user);
+
+        return thisPA != null;
     }
 
     protected View.OnClickListener getOnClickListener()

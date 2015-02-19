@@ -51,7 +51,6 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
     protected int iconSize;
     protected View.OnClickListener onClickListener;
 
-    protected List<LinearLayout> appRowsToAdd;
     protected Set<String> selectedApps;
     protected ProgressBar progressbar;
 
@@ -72,7 +71,6 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
         this.appsViewPager = appsViewPager;
         this.iconSize = LauncherUtility.intToDP(context, iconSize);
         this.onClickListener = onClickListener;
-        appRowsToAdd = new ArrayList<LinearLayout>();
     }
 
     /**
@@ -204,7 +202,7 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
         }
         //mark the applications if they were selected by the user
         //NOTE: This is only relevant for SettingsAcitivty, which markApplications checks for itself.
-        markApplications(appInfoHash);
+        //markApplications(appInfoHash);
 
         return null;
     }
@@ -224,12 +222,15 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
 
         progressbar.setVisibility(View.GONE);
 
-        if (appRowsToAdd.size() > 0) {
+        if (appInfos.size() > 0)
+        {
             changeVisibilityOfNoAppsMessage(View.GONE);
 
             ((AppsFragmentAdapter)this.appsViewPager.getAdapter()).swapApps(appInfos, rowSize, columnSize);
 
-        } else {
+        }
+        else
+        {
             changeVisibilityOfNoAppsMessage(View.VISIBLE);
         }
 
@@ -296,20 +297,7 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
             noAppsTextView.setVisibility(visibility);
     }
 
-    /**
-     * This function checks if the ProfileApplication consisting of the given application and the given user exists.
-     * If it does, it means the application was selected earlier by the user and should be marked as selected
-     *
-     * @param pac  The ProfileApplicationController used to retrieve the ProfileApplication
-     * @param app  The application to check for
-     * @param user The profile to check for
-     * @return true if the ProfileApplication exists, otherwise return false
-     */
-    private boolean doesProfileApplicationExist(ProfileApplicationController pac, Application app, Profile user) {
-        ProfileApplication thisPA = pac.getProfileApplicationByProfileIdAndApplicationId(app, user);
 
-        return thisPA != null;
-    }
 
     /**
      * This function goes through all the applications and marks the relevant ones as selected.
@@ -319,6 +307,7 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
      *
      * @param appInfos the list of AppInfos that we are checking to be marked
      */
+    /*
     private void markApplications(final HashMap<String, AppInfo> appInfos) {
         if (context instanceof SettingsActivity) {
             final ProfileApplicationController pac = new ProfileApplicationController(context);
@@ -340,7 +329,7 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
             }
         }
     }
-
+    */
     /**
      * This function creates a new row to be added to the targetlayout, with all the properties it needs
      *
