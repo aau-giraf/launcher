@@ -429,25 +429,32 @@ public class HomeActivity extends FragmentActivity {
 
         //Set up widget updater, which updates the widget's view regularly, according to its status.
 		mWidgetUpdater = new GWidgetUpdater();
+        if(mCurrentUser.getRole().getValue() < Profile.Roles.CHILD.getValue()) {
+            settingsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
+                    intent.putExtra(Constants.GUARDIAN_ID, mLoggedInGuardian.getId());
+                    if(mCurrentUser.getRole() == Profile.Roles.GUARDIAN)
+                        intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
+                    else
+                        intent.putExtra(Constants.CHILD_ID, mCurrentUser.getId());
 
-        settingsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
-                intent.putExtra(Constants.GUARDIAN_ID, mLoggedInGuardian.getId());
-                if(mCurrentUser.getRole() == Profile.Roles.GUARDIAN)
-                    intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
-                else
-                    intent.putExtra(Constants.CHILD_ID, mCurrentUser.getId());
+                    startActivity(intent);
+                }
+            });
+        } else {
+            settingsButton.setVisibility(View.GONE);
+        }
 
-                startActivity(intent);
-            }
-        });
 
         mWidgetProfileSelection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mProfileSelectorDialog.show();
+                if(mCurrentUser.getRole().getValue() < Profile.Roles.CHILD.getValue())
+                {
+                    mProfileSelectorDialog.show();
+                }
             }
         });
         mWidgetProfileSelection.setImageBitmap(mCurrentUser.getImage());
@@ -496,7 +503,10 @@ public class HomeActivity extends FragmentActivity {
 
                 updatesProfileSelector();
 
-                //Reload the application container, as a new user has been selected.
+                // Reload the widgets in the left side of the screen
+                loadWidgets();
+
+                // Reload the application container, as a new user has been selected.
                 reloadApplications();
             }
         });
