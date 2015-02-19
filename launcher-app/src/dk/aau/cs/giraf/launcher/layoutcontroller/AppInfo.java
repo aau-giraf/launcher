@@ -3,6 +3,8 @@ package dk.aau.cs.giraf.launcher.layoutcontroller;
 import android.content.Context;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.util.List;
 
@@ -14,7 +16,12 @@ import dk.aau.cs.giraf.oasis.lib.models.Application;
  * This includes the icon and background color of an app, along with methods for getting and setting these.
  *
  */
-public class AppInfo extends Application {
+public class AppInfo extends Application implements Parcelable {
+
+    /**
+     * The application icon background color.
+     */
+    private int mBgColor;
 
     /** The application icon. */
     private Drawable mIcon;
@@ -51,10 +58,63 @@ public class AppInfo extends Application {
         this.setAuthor(parentApp.getAuthor());
     }
 
-    /**
-     * The application icon background color.
-     */
-    private int mBgColor;
+    public AppInfo(Parcel in){
+
+        /* Data is put in, in this order:
+        Int:
+        private int id;
+        private int mBgColor;
+        private int author;
+        String:
+        private String name;
+        private String version;
+        private String pack;
+        private String activity;
+        private String description;
+        */
+        String[] stringdata = new String[5];
+        int[] intdata = new int[3];
+
+        in.readStringArray(stringdata);
+        in.readIntArray(intdata);
+
+        // Integers
+        this.setId(intdata[0]);
+        this.setBgColor(intdata[1]);
+        this.setAuthor(intdata[2]);
+
+        // Strings
+        this.setName(stringdata[0]);
+        this.setVersion(stringdata[1]);
+        this.setPackage(stringdata[2]);
+        this.setActivity(stringdata[3]);
+        this.setDescription(stringdata[4]);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags)
+    {
+        // Write integers
+        dest.writeIntArray(new int[]{this.getId(),this.getBgColor(), this.getAuthor() });
+
+        // Write strings
+        dest.writeStringArray(new String[]{this.getName(), this.getVersion(), this.getPackage(), this.getActivity(), this.getDescription()});
+    }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public AppInfo createFromParcel(Parcel in) {
+            return new AppInfo(in);
+        }
+
+        public AppInfo[] newArray(int size) {
+            return new AppInfo[size];
+        }
+    };
 
     /**
      * Set the background color.
@@ -81,7 +141,7 @@ public class AppInfo extends Application {
      * @return shortened name for the app
      */
     public String getShortenedName() {
-        if (this.getName().length() > 6) {
+        if (this.getName().length() > 8) {
             return this.getName().subSequence(0, 5) + "...";
         } else {
             return this.getName();
@@ -105,4 +165,6 @@ public class AppInfo extends Application {
             }
         }
     }
+
+
 }

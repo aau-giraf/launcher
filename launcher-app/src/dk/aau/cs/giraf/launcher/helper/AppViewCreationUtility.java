@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -66,7 +67,7 @@ public class AppViewCreationUtility {
      * @param appIcon The Icon of the App
      * @return
      */
-    private static View addContentToView(Context context, LinearLayout targetLayout, String appName, Drawable appIcon){
+    private static View addContentToView(Context context, GridLayout targetLayout, String appName, Drawable appIcon){
         final LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
         View targetView = inflater.inflate(R.layout.apps_container, targetLayout, false);
 
@@ -87,9 +88,9 @@ public class AppViewCreationUtility {
      * @param targetLayout The layout we want to add the AppImageView to.
      * @return
      */
-    protected static AppImageView createAppImageView(Context context, final Profile currentUser, final Profile guardian, AppInfo appInfo, LinearLayout targetLayout, View.OnClickListener listener) {
+     public static AppImageView createAppImageView(Context context, final Profile currentUser, final Profile guardian, AppInfo appInfo, GridLayout targetLayout, View.OnClickListener listener) {
 
-        AppImageView appImageView = new AppImageView(context);
+        AppImageView appImageView = new AppImageView(context, appInfo);
         View appView = addContentToView(context, targetLayout, appInfo.getName(), appInfo.getIconImage());
 
         setAppBackground(appView, appInfo.getBgColor());

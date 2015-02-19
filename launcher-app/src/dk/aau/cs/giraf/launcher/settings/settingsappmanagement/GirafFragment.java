@@ -3,12 +3,15 @@ package dk.aau.cs.giraf.launcher.settings.settingsappmanagement;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridLayout;
 import android.widget.LinearLayout;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -30,7 +33,7 @@ import dk.aau.cs.giraf.oasis.lib.models.ProfileApplication;
 public class GirafFragment extends AppContainerFragment {
 
     private Timer appsUpdater;
-    private HashMap<String,AppInfo> appInfos;
+    private ArrayList<AppInfo> appInfos;
     private loadGirafApplicationTask loadApplicationTask;
     private View.OnClickListener listener;
 
@@ -45,7 +48,7 @@ public class GirafFragment extends AppContainerFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
-        appView = (LinearLayout) view.findViewById(R.id.appContainer);
+        appView = (ViewPager) view.findViewById(R.id.appsViewPager);
 
         setListeners();
 
@@ -122,7 +125,8 @@ public class GirafFragment extends AppContainerFragment {
                 AppImageView appImageView = (AppImageView) v;
                 appImageView.toggle();
                 ProfileApplicationController pac = new ProfileApplicationController(getActivity());
-                AppInfo app = appInfos.get(v.getTag().toString());
+                AppInfo app = appImageView.appInfo;
+
 
                 if(userHasApplicationInView(pac, app.getApp(), currentUser))
                 {
@@ -181,12 +185,12 @@ public class GirafFragment extends AppContainerFragment {
          * @param context The context of the current activity
          * @param currentUser The current user (if the current user is a guardian, this is set to null)
          * @param guardian The guardian of the current user (or just the current user, if the user is a guardian)
-         * @param targetLayout The layout to be populated with AppImageViews
+         * @param appsViewPager The layout to be populated with AppImageViews
          * @param iconSize The size the icons should have
          * @param onClickListener the onClickListener that each created app should have. In this case we feed it the global variable listener
          */
-        public loadGirafApplicationTask(Context context, Profile currentUser, Profile guardian, LinearLayout targetLayout, int iconSize, View.OnClickListener onClickListener) {
-            super(context, currentUser, guardian, targetLayout, iconSize, onClickListener);
+        public loadGirafApplicationTask(Context context, Profile currentUser, Profile guardian,  ViewPager appsViewPager, int iconSize, View.OnClickListener onClickListener) {
+            super(context, currentUser, guardian, appsViewPager, iconSize, onClickListener);
         }
 
         /** We override onPreExecute to cancel the AppObserver if it is running*/
@@ -205,7 +209,7 @@ public class GirafFragment extends AppContainerFragment {
          * @return The Hashmap of AppInfos that describe the added applications.
          */
         @Override
-        protected HashMap<String, AppInfo> doInBackground(Application... applications) {
+        protected ArrayList<AppInfo> doInBackground(Application... applications) {
             apps = ApplicationControlUtility.getGirafAppsOnDeviceButLauncherAsApplicationList(context);
             applications = apps.toArray(applications);
             appInfos = super.doInBackground(applications);
@@ -215,7 +219,7 @@ public class GirafFragment extends AppContainerFragment {
 
         /**Once we have loaded applications, we start observing for new apps*/
         @Override
-        protected void onPostExecute(HashMap<String, AppInfo> appInfos) {
+        protected void onPostExecute(ArrayList<AppInfo> appInfos) {
             super.onPostExecute(appInfos);
             loadedApps = appInfos;
             startObservingApps();

@@ -3,13 +3,16 @@ package dk.aau.cs.giraf.launcher.settings.settingsappmanagement;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,6 +26,7 @@ import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
+import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
@@ -34,7 +38,7 @@ public class AndroidFragment extends AppContainerFragment {
     private Timer appsUpdater;
     private SharedPreferences preferences;
     private Set<String> selectedApps;
-    private HashMap<String, AppInfo> appInfos;
+    private ArrayList<AppInfo> appInfos;
     private LoadAndroidApplicationTask loadApplicationsTask;
     private View.OnClickListener listener;
 
@@ -50,10 +54,21 @@ public class AndroidFragment extends AppContainerFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
-        appView = (LinearLayout) view.findViewById(R.id.appContainer);
+        appView = (ViewPager) view.findViewById(R.id.appsViewPager);
         preferences = LauncherUtility.getSharedPreferencesForCurrentUser(getActivity(), currentUser);
         selectedApps = preferences.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
         setListeners();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+        {
+            appsFragmentAdapter = new AppsFragmentAdapter(this.getChildFragmentManager());
+        }
+        else
+        {
+            appsFragmentAdapter = new AppsFragmentAdapter(this.getFragmentManager());
+        }
+
+        appView.setAdapter(appsFragmentAdapter);
 
         return view;
     }
@@ -135,7 +150,7 @@ public class AndroidFragment extends AppContainerFragment {
                 if (selectedApps == null)
                     selectedApps = new HashSet<String>();
 
-                AppInfo app = appInfos.get((String) v.getTag());
+                AppInfo app = appImageView.appInfo;
                 String activityName = app.getActivity();
 
                 /** If the user had previously selected the app, removed it from the list of selected apps
@@ -182,12 +197,12 @@ public class AndroidFragment extends AppContainerFragment {
          * @param context The context of the current activity
          * @param currentUser The current user (if the current user is a guardian, this is set to null)
          * @param guardian The guardian of the current user (or just the current user, if the user is a guardian)
-         * @param targetLayout The layout to be populated with AppImageViews
+         * @param appsViewPager The layout to be populated with AppImageViews
          * @param iconSize The size the icons should have
          * @param onClickListener the onClickListener that each created app should have. In this case we feed it the global variable listener
          */
-        public LoadAndroidApplicationTask(Context context, Profile currentUser, Profile guardian, LinearLayout targetLayout, int iconSize, View.OnClickListener onClickListener) {
-            super(context, currentUser, guardian, targetLayout, iconSize, onClickListener);
+        public LoadAndroidApplicationTask(Context context, Profile currentUser, Profile guardian, ViewPager appsViewPager, int iconSize, View.OnClickListener onClickListener) {
+            super(context, currentUser, guardian, appsViewPager, iconSize, onClickListener);
         }
 
         /** We override onPreExecute to cancel the AppObserver if it is running*/
@@ -206,7 +221,7 @@ public class AndroidFragment extends AppContainerFragment {
          * @return The Hashmap of AppInfos that describe the added applications.
          */
         @Override
-        protected HashMap<String, AppInfo> doInBackground(Application... applications) {
+        protected ArrayList<AppInfo> doInBackground(Application... applications) {
             applications = ApplicationControlUtility.getAndroidAppsOnDeviceAsApplicationList(context).toArray(applications);
             appInfos = super.doInBackground(applications);
 
@@ -215,7 +230,7 @@ public class AndroidFragment extends AppContainerFragment {
 
         /**Once we have loaded applications, we start observing for new apps*/
         @Override
-        protected void onPostExecute(HashMap<String, AppInfo> appInfos) {
+        protected void onPostExecute(ArrayList<AppInfo> appInfos) {
             super.onPostExecute(appInfos);
             loadedApps = appInfos;
             startObservingApps();
