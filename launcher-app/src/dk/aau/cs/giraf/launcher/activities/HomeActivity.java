@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.MotionEvent;
@@ -20,6 +23,7 @@ import android.widget.ScrollView;
 
 import com.google.analytics.tracking.android.EasyTracker;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -40,6 +44,7 @@ import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
+import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.launcher.layoutcontroller.DrawerLayout;
 import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
 import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
@@ -52,14 +57,14 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
  * The primary activity of Launcher. Allows the user to start other GIRAF apps and access the settings
  * activity. It requires a user id in the parent intent.
  */
-public class HomeActivity extends Activity {
+public class HomeActivity extends FragmentActivity {
 
+    private Profile mCurrentUser;
     private Profile mLoggedInGuardian;
-	private Profile mCurrentUser;
 	private Helper mHelper;
     private LoadHomeActivityApplicationTask loadHomeActivityApplicationTask;
 
-    private HashMap<String, AppInfo> mCurrentLoadedApps;
+    private ArrayList<AppInfo> mCurrentLoadedApps;
 
     private boolean mIsAppsContainerInitialized = false;
     private boolean mWidgetRunning = false;
@@ -72,11 +77,23 @@ public class HomeActivity extends Activity {
     private GDialog mLogoutDialog;
 
 	private RelativeLayout mDrawerContentView;
-    private RelativeLayout mSidebarView;
+    //private RelativeLayout mSidebarView;
     private DrawerLayout mDrawerView;
-    private LinearLayout mAppsContainer;
-    private ScrollView mAppsScrollView;
+    //private LinearLayout mAppsContainer;
+    //private ScrollView mAppsScrollView;
+    private ViewPager mAppViewPager;
+    private AppsFragmentAdapter appsFragmentAdapter;
+
     private Timer mAppsUpdater;
+
+    public Profile getCurrentUser()
+    {
+        return this.mCurrentUser;
+    }
+    public Profile getLoggedInGuardian()
+    {
+        return this.mLoggedInGuardian;
+    }
 
     /**
      * Sets up the activity. Specifically view variables are instantiated, the login button listener
@@ -94,7 +111,13 @@ public class HomeActivity extends Activity {
         mCurrentUser = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
         mLoggedInGuardian = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
 
-        loadViews();
+        // Fetch references to view objects
+        mDrawerView = (DrawerLayout)this.findViewById(R.id.DrawerView);
+        mAppViewPager = (ViewPager) this.findViewById(R.id.appsViewPager);
+
+        appsFragmentAdapter = new AppsFragmentAdapter(getSupportFragmentManager());
+        mAppViewPager.setAdapter(appsFragmentAdapter);
+
 		loadDrawer();                 //Temporarily disabled, see JavaDoc.
 		loadWidgets();
         setupLogoutDialog();
@@ -141,17 +164,17 @@ public class HomeActivity extends Activity {
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 
-        if (!mIsAppsContainerInitialized && mAppsContainer.getViewTreeObserver() != null) {
-            mAppsContainer.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        if (!mIsAppsContainerInitialized && mAppViewPager.getViewTreeObserver() != null) {
+            mAppViewPager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 
                 @Override
                 public void onGlobalLayout() {
                     // Ensure you call it only once :
-                    mAppsContainer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    mAppViewPager.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                     loadApplications();
                 }
             });
-        } else if (mAppsContainer.getViewTreeObserver() == null) {
+        } else if (mAppViewPager.getViewTreeObserver() == null) {
             Log.e(Constants.ERROR_TAG, "ViewTreeObserver is null.");
         }
 	}
@@ -184,7 +207,8 @@ public class HomeActivity extends Activity {
      * @see HomeActivity#startObservingApps()
      */
 	@Override
-	protected void onResume() {
+	protected void onResume()
+    {
 		super.onResume();
         if(mIsAppsContainerInitialized)
             reloadApplications();
@@ -212,21 +236,12 @@ public class HomeActivity extends Activity {
     /**
      * Load the user's applications into the app container.
      */
-    private void loadApplications(){
+    private void loadApplications()
+    {
         updateIconSize();
-        loadHomeActivityApplicationTask = new LoadHomeActivityApplicationTask(this, mCurrentUser, mLoggedInGuardian, mAppsContainer, mIconSize, null);
+        loadHomeActivityApplicationTask = new LoadHomeActivityApplicationTask(this, mCurrentUser, mLoggedInGuardian, mAppViewPager, mIconSize, null);
         loadHomeActivityApplicationTask.execute();
-        mIsAppsContainerInitialized = true;
-    }
 
-    /**
-     * Initialises the member views of the activity.
-     */
-    private void loadViews() {
-        mSidebarView = (RelativeLayout) this.findViewById(R.id.SidebarView);
-        mDrawerView = (DrawerLayout)this.findViewById(R.id.DrawerView);
-        mAppsContainer = (LinearLayout)this.findViewById(R.id.appContainer);
-        mAppsScrollView = (ScrollView) this.findViewById(R.id.appScrollView);
     }
 
     /**
@@ -274,7 +289,7 @@ public class HomeActivity extends Activity {
         });
         */
 
-        mAppsScrollView.setOnTouchListener(new View.OnTouchListener() {
+        /*mAppsScrollView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent e) {
                 boolean result = true;
@@ -291,7 +306,7 @@ public class HomeActivity extends Activity {
                 return result;
             }
         });
-
+        */
         /*
         // This closes the drawer after starting to drag a color and
         // opens it again once you stop dragging.
@@ -338,7 +353,7 @@ public class HomeActivity extends Activity {
                 @Override
                 public void onAnimationStart(Animation animation) {
                     // Sets the left margin of the scrollview based on the width of the homebar
-                    mAppsScrollView.setLeft(mDrawerContentView.getWidth());
+                    //mAppsScrollView.setLeft(mDrawerContentView.getWidth());
                 }
 
                 @Override
@@ -356,6 +371,7 @@ public class HomeActivity extends Activity {
     /**
      * Supporting function for {@link HomeActivity#loadDrawer()}
      */
+    /*
     private void placeDrawer(){
         int to;
 
@@ -389,7 +405,7 @@ public class HomeActivity extends Activity {
             }
         });
     }
-
+    */
 	/**
 	 * Loads the sidebar's widgets.
      *
@@ -532,12 +548,12 @@ public class HomeActivity extends Activity {
          * @param context The context of the current activity
          * @param currentUser The current user (if the current user is a guardian, this is set to null)
          * @param guardian The guardian of the current user (or just the current user, if the user is a guardian)
-         * @param targetLayout The layout to be populated with AppImageViews
+         * @param appsViewPager The layout to be populated with AppImageViews
          * @param iconSize The size the icons should have
          * @param onClickListener the onClickListener that each created app should have. In this case we feed it the global variable listener
          */
-        public LoadHomeActivityApplicationTask(Context context, Profile currentUser, Profile guardian, LinearLayout targetLayout, int iconSize, View.OnClickListener onClickListener) {
-            super(context, currentUser, guardian, targetLayout, iconSize, onClickListener);
+        public LoadHomeActivityApplicationTask(Context context, Profile currentUser, Profile guardian, ViewPager appsViewPager, int iconSize, View.OnClickListener onClickListener) {
+            super(context, currentUser, guardian, appsViewPager, iconSize, onClickListener);
         }
 
         /** We override onPreExecute to cancel the AppObserver if it is running*/
@@ -556,8 +572,8 @@ public class HomeActivity extends Activity {
          * @return The Hashmap of AppInfos that describe the added applications.
          */
         @Override
-        protected HashMap<String, AppInfo> doInBackground(Application... applications) {
-            HashMap<String, AppInfo> appInfos;
+        protected ArrayList<AppInfo> doInBackground(Application... applications) {
+
             List<Application> girafAppsList = ApplicationControlUtility.getAvailableGirafAppsForUser(context, currentUser); // For home_activity
             SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(context, currentUser);
             Set<String> androidAppsPackagenames = prefs.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
@@ -565,17 +581,18 @@ public class HomeActivity extends Activity {
             girafAppsList.addAll(androidAppsList);
 
             applications = girafAppsList.toArray(applications);
-            appInfos = super.doInBackground(applications);
+            ArrayList<AppInfo> appInfos = super.doInBackground(applications);
 
             return appInfos;
         }
 
         /** Once we have loaded applications, we start observing for new apps */
         @Override
-        protected void onPostExecute(HashMap<String, AppInfo> appInfos) {
+        protected void onPostExecute(ArrayList<AppInfo> appInfos) {
             super.onPostExecute(appInfos);
 
             mCurrentLoadedApps = appInfos;
+            mIsAppsContainerInitialized = true;
 
             startObservingApps();
         }

@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.FragmentActivity;
 
 import java.util.ArrayList;
 
@@ -24,7 +25,7 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
  * Activity responsible for handling Launcher settings_activity and starting
  * other setting-related activities.
  */
-public class SettingsActivity extends Activity
+public class SettingsActivity extends FragmentActivity
         implements SettingsListFragment.SettingsListFragmentListener,
         AppsFragmentInterface {
 
