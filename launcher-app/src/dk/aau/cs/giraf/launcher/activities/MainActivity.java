@@ -1,7 +1,7 @@
 package dk.aau.cs.giraf.launcher.activities;
 
 import android.app.Activity;
-import android.content.Context;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -26,7 +26,8 @@ import dk.aau.cs.giraf.oasis.localdb.main;
  * Displays the splash logo of Launcher, and then starts {@link dk.aau.cs.giraf.launcher.activities.AuthenticationActivity}.
  * Provides variables for enabling debug mode before compilation.
  */
-public class MainActivity extends Activity implements Animation.AnimationListener{
+public class MainActivity extends Activity implements Animation.AnimationListener
+{
     //private Context mContext;
     private int oldSessionGuardianID = -1;
     Animation startingAnimation;
@@ -50,7 +51,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      * If {@code true}, the splash screen is shown, despite debugging mode. Has no
      * effect if {@code DEBUG_MODE} is {@code false}.
      */
-    private final boolean SKIP_SPLASH_SCREEN = true;
+    private final boolean SKIP_SPLASH_SCREEN = false;
 
     /**
      * If {@code true}, Launcher automatically logs in with a child profile. If {@code false},
@@ -69,40 +70,39 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      * @see dk.aau.cs.giraf.launcher.activities.MainActivity#SKIP_SPLASH_SCREEN
      */
     @Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState)
+    {
 	    super.onCreate(savedInstanceState);
 
         boolean showAnimation = true;
 
 	    setContentView(R.layout.main_activity);
 
-        //mContext = this.getApplicationContext();
-
         // Start the remote syncing service
         new main(this).startSynch();
 
-        //Load the splash animation
-        startingAnimation = AnimationUtils.loadAnimation(this, R.animator.main_activity_rotatelogo_once);
-        loadAnimation = AnimationUtils.loadAnimation(this, R.animator.main_activity_rotatelogo_infinite);
-
         //Load the preference determining whether the animation should be shown
         findOldSession();
-        if (oldSessionGuardianID != -1) {
+
+        if (oldSessionGuardianID != -1)
+        {
             Profile oldSessionProfile = new ProfileController(this).getProfileById(oldSessionGuardianID);
             SharedPreferences prefs = SettingsUtility.getLauncherSettings(this, LauncherUtility.getSharedPreferenceUser(oldSessionProfile));
             showAnimation = prefs.getBoolean(getString(R.string.show_animation_preference_key), true);
         }
-
 
         //Decide whether to skip animation, according to debug mode
         if ((DEBUG_MODE && SKIP_SPLASH_SCREEN) || !showAnimation)
         {
             startNextActivity();
         }
-        else {
-            startingAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
-            loadAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
-        }
+        //Load the splash animation
+        startingAnimation = AnimationUtils.loadAnimation(this, R.animator.main_activity_rotatelogo_once);
+        loadAnimation = AnimationUtils.loadAnimation(this, R.animator.main_activity_rotatelogo_infinite);
+
+        startingAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
+        loadAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
+
 
         findViewById(R.id.giraficon).startAnimation(startingAnimation);
         startingAnimation.setAnimationListener(this);
@@ -214,10 +214,14 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      * Looks for a previously loaded session.
      * Loads the sharedpreferences if one exists
      */
-    private void findOldSession() {
-        if (LauncherUtility.sessionExpired(this)) {
+    private void findOldSession()
+    {
+        if (LauncherUtility.sessionExpired(this))
+        {
             oldSessionGuardianID = -1;
-        } else {
+        }
+        else
+        {
             SharedPreferences sharedPreferences = getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
             oldSessionGuardianID = sharedPreferences.getInt(Constants.GUARDIAN_ID, -1);
         }
@@ -251,9 +255,6 @@ public class MainActivity extends Activity implements Animation.AnimationListene
             if (size <= 0) {
                 //helper.CreateDummyData();
             }*/
-
-
-
             return null;
         }
 
