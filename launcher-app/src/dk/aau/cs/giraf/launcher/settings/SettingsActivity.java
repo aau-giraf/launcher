@@ -293,7 +293,7 @@ public class SettingsActivity extends Activity
     @Override
     public void setActiveFragment(Fragment fragment) {
         // Only add new transaction if the user clicked a non-active fragment
-        if (mActiveFragment != fragment) {
+        if (!mActiveFragment.equals(fragment)) {
             FragmentTransaction ft = mFragManager.beginTransaction();
             // Replace the fragment in settingsContainer
             ft.replace(R.id.settingsContainer, fragment);
