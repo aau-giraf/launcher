@@ -217,40 +217,38 @@ public class SettingsActivity extends Activity
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         // Check if the intent exists
-        if(intent.resolveActivity(pm) != null) {
-            if (appInfo != null) {
-                String title;
+        if (intent.resolveActivity(pm) != null && appInfo != null) {
+            String title;
 
-                // Test if the provided alias is set
-                if (alias == null || alias.isEmpty()) {
-                    // Extract name of application
-                    title = pm.getApplicationLabel(appInfo).toString();
-                } else {
-                    title = alias;
-                }
-
-                // Extract icon of application
-                final Drawable appIcon = pm.getApplicationIcon(appInfo);
-
-                // A child profile has been selected, pass id
-                if (mCurrentUser.getRole() == Profile.Roles.CHILD) {
-                    intent.putExtra(Constants.CHILD_ID, mCurrentUser.getId());
-                }
-                // We are a guardian, do not add a child
-                else {
-                    intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
-                }
-
-                // Create new item
-                IntentSettingsListItem item = new IntentSettingsListItem(
-                        title,
-                        appIcon,
-                        intent
-                );
-
-                // Add item to the list of applications
-                mAppList.add(item);
+            // Test if the provided alias is set
+            if (alias == null || alias.isEmpty()) {
+                // Extract name of application
+                title = pm.getApplicationLabel(appInfo).toString();
+            } else {
+                title = alias;
             }
+
+            // Extract icon of application
+            final Drawable appIcon = pm.getApplicationIcon(appInfo);
+
+            // A child profile has been selected, pass id
+            if (mCurrentUser.getRole() == Profile.Roles.CHILD) {
+                intent.putExtra(Constants.CHILD_ID, mCurrentUser.getId());
+            }
+            // We are a guardian, do not add a child
+            else {
+                intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
+            }
+
+            // Create new item
+            IntentSettingsListItem item = new IntentSettingsListItem(
+                    title,
+                    appIcon,
+                    intent
+            );
+
+            // Add item to the list of applications
+            mAppList.add(item);
         }
     }
 
