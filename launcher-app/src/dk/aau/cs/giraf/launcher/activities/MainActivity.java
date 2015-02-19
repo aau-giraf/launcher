@@ -173,8 +173,9 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         }
 
         //If in debugging mode, set global variables.
-        if(DEBUG_MODE)
+        if(DEBUG_MODE) {
             LauncherUtility.setDebugging(DEBUG_MODE, DEBUG_AS_CHILD, this);
+        }
 
         startActivity(intent);
         finish();
