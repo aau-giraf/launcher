@@ -217,8 +217,8 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
     @Override
     protected void onPostExecute(ArrayList<AppInfo> appInfos) {
 
-        final int rowSize = 4;
-        final int columnSize = 4;
+        final int rowSize = 3;
+        final int columnSize = 3;
 
         progressbar.setVisibility(View.GONE);
 
@@ -227,7 +227,6 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
             changeVisibilityOfNoAppsMessage(View.GONE);
 
             ((AppsFragmentAdapter)this.appsViewPager.getAdapter()).swapApps(appInfos, rowSize, columnSize);
-
         }
         else
         {

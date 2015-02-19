@@ -19,6 +19,7 @@ import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementFragment;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
+import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 /**
@@ -37,6 +38,8 @@ public class SettingsActivity extends FragmentActivity
     private Fragment mActiveFragment;
     private android.support.v4.app.Fragment mActiveSupportFragment;
     private Profile mCurrentUser;
+    private Profile mLoggedInGuardian;
+    private Helper mHelper;
 
     /**
      * Global variable containing giraf applications with settings.
@@ -65,6 +68,10 @@ public class SettingsActivity extends FragmentActivity
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.settings_activity);
+
+        mHelper = LauncherUtility.getOasisHelper(this);
+        mCurrentUser = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
+        mLoggedInGuardian = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
 
         // Used to handle fragment changes within the containing View
         mFragManager = this.getFragmentManager();
@@ -407,13 +414,19 @@ public class SettingsActivity extends FragmentActivity
         mCurrentUser = profile;
     }
 
+    public Profile getCurrentUser() {
+        return mCurrentUser;
+    }
+
+    @Override
+    public Profile getLoggedInGuardian() {
+        return mLoggedInGuardian;
+    }
+
+
     /**
      * Gets the currently selected profile
      *
      * @return the currently selected profile.
      */
-    @Override
-    public Profile getSelectedProfile() {
-        return mCurrentUser;
-    }
 }

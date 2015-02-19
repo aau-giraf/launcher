@@ -54,7 +54,7 @@ public abstract class AppContainerFragment extends Fragment {
             view = inflater.inflate(R.layout.settings_appmanagement_appcontainer,
                     container, false);
 
-            currentUser = mCallback.getSelectedProfile();
+            currentUser = mCallback.getCurrentUser();
         } else {
             view = appView.getRootView();
         }

@@ -48,6 +48,7 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.launcher.layoutcontroller.DrawerLayout;
 import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
 import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
+import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.controllers.ProfileController;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
@@ -57,7 +58,7 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
  * The primary activity of Launcher. Allows the user to start other GIRAF apps and access the settings
  * activity. It requires a user id in the parent intent.
  */
-public class HomeActivity extends FragmentActivity {
+public class HomeActivity extends FragmentActivity implements AppsFragmentInterface {
 
     private Profile mCurrentUser;
     private Profile mLoggedInGuardian;
@@ -86,10 +87,12 @@ public class HomeActivity extends FragmentActivity {
 
     private Timer mAppsUpdater;
 
+    @Override
     public Profile getCurrentUser()
     {
         return this.mCurrentUser;
     }
+    @Override
     public Profile getLoggedInGuardian()
     {
         return this.mLoggedInGuardian;
