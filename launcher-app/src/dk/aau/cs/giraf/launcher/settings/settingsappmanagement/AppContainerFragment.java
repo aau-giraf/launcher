@@ -38,7 +38,7 @@ public abstract class AppContainerFragment extends Fragment {
     protected ViewPager appView;
     protected AppsFragmentAdapter appsFragmentAdapter;
     protected boolean haveAppsBeenAdded = false;
-    protected View.OnClickListener listener;
+    public View.OnClickListener listener;
 
     /**
      * Because we are dealing with a Fragment, OnCreateView is where most of the variables are set.

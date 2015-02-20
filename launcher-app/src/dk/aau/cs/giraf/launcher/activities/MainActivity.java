@@ -28,6 +28,9 @@ import dk.aau.cs.giraf.oasis.localdb.main;
  */
 public class MainActivity extends Activity implements Animation.AnimationListener
 {
+    public static final int rowSize = 3;
+    public static final int columnSize = 3;
+
     //private Context mContext;
     private int oldSessionGuardianID = -1;
     Animation startingAnimation;
