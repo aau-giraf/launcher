@@ -63,7 +63,7 @@
         <activity
                 android:name=".settings.SettingsActivity"
                 android:label="@string/settings_tablist_tablet"
-                android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+                android:theme="@android:style/Theme.Holo.Light"
                 android:screenOrientation="landscape">
         </activity>
         <provider

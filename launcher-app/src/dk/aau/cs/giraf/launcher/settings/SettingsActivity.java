@@ -1,5 +1,6 @@
 package dk.aau.cs.giraf.launcher.settings;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -23,9 +24,9 @@ import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 /**
- * Activity responsible for handling Launcher settings_activity and starting
- * other setting-related activities.
- */
+* Activity responsible for handling Launcher settings_activity and starting
+* other setting-related activities.
+*/
 public class SettingsActivity extends FragmentActivity
         implements SettingsListFragment.SettingsListFragmentListener,
         AppsFragmentInterface {
@@ -400,6 +401,7 @@ public class SettingsActivity extends FragmentActivity
 
         // Stop activity before restarting
         SettingsActivity.this.finish();
+
         // Start activity again to reload contents
         startActivity(intent);
     }
@@ -422,11 +424,4 @@ public class SettingsActivity extends FragmentActivity
     public Profile getLoggedInGuardian() {
         return mLoggedInGuardian;
     }
-
-
-    /**
-     * Gets the currently selected profile
-     *
-     * @return the currently selected profile.
-     */
 }

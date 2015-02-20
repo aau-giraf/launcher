@@ -1,5 +1,6 @@
 package dk.aau.cs.giraf.launcher.settings;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.ActivityNotFoundException;
@@ -101,28 +102,47 @@ public class SettingsListFragment extends Fragment {
         int childID = getActivity().getIntent().getIntExtra(Constants.CHILD_ID, -1);
 
         // The childID is -1 meaning that no childs are available
-        if(childID == -1)
-        {
+        if(childID == -1) {
             mCurrentUser = pc.getProfileById(getActivity().getIntent().getIntExtra(Constants.GUARDIAN_ID, -1));
             mProfileSelector = new GProfileSelector(getActivity(), mLoggedInGuardian, null);
-        }
-        // A child is found - set it as active and add its profile selector
-        else
-        {
+        } else { // A child is found - set it as active and add its profile selector
             mCurrentUser = pc.getProfileById(childID);
             mProfileSelector = new GProfileSelector(getActivity(), mLoggedInGuardian, mCurrentUser);
         }
         // Notify about the current user
         mCallback.setCurrentUser(mCurrentUser);
+
+        // Get the name of the current user ensure the user and its name is not null
+        String currentUserName = mCurrentUser == null || mCurrentUser.getName() == null ? "Uknown" : mCurrentUser.getName();
+
         // Update the name of the user
-        mProfileName.setText(mCurrentUser.getName());
+        mProfileName.setText(currentUserName);
+
+        ActionBar actionBar = getActivity().getActionBar();
+
+        // Check if the actionbar is null
+        if (actionBar != null) {
+
+            // Inflate the activity with the settings_actionbar
+            View actionBarView = getActivity().getLayoutInflater().inflate(R.layout.settings_actionbar, null);
+
+            // Override the actionbar
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+            actionBar.setCustomView(actionBarView);
+
+            // Find the title (text view) of the actionbar
+            TextView actionBarTitle = (TextView) actionBar.getCustomView().findViewById(R.id.settings_actionbar_title);
+
+            // Set the title of the actionbar (text view)
+            actionBarTitle.setText(getString(R.string.settings_for) + currentUserName);
+        }
 
         // Instantiates a new adapter to render the items in the ListView with a list of installed (available) apps
         mAdapter = new SettingsListAdapter(getActivity(), mSettingsListView, mCallback.getInstalledSettingsApps());
         // Set the new adapter in the ListView
         mSettingsListView.setAdapter(mAdapter);
 
-        // Set listerners for loaded user interface components
+        // Set listeners for loaded user interface components
         setListeners();
 
         //Load the correct profile picture for the choosen profile
