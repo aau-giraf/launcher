@@ -227,7 +227,8 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
         {
             changeVisibilityOfNoAppsMessage(View.GONE);
 
-            this.appsViewPager.setAdapter(new AppsFragmentAdapter(getFragmentMangerForAppsFragmentAdapter(),appInfos , MainActivity.rowSize, MainActivity.columnSize));
+            ((AppsFragmentAdapter)this.appsViewPager.getAdapter()).swapApps(appInfos , MainActivity.rowSize, MainActivity.columnSize);
+            //this.appsViewPager.setAdapter(new AppsFragmentAdapter(getFragmentMangerForAppsFragmentAdapter(),appInfos , MainActivity.rowSize, MainActivity.columnSize));
         }
         else
         {

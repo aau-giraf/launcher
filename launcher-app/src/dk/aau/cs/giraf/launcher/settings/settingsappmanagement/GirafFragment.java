@@ -61,6 +61,14 @@ public class GirafFragment extends AppContainerFragment {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         appView = (ViewPager) view.findViewById(R.id.appsViewPager);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+
+            appView.setAdapter(new AppsFragmentAdapter(getChildFragmentManager(), appInfos, MainActivity.rowSize, MainActivity.columnSize));
+        } else {
+
+            appView.setAdapter(new AppsFragmentAdapter(getFragmentManager(), appInfos, MainActivity.rowSize, MainActivity.columnSize));
+        }
+
 
         return view;
     }
@@ -106,8 +114,6 @@ public class GirafFragment extends AppContainerFragment {
 
             Log.d(Constants.ERROR_TAG, "Applications are no longer observed.");
         }
-
-        appView.setAdapter(null);
     }
 
     /**
