@@ -1,9 +1,11 @@
 package dk.aau.cs.giraf.launcher.helper;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Gravity;
@@ -23,6 +25,7 @@ import java.util.Set;
 
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.HomeActivity;
+import dk.aau.cs.giraf.launcher.activities.MainActivity;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
@@ -217,8 +220,6 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
     @Override
     protected void onPostExecute(ArrayList<AppInfo> appInfos) {
 
-        final int rowSize = 3;
-        final int columnSize = 3;
 
         progressbar.setVisibility(View.GONE);
 
@@ -226,7 +227,7 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
         {
             changeVisibilityOfNoAppsMessage(View.GONE);
 
-            ((AppsFragmentAdapter)this.appsViewPager.getAdapter()).swapApps(appInfos, rowSize, columnSize);
+            this.appsViewPager.setAdapter(new AppsFragmentAdapter(getFragmentMangerForAppsFragmentAdapter(),appInfos , MainActivity.rowSize, MainActivity.columnSize));
         }
         else
         {
@@ -234,6 +235,13 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
         }
 
         removeStrayProgressbars();
+
+
+    }
+
+    public android.support.v4.app.FragmentManager getFragmentMangerForAppsFragmentAdapter()
+    {
+        return ((FragmentActivity)context).getSupportFragmentManager();
     }
 
     /**

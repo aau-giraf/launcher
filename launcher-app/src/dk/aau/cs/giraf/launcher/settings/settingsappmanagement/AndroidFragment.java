@@ -20,6 +20,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.activities.MainActivity;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
@@ -79,13 +80,7 @@ public class AndroidFragment extends AppContainerFragment {
             startObservingApps();
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            appsFragmentAdapter = new AppsFragmentAdapter(this.getChildFragmentManager());
-        } else {
-            appsFragmentAdapter = new AppsFragmentAdapter(this.getFragmentManager());
-        }
 
-        appView.setAdapter(appsFragmentAdapter);
 
         reloadApplications();
     }
@@ -151,7 +146,7 @@ public class AndroidFragment extends AppContainerFragment {
      */
      @Override
      void setListeners() {
-        listener = new View.OnClickListener() {
+        super.listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AppImageView appImageView = (AppImageView) v;
@@ -199,7 +194,7 @@ public class AndroidFragment extends AppContainerFragment {
      * However, since there are some special things that need to be handled in the case of Android applications,
      * we must inherit the class, override it's methods and do what we need to do in addition to the superclass
      */
-    class LoadAndroidApplicationTask extends LoadApplicationTask {
+    private class LoadAndroidApplicationTask extends LoadApplicationTask {
 
         /**
          * The contructor of the class
@@ -224,6 +219,16 @@ public class AndroidFragment extends AppContainerFragment {
                 appsUpdater.cancel();
 
             super.onPreExecute();
+        }
+
+        @Override
+        public android.support.v4.app.FragmentManager getFragmentMangerForAppsFragmentAdapter()
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                return AndroidFragment.this.getChildFragmentManager();
+            } else {
+                return AndroidFragment.this.getFragmentManager();
+            }
         }
 
         /**

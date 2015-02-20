@@ -54,11 +54,10 @@ public class AppsGridFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity)
-    {
+    public void onAttach(Activity activity) {
         super.onAttach(activity);
         pac = new ProfileApplicationController(activity);
-        final Profile currentUser = ((AppsFragmentInterface)activity).getCurrentUser();
+        final Profile currentUser = ((AppsFragmentInterface) activity).getCurrentUser();
         SharedPreferences preferences = LauncherUtility.getSharedPreferencesForCurrentUser(activity, currentUser);
         selectedApps = preferences.getStringSet(activity.getResources().getString(R.string.selected_android_apps_key), new HashSet<String>());
     }
@@ -70,8 +69,7 @@ public class AppsGridFragment extends Fragment {
 
         final Bundle arguments = getArguments();
 
-        if (arguments != null)
-        {
+        if (arguments != null) {
             final int rowSize = arguments.getInt(ROW_SIZE_INT_TAG);
             final int columnSize = arguments.getInt(COLUMN_SIZE_INT_TAG);
             final ArrayList<AppInfo> appInfos = arguments.getParcelableArrayList(APPINFOS_PARCELABLE_TAG);
@@ -79,34 +77,27 @@ public class AppsGridFragment extends Fragment {
             appsGridLayout.setRowCount(rowSize);
             appsGridLayout.setColumnCount(columnSize);
 
+            for (int appCounter = 0; appCounter < appInfos.size(); appCounter++) {
+                final AppInfo currentAppInfo = appInfos.get(appCounter);
 
-            for(int appCounter = 0; appCounter < appInfos.size(); appCounter++)
-            {
-                    final AppInfo currentAppInfo = appInfos.get(appCounter);
+                final AppsFragmentInterface activity = (AppsFragmentInterface) getActivity();
+                final Profile currentUser = activity.getCurrentUser();
 
-                    final AppsFragmentInterface activity = (AppsFragmentInterface)getActivity();
-                    final Profile currentUser = activity.getCurrentUser();
+                //Create a new AppImageView and set its properties
+                AppImageView newAppView = AppViewCreationUtility.createAppImageView(getActivity(), currentUser, activity.getLoggedInGuardian(), currentAppInfo, appsGridLayout, getOnClickListener());
+                newAppView.setScaleType(ImageView.ScaleType.FIT_XY);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(container.getMeasuredWidth() / columnSize, container.getMeasuredHeight() / rowSize);
+                //params.setMargins(2, 2, 2, 2);
+                newAppView.setLayoutParams(params);
 
-                    //Create a new AppImageView and set its properties
-                    AppImageView newAppView = AppViewCreationUtility.createAppImageView(getActivity(), currentUser, activity.getLoggedInGuardian(), currentAppInfo, appsGridLayout, getOnClickListener());
-                    newAppView.setScaleType(ImageView.ScaleType.FIT_XY);
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(container.getMeasuredWidth() / columnSize, container.getMeasuredHeight() / rowSize);
-                    //params.setMargins(2, 2, 2, 2);
-                    newAppView.setLayoutParams(params);
-
+                // Application icons should only have their check state set when in the SetttingsActivity
+                if (activity instanceof SettingsActivity) {
                     if (currentAppInfo != null && (doesProfileApplicationExist(pac, currentAppInfo.getApp(), currentUser) || selectedApps.contains(currentAppInfo.getActivity()))) {
                         newAppView.setChecked(true);
                     }
+                }
+                appsGridLayout.addView(newAppView, appCounter);
 
-                    appsGridLayout.addView(newAppView, appCounter);
-
-                /*
-                View view = new View(getActivity());
-                view.setLayoutParams(new ActionBar.LayoutParams(50, 50));
-                view.setBackgroundColor(Color.RED);
-
-                appsGridLayout.addView(view, appCounter);
-                */
             }
         }
 
@@ -128,13 +119,11 @@ public class AppsGridFragment extends Fragment {
         return thisPA != null;
     }
 
-    protected View.OnClickListener getOnClickListener()
-    {
+    protected View.OnClickListener getOnClickListener() {
         Fragment parentFragment = getParentFragment();
 
-        if(parentFragment instanceof AppContainerFragment)
-        {
-            return ((AppContainerFragment)parentFragment).getListener();
+        if (parentFragment instanceof AppContainerFragment) {
+            return ((AppContainerFragment) parentFragment).getListener();
         }
 
         return null;
