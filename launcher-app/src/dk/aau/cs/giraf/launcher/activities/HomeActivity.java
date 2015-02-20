@@ -62,7 +62,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
 
     private Profile mCurrentUser;
     private Profile mLoggedInGuardian;
-	private Helper mHelper;
+    private Helper mHelper;
     private LoadHomeActivityApplicationTask loadHomeActivityApplicationTask;
 
     private ArrayList<AppInfo> mCurrentLoadedApps;
@@ -72,29 +72,28 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
     private boolean mDrawerAnimationRunning = false;
     private int mIconSize;
 
-	private GWidgetUpdater mWidgetUpdater;
+    private GWidgetUpdater mWidgetUpdater;
     private GWidgetProfileSelection mWidgetProfileSelection;
     private GProfileSelector mProfileSelectorDialog;
     private GDialog mLogoutDialog;
 
-	private RelativeLayout mDrawerContentView;
+    private RelativeLayout mDrawerContentView;
     //private RelativeLayout mSidebarView;
     private DrawerLayout mDrawerView;
     //private LinearLayout mAppsContainer;
     //private ScrollView mAppsScrollView;
     private ViewPager mAppViewPager;
-    private AppsFragmentAdapter appsFragmentAdapter;
+    //private AppsFragmentAdapter appsFragmentAdapter;
 
     private Timer mAppsUpdater;
 
     @Override
-    public Profile getCurrentUser()
-    {
+    public Profile getCurrentUser() {
         return this.mCurrentUser;
     }
+
     @Override
-    public Profile getLoggedInGuardian()
-    {
+    public Profile getLoggedInGuardian() {
         return this.mLoggedInGuardian;
     }
 
@@ -104,10 +103,10 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
      *
      * @param savedInstanceState Information from the last launch of the activity.
      */
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.home_activity);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.home_activity);
 
         mHelper = LauncherUtility.getOasisHelper(this);
 
@@ -115,14 +114,11 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
         mLoggedInGuardian = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
 
         // Fetch references to view objects
-        mDrawerView = (DrawerLayout)this.findViewById(R.id.DrawerView);
+        mDrawerView = (DrawerLayout) this.findViewById(R.id.DrawerView);
         mAppViewPager = (ViewPager) this.findViewById(R.id.appsViewPager);
 
-        appsFragmentAdapter = new AppsFragmentAdapter(getSupportFragmentManager());
-        mAppViewPager.setAdapter(appsFragmentAdapter);
-
-		loadDrawer();                 //Temporarily disabled, see JavaDoc.
-		loadWidgets();
+        loadDrawer();                 //Temporarily disabled, see JavaDoc.
+        loadWidgets();
         setupLogoutDialog();
 
         // Show warning if DEBUG_MODE is true
@@ -132,7 +128,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
 
         // Start logging this activity
         EasyTracker.getInstance(this).activityStart(this);
-	}
+    }
 
     /**
      * Starts a timer that looks for updates in the set of available applications every 5 seconds.
@@ -163,9 +159,9 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
      *
      * @param hasFocus {@code true} if the activity has focus.
      */
-	@Override
-	public void onWindowFocusChanged(boolean hasFocus) {
-		super.onWindowFocusChanged(hasFocus);
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
 
         if (!mIsAppsContainerInitialized && mAppViewPager.getViewTreeObserver() != null) {
             mAppViewPager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -180,28 +176,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
         } else if (mAppViewPager.getViewTreeObserver() == null) {
             Log.e(Constants.ERROR_TAG, "ViewTreeObserver is null.");
         }
-	}
-
-    /**
-     * Stops the timer looking for updates in the set of available apps.
-     *
-     * @see HomeActivity#startObservingApps()
-     */
-	@Override
-	protected void onPause() {
-		super.onPause();
-        mIsAppsContainerInitialized = true; //This makes the Launcher load applications if it was paused before loading them.
-        if(mAppsUpdater != null){
-            mAppsUpdater.cancel();
-            Log.d(Constants.ERROR_TAG, "Applications are no longer observed.");
-        }
-
-        if(mWidgetUpdater != null)
-		    mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_STOP);
-
-        if(loadHomeActivityApplicationTask != null)
-            loadHomeActivityApplicationTask.cancel(true);
-	}
+    }
 
     /**
      * Redraws the application container and resumes the timer looking for updates in the set of
@@ -209,16 +184,43 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
      *
      * @see HomeActivity#startObservingApps()
      */
-	@Override
-	protected void onResume()
-    {
-		super.onResume();
-        if(mIsAppsContainerInitialized)
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (mIsAppsContainerInitialized) {
             reloadApplications();
+        }
         //startObservingApps();
-        if(mWidgetUpdater != null)
-		    mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_START);
-	}
+        if (mWidgetUpdater != null) {
+            mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_START);
+        }
+    }
+
+    /**
+     * Stops the timer looking for updates in the set of available apps.
+     *
+     * @see HomeActivity#startObservingApps()
+     */
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mIsAppsContainerInitialized = true; //This makes the Launcher load applications if it was paused before loading them.
+        if (mAppsUpdater != null) {
+            mAppsUpdater.cancel();
+            Log.d(Constants.ERROR_TAG, "Applications are no longer observed.");
+        }
+
+        if (mWidgetUpdater != null) {
+            mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_STOP);
+        }
+        if (loadHomeActivityApplicationTask != null) {
+            loadHomeActivityApplicationTask.cancel(true);
+        }
+
+        mAppViewPager.setAdapter(null);
+    }
+
 
     /**
      * Does nothing, to prevent the user from returning to the authentication_activity or native OS.
@@ -231,7 +233,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
     /**
      * Force loadApplications to redraw but setting mCurrentlyLoadedApps to null
      */
-    private void reloadApplications(){
+    private void reloadApplications() {
         mCurrentLoadedApps = null;
         loadApplications();
     }
@@ -239,8 +241,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
     /**
      * Load the user's applications into the app container.
      */
-    private void loadApplications()
-    {
+    private void loadApplications() {
         updateIconSize();
         loadHomeActivityApplicationTask = new LoadHomeActivityApplicationTask(this, mCurrentUser, mLoggedInGuardian, mAppViewPager, mIconSize, null);
         loadHomeActivityApplicationTask.execute();
@@ -264,15 +265,15 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
         mLogoutDialog.setOwnerActivity(this);
     }
 
-	/**
-	 * Load the drawer and its functionality.
+    /**
+     * Load the drawer and its functionality.
      * This has been temporarily disabled, as it turned out that the clients had no use for it.
      * It is left in, as it may become useful at a later date.
      * You can read more in the report about the Launcher from 2014.
-	 */
-	private void loadDrawer() {
+     */
+    private void loadDrawer() {
         /*
-		// If result = true, the onTouch-function will be run again.
+        // If result = true, the onTouch-function will be run again.
 		mSidebarView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent e) {
@@ -331,23 +332,22 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
             }
         });
         */
-	}
+    }
 
     /**
      * Supporting function for {@link HomeActivity#loadDrawer()}
      */
-    private void popBackDrawer(){
+    private void popBackDrawer() {
         int to;
 
-        if(!mDrawerView.isSideBarHidden)
-        {
+        if (!mDrawerView.isSideBarHidden) {
             to = -mDrawerContentView.getWidth();
 
             // then animate the view translating from (0, 0)
             TranslateAnimation ta = new TranslateAnimation(0, to, 0, 0);
             ta.setDuration(500);
 
-            if(!mDrawerAnimationRunning){
+            if (!mDrawerAnimationRunning) {
                 mDrawerView.startAnimation(ta);
                 mDrawerAnimationRunning = true;
             }
@@ -409,36 +409,37 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
         });
     }
     */
-	/**
-	 * Loads the sidebar's widgets.
+
+    /**
+     * Loads the sidebar's widgets.
      *
      * @see dk.aau.cs.giraf.gui.GWidgetConnectivity
      * @see dk.aau.cs.giraf.gui.GWidgetLogout
      * @see dk.aau.cs.giraf.gui.GWidgetProfileSelection
      * @see dk.aau.cs.giraf.gui.GButtonSettings
-	 */
-	private void loadWidgets() {
+     */
+    private void loadWidgets() {
         GWidgetLogout logoutWidget = (GWidgetLogout) findViewById(R.id.logoutwidget);
         mWidgetProfileSelection = (GWidgetProfileSelection) findViewById(R.id.profile_widget);
         GButtonSettings settingsButton = (GButtonSettings) findViewById(R.id.settingsbutton);
-		mDrawerContentView = (RelativeLayout) findViewById(R.id.DrawerContentView);
+        mDrawerContentView = (RelativeLayout) findViewById(R.id.DrawerContentView);
 
         /*Setup the profile selector dialog. If the current user is not a guardian, the guardian is used
           as the current user.*/
-        if(mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
+        if (mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
             mProfileSelectorDialog = new GProfileSelector(this, mLoggedInGuardian, mCurrentUser);
         else
             mProfileSelectorDialog = new GProfileSelector(this, mLoggedInGuardian, null);
 
         //Set up widget updater, which updates the widget's view regularly, according to its status.
-		mWidgetUpdater = new GWidgetUpdater();
-        if(mCurrentUser.getRole().getValue() < Profile.Roles.CHILD.getValue()) {
+        mWidgetUpdater = new GWidgetUpdater();
+        if (mCurrentUser.getRole().getValue() < Profile.Roles.CHILD.getValue()) {
             settingsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
                     intent.putExtra(Constants.GUARDIAN_ID, mLoggedInGuardian.getId());
-                    if(mCurrentUser.getRole() == Profile.Roles.GUARDIAN)
+                    if (mCurrentUser.getRole() == Profile.Roles.GUARDIAN)
                         intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
                     else
                         intent.putExtra(Constants.CHILD_ID, mCurrentUser.getId());
@@ -454,8 +455,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
         mWidgetProfileSelection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mCurrentUser.getRole().getValue() < Profile.Roles.CHILD.getValue())
-                {
+                if (mCurrentUser.getRole().getValue() < Profile.Roles.CHILD.getValue()) {
                     mProfileSelectorDialog.show();
                 }
             }
@@ -464,9 +464,9 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
 
         updatesProfileSelector();
 
-		logoutWidget.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
+        logoutWidget.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 if (!mWidgetRunning) {
                     mWidgetRunning = true;
                     mLogoutDialog.show();
@@ -474,7 +474,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
                 }
             }
         });
-	}
+    }
 
     /**
      * Updates the user's preferred icon size from SharedPreferences. This preference it set in Launcher's
@@ -488,8 +488,8 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
     /**
      * Updates the ProfileSelector. It is needed when a new user has been selected, as a different
      * listener is needed, and the app container has to be reloaded.
-     * */
-    private void updatesProfileSelector(){
+     */
+    private void updatesProfileSelector() {
         mProfileSelectorDialog.setOnListItemClick(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -518,6 +518,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
     /**
      * Task for observing if the set of available apps has changed.
      * Is only instantiated after apps have been loaded the first time.
+     *
      * @see HomeActivity#loadApplications()
      */
     private class AppsObserver extends TimerTask {
@@ -534,7 +535,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
             Set<String> androidAppsPackagenames = prefs.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
             List<Application> androidAppsList = ApplicationControlUtility.convertPackageNamesToApplications(HomeActivity.this, androidAppsPackagenames);
             girafAppsList.addAll(androidAppsList);
-            if (mCurrentLoadedApps == null || mCurrentLoadedApps.size() != girafAppsList.size()){
+            if (mCurrentLoadedApps == null || mCurrentLoadedApps.size() != girafAppsList.size()) {
                 // run this on UI thread since UI might need to get updated
                 runOnUiThread(new Runnable() {
                     @Override
@@ -558,18 +559,21 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
 
         /**
          * The contructor of the class
-         * @param context The context of the current activity
-         * @param currentUser The current user (if the current user is a guardian, this is set to null)
-         * @param guardian The guardian of the current user (or just the current user, if the user is a guardian)
-         * @param appsViewPager The layout to be populated with AppImageViews
-         * @param iconSize The size the icons should have
+         *
+         * @param context         The context of the current activity
+         * @param currentUser     The current user (if the current user is a guardian, this is set to null)
+         * @param guardian        The guardian of the current user (or just the current user, if the user is a guardian)
+         * @param appsViewPager   The layout to be populated with AppImageViews
+         * @param iconSize        The size the icons should have
          * @param onClickListener the onClickListener that each created app should have. In this case we feed it the global variable listener
          */
         public LoadHomeActivityApplicationTask(Context context, Profile currentUser, Profile guardian, ViewPager appsViewPager, int iconSize, View.OnClickListener onClickListener) {
             super(context, currentUser, guardian, appsViewPager, iconSize, onClickListener);
         }
 
-        /** We override onPreExecute to cancel the AppObserver if it is running*/
+        /**
+         * We override onPreExecute to cancel the AppObserver if it is running
+         */
         @Override
         protected void onPreExecute() {
             if (mAppsUpdater != null)
@@ -581,6 +585,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
         /**
          * This method needs to be overridden since we need to inform the superclass of exactly which apps should be generated.
          * In this case it is both Giraf and Android applications.
+         *
          * @param applications the applications that the task should generate AppImageViews for
          * @return The Hashmap of AppInfos that describe the added applications.
          */
@@ -599,7 +604,9 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
             return appInfos;
         }
 
-        /** Once we have loaded applications, we start observing for new apps */
+        /**
+         * Once we have loaded applications, we start observing for new apps
+         */
         @Override
         protected void onPostExecute(ArrayList<AppInfo> appInfos) {
             super.onPostExecute(appInfos);

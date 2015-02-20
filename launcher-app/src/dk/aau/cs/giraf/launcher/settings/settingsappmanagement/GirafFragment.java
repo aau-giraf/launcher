@@ -18,6 +18,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.activities.MainActivity;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
@@ -79,9 +80,9 @@ public class GirafFragment extends AppContainerFragment {
             startObservingApps();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            appsFragmentAdapter = new AppsFragmentAdapter(this.getChildFragmentManager());
+            appsFragmentAdapter = new AppsFragmentAdapter(this.getChildFragmentManager(),  appInfos, MainActivity.rowSize, MainActivity.columnSize);
         } else {
-            appsFragmentAdapter = new AppsFragmentAdapter(this.getFragmentManager());
+            appsFragmentAdapter = new AppsFragmentAdapter(this.getFragmentManager(),  appInfos, MainActivity.rowSize, MainActivity.columnSize);
         }
 
         appView.setAdapter(appsFragmentAdapter);
@@ -145,7 +146,7 @@ public class GirafFragment extends AppContainerFragment {
      */
     @Override
     void setListeners() {
-        listener = new View.OnClickListener() {
+        super.listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AppImageView appImageView = (AppImageView) v;
@@ -244,6 +245,17 @@ public class GirafFragment extends AppContainerFragment {
 
             return appInfos;
         }
+
+        @Override
+        public android.support.v4.app.FragmentManager getFragmentMangerForAppsFragmentAdapter()
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                return GirafFragment.this.getChildFragmentManager();
+            } else {
+                return GirafFragment.this.getFragmentManager();
+            }
+        }
+
 
         /**
          * Once we have loaded applications, we start observing for new apps
