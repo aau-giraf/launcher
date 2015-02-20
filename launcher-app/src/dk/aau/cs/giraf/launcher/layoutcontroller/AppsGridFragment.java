@@ -3,12 +3,14 @@ package dk.aau.cs.giraf.launcher.layoutcontroller;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
@@ -19,6 +21,8 @@ import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 import dk.aau.cs.giraf.launcher.helper.AppViewCreationUtility;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
+import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
+import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
 import dk.aau.cs.giraf.oasis.lib.controllers.ProfileApplicationController;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -51,8 +55,9 @@ public class AppsGridFragment extends Fragment {
     @Override
     public void onAttach(Activity activity)
     {
+        super.onAttach(activity);
         pac = new ProfileApplicationController(activity);
-        final Profile currentUser = ((HomeActivity)activity).getCurrentUser();
+        final Profile currentUser = ((AppsFragmentInterface)activity).getCurrentUser();
         SharedPreferences preferences = LauncherUtility.getSharedPreferencesForCurrentUser(activity, currentUser);
         selectedApps = preferences.getStringSet(activity.getResources().getString(R.string.selected_android_apps_key), new HashSet<String>());
     }
@@ -60,7 +65,7 @@ public class AppsGridFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        GridLayout appsGridLayout = (GridLayout) inflater.inflate(R.layout.apps_grid_fragment, null);
+        final GridLayout appsGridLayout = (GridLayout) inflater.inflate(R.layout.apps_grid_fragment, null);
 
         final Bundle arguments = getArguments();
 
@@ -73,32 +78,38 @@ public class AppsGridFragment extends Fragment {
             appsGridLayout.setRowCount(rowSize);
             appsGridLayout.setColumnCount(columnSize);
 
-            for(int rowCounter = 0; rowCounter < rowSize; rowCounter++)
+
+            for(int appCounter = 0; appCounter < appInfos.size(); appCounter++)
             {
-                for(int columnCounter = 0; columnCounter < columnSize; rowCounter++)
-                {
-                    final AppInfo currentAppInfo = appInfos.get(columnCounter + rowCounter * rowSize);
 
+                    final AppInfo currentAppInfo = appInfos.get(appCounter);
 
-
-                    final HomeActivity activity = (HomeActivity)getActivity();
+                    final AppsFragmentInterface activity = (AppsFragmentInterface)getActivity();
                     final Profile currentUser = activity.getCurrentUser();
 
                     //Create a new AppImageView and set its properties
                     AppImageView newAppView = AppViewCreationUtility.createAppImageView(getActivity(), currentUser, activity.getLoggedInGuardian(), currentAppInfo, appsGridLayout, getOnClickListener());
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-                    params.setMargins(2, 2, 2, 2);
+                    newAppView.setScaleType(ImageView.ScaleType.FIT_XY);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(container.getMeasuredWidth() / columnSize, container.getMeasuredHeight() / rowSize);
+                    //params.setMargins(2, 2, 2, 2);
                     newAppView.setLayoutParams(params);
 
                     if (currentAppInfo != null && (doesProfileApplicationExist(pac, currentAppInfo.getApp(), currentUser) || selectedApps.contains(currentAppInfo.getActivity()))) {
                         newAppView.setChecked(true);
                     }
 
-                    appsGridLayout.addView(newAppView, columnCounter + rowCounter * rowSize);
+                    appsGridLayout.addView(newAppView, appCounter);
 
-                }
+                /*
+                View view = new View(getActivity());
+                view.setLayoutParams(new ActionBar.LayoutParams(50, 50));
+                view.setBackgroundColor(Color.RED);
+
+                appsGridLayout.addView(view, appCounter);
+                */
             }
-            //
+
+            appsGridLayout.setBackgroundColor(Color.GREEN);
 
         }
 

@@ -2,6 +2,7 @@ package dk.aau.cs.giraf.launcher.settings.settingsappmanagement;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -22,6 +23,7 @@ import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
+import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.oasis.lib.controllers.ProfileApplicationController;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -51,6 +53,17 @@ public class GirafFragment extends AppContainerFragment {
         appView = (ViewPager) view.findViewById(R.id.appsViewPager);
 
         setListeners();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+        {
+            appsFragmentAdapter = new AppsFragmentAdapter(this.getChildFragmentManager());
+        }
+        else
+        {
+            appsFragmentAdapter = new AppsFragmentAdapter(this.getFragmentManager());
+        }
+
+        appView.setAdapter(appsFragmentAdapter);
 
         return view;
     }

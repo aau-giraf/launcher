@@ -17,6 +17,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -97,7 +98,7 @@ public class AppViewCreationUtility {
 
         appImageView.setImageBitmap(createBitmapFromLayoutWithText(context, appView, Constants.APP_ICON_DIMENSION_DEF, Constants.APP_ICON_DIMENSION_DEF));
         appImageView.setTag(String.valueOf(appInfo.getApp().getId()));
-        appImageView.setOnDragListener(new GAppDragger());
+        //appImageView.setOnDragListener(new GAppDragger());
 
         if(listener == null)
         {

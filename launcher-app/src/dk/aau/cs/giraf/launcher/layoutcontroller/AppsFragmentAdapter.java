@@ -29,8 +29,10 @@ public class AppsFragmentAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        if (appInfoList != null) {
-            return appInfoList.size() / (rowSize * coloumnSize);
+
+        if (appInfoList != null)
+        {
+            return (int) Math.ceil(appInfoList.size() / (rowSize * coloumnSize));
         }
 
         return 0;
