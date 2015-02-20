@@ -22,6 +22,7 @@ import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 import dk.aau.cs.giraf.launcher.helper.AppViewCreationUtility;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
+import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppContainerFragment;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
 import dk.aau.cs.giraf.oasis.lib.controllers.ProfileApplicationController;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
@@ -129,6 +130,13 @@ public class AppsGridFragment extends Fragment {
 
     protected View.OnClickListener getOnClickListener()
     {
+        Fragment parentFragment = getParentFragment();
+
+        if(parentFragment instanceof AppContainerFragment)
+        {
+            return ((AppContainerFragment)parentFragment).getListener();
+        }
+
         return null;
     }
 

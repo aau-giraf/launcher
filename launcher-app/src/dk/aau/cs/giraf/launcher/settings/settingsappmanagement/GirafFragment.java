@@ -40,6 +40,12 @@ public class GirafFragment extends AppContainerFragment {
     private loadGirafApplicationTask loadApplicationTask;
     private View.OnClickListener listener;
 
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
     /**
      * Because we are dealing with a Fragment, OnCreateView is where most of the variables are set.
      * The context is set by the superclass.
@@ -53,9 +59,6 @@ public class GirafFragment extends AppContainerFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         appView = (ViewPager) view.findViewById(R.id.appsViewPager);
-
-        setListeners();
-
 
 
         return view;
@@ -140,7 +143,8 @@ public class GirafFragment extends AppContainerFragment {
      * The listener is the OnClickListener that all the AppImageViews created need to implement to make them
      * selectable and deselectable by the user.
      */
-    private void setListeners() {
+    @Override
+    void setListeners() {
         listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {

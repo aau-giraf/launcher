@@ -38,6 +38,7 @@ public abstract class AppContainerFragment extends Fragment {
     protected ViewPager appView;
     protected AppsFragmentAdapter appsFragmentAdapter;
     protected boolean haveAppsBeenAdded = false;
+    protected View.OnClickListener listener;
 
     /**
      * Because we are dealing with a Fragment, OnCreateView is where most of the variables are set.
@@ -80,7 +81,6 @@ public abstract class AppContainerFragment extends Fragment {
                 public void onGlobalLayout() {
                     // Ensure you call it only once :
                     appView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-
                 }
             });
         }
@@ -115,5 +115,17 @@ public abstract class AppContainerFragment extends Fragment {
      * must specify which ASyncTask class they use to load the applications as well.
      */
     protected void loadApplications(){
+    }
+
+    abstract void setListeners();
+
+    public View.OnClickListener getListener()
+    {
+        if(listener == null)
+        {
+            setListeners();
+        }
+
+        return listener;
     }
 }

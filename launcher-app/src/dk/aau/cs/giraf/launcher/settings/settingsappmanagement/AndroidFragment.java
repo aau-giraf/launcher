@@ -40,25 +40,30 @@ public class AndroidFragment extends AppContainerFragment {
     private Set<String> selectedApps;
     private ArrayList<AppInfo> appInfos;
     private LoadAndroidApplicationTask loadApplicationsTask;
-    private View.OnClickListener listener;
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     /**
      * Because we are dealing with a Fragment, OnCreateView is where most of the variables are set.
      * The context and the currentUser is set by the superclass.
-     * @param inflater The inflater (Android takes care of this)
-     * @param container The container, the ViewGroup, that the fragment should be inflate in.
+     *
+     * @param inflater           The inflater (Android takes care of this)
+     * @param container          The container, the ViewGroup, that the fragment should be inflate in.
      * @param savedInstanceState The previously saved instancestate
      * @return the inflated view.
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
         appView = (ViewPager) view.findViewById(R.id.appsViewPager);
         preferences = LauncherUtility.getSharedPreferencesForCurrentUser(getActivity(), currentUser);
         selectedApps = preferences.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
-        setListeners();
-
 
 
         return view;
@@ -70,16 +75,13 @@ public class AndroidFragment extends AppContainerFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (haveAppsBeenAdded){
+        if (haveAppsBeenAdded) {
             startObservingApps();
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
-        {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             appsFragmentAdapter = new AppsFragmentAdapter(this.getChildFragmentManager());
-        }
-        else
-        {
+        } else {
             appsFragmentAdapter = new AppsFragmentAdapter(this.getFragmentManager());
         }
 
@@ -101,7 +103,7 @@ public class AndroidFragment extends AppContainerFragment {
         if (selectedApps == null)
             selectedApps = new HashSet<String>();
 
-        if(appsUpdater != null){
+        if (appsUpdater != null) {
             appsUpdater.cancel();
             Log.d(Constants.ERROR_TAG, "Applications are no longer observed.");
         }
@@ -118,6 +120,7 @@ public class AndroidFragment extends AppContainerFragment {
 
     /**
      * This function reloads all the applications into the view.
+     *
      * @see dk.aau.cs.giraf.launcher.helper.LoadApplicationTask to see what the superclass does.
      */
     @Override
@@ -128,16 +131,16 @@ public class AndroidFragment extends AppContainerFragment {
 
     /**
      * Loads applications into the appview container if:
-     *  - the currently loadedapps list is null OR
-     *  - the size of the current loadedapps list is not equal to the list of all apps that should be loaded.
-     *  the superclass merely exists for derived classes to overwrite it and is empty
-     *  Keep in mind that this version of loadapplication uses LoadAndroidApplicationTask,
-     *  while GirafFragment uses LoadGirafApplicationTask, which is why it must be overridden
+     * - the currently loadedapps list is null OR
+     * - the size of the current loadedapps list is not equal to the list of all apps that should be loaded.
+     * the superclass merely exists for derived classes to overwrite it and is empty
+     * Keep in mind that this version of loadapplication uses LoadAndroidApplicationTask,
+     * while GirafFragment uses LoadGirafApplicationTask, which is why it must be overridden
      */
     @Override
-    public void loadApplications(){
-           loadApplicationsTask = new LoadAndroidApplicationTask(getActivity(), currentUser, null, appView, 110, listener);
-           loadApplicationsTask.execute();
+    public void loadApplications() {
+        loadApplicationsTask = new LoadAndroidApplicationTask(getActivity(), currentUser, null, appView, 110, listener);
+        loadApplicationsTask.execute();
 
     }
 
@@ -146,7 +149,8 @@ public class AndroidFragment extends AppContainerFragment {
      * The listener is the OnClickListener that all the AppImageViews created need to implement to make them
      * selectable and deselectable by the user.
      */
-    private void setListeners(){
+     @Override
+     void setListeners() {
         listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,11 +165,10 @@ public class AndroidFragment extends AppContainerFragment {
 
                 /** If the user had previously selected the app, removed it from the list of selected apps
                  * otherwise add it to the list of selected apps.*/
-                if (selectedApps.contains(activityName)){
+                if (selectedApps.contains(activityName)) {
                     selectedApps.remove(activityName);
                     Log.d(Constants.ERROR_TAG, "Removed '" + activityName + "' to list: " + selectedApps.size());
-                }
-                else{
+                } else {
                     selectedApps.add(activityName);
                     Log.d(Constants.ERROR_TAG, "Added '" + activityName + "' to list: " + selectedApps.size());
                 }
@@ -180,9 +183,9 @@ public class AndroidFragment extends AppContainerFragment {
         appsUpdater = new Timer();
         AppsObserver timerTask = new AppsObserver();
 
-        try{
+        try {
             appsUpdater.scheduleAtFixedRate(timerTask, 5000, 5000);
-        } catch (IllegalStateException e){
+        } catch (IllegalStateException e) {
             Log.e(Constants.ERROR_TAG, "Timer was already canceled:" + e.getMessage());
         }
 
@@ -200,21 +203,24 @@ public class AndroidFragment extends AppContainerFragment {
 
         /**
          * The contructor of the class
-         * @param context The context of the current activity
-         * @param currentUser The current user (if the current user is a guardian, this is set to null)
-         * @param guardian The guardian of the current user (or just the current user, if the user is a guardian)
-         * @param appsViewPager The layout to be populated with AppImageViews
-         * @param iconSize The size the icons should have
+         *
+         * @param context         The context of the current activity
+         * @param currentUser     The current user (if the current user is a guardian, this is set to null)
+         * @param guardian        The guardian of the current user (or just the current user, if the user is a guardian)
+         * @param appsViewPager   The layout to be populated with AppImageViews
+         * @param iconSize        The size the icons should have
          * @param onClickListener the onClickListener that each created app should have. In this case we feed it the global variable listener
          */
         public LoadAndroidApplicationTask(Context context, Profile currentUser, Profile guardian, ViewPager appsViewPager, int iconSize, View.OnClickListener onClickListener) {
             super(context, currentUser, guardian, appsViewPager, iconSize, onClickListener);
         }
 
-        /** We override onPreExecute to cancel the AppObserver if it is running*/
+        /**
+         * We override onPreExecute to cancel the AppObserver if it is running
+         */
         @Override
         protected void onPreExecute() {
-            if(appsUpdater != null)
+            if (appsUpdater != null)
                 appsUpdater.cancel();
 
             super.onPreExecute();
@@ -223,6 +229,7 @@ public class AndroidFragment extends AppContainerFragment {
         /**
          * This method needs to be overridden since we need to inform the superclass of exactly which apps should be generated.
          * In this case it is Android applications only.
+         *
          * @param applications the applications that the task should generate AppImageViews for
          * @return The Hashmap of AppInfos that describe the added applications.
          */
@@ -234,7 +241,9 @@ public class AndroidFragment extends AppContainerFragment {
             return appInfos;
         }
 
-        /**Once we have loaded applications, we start observing for new apps*/
+        /**
+         * Once we have loaded applications, we start observing for new apps
+         */
         @Override
         protected void onPostExecute(ArrayList<AppInfo> appInfos) {
             super.onPostExecute(appInfos);
@@ -247,6 +256,7 @@ public class AndroidFragment extends AppContainerFragment {
     /**
      * Task for observing if the set of available apps has changed.
      * Is only instantiated after apps have been loaded the first time.
+     *
      * @see dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AndroidFragment#loadApplications()
      */
     private class AppsObserver extends TimerTask {
@@ -254,8 +264,7 @@ public class AndroidFragment extends AppContainerFragment {
         @Override
         public void run() {
             apps = ApplicationControlUtility.getAndroidAppsOnDeviceAsApplicationList(getActivity());
-            if (loadedApps == null || loadedApps.size() != apps.size())
-            {
+            if (loadedApps == null || loadedApps.size() != apps.size()) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

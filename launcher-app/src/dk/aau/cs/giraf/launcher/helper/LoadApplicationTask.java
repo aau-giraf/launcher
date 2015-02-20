@@ -222,7 +222,7 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
 
         progressbar.setVisibility(View.GONE);
 
-        if (appInfos.size() > 0)
+        if (appInfos!= null && appInfos.size() > 0)
         {
             changeVisibilityOfNoAppsMessage(View.GONE);
 
