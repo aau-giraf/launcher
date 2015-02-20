@@ -59,16 +59,7 @@ public class AndroidFragment extends AppContainerFragment {
         selectedApps = preferences.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
         setListeners();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
-        {
-            appsFragmentAdapter = new AppsFragmentAdapter(this.getChildFragmentManager());
-        }
-        else
-        {
-            appsFragmentAdapter = new AppsFragmentAdapter(this.getFragmentManager());
-        }
 
-        appView.setAdapter(appsFragmentAdapter);
 
         return view;
     }
@@ -82,6 +73,19 @@ public class AndroidFragment extends AppContainerFragment {
         if (haveAppsBeenAdded){
             startObservingApps();
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+        {
+            appsFragmentAdapter = new AppsFragmentAdapter(this.getChildFragmentManager());
+        }
+        else
+        {
+            appsFragmentAdapter = new AppsFragmentAdapter(this.getFragmentManager());
+        }
+
+        appView.setAdapter(appsFragmentAdapter);
+
+        reloadApplications();
     }
 
     /**
@@ -108,6 +112,8 @@ public class AndroidFragment extends AppContainerFragment {
         editor.apply();
 
         loadApplicationsTask.cancel(true);
+
+        appView.setAdapter(null);
     }
 
     /**

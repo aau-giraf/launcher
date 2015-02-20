@@ -80,7 +80,7 @@ public abstract class AppContainerFragment extends Fragment {
                 public void onGlobalLayout() {
                     // Ensure you call it only once :
                     appView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                    reloadApplications();
+
                 }
             });
         }

@@ -2,6 +2,7 @@ package dk.aau.cs.giraf.launcher.layoutcontroller;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;;
 
@@ -11,7 +12,7 @@ import java.util.List;
 /**
  * Created by Marhlder on 18-02-15.
  */
-public class AppsFragmentAdapter extends FragmentStatePagerAdapter {
+public class AppsFragmentAdapter extends FragmentPagerAdapter {
 
     private List<AppInfo> appInfoList;
     private int rowSize;
@@ -24,15 +25,25 @@ public class AppsFragmentAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(final int position) {
-        return AppsGridFragment.newInstance(new ArrayList<AppInfo>(appInfoList.subList(position * rowSize * coloumnSize, ((position + 1) * rowSize * coloumnSize) - 1)), rowSize, coloumnSize);
+        final int from = position * rowSize * coloumnSize;
+        final int to = ((position + 1) * rowSize * coloumnSize);
+
+        if(to <appInfoList.size())
+        {
+            return AppsGridFragment.newInstance(new ArrayList<AppInfo>(appInfoList.subList(from, to)), rowSize, coloumnSize);
+        }
+        else
+        {
+            return AppsGridFragment.newInstance(new ArrayList<AppInfo>(appInfoList.subList(from, appInfoList.size())), rowSize, coloumnSize);
+        }
+
     }
 
     @Override
     public int getCount() {
 
-        if (appInfoList != null)
-        {
-            return (int) Math.ceil(appInfoList.size() / (rowSize * coloumnSize));
+        if (appInfoList != null) {
+            return (int) Math.ceil( ((double)appInfoList.size()) / (rowSize * coloumnSize));
         }
 
         return 0;

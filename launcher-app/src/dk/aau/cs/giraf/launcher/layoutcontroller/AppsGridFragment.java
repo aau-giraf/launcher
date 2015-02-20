@@ -81,7 +81,6 @@ public class AppsGridFragment extends Fragment {
 
             for(int appCounter = 0; appCounter < appInfos.size(); appCounter++)
             {
-
                     final AppInfo currentAppInfo = appInfos.get(appCounter);
 
                     final AppsFragmentInterface activity = (AppsFragmentInterface)getActivity();
@@ -108,9 +107,6 @@ public class AppsGridFragment extends Fragment {
                 appsGridLayout.addView(view, appCounter);
                 */
             }
-
-            appsGridLayout.setBackgroundColor(Color.GREEN);
-
         }
 
         return appsGridLayout;

@@ -89,6 +89,8 @@ public class AppInfo extends Application implements Parcelable {
         this.setPackage(stringdata[2]);
         this.setActivity(stringdata[3]);
         this.setDescription(stringdata[4]);
+
+
     }
 
     @Override
@@ -99,11 +101,11 @@ public class AppInfo extends Application implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags)
     {
-        // Write integers
-        dest.writeIntArray(new int[]{this.getId(),this.getBgColor(), this.getAuthor() });
-
         // Write strings
         dest.writeStringArray(new String[]{this.getName(), this.getVersion(), this.getPackage(), this.getActivity(), this.getDescription()});
+
+        // Write integers
+        dest.writeIntArray(new int[]{this.getId(),this.getBgColor(), this.getAuthor() });
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
