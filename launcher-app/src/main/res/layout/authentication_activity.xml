@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="horizontal"
+        android:background="@drawable/gbackground"
+        android:weightSum="5">
+
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="3"
+            android:id="@+id/Instruction_container">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal">
+
+                <TextView
+                    android:id="@+id/headline"
+                    android:text="@string/authentication_headline"
+                    android:textColor="#FFFFFFFF"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:textSize="30sp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"/>
+
+                <ImageView android:id="@+id/animation"
+                    android:contentDescription="Instructions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleX="0.8"
+                    android:scaleY="0.8"
+                    android:layout_alignParentLeft="true"
+                    android:src="@drawable/ani_00000"
+                    android:layout_below="@+id/headline" />
+
+                <TextView
+                    android:id="@+id/authentication_step1"
+                    android:text="@string/authentication_step1"
+                    android:textColor="#FFFFFFFF"
+                    android:layout_height="wrap_content"
+                    android:layout_width="300dp"
+                    android:textSize="30sp"
+                    android:layout_below="@+id/animation" />
+
+                <TextView
+                    android:visibility="invisible"
+                    android:singleLine="false"
+                    android:id="@+id/loginname"
+                    android:textColor="#FFFFFFFF"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:textSize="50sp"
+                    android:layout_below="@+id/authentication_step1"
+                    android:layout_marginTop="15dp" />
+            </RelativeLayout>
+
+            <include
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    layout="@layout/debug_mode_overlay" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="100dp"
+            android:layout_marginBottom="100dp"
+            android:layout_marginRight="75dp"
+            android:layout_weight="2"
+            android:id="@+id/Camerafeed_container">
+
+            <RelativeLayout
+                android:id="@+id/camerafeed"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center"
+                android:background="@drawable/cameraborder"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true">
+                <include layout="@layout/capture"/>
+
+                <ImageView
+                    android:id="@+id/scanicon"
+                    android:layout_width="250dp"
+                    android:layout_height="250dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:alpha="0.5"
+                    android:src="@drawable/scanicon" />
+
+            </RelativeLayout>
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <dk.aau.cs.giraf.gui.GVerifyButton
+        android:visibility="invisible"
+        android:id="@+id/loginGButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="40sp"
+        android:text="Log ind"
+        android:layout_margin="20dp"
+        android:layout_gravity="center_horizontal|bottom" />
+</FrameLayout>

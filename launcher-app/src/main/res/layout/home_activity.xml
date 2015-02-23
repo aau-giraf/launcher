@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/gbackgroundlight">
+
+    <dk.aau.cs.giraf.launcher.layoutcontroller.DrawerLayout
+        android:id="@+id/DrawerView"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_marginLeft="-400dp">
+
+        <RelativeLayout
+            android:layout_width="400dp"
+            android:layout_height="fill_parent"
+            android:id="@+id/DrawerContentView"
+            android:background="@drawable/drawerbackground">
+
+            <GridView
+                android:id="@+id/appcolors"
+                android:layout_height="fill_parent"
+                android:layout_width="fill_parent"
+                android:layout_alignParentRight="true"
+                android:numColumns="auto_fit"
+
+                android:listSelector="#00000000"
+                android:padding="20dp"
+                android:columnWidth="90dp"
+                android:verticalSpacing="20dp" />
+        </RelativeLayout>
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/SidebarView"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_toRightOf="@id/DrawerContentView"
+            android:background="@drawable/homebar_back_land"
+            android:paddingBottom="20dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="40dp"
+            android:paddingTop="20dp">
+
+            <dk.aau.cs.giraf.gui.GWidgetProfileSelection
+                android:visibility="visible"
+                android:id="@+id/profile_widget"
+                android:layout_width="@dimen/profile_selection_width"
+                android:layout_height="@dimen/profile_selection_height"
+                android:layout_alignParentLeft="true" />
+
+            <dk.aau.cs.giraf.gui.GButtonSettings
+                android:id="@+id/settingsbutton"
+                android:layout_width="@dimen/drawer_widget_dimension"
+                android:layout_height="@dimen/drawer_widget_dimension"
+                android:layout_below="@id/profile_widget"
+                android:layout_marginTop="@dimen/drawer_widget_marginTop" />
+
+            <dk.aau.cs.giraf.gui.GWidgetLogout
+                android:id="@+id/logoutwidget"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="@dimen/drawer_widget_marginTop" />
+        </RelativeLayout>
+        
+    </dk.aau.cs.giraf.launcher.layoutcontroller.DrawerLayout>
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_toRightOf="@id/DrawerView">
+
+        <TextView
+            android:id="@+id/noAppsMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="30sp"
+            android:layout_gravity="center"
+            android:text="@string/no_apps_available"
+            android:textColor="@android:color/darker_gray"
+            android:visibility="gone" />
+
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            layout="@layout/debug_mode_overlay" />
+
+        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/appScrollView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/appContainer"
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+            </LinearLayout>
+        </ScrollView>
+    </FrameLayout>
+
+</RelativeLayout>
