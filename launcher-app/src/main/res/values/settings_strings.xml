@@ -24,5 +24,5 @@
     <string name="settings_tablist_general">Generelt</string>
     <string name="settings_tablist_applications">Aktive applikationer</string>
     <string name="settings_tablist_tablet">Tablet Indstillinger</string>
-    <string name="settings_for">Indstillinger for </string>
+    <string name="settings_for">Indstillinger for</string>
 </resources>
