@@ -4,8 +4,10 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,7 +88,7 @@ public class AppsGridFragment extends Fragment {
                 //Create a new AppImageView and set its properties
                 AppImageView newAppView = AppViewCreationUtility.createAppImageView(getActivity(), currentUser, activity.getLoggedInGuardian(), currentAppInfo, appsGridLayout, getOnClickListener());
                 newAppView.setScaleType(ImageView.ScaleType.FIT_XY);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(container.getMeasuredWidth() / columnSize, container.getMeasuredHeight() / rowSize);
+                GridLayout.LayoutParams params = new GridLayout.LayoutParams(new ViewGroup.LayoutParams(container.getMeasuredWidth() / columnSize, container.getMeasuredHeight() / rowSize));
                 //params.setMargins(2, 2, 2, 2);
                 newAppView.setLayoutParams(params);
 
@@ -120,7 +122,18 @@ public class AppsGridFragment extends Fragment {
     }
 
     protected View.OnClickListener getOnClickListener() {
-        Fragment parentFragment = getParentFragment();
+
+        Fragment parentFragment = null;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+
+            parentFragment = getParentFragment();
+        } else
+        {
+            FragmentManager manager = getFragmentManager();
+
+            parentFragment = manager.findFragmentById(R.id.app_settings_fragmentlayout);
+        }
 
         if (parentFragment instanceof AppContainerFragment) {
             return ((AppContainerFragment) parentFragment).getListener();

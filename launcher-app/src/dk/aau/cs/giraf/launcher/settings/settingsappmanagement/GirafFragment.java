@@ -61,6 +61,13 @@ public class GirafFragment extends AppContainerFragment {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         appView = (ViewPager) view.findViewById(R.id.appsViewPager);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+
+            appView.setAdapter(new AppsFragmentAdapter(getChildFragmentManager(), appInfos, MainActivity.rowSize, MainActivity.columnSize));
+        } else {
+
+            appView.setAdapter(new AppsFragmentAdapter(getFragmentManager(), appInfos, MainActivity.rowSize, MainActivity.columnSize));
+        }
 
         return view;
     }
@@ -76,16 +83,9 @@ public class GirafFragment extends AppContainerFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (haveAppsBeenAdded)
+        if (haveAppsBeenAdded) {
             startObservingApps();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            appsFragmentAdapter = new AppsFragmentAdapter(this.getChildFragmentManager(),  appInfos, MainActivity.rowSize, MainActivity.columnSize);
-        } else {
-            appsFragmentAdapter = new AppsFragmentAdapter(this.getFragmentManager(),  appInfos, MainActivity.rowSize, MainActivity.columnSize);
         }
-
-        appView.setAdapter(appsFragmentAdapter);
         reloadApplications();
     }
 
@@ -106,8 +106,6 @@ public class GirafFragment extends AppContainerFragment {
 
             Log.d(Constants.ERROR_TAG, "Applications are no longer observed.");
         }
-
-        appView.setAdapter(null);
     }
 
     /**
@@ -247,8 +245,7 @@ public class GirafFragment extends AppContainerFragment {
         }
 
         @Override
-        public android.support.v4.app.FragmentManager getFragmentMangerForAppsFragmentAdapter()
-        {
+        public android.support.v4.app.FragmentManager getFragmentMangerForAppsFragmentAdapter() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 return GirafFragment.this.getChildFragmentManager();
             } else {

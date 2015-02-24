@@ -126,6 +126,8 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
             LauncherUtility.showDebugInformation(this);
         }
 
+        mAppViewPager.setAdapter(new AppsFragmentAdapter(getSupportFragmentManager(), mCurrentLoadedApps,  MainActivity.rowSize, MainActivity.columnSize));
+
         // Start logging this activity
         EasyTracker.getInstance(this).activityStart(this);
     }
@@ -218,7 +220,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
             loadHomeActivityApplicationTask.cancel(true);
         }
 
-        mAppViewPager.setAdapter(null);
+        //mAppViewPager.setAdapter(null);
     }
 
 

@@ -67,6 +67,15 @@ public class AndroidFragment extends AppContainerFragment {
         selectedApps = preferences.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
 
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+
+            appView.setAdapter(new AppsFragmentAdapter(getChildFragmentManager(), appInfos, MainActivity.rowSize, MainActivity.columnSize));
+        } else {
+
+            appView.setAdapter(new AppsFragmentAdapter(getFragmentManager(), appInfos, MainActivity.rowSize, MainActivity.columnSize));
+        }
+
+
         return view;
     }
 
@@ -79,8 +88,6 @@ public class AndroidFragment extends AppContainerFragment {
         if (haveAppsBeenAdded) {
             startObservingApps();
         }
-
-
 
         reloadApplications();
     }
@@ -110,7 +117,6 @@ public class AndroidFragment extends AppContainerFragment {
 
         loadApplicationsTask.cancel(true);
 
-        appView.setAdapter(null);
     }
 
     /**
@@ -144,8 +150,8 @@ public class AndroidFragment extends AppContainerFragment {
      * The listener is the OnClickListener that all the AppImageViews created need to implement to make them
      * selectable and deselectable by the user.
      */
-     @Override
-     void setListeners() {
+    @Override
+    void setListeners() {
         super.listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -222,8 +228,7 @@ public class AndroidFragment extends AppContainerFragment {
         }
 
         @Override
-        public android.support.v4.app.FragmentManager getFragmentMangerForAppsFragmentAdapter()
-        {
+        public android.support.v4.app.FragmentManager getFragmentMangerForAppsFragmentAdapter() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 return AndroidFragment.this.getChildFragmentManager();
             } else {
