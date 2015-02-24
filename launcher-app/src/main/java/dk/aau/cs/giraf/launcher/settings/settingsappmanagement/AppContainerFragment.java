@@ -1,20 +1,24 @@
 package dk.aau.cs.giraf.launcher.settings.settingsappmanagement;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.GridLayout;
 import android.widget.LinearLayout;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
+import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
@@ -24,16 +28,17 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
  * This Fragment should never be implemented directly, but simply inherited from.
  * It is therefore abstract
  */
-public abstract class AppContainerFragment extends Fragment{
+public abstract class AppContainerFragment extends Fragment {
 
     protected AppsFragmentInterface mCallback; // Callback to containing Activity implementing the SettingsListFragmentListener interface
     protected Profile currentUser;
-    protected HashMap<String, AppInfo> loadedApps;
+    protected ArrayList<AppInfo> loadedApps;
     // This needs to be initialized in the subclasses
     protected List<Application> apps;
-    protected LinearLayout appView;
+    protected ViewPager appView;
+    protected AppsFragmentAdapter appsFragmentAdapter;
     protected boolean haveAppsBeenAdded = false;
-    protected Context context;
+    public View.OnClickListener listener;
 
     /**
      * Because we are dealing with a Fragment, OnCreateView is where most of the variables are set.
@@ -49,8 +54,8 @@ public abstract class AppContainerFragment extends Fragment{
         if (appView == null){
             view = inflater.inflate(R.layout.settings_appmanagement_appcontainer,
                     container, false);
-            context = getActivity();
-            currentUser = mCallback.getSelectedProfile();
+
+            currentUser = mCallback.getCurrentUser();
         } else {
             view = appView.getRootView();
         }
@@ -76,7 +81,6 @@ public abstract class AppContainerFragment extends Fragment{
                 public void onGlobalLayout() {
                     // Ensure you call it only once :
                     appView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                    reloadApplications();
                 }
             });
         }
@@ -88,7 +92,7 @@ public abstract class AppContainerFragment extends Fragment{
      * @param activity
      */
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(final Activity activity) {
         super.onAttach(activity);
         try {
             mCallback = (AppsFragmentInterface) activity;
@@ -111,5 +115,17 @@ public abstract class AppContainerFragment extends Fragment{
      * must specify which ASyncTask class they use to load the applications as well.
      */
     protected void loadApplications(){
+    }
+
+    abstract void setListeners();
+
+    public View.OnClickListener getListener()
+    {
+        if(listener == null)
+        {
+            setListeners();
+        }
+
+        return listener;
     }
 }

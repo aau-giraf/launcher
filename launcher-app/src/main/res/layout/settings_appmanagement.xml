@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="match_parent"
-android:layout_height="match_parent">
-
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/tabLayout"
@@ -27,7 +26,8 @@ android:layout_height="match_parent">
             android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/black"
-            android:background="@drawable/settings_tab_button_drawable"/>
+            android:background="@drawable/settings_tab_button_drawable" />
+
         <Button
             android:id="@+id/settings_android_button"
             android:layout_width="0dp"
@@ -40,7 +40,8 @@ android:layout_height="match_parent">
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:gravity="center"
             android:textColor="@android:color/black"
-            android:background="@drawable/settings_tab_button_drawable"/>
+            android:background="@drawable/settings_tab_button_drawable" />
+
         <Button
             android:id="@+id/settings_googleplay_button"
             android:layout_width="0dp"
@@ -53,17 +54,16 @@ android:layout_height="match_parent">
             android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/black"
-            android:background="@drawable/settings_tab_button_drawable"/>
+            android:background="@drawable/settings_tab_button_drawable" />
 
-        </LinearLayout>
+    </LinearLayout>
 
     <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_marginTop="50dp"
         android:layout_alignParentTop="true"
         android:id="@+id/app_settings_fragmentlayout"
-        android:layout_alignParentLeft="true">
-        </FrameLayout>
+        android:layout_alignParentLeft="true"/>
 
 </RelativeLayout>

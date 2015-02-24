@@ -1,5 +1,6 @@
 package dk.aau.cs.giraf.launcher.activities;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -19,6 +20,7 @@ import com.google.zxing.Result;
 import com.google.zxing.client.android.CaptureActivity;
 
 import java.util.Date;
+import java.util.List;
 
 import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.launcher.R;
@@ -38,10 +40,10 @@ public class AuthenticationActivity extends CaptureActivity {
 	private GButton mGLoginButton;
 	private TextView mLoginNameView;
 	private TextView mInfoView;
-	private Context mContext;
 	private Vibrator mVibrator;
 	private Profile mPreviousProfile;
     private View mCameraFeed;
+    private Helper mHelper;
 
     private boolean isFramingRectangleRedrawn = false;
 
@@ -56,11 +58,15 @@ public class AuthenticationActivity extends CaptureActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.authentication_activity);
 
-		mContext = this;
+		//mContext = this;
 		mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);		
 		mGLoginButton = (GButton)this.findViewById(R.id.loginGButton);
 		mLoginNameView = (TextView)this.findViewById(R.id.loginname);
 		mInfoView = (TextView)this.findViewById(R.id.authentication_step1);
+
+        mHelper = new Helper(this);
+
+        addLoginButtonsForDebugging();
 
         // Show warning if in debugging mode
         if (LauncherUtility.isDebugging()) {
@@ -72,7 +78,7 @@ public class AuthenticationActivity extends CaptureActivity {
 			public void onClick(View v) {
 				// If authentication_activity was not launched by the launcher...
 				if (!getIntent().hasCategory("dk.aau.cs.giraf.launcher.GIRAF")) {
-                    LauncherUtility.saveLogInData(mContext, mPreviousProfile.getId(), new Date().getTime());
+                    LauncherUtility.saveLogInData(AuthenticationActivity.this, mPreviousProfile.getId(), new Date().getTime());
 					startActivity(mHomeIntent);
 				}
 			}
@@ -85,6 +91,30 @@ public class AuthenticationActivity extends CaptureActivity {
         // Start logging this activity
         EasyTracker.getInstance(this).activityStart(this);
 	}
+
+    private void addLoginButtonsForDebugging() {
+        GButton guardianButton = (GButton) this.findViewById(R.id.loginGuardianGButton);
+
+        guardianButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            Profile guardianProfile = mHelper.profilesHelper.getProfilesByName("sw615f14").get(0);
+
+            if (guardianProfile == null)
+            {
+                mInfoView.setText("Kunne ikke finde bruger: SW615f14");
+                return;
+            }
+
+            if (!getIntent().hasCategory("dk.aau.cs.giraf.launcher.GIRAF")) {
+                mHomeIntent = new Intent(AuthenticationActivity.this, HomeActivity.class);
+                mHomeIntent.putExtra(Constants.GUARDIAN_ID, guardianProfile.getId());
+                LauncherUtility.saveLogInData(AuthenticationActivity.this, guardianProfile.getId(), new Date().getTime());
+                startActivity(mHomeIntent);
+            }
+        }
+        });
+    }
 
     /**
      * Draws the feed's framing rectangle if necessary.

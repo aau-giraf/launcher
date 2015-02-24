@@ -7,5 +7,6 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
  * It is implemented by AppContainerFragment
  */
 public interface AppsFragmentInterface {
-    public Profile getSelectedProfile();
+    public Profile getCurrentUser();
+    public Profile getLoggedInGuardian();
 }

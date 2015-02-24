@@ -1,12 +1,10 @@
 package dk.aau.cs.giraf.launcher.settings;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.ActivityNotFoundException;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.sax.StartElementListener;
-import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +51,13 @@ public class SettingsListFragment extends Fragment {
         public void setActiveFragment(Fragment fragment);
 
         /**
+         * Used when an item in the ListView has been clicked
+         * to send the to-be-active fragment back to the Activity.
+         * @param fragment
+         */
+        public void setActiveFragment(android.support.v4.app.Fragment fragment);
+
+        /**
          * Reloads the activity when user settings should be refreshed
          * based on a new profile selection.
          * @see SettingsListFragment
@@ -97,28 +102,47 @@ public class SettingsListFragment extends Fragment {
         int childID = getActivity().getIntent().getIntExtra(Constants.CHILD_ID, -1);
 
         // The childID is -1 meaning that no childs are available
-        if(childID == -1)
-        {
+        if(childID == -1) {
             mCurrentUser = pc.getProfileById(getActivity().getIntent().getIntExtra(Constants.GUARDIAN_ID, -1));
             mProfileSelector = new GProfileSelector(getActivity(), mLoggedInGuardian, null);
-        }
-        // A child is found - set it as active and add its profile selector
-        else
-        {
+        } else { // A child is found - set it as active and add its profile selector
             mCurrentUser = pc.getProfileById(childID);
             mProfileSelector = new GProfileSelector(getActivity(), mLoggedInGuardian, mCurrentUser);
         }
         // Notify about the current user
         mCallback.setCurrentUser(mCurrentUser);
+
+        // Get the name of the current user ensure the user and its name is not null
+        String currentUserName = mCurrentUser == null || mCurrentUser.getName() == null ? "Uknown" : mCurrentUser.getName();
+
         // Update the name of the user
-        mProfileName.setText(mCurrentUser.getName());
+        mProfileName.setText(currentUserName);
+
+        ActionBar actionBar = getActivity().getActionBar();
+
+        // Check if the actionbar is null
+        if (actionBar != null) {
+
+            // Inflate the activity with the settings_actionbar
+            View actionBarView = getActivity().getLayoutInflater().inflate(R.layout.settings_actionbar, null);
+
+            // Override the actionbar
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+            actionBar.setCustomView(actionBarView);
+
+            // Find the title (text view) of the actionbar
+            TextView actionBarTitle = (TextView) actionBar.getCustomView().findViewById(R.id.settings_actionbar_title);
+
+            // Set the title of the actionbar (text view)
+            actionBarTitle.setText(getString(R.string.settings_for) + currentUserName);
+        }
 
         // Instantiates a new adapter to render the items in the ListView with a list of installed (available) apps
         mAdapter = new SettingsListAdapter(getActivity(), mSettingsListView, mCallback.getInstalledSettingsApps());
         // Set the new adapter in the ListView
         mSettingsListView.setAdapter(mAdapter);
 
-        // Set listerners for loaded user interface components
+        // Set listeners for loaded user interface components
         setListeners();
 
         //Load the correct profile picture for the choosen profile
@@ -174,21 +198,35 @@ public class SettingsListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 SettingsListItem item = (SettingsListItem) parent.getAdapter().getItem(position);
+
                 // If the item contains a fragment, set it as active
-                if (item.mAppFragment != null) {
+                if (item instanceof FragmentSettingsListItem) {
+
+                    FragmentSettingsListItem fragmentItem = ((FragmentSettingsListItem) item);
+
                     // Notify class implementing the callback interface that a new fragment has been selected
-                    mCallback.setActiveFragment(item.mAppFragment);
+
+                    if(fragmentItem.fragment == null)
+                    {
+                        mCallback.setActiveFragment(fragmentItem.supportFragment);
+                    }
+                    else
+                    {
+                        mCallback.setActiveFragment(fragmentItem.fragment);
+                    }
+
+
                     // Update the adapter to reflect the selection
                     mAdapter.setSelected(position);
                 }
                 // Otherwise it must be an intent
-                else if (item.mIntent != null) {
+                else if (item instanceof IntentSettingsListItem) {
                     try {
                         // Start a new activity with the intent
-                        startActivity(item.mIntent);
+                        startActivity(((IntentSettingsListItem) item).intent);
                     }
                     // Handle exception if the intended activity can not be started.
-                    catch (ActivityNotFoundException ex) {
+                    catch (ActivityNotFoundException e) {
                         Toast.makeText(parent.getContext(), R.string.settings_activity_not_found_msg, Toast.LENGTH_SHORT).show();
                     }
                     finally {

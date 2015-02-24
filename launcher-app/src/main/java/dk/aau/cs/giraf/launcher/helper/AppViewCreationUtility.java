@@ -14,8 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -40,10 +42,11 @@ public class AppViewCreationUtility {
     /**
      * Loads the AppInfo object of app from the list, into the {@code mAppInfoHashMap} hash map, making
      * them accessible with only the ID string of the app.
+     * synchronized: Because mAppInfoHashMap is used on GUI thread and in LoadApplicationTask
      * @param context The context of the current activity
      * @param appsList The array of accessible apps
      */
-    public static HashMap<String,AppInfo> updateAppInfoHashMap(Context context, Application[] appsList) {
+    public synchronized static HashMap<String,AppInfo> updateAppInfoHashMap(Context context, Application[] appsList) {
         mAppInfoHashMap = new HashMap<String,AppInfo>();
 
         for (Application app : appsList) {
@@ -65,7 +68,7 @@ public class AppViewCreationUtility {
      * @param appIcon The Icon of the App
      * @return
      */
-    private static View addContentToView(Context context, LinearLayout targetLayout, String appName, Drawable appIcon){
+    private static View addContentToView(Context context, GridLayout targetLayout, String appName, Drawable appIcon){
         final LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
         View targetView = inflater.inflate(R.layout.apps_container, targetLayout, false);
 
@@ -86,16 +89,16 @@ public class AppViewCreationUtility {
      * @param targetLayout The layout we want to add the AppImageView to.
      * @return
      */
-    protected static AppImageView createAppImageView(Context context, final Profile currentUser, final Profile guardian, AppInfo appInfo, LinearLayout targetLayout, View.OnClickListener listener) {
+     public static AppImageView createAppImageView(Context context, final Profile currentUser, final Profile guardian, AppInfo appInfo, GridLayout targetLayout, View.OnClickListener listener) {
 
-        AppImageView appImageView = new AppImageView(context);
+        AppImageView appImageView = new AppImageView(context, appInfo);
         View appView = addContentToView(context, targetLayout, appInfo.getName(), appInfo.getIconImage());
 
         setAppBackground(appView, appInfo.getBgColor());
 
         appImageView.setImageBitmap(createBitmapFromLayoutWithText(context, appView, Constants.APP_ICON_DIMENSION_DEF, Constants.APP_ICON_DIMENSION_DEF));
         appImageView.setTag(String.valueOf(appInfo.getApp().getId()));
-        appImageView.setOnDragListener(new GAppDragger());
+        //appImageView.setOnDragListener(new GAppDragger());
 
         if(listener == null)
         {
@@ -108,9 +111,23 @@ public class AppViewCreationUtility {
                     } catch (NullPointerException e){
                         // could not get context, no animation.
                     }
-                    AppInfo app = mAppInfoHashMap.get((String) v.getTag());
-                    Intent intent = new Intent(Intent.ACTION_MAIN);
+
+                    AppInfo app = null;
+
+                    /*
+                    * This block is synchronized on the AppViewCreationUtility class to prevent
+                    * race condtions where mAppInfoHashMap is reinitialized in the background with
+                    * updateAppInfoHashMap
+                    *
+                    * */
+                    synchronized(AppViewCreationUtility.class)
+                    {
+                        app = mAppInfoHashMap.get((String) v.getTag());
+                    }
+
+                        Intent intent = new Intent(Intent.ACTION_MAIN);
                     intent.addCategory(Intent.CATEGORY_LAUNCHER);
+
                     intent.setComponent(new ComponentName(app.getPackage(), app.getActivity()));
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                             | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);

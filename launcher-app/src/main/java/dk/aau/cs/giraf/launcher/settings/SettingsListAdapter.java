@@ -2,8 +2,6 @@ package dk.aau.cs.giraf.launcher.settings;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -110,7 +108,6 @@ public class SettingsListAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.appIcon = (ImageView)convertView.findViewById(R.id.settingsListAppLogo);
             holder.appName = (TextView)convertView.findViewById(R.id.settingsListAppName);
-            holder.summary = (TextView)convertView.findViewById(R.id.settingsListSummary);
             holder.shadowTop = convertView.findViewById(R.id.settingsListRowShadowBelow);
             holder.shadowBottom = convertView.findViewById(R.id.settingsListRowShadowAbove);
             holder.shadowRight = convertView.findViewById(R.id.settingsListRowShadowRight);
@@ -129,7 +126,6 @@ public class SettingsListAdapter extends BaseAdapter {
         // Set the visibility of the right shadow of current view
         if (position == mLastSelectedItem) {
             setShadowVisibility(holder.shadowRight, false);
-            holder.summary.setVisibility(View.GONE);
             // Set the selected item in the ListView coming from the constructor
             // Minimizes the use of findViewById
             mListView.setItemChecked(position, true);
@@ -150,13 +146,8 @@ public class SettingsListAdapter extends BaseAdapter {
             setShadowVisibility(holder.shadowTop, false);
 
         // Setting all values in ListView
-        holder.appIcon.setBackgroundDrawable(item.mAppIcon);
-        holder.appName.setText(item.mAppName);
-
-        if (item.mSummary != null && position != mLastSelectedItem) {
-            holder.summary.setText(item.mSummary);
-            holder.summary.setVisibility(View.VISIBLE);
-        }
+        holder.appIcon.setBackgroundDrawable(item.icon);
+        holder.appName.setText(item.title);
 
         return convertView;
     }
@@ -180,7 +171,6 @@ public class SettingsListAdapter extends BaseAdapter {
     private class ViewHolder {
         public ImageView appIcon;
         public TextView appName;
-        public TextView summary;
         public View shadowTop;
         public View shadowBottom;
         public View shadowRight;

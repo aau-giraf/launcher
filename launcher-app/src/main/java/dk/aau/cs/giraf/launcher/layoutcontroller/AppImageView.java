@@ -11,50 +11,30 @@ import dk.aau.cs.giraf.launcher.R;
  * this is the type they are made of. The class adds a few methods to the native ImageView
  */
 public class AppImageView extends ImageView {
+
     private boolean checked = false;
     private Context context;
+    public final AppInfo appInfo;
 
     /**
      * A constructor for the class
      * @param context The context of the current activity
      */
-    public AppImageView(Context context) {
+    public AppImageView(final Context context, final AppInfo appInfo) {
         super(context);
         this.context = context;
-    }
-
-    /**
-     * A constructor for the class
-     * This constructor is not used, but must be implemented in order to override the ImageView class
-     * @param context The context of the current activity
-     * @param attrs The set of attributes added to the AppImageView
-     */
-    public AppImageView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        this.context = context;
-    }
-
-    /**
-     * A constructor for the class
-     * This constructor is not used, but must be implemented in order to override the ImageView class
-     * @param context The context of the current activity
-     * @param attrs The set of attributes added to the AppImageView
-     * @param defStyle The defined style of the AppImageView
-     */
-    public AppImageView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        this.context = context;
+        this.appInfo = appInfo;
     }
 
     /**
      * Set an AppView as checked.
      * This is used in SettingsActivity for displaying which apps a user has chosen.
-     * Also calls setRightColor to set the background color to the correct one.
+     * Also calls updateColor to set the background color to the correct one.
      * @param checked
      */
     public void setChecked(boolean checked){
         this.checked = checked;
-        setRightColor();
+        updateColor();
     }
 
     /**
@@ -63,7 +43,7 @@ public class AppImageView extends ImageView {
      * If checked is set, sets the background color to light orange.
      * This is only relevant for SettingsActivity to show which apps have been chosen by a user.
      */
-    private void setRightColor(){
+    private void updateColor(){
         if (checked){
             setBackgroundColor(context.getResources().getColor(android.R.color.holo_orange_light));
         }
@@ -83,7 +63,7 @@ public class AppImageView extends ImageView {
     /**
      * Toogles an AppView as checked or unchecked.
      * This is used in SettingsActivity for displaying which apps a user has chosen.
-     * Also calls setRightColor to set the background color to the correct one.
+     * Also calls updateColor to set the background color to the correct one.
      * @return Whether checked was set to true or false
      */
     public boolean toggle(){
@@ -94,7 +74,7 @@ public class AppImageView extends ImageView {
             checked = false;
         }
 
-        setRightColor();
+        updateColor();
 
         return checked;
     }

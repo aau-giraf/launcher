@@ -2,10 +2,12 @@ package dk.aau.cs.giraf.launcher.settings.settingsappmanagement;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import  android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +21,7 @@ import dk.aau.cs.giraf.launcher.R;
  * Also implements the buttons needed to switch between the two fragments
  * Finally, it also implements the button used to open the Play Store.
  */
-public class AppManagementFragment extends Fragment {
+public class AppManagementFragment extends android.support.v4.app.Fragment {
 
     /** These strings are used for opening the Play Store, searching for the correct items*/
     private static final String MARKET_SEARCH_APP_URI = "market://search?q=pub:";
@@ -30,10 +32,10 @@ public class AppManagementFragment extends Fragment {
     /** The FragmentManager is used to manage whcih fragments are current in the FragmentContainer*/
     /** The girafFragment and the androidFragment are the fragments to be inflated into the container*/
     /** The fragmentContainer that contains the inflated girafFragment or androidFragment*/
-    private FragmentManager fragmentManager;
-    private Fragment girafFragment;
-    private Fragment androidFragment;
-    private Fragment fragmentContainer;
+    private android.support.v4.app.FragmentManager fragmentManager;
+    private GirafFragment girafFragment;
+    private AndroidFragment androidFragment;
+    private android.support.v4.app.Fragment fragmentContainer;
 
     /** All the buttons that make the fragmentContainer inflate the correct fragment or open Play Store*/
     private Button girafAppsButton;
@@ -48,8 +50,8 @@ public class AppManagementFragment extends Fragment {
      * @return the inflated view.
      */
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.settings_appmanagement,
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+        final View view = inflater.inflate(R.layout.settings_appmanagement,
                 container, false);
 
         this.setRetainInstance(true);
@@ -61,14 +63,20 @@ public class AppManagementFragment extends Fragment {
         androidAppsButton = (Button)view.findViewById(R.id.settings_android_button);
         googlePlayButton = (Button)view.findViewById(R.id.settings_googleplay_button);
         this.setButtonListeners();
-        fragmentManager = this.getFragmentManager();
-        fragmentContainer = fragmentManager.findFragmentById(R.id.app_settings_fragmentlayout);
+
+        /*
+        * getChildFragmentManager() only works with Build.VERSION_CODES.JELLY_BEAN_MR1 or higher
+        * */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            fragmentManager = this.getChildFragmentManager();
+        } else {
+            fragmentManager = this.getFragmentManager();
+        }
 
         /** Choose the GIRAF pane and set the GIRAF button when the fragment has loaded.*/
         fragmentContainer = girafFragment;
         focusButton(girafAppsButton);
-        fragmentManager.beginTransaction().add(R.id.app_settings_fragmentlayout, fragmentContainer)
-                .commit();
+        fragmentManager.beginTransaction().add(R.id.app_settings_fragmentlayout, fragmentContainer).commit();
 
         return view;
     }
@@ -115,7 +123,7 @@ public class AppManagementFragment extends Fragment {
      * Adds responsiveness when loading list of installed apps_container.
      * @param fragment
      */
-    private void replaceFragment(final Fragment fragment){
+    private void replaceFragment(final android.support.v4.app.Fragment fragment){
         new Runnable() {
             @Override
             public void run() {

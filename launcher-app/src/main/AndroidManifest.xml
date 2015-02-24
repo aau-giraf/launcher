@@ -5,6 +5,8 @@
     android:versionCode="5"
     android:versionName="2.2">
 
+    <!-- <uses-sdk/> is defined in build.gralde -->
+
     <uses-permission android:name="dk.aau.cs.giraf.oasis.app"/>
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -64,8 +66,8 @@
         </activity>
         <activity
                 android:name=".settings.SettingsActivity"
-                android:label="@string/giraf_settings_name"
-                android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+                android:label="@string/settings_tablist_tablet"
+                android:theme="@android:style/Theme.Holo.Light"
                 android:screenOrientation="landscape">
         </activity>
         <provider
