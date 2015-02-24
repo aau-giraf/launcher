@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/gbackgroundlight">
+    android:background="@color/giraf_yellow">
 
     <dk.aau.cs.giraf.launcher.layoutcontroller.DrawerLayout
         android:id="@+id/DrawerView"

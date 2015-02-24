@@ -1,7 +1,6 @@
 package dk.aau.cs.giraf.launcher.activities;
 
 import android.app.Activity;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -28,8 +27,8 @@ import dk.aau.cs.giraf.oasis.localdb.main;
  */
 public class MainActivity extends Activity implements Animation.AnimationListener
 {
-    public static final int rowSize = 3;
-    public static final int columnSize = 3;
+    public static final int rowSize = 4;
+    public static final int columnSize = 5;
 
     //private Context mContext;
     private int oldSessionGuardianID = -1;

@@ -2,12 +2,6 @@ package dk.aau.cs.giraf.launcher.settings;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.view.View;
-import android.view.ViewGroup;
-
-import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 
 /**
  * Helper methods used to handle saving of settings for each user

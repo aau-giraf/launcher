@@ -1,7 +1,6 @@
 package dk.aau.cs.giraf.launcher.layoutcontroller;
 
 import android.content.Context;
-import android.util.AttributeSet;
 import android.widget.ImageView;
 
 import dk.aau.cs.giraf.launcher.R;

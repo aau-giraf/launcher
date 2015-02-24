@@ -5,10 +5,14 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
-import dk.aau.cs.giraf.launcher.R;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
+
+import dk.aau.cs.giraf.launcher.R;
 
 /**
  * Custom adapter to ListView.
