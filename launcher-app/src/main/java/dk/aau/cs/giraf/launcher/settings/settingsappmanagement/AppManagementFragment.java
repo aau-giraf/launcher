@@ -33,9 +33,9 @@ public class AppManagementFragment extends android.support.v4.app.Fragment {
     /** The girafFragment and the androidFragment are the fragments to be inflated into the container*/
     /** The fragmentContainer that contains the inflated girafFragment or androidFragment*/
     private android.support.v4.app.FragmentManager fragmentManager;
-    private GirafFragment girafFragment;
-    private AndroidFragment androidFragment;
-    private android.support.v4.app.Fragment fragmentContainer;
+    //private GirafFragment girafFragment;
+    //private AndroidFragment androidFragment;
+    //private android.support.v4.app.Fragment fragmentContainer;
 
     /** All the buttons that make the fragmentContainer inflate the correct fragment or open Play Store*/
     private Button girafAppsButton;
@@ -57,8 +57,8 @@ public class AppManagementFragment extends android.support.v4.app.Fragment {
         this.setRetainInstance(true);
 
         /** Instantiated all the variables needed*/
-        girafFragment = new GirafFragment();
-        androidFragment = new AndroidFragment();
+        //girafFragment = new GirafFragment();
+        //androidFragment = new AndroidFragment();
         girafAppsButton = (Button)view.findViewById(R.id.settings_giraf_button);
         androidAppsButton = (Button)view.findViewById(R.id.settings_android_button);
         googlePlayButton = (Button)view.findViewById(R.id.settings_googleplay_button);
@@ -74,9 +74,9 @@ public class AppManagementFragment extends android.support.v4.app.Fragment {
         }
 
         /** Choose the GIRAF pane and set the GIRAF button when the fragment has loaded.*/
-        fragmentContainer = girafFragment;
+        //fragmentContainer = girafFragment;
         focusButton(girafAppsButton);
-        fragmentManager.beginTransaction().add(R.id.app_settings_fragmentlayout, fragmentContainer).commit();
+        replaceFragment(new GirafFragment());
 
         return view;
     }
@@ -88,7 +88,7 @@ public class AppManagementFragment extends android.support.v4.app.Fragment {
         /** inflate the girafFragment when the girafAppsButton is pressed*/
         girafAppsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                replaceFragment(girafFragment);
+                replaceFragment(new GirafFragment());
                 focusButton(girafAppsButton);
             }
         });
@@ -96,7 +96,7 @@ public class AppManagementFragment extends android.support.v4.app.Fragment {
         /** inflate the androidFragment when the androidAppsButton is pressed*/
         androidAppsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                replaceFragment(androidFragment);
+                replaceFragment(new AndroidFragment());
                 focusButton(androidAppsButton);
             }
         });
