@@ -89,7 +89,6 @@ public class AndroidFragment extends AppContainerFragment {
             startObservingApps();
         }
 
-
         reloadApplications();
     }
 
