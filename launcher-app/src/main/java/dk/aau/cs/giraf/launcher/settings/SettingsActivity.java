@@ -1,7 +1,5 @@
 package dk.aau.cs.giraf.launcher.settings;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;

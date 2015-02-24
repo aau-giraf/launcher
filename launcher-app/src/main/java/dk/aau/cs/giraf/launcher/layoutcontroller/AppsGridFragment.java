@@ -1,9 +1,7 @@
 package dk.aau.cs.giraf.launcher.layoutcontroller;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,14 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 import dk.aau.cs.giraf.launcher.helper.AppViewCreationUtility;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
