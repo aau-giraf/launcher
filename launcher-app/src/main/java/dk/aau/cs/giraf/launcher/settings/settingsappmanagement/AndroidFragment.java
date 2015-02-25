@@ -25,6 +25,7 @@ import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
+import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
@@ -63,13 +64,15 @@ public class AndroidFragment extends AppContainerFragment {
         preferences = LauncherUtility.getSharedPreferencesForCurrentUser(getActivity(), currentUser);
         selectedApps = preferences.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
 
+        final int rowsSize = ApplicationGridResizer.getGridRowSize(getActivity(), currentUser);
+        final int columnsSize = ApplicationGridResizer.getGridColumnSize(getActivity(), currentUser);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
 
-            appView.setAdapter(new AppsFragmentAdapter(getChildFragmentManager(), appInfos, MainActivity.rowSize, MainActivity.columnSize));
+            appView.setAdapter(new AppsFragmentAdapter(getChildFragmentManager(), appInfos, rowsSize, columnsSize));
         } else {
 
-            appView.setAdapter(new AppsFragmentAdapter(getFragmentManager(), appInfos, MainActivity.rowSize, MainActivity.columnSize));
+            appView.setAdapter(new AppsFragmentAdapter(getFragmentManager(), appInfos, rowsSize, columnsSize));
         }
 
 
@@ -137,7 +140,7 @@ public class AndroidFragment extends AppContainerFragment {
      */
     @Override
     public void loadApplications() {
-        loadApplicationsTask = new LoadAndroidApplicationTask(getActivity(), currentUser, null, appView, 110, listener);
+        loadApplicationsTask = new LoadAndroidApplicationTask(getActivity(), currentUser, null, appView, listener);
         loadApplicationsTask.execute();
 
     }
@@ -206,11 +209,10 @@ public class AndroidFragment extends AppContainerFragment {
          * @param currentUser     The current user (if the current user is a guardian, this is set to null)
          * @param guardian        The guardian of the current user (or just the current user, if the user is a guardian)
          * @param appsViewPager   The layout to be populated with AppImageViews
-         * @param iconSize        The size the icons should have
          * @param onClickListener the onClickListener that each created app should have. In this case we feed it the global variable listener
          */
-        public LoadAndroidApplicationTask(Context context, Profile currentUser, Profile guardian, ViewPager appsViewPager, int iconSize, View.OnClickListener onClickListener) {
-            super(context, currentUser, guardian, appsViewPager, iconSize, onClickListener);
+        public LoadAndroidApplicationTask(Context context, Profile currentUser, Profile guardian, ViewPager appsViewPager, View.OnClickListener onClickListener) {
+            super(context, currentUser, guardian, appsViewPager, onClickListener);
         }
 
         /**

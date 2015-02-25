@@ -22,6 +22,7 @@ import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
+import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 import dk.aau.cs.giraf.oasis.lib.controllers.ProfileApplicationController;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -58,12 +59,15 @@ public class GirafFragment extends AppContainerFragment {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         appView = (ViewPager) view.findViewById(R.id.appsViewPager);
 
+        final int rowsSize = ApplicationGridResizer.getGridRowSize(getActivity(), currentUser);
+        final int columnsSize = ApplicationGridResizer.getGridColumnSize(getActivity(), currentUser);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
 
-            appView.setAdapter(new AppsFragmentAdapter(getChildFragmentManager(), appInfos, MainActivity.rowSize, MainActivity.columnSize));
+            appView.setAdapter(new AppsFragmentAdapter(getChildFragmentManager(), appInfos, rowsSize, columnsSize));
         } else {
 
-            appView.setAdapter(new AppsFragmentAdapter(getFragmentManager(), appInfos, MainActivity.rowSize, MainActivity.columnSize));
+            appView.setAdapter(new AppsFragmentAdapter(getFragmentManager(), appInfos, rowsSize, columnsSize));
         }
 
         return view;
@@ -129,7 +133,7 @@ public class GirafFragment extends AppContainerFragment {
         if (loadedApps == null || loadedApps.size() != apps.size()) {
             //Remember that the apps have been added, so they are not added again by the listener
 
-            loadApplicationTask = new loadGirafApplicationTask(getActivity(), currentUser, null, appView, 110, listener);
+            loadApplicationTask = new loadGirafApplicationTask(getActivity(), currentUser, null, appView, listener);
             loadApplicationTask.execute();
         }
     }
@@ -207,11 +211,10 @@ public class GirafFragment extends AppContainerFragment {
          * @param currentUser     The current user (if the current user is a guardian, this is set to null)
          * @param guardian        The guardian of the current user (or just the current user, if the user is a guardian)
          * @param appsViewPager   The layout to be populated with AppImageViews
-         * @param iconSize        The size the icons should have
          * @param onClickListener the onClickListener that each created app should have. In this case we feed it the global variable listener
          */
-        public loadGirafApplicationTask(Context context, Profile currentUser, Profile guardian, ViewPager appsViewPager, int iconSize, View.OnClickListener onClickListener) {
-            super(context, currentUser, guardian, appsViewPager, iconSize, onClickListener);
+        public loadGirafApplicationTask(Context context, Profile currentUser, Profile guardian, ViewPager appsViewPager, View.OnClickListener onClickListener) {
+            super(context, currentUser, guardian, appsViewPager, onClickListener);
         }
 
         /**
