@@ -137,7 +137,7 @@ public class SettingsListFragment extends Fragment {
             TextView actionBarTitle = (TextView) actionBar.getCustomView().findViewById(R.id.settings_actionbar_title);
 
             // Set the title of the actionbar (text view)
-            actionBarTitle.setText(getString(R.string.settings_for) + currentUserName);
+            actionBarTitle.setText(getString(R.string.settings_for) + " " + currentUserName);
         }
 
         // Instantiates a new adapter to render the items in the ListView with a list of installed (available) apps
