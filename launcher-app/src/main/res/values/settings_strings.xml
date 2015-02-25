@@ -11,7 +11,7 @@
 
     <!-- Launcher preference keys -->
     <string name="show_animation_preference_key">show_animation_preference</string>
-    <string name="icon_size_preference_key">icon_size_preference</string>
+    <string name="grid_size_preference_key">grid_size_preference_key</string>
     <string name="selected_android_apps_key">selected_android_apps</string>
 
     <!-- Launcher preference UI -->

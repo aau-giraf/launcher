@@ -40,6 +40,7 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.launcher.layoutcontroller.DrawerLayout;
 import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
 import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
+import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.controllers.ProfileController;
@@ -62,7 +63,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
     private boolean mIsAppsContainerInitialized = false;
     private boolean mWidgetRunning = false;
     private boolean mDrawerAnimationRunning = false;
-    private int mIconSize;
+
 
     private GWidgetUpdater mWidgetUpdater;
     private GWidgetProfileSelection mWidgetProfileSelection;
@@ -118,7 +119,10 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
             LauncherUtility.showDebugInformation(this);
         }
 
-        mAppViewPager.setAdapter(new AppsFragmentAdapter(getSupportFragmentManager(), mCurrentLoadedApps,  MainActivity.rowSize, MainActivity.columnSize));
+        final int rowsSize = ApplicationGridResizer.getGridRowSize(this, mCurrentUser);
+        final int columnsSize = ApplicationGridResizer.getGridColumnSize(this, mCurrentUser);
+
+        mAppViewPager.setAdapter(new AppsFragmentAdapter(getSupportFragmentManager(), mCurrentLoadedApps, rowsSize, columnsSize));
 
         // Start logging this activity
         EasyTracker.getInstance(this).activityStart(this);
@@ -236,8 +240,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
      * Load the user's applications into the app container.
      */
     private void loadApplications() {
-        updateIconSize();
-        loadHomeActivityApplicationTask = new LoadHomeActivityApplicationTask(this, mCurrentUser, mLoggedInGuardian, mAppViewPager, mIconSize, null);
+        loadHomeActivityApplicationTask = new LoadHomeActivityApplicationTask(this, mCurrentUser, mLoggedInGuardian, mAppViewPager, null);
         loadHomeActivityApplicationTask.execute();
 
     }
@@ -474,10 +477,6 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
      * Updates the user's preferred icon size from SharedPreferences. This preference it set in Launcher's
      * PreferenceFragment. The size is saved in {@link HomeActivity#mIconSize}.
      */
-    private void updateIconSize() {
-        SharedPreferences prefs = SettingsUtility.getLauncherSettings(this, LauncherUtility.getSharedPreferenceUser(mCurrentUser));
-        mIconSize = prefs.getInt(getString(R.string.icon_size_preference_key), 200);
-    }
 
     /**
      * Updates the ProfileSelector. It is needed when a new user has been selected, as a different
@@ -558,11 +557,10 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
          * @param currentUser     The current user (if the current user is a guardian, this is set to null)
          * @param guardian        The guardian of the current user (or just the current user, if the user is a guardian)
          * @param appsViewPager   The layout to be populated with AppImageViews
-         * @param iconSize        The size the icons should have
          * @param onClickListener the onClickListener that each created app should have. In this case we feed it the global variable listener
          */
-        public LoadHomeActivityApplicationTask(Context context, Profile currentUser, Profile guardian, ViewPager appsViewPager, int iconSize, View.OnClickListener onClickListener) {
-            super(context, currentUser, guardian, appsViewPager, iconSize, onClickListener);
+        public LoadHomeActivityApplicationTask(Context context, Profile currentUser, Profile guardian, ViewPager appsViewPager, View.OnClickListener onClickListener) {
+            super(context, currentUser, guardian, appsViewPager, onClickListener);
         }
 
         /**

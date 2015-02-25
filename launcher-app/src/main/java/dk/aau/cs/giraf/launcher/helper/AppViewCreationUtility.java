@@ -70,7 +70,7 @@ public class AppViewCreationUtility {
         final LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
         View targetView = inflater.inflate(R.layout.apps_container, targetLayout, false);
 
-        ImageView appIconView = (ImageView) targetView.findViewById(R.id.app_icon);
+        ImageView appIconView = (ImageView) targetView.findViewById(R.id.example_grid_layout);
         TextView appTextView = (TextView) targetView.findViewById(R.id.app_text);
 
         appTextView.setText(appName);
