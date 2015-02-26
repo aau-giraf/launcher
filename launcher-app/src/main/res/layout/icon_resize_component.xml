@@ -24,16 +24,27 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:orientation="vertical">
-
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/setting_launcher_grid_column_title"
+                android:paddingTop="15dp"/>
+            
             <!-- TODO: Implement this with GIRAF-specific SeekBar -->
-            <SeekBar
+            <dk.aau.cs.giraf.launcher.widgets.SeekBarWithScale
                 android:id="@+id/iconsResizerRowsSeekBar"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="15dp"
-                android:paddingTop="15dp"/>
+                android:layout_marginBottom="15dp"
+                />
 
-            <SeekBar
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/setting_launcher_grid_row_title"/>
+
+            <dk.aau.cs.giraf.launcher.widgets.SeekBarWithScale
                 android:id="@+id/iconsResizerColumnsSeekBar"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"/>
@@ -56,15 +67,14 @@
             android:gravity="center"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
-            android:text="Eksempel"/>
+            android:text="@string/setting_launcher_grid_example_text"/>
 
-        <GridLayout
+        <dk.aau.cs.giraf.launcher.widgets.GridPreviewView
             android:id="@+id/example_grid_layout"
             android:layout_height="120dp"
             android:layout_width="213dp"
             android:layout_below="@id/example_text"
             android:layout_alignRight="@id/example_text"
-            android:stretchMode="columnWidth"
             android:gravity="center"
             android:background="@drawable/example_grid_layout_drawable"
             android:layout_marginTop="6dp"

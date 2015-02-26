@@ -11,11 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
+import dk.aau.cs.giraf.launcher.widgets.GridPreviewView;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 /**
@@ -35,6 +38,9 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
     // default value for the starting position of the seeking bar, if not set in the preference xml
     private static final int DEFAULT_ROWS_VALUE = 4;
     private static final int DEFAULT_COLUMNS_VALUE = 5;
+
+    private int initialGridWidth = -1;
+    private int initialGridHeight = -1;
 
     public static int getGridColumnSize(final Context context, final Profile currentUser) {
 
@@ -63,7 +69,8 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
     private SeekBar mRowsSeekBar;
     private SeekBar mColumnsSeekBar;
     private Bitmap mAppBitmap;
-    private GridLayout mExampleGridLayout;
+    private GridPreviewView mExampleGridLayout;
+    private TextView ExampleTextView;
 
     // constructor inherited from superclass
     public ApplicationGridResizer(Context context, AttributeSet attrs) {
@@ -145,8 +152,9 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
         mColumnsSeekBar = (SeekBar) view.findViewById(R.id.iconsResizerColumnsSeekBar);
         mColumnsSeekBar.setMax(mMaxValue - mMinValue);
 
+        ExampleTextView = (TextView) view.findViewById(R.id.example_text);
 
-        mExampleGridLayout = (GridLayout) view.findViewById(R.id.example_grid_layout);
+        mExampleGridLayout = (GridPreviewView) view.findViewById(R.id.example_grid_layout);
 
         return view;
     }
@@ -194,6 +202,8 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
         mRowsCurrentValue = pref.getInt(ROWS_SIZE_PREFERENCE_TAG, DEFAULT_ROWS_VALUE);
         mColumnsCurrentValue = pref.getInt(COLUMNS_SIZE_PREFERENCE_TAG, DEFAULT_COLUMNS_VALUE);
 
+        ExampleTextView.setText(getContext().getString(R.string.setting_launcher_grid_example_text) + " " + mRowsCurrentValue + " × " + mColumnsCurrentValue);
+
         mRowsSeekBar.setProgress(mRowsCurrentValue - mMinValue);
         mColumnsSeekBar.setProgress(mColumnsCurrentValue - mMinValue);
 
@@ -211,25 +221,34 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
      */
     private void updateExampleGridSize(final int newRowSize, final int newColumnSize) {
 
-        mExampleGridLayout.removeAllViews();
+        //mExampleGridLayout.removeAllViews();
 
-        mExampleGridLayout.setRowCount(newRowSize);
-        mExampleGridLayout.setColumnCount(newColumnSize);
+        mExampleGridLayout.setRowSize(newRowSize);
+        mExampleGridLayout.setColumnSize(newColumnSize);
+        mExampleGridLayout.invalidate();
         /*
         int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(, View.MeasureSpec.EXACTLY);
         int heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(mExampleGridLayout.getLayoutParams().height, View.MeasureSpec.EXACTLY);
 
         mExampleGridLayout.measure(widthMeasureSpec, heightMeasureSpec);
         */
-        for (int exampleGridFillerCounter = 0; exampleGridFillerCounter < newRowSize * newColumnSize; exampleGridFillerCounter++) {
-            final View view = new View(getContext());
-            view.setBackgroundResource(R.drawable.example_grid_layout_drawable);
 
-            int height = mExampleGridLayout.getLayoutParams().height / newRowSize;
-            int width = mExampleGridLayout.getLayoutParams().width / newColumnSize;
+        final int elementCount = newRowSize * newColumnSize;
 
-            mExampleGridLayout.addView(view, new ViewGroup.LayoutParams(width, height));
+        // Save the inital size
+        if (initialGridWidth == -1 && initialGridHeight == -1) {
+            initialGridWidth = mExampleGridLayout.getLayoutParams().width;
+            initialGridHeight = mExampleGridLayout.getLayoutParams().height;
         }
+
+        final int height = initialGridHeight / newRowSize;
+        final int width = initialGridWidth / newColumnSize;
+
+        RelativeLayout.LayoutParams gridLayoutParams = new RelativeLayout.LayoutParams(width * newColumnSize, height * newRowSize);
+        gridLayoutParams.addRule(RelativeLayout.BELOW, R.id.example_text);
+        gridLayoutParams.addRule(RelativeLayout.ALIGN_RIGHT, R.id.example_text);
+
+        mExampleGridLayout.setLayoutParams(gridLayoutParams);
     }
 
     @Override
@@ -242,8 +261,8 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
 
         final SharedPreferences pref = getSharedPreferences();
 
-        mColumnsCurrentValue = pref.getInt(COLUMNS_SIZE_PREFERENCE_TAG, DEFAULT_COLUMNS_VALUE);
         mRowsCurrentValue = pref.getInt(ROWS_SIZE_PREFERENCE_TAG, DEFAULT_ROWS_VALUE);
+        mColumnsCurrentValue = pref.getInt(COLUMNS_SIZE_PREFERENCE_TAG, DEFAULT_COLUMNS_VALUE);
     }
 
     /**
@@ -313,10 +332,14 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
             mRowsCurrentValue += mMinValue;
             mColumnsCurrentValue += mMinValue;
 
-            editor.putInt(COLUMNS_SIZE_PREFERENCE_TAG, mColumnsCurrentValue);
             editor.putInt(ROWS_SIZE_PREFERENCE_TAG, mRowsCurrentValue);
+            editor.putInt(COLUMNS_SIZE_PREFERENCE_TAG, mColumnsCurrentValue);
+
 
             editor.commit();
+
+            ExampleTextView.setText(getContext().getString(R.string.setting_launcher_grid_example_text) + " " + mRowsCurrentValue + " × " + mColumnsCurrentValue);
+
             //notifyChanged();
             updateExampleGridSize(mRowsCurrentValue, mColumnsCurrentValue);
         }

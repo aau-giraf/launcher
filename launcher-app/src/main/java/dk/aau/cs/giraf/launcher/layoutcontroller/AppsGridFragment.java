@@ -83,12 +83,12 @@ public class AppsGridFragment extends Fragment {
 
                 //Create a new AppImageView and set its properties
                 AppImageView newAppView = AppViewCreationUtility.createAppImageView(getActivity(), currentUser, activity.getLoggedInGuardian(), currentAppInfo, appsGridLayout, getOnClickListener());
-                newAppView.setScaleType(ImageView.ScaleType.FIT_XY);
+                //newAppView.setScaleType(ImageView.ScaleType.FIT_XY);
                 GridLayout.LayoutParams params = new GridLayout.LayoutParams(new ViewGroup.LayoutParams(container.getMeasuredWidth() / columnSize, container.getMeasuredHeight() / rowSize));
                 //params.setMargins(2, 2, 2, 2);
                 newAppView.setLayoutParams(params);
 
-                // Application icons should only have their check state set when in the SetttingsActivity
+                // Application icons should only have their check state set when in the SettingsActivity
                 if (activity instanceof SettingsActivity) {
                     if (currentAppInfo != null && (doesProfileApplicationExist(pac, currentAppInfo.getApp(), currentUser) || selectedApps.contains(currentAppInfo.getActivity()))) {
                         newAppView.setChecked(true);
