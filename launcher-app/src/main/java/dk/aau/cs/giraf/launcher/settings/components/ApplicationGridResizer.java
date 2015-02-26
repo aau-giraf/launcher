@@ -34,7 +34,7 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
 
     // default value for the starting position of the seeking bar, if not set in the preference xml
     private static final int DEFAULT_ROWS_VALUE = 4;
-    private static final int DEFAULT_COLUMNS_VALUE = 4;
+    private static final int DEFAULT_COLUMNS_VALUE = 5;
 
     public static int getGridColumnSize(final Context context, final Profile currentUser) {
 
