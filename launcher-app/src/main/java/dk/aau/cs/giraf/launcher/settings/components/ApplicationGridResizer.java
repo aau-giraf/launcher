@@ -39,8 +39,10 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
     private static final int DEFAULT_ROWS_VALUE = 4;
     private static final int DEFAULT_COLUMNS_VALUE = 5;
 
+    /*
     private int initialGridWidth = -1;
     private int initialGridHeight = -1;
+    */
 
     /**
      * @param context
@@ -203,6 +205,7 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
         mExampleGridLayout.setColumnSize(newColumnSize);
         mExampleGridLayout.invalidate();
 
+        /*
         // Save the inital size
         if (initialGridWidth == -1 && initialGridHeight == -1) {
             initialGridWidth = mExampleGridLayout.getLayoutParams().width;
@@ -212,11 +215,14 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
         final int height = initialGridHeight / newRowSize;
         final int width = initialGridWidth / newColumnSize;
 
-        RelativeLayout.LayoutParams gridLayoutParams = new RelativeLayout.LayoutParams(width * newColumnSize, height * newRowSize);
+        RelativeLayout.LayoutParams gridLayoutParams = new RelativeLayout.LayoutParams(initialGridWidth, initialGridHeight);
         gridLayoutParams.addRule(RelativeLayout.BELOW, R.id.example_text);
         gridLayoutParams.addRule(RelativeLayout.ALIGN_RIGHT, R.id.example_text);
 
+
         mExampleGridLayout.setLayoutParams(gridLayoutParams);
+
+        */
     }
 
     @Override
@@ -251,6 +257,7 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
         mColumnsCurrentValue = mColumnsSeekBar.getProgress();
 
         if (fromUser) {
+            /*
             if (seekBar == mRowsSeekBar) {
                 if (progress > mColumnsCurrentValue + 1) {
                     mColumnsCurrentValue = progress - 1;
@@ -273,6 +280,7 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
 
                 mColumnsCurrentValue = progress;
             }
+            */
         }
 
         if (fromUser) {
