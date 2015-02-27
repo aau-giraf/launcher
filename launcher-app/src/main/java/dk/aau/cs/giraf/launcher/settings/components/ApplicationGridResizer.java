@@ -9,9 +9,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridLayout;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -68,16 +66,16 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
         return pref.getInt(ApplicationGridResizer.ROWS_SIZE_PREFERENCE_TAG, DEFAULT_ROWS_VALUE);
     }
 
-    private int mMaxValue = 10; // Max value for the seeking bar in units
+    private int mMaxValue = 7; // Max value for the seeking bar in units
     private int mMinValue = 2; // Min value for the seeking bar in units
     private int mInterval = 1; // each unit is 1 percent
-    //private int mCurrentValue;
+
     private int mRowsCurrentValue;
     private int mColumnsCurrentValue;
     private String mUnitsLeft = "";
     private String mUnitsRight = "";
-    private SeekBar mRowsSeekBar;
-    private SeekBar mColumnsSeekBar;
+    private SeekBar gridSizeSeekBar;
+
     private Bitmap mAppBitmap;
     private GridPreviewView mExampleGridLayout;
     private TextView ExampleTextView;
@@ -154,11 +152,8 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
         LinearLayout layout = (LinearLayout) view;
         layout.setOrientation(LinearLayout.VERTICAL);
 
-        mRowsSeekBar = (SeekBar) view.findViewById(R.id.iconsResizerRowsSeekBar);
-        mRowsSeekBar.setMax(mMaxValue - mMinValue);
-
-        mColumnsSeekBar = (SeekBar) view.findViewById(R.id.iconsResizerColumnsSeekBar);
-        mColumnsSeekBar.setMax(mMaxValue - mMinValue);
+        gridSizeSeekBar = (SeekBar) view.findViewById(R.id.gridResizerSeekBar);
+        gridSizeSeekBar.setMax(mMaxValue - mMinValue);
 
         ExampleTextView = (TextView) view.findViewById(R.id.example_text);
 
@@ -184,11 +179,9 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
 
         ExampleTextView.setText(getContext().getString(R.string.setting_launcher_grid_example_text) + " " + mRowsCurrentValue + " × " + mColumnsCurrentValue);
 
-        mRowsSeekBar.setProgress(mRowsCurrentValue - mMinValue);
-        mColumnsSeekBar.setProgress(mColumnsCurrentValue - mMinValue);
+        gridSizeSeekBar.setProgress(mRowsCurrentValue - mMinValue);
 
-        mRowsSeekBar.setOnSeekBarChangeListener(this);
-        mColumnsSeekBar.setOnSeekBarChangeListener(this);
+        gridSizeSeekBar.setOnSeekBarChangeListener(this);
 
         updateExampleGridSize(mRowsCurrentValue, mColumnsCurrentValue);
     }
@@ -253,12 +246,12 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
     public void onProgressChanged(final SeekBar seekBar, int progress, final boolean fromUser) {
 
         // change accepted, store it
-        mRowsCurrentValue = mRowsSeekBar.getProgress();
-        mColumnsCurrentValue = mColumnsSeekBar.getProgress();
+        mRowsCurrentValue = gridSizeSeekBar.getProgress();
+        mColumnsCurrentValue = mRowsCurrentValue + 1;
 
         if (fromUser) {
             /*
-            if (seekBar == mRowsSeekBar) {
+            if (seekBar == gridSizeSeekBar) {
                 if (progress > mColumnsCurrentValue + 1) {
                     mColumnsCurrentValue = progress - 1;
                     mColumnsSeekBar.setProgress(mColumnsCurrentValue);
@@ -272,10 +265,10 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
             if (seekBar == mColumnsSeekBar) {
                 if (progress > mRowsCurrentValue + 1) {
                     mRowsCurrentValue = progress - 1;
-                    mRowsSeekBar.setProgress(mRowsCurrentValue);
+                    gridSizeSeekBar.setProgress(mRowsCurrentValue);
                 } else if (progress < mRowsCurrentValue - 1) {
                     mRowsCurrentValue = progress + 1;
-                    mRowsSeekBar.setProgress(mRowsCurrentValue);
+                    gridSizeSeekBar.setProgress(mRowsCurrentValue);
                 }
 
                 mColumnsCurrentValue = progress;
@@ -292,7 +285,6 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
 
             editor.putInt(ROWS_SIZE_PREFERENCE_TAG, mRowsCurrentValue);
             editor.putInt(COLUMNS_SIZE_PREFERENCE_TAG, mColumnsCurrentValue);
-
 
             editor.commit();
 
@@ -320,8 +312,7 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        mRowsSeekBar.setEnabled(enabled);
-        mColumnsSeekBar.setEnabled(enabled);
+        gridSizeSeekBar.setEnabled(enabled);
     }
 
     @Override
@@ -329,11 +320,8 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
         super.onDependencyChanged(dependency, disableDependent);
 
         //Disable movement of seek bar when dependency is false
-        if (mRowsSeekBar != null) {
-            mRowsSeekBar.setEnabled(!disableDependent);
-        }
-        if (mColumnsSeekBar != null) {
-            mColumnsSeekBar.setEnabled(!disableDependent);
+        if (gridSizeSeekBar != null) {
+            gridSizeSeekBar.setEnabled(!disableDependent);
         }
     }
 }

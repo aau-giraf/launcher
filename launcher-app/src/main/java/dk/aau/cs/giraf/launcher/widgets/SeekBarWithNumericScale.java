@@ -47,11 +47,11 @@ public class SeekBarWithNumericScale extends SeekBar {
 
     /**
      * Converts a float value to the corresponding sp value
+     *
      * @param integer
      * @return
      */
-    private float ToSp(final float integer)
-    {
+    private float ToSp(final float integer) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
                 integer, getResources().getDisplayMetrics());
     }
@@ -61,8 +61,7 @@ public class SeekBarWithNumericScale extends SeekBar {
         this.firstScaleItemValue = firstScaleItemValue;
         this.lastScaleItemValue = lastScaleItemValue;
 
-        if(lastScaleItemValue - firstScaleItemValue < 0)
-        {
+        if (lastScaleItemValue - firstScaleItemValue < 0) {
             throw new IllegalArgumentException("lastScaleItemValue should be bigger than firstScaleItemValue");
         }
 
@@ -94,10 +93,13 @@ public class SeekBarWithNumericScale extends SeekBar {
             final int width = canvas.getWidth();
             final int height = canvas.getHeight();
 
-            final int distanceBetweenScaleElements = width / scaleElementCount;
+            final int paddingLeft = this.getPaddingLeft();
+            final int paddingRight = this.getPaddingRight();
+
+            final int distanceBetweenScaleElements = (width - paddingLeft - paddingRight) / (scaleElementCount - 1);
 
             for (int scaleElementCounter = 0; scaleElementCounter < scaleElementCount; scaleElementCounter++) {
-                canvas.drawText("" + (scaleElementCounter + firstScaleItemValue), (distanceBetweenScaleElements / 5) * 2 + distanceBetweenScaleElements * scaleElementCounter, height / 2 + textSize * 1.5f, paint);
+                canvas.drawText("" + (scaleElementCounter + firstScaleItemValue), paddingLeft + distanceBetweenScaleElements * scaleElementCounter, height / 2 + textSize * 1.5f, paint);
             }
         }
     }

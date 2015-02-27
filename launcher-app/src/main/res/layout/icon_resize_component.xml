@@ -33,15 +33,15 @@
                 android:paddingTop="15dp"/>
 
             <dk.aau.cs.giraf.launcher.widgets.SeekBarWithNumericScale
-                android:id="@+id/iconsResizerRowsSeekBar"
+                android:id="@+id/gridResizerSeekBar"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="15dp"
                 custom:firstScaleItemValue="2"
-                custom:lastScaleItemValue="10"
+                custom:lastScaleItemValue="7"
                 custom:scaleTextSize="14sp"
                 />
-
+            <!--
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
                 android:layout_height="wrap_content"
                 custom:firstScaleItemValue="2"
                 custom:lastScaleItemValue="10"
-                custom:scaleTextSize="14sp"/>
+                custom:scaleTextSize="14sp"/>-->
         </LinearLayout>
 
     </RelativeLayout>
