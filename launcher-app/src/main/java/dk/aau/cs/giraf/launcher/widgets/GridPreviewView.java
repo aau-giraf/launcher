@@ -10,6 +10,7 @@ import android.view.View;
 
 /**
  * Created by Marhlder on 26-02-2015.
+ * View which draws a grid with rowSize rows and columnSize columns
  */
 public class GridPreviewView extends View {
     private int gridLinesSize;
@@ -45,14 +46,29 @@ public class GridPreviewView extends View {
         paint.setAntiAlias(true);
     }
 
+    /**
+     * Sets the rowSize of this GridPreviewView
+     * Clients should call .invalidate() to update the view
+     * @param rowSize
+     */
     public void setRowSize(final int rowSize) {
         this.rowSize = rowSize;
     }
 
+    /**
+     * Sets the columnSize of this GridPreviewView
+     * Clients should call .invalidate() to update the view
+     * @param columnSize
+     */
     public void setColumnSize(final int columnSize) {
         this.columnSize = columnSize;
     }
 
+
+    /**
+     * Override on draw to draw a grid with this.rowSize rows and this.columnSize columns
+     * @param canvas
+     */
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
