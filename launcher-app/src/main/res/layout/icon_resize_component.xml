@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:custom="http://schemas.android.com/apk/res/dk.aau.cs.giraf.launcher"
               android:layout_width="fill_parent"
               android:layout_height="wrap_content"
               android:paddingBottom="5dp"
@@ -24,19 +25,21 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:orientation="vertical">
-            
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/setting_launcher_grid_row_title"
                 android:paddingTop="15dp"/>
-            
-            <!-- TODO: Implement this with GIRAF-specific SeekBar -->
-            <dk.aau.cs.giraf.launcher.widgets.SeekBarWithScale
+
+            <dk.aau.cs.giraf.launcher.widgets.SeekBarWithNumericScale
                 android:id="@+id/iconsResizerRowsSeekBar"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="15dp"
+                custom:firstScaleItemValue="2"
+                custom:lastScaleItemValue="10"
+                custom:scaleTextSize="14sp"
                 />
 
             <TextView
@@ -44,10 +47,13 @@
                 android:layout_height="wrap_content"
                 android:text="@string/setting_launcher_grid_column_title"/>
 
-            <dk.aau.cs.giraf.launcher.widgets.SeekBarWithScale
+            <dk.aau.cs.giraf.launcher.widgets.SeekBarWithNumericScale
                 android:id="@+id/iconsResizerColumnsSeekBar"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                custom:firstScaleItemValue="2"
+                custom:lastScaleItemValue="10"
+                custom:scaleTextSize="14sp"/>
         </LinearLayout>
 
     </RelativeLayout>

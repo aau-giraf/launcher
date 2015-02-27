@@ -35,17 +35,18 @@ import static android.content.Context.LAYOUT_INFLATER_SERVICE;
  */
 public class AppViewCreationUtility {
 
-    private static HashMap<String,AppInfo> mAppInfoHashMap;
+    private static HashMap<String, AppInfo> mAppInfoHashMap;
 
     /**
      * Loads the AppInfo object of app from the list, into the {@code mAppInfoHashMap} hash map, making
      * them accessible with only the ID string of the app.
      * synchronized: Because mAppInfoHashMap is used on GUI thread and in LoadApplicationTask
-     * @param context The context of the current activity
+     *
+     * @param context  The context of the current activity
      * @param appsList The array of accessible apps
      */
-    public synchronized static HashMap<String,AppInfo> updateAppInfoHashMap(Context context, Application[] appsList) {
-        mAppInfoHashMap = new HashMap<String,AppInfo>();
+    public synchronized static HashMap<String, AppInfo> updateAppInfoHashMap(Context context, Application[] appsList) {
+        mAppInfoHashMap = new HashMap<String, AppInfo>();
 
         for (Application app : appsList) {
             AppInfo appInfo = new AppInfo(app);
@@ -60,13 +61,14 @@ public class AppViewCreationUtility {
 
     /**
      * This function adds the icon and name of an app to a View and returns it
-     * @param context The context of the current activity
+     *
+     * @param context      The context of the current activity
      * @param targetLayout The layout that the apps are being added too
-     * @param appName The name of the App
-     * @param appIcon The Icon of the App
+     * @param appName      The name of the App
+     * @param appIcon      The Icon of the App
      * @return
      */
-    private static View addContentToView(Context context, GridLayout targetLayout, String appName, Drawable appIcon){
+    private static View addContentToView(Context context, GridLayout targetLayout, String appName, Drawable appIcon) {
         final LayoutInflater inflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
         View targetView = inflater.inflate(R.layout.apps_container, targetLayout, false);
 
@@ -82,12 +84,13 @@ public class AppViewCreationUtility {
     /**
      * The main function for creating an AppImageView to be added to a targetlayout with apps in it.
      * includes information about the onClickListener, the Application and the User
-     * @param context The context of the current activity
-     * @param appInfo The appinfo instance of the Application to be added
+     *
+     * @param context      The context of the current activity
+     * @param appInfo      The appinfo instance of the Application to be added
      * @param targetLayout The layout we want to add the AppImageView to.
      * @return
      */
-     public static AppImageView createAppImageView(Context context, final Profile currentUser, final Profile guardian, AppInfo appInfo, GridLayout targetLayout, View.OnClickListener listener) {
+    public static AppImageView createAppImageView(Context context, final Profile currentUser, final Profile guardian, AppInfo appInfo, GridLayout targetLayout, View.OnClickListener listener) {
 
         AppImageView appImageView = new AppImageView(context, appInfo);
         View appView = addContentToView(context, targetLayout, appInfo.getName(), appInfo.getIconImage());
@@ -98,15 +101,14 @@ public class AppViewCreationUtility {
         appImageView.setTag(String.valueOf(appInfo.getApp().getId()));
         //appImageView.setOnDragListener(new GAppDragger());
 
-        if(listener == null)
-        {
+        if (listener == null) {
             appImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     try {
                         Animation animation = AnimationUtils.loadAnimation(v.getContext(), R.animator.app_pressed_animation);
                         v.startAnimation(animation);
-                    } catch (NullPointerException e){
+                    } catch (NullPointerException e) {
                         // could not get context, no animation.
                     }
 
@@ -118,19 +120,18 @@ public class AppViewCreationUtility {
                     * updateAppInfoHashMap
                     *
                     * */
-                    synchronized(AppViewCreationUtility.class)
-                    {
+                    synchronized (AppViewCreationUtility.class) {
                         app = mAppInfoHashMap.get((String) v.getTag());
                     }
 
-                        Intent intent = new Intent(Intent.ACTION_MAIN);
+                    Intent intent = new Intent(Intent.ACTION_MAIN);
                     intent.addCategory(Intent.CATEGORY_LAUNCHER);
 
                     intent.setComponent(new ComponentName(app.getPackage(), app.getActivity()));
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                             | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 
-                    if(currentUser.getRole() == Profile.Roles.CHILD)
+                    if (currentUser.getRole() == Profile.Roles.CHILD)
                         intent.putExtra(Constants.CHILD_ID, currentUser.getId());
                     else
                         intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
@@ -145,9 +146,7 @@ public class AppViewCreationUtility {
                 }
             });
 
-        }
-        else
-        {
+        } else {
             appImageView.setOnClickListener(listener);
         }
 
@@ -156,13 +155,14 @@ public class AppViewCreationUtility {
 
     /**
      * Sets the background of the app.
-     * @param wrapperView The view the app is located inside.
+     *
+     * @param wrapperView     The view the app is located inside.
      * @param backgroundColor The color to use for the background.
      */
     private static void setAppBackground(View wrapperView, int backgroundColor) {
         LinearLayout appViewLayout = (LinearLayout) wrapperView.findViewById(R.id.app_bg);
 
-        RoundRectShape roundRect = new RoundRectShape( new float[] {15,15, 15,15, 15,15, 15,15}, new RectF(), null);
+        RoundRectShape roundRect = new RoundRectShape(new float[]{15, 15, 15, 15, 15, 15, 15, 15}, new RectF(), null);
         ShapeDrawable shapeDrawable = new ShapeDrawable(roundRect);
 
         shapeDrawable.getPaint().setColor(backgroundColor);
@@ -172,9 +172,10 @@ public class AppViewCreationUtility {
 
     /**
      * This function create a Bitmap to put into the AppImageView. The Bitmap is scaled to be a certain size when it is returned.
-     * @param context The context of the current activity.
-     * @param view The AppImageView that the bitmap should be inserted into.
-     * @param widthInDP The width of the Bitmap in density pixels.
+     *
+     * @param context    The context of the current activity.
+     * @param view       The AppImageView that the bitmap should be inserted into.
+     * @param widthInDP  The width of the Bitmap in density pixels.
      * @param heightInDP The height of the bitmap in density pixels.
      * @return the final bitmap of the application to be inserted into the AppImageView.
      */

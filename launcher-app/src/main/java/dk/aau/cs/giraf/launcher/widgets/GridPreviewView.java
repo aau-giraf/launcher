@@ -64,7 +64,6 @@ public class GridPreviewView extends View {
         this.columnSize = columnSize;
     }
 
-
     /**
      * Override on draw to draw a grid with this.rowSize rows and this.columnSize columns
      * @param canvas

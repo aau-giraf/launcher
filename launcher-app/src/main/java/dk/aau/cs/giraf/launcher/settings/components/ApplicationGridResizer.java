@@ -22,8 +22,8 @@ import dk.aau.cs.giraf.launcher.widgets.GridPreviewView;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 /**
- * Custom preference class for the launcher settings. This preference provides a seeking bar and an
- * example icon to illustrate the chosen size.
+ * Custom preference class for the launcher settings. This preference provides two seeking bars and an
+ * example grid to illustrate the chosen size.
  */
 public class ApplicationGridResizer extends Preference implements SeekBar.OnSeekBarChangeListener {
     private final String TAG = getClass().getName(); // Error tag - maybe use the one from constants instead
@@ -42,14 +42,23 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
     private int initialGridWidth = -1;
     private int initialGridHeight = -1;
 
+    /**
+     * @param context
+     * @param currentUser
+     * @return The column size saved in the shared preference for the current user
+     */
     public static int getGridColumnSize(final Context context, final Profile currentUser) {
 
         SharedPreferences pref = SettingsUtility.getLauncherSettings(context, LauncherUtility.getSharedPreferenceUser(currentUser));
 
-
         return pref.getInt(ApplicationGridResizer.COLUMNS_SIZE_PREFERENCE_TAG, DEFAULT_COLUMNS_VALUE);
     }
 
+    /**
+     * @param context
+     * @param currentUser
+     * @return The row size saved in the shared preference for the current user
+     */
     public static int getGridRowSize(final Context context, final Profile currentUser) {
 
         SharedPreferences pref = SettingsUtility.getLauncherSettings(context, LauncherUtility.getSharedPreferenceUser(currentUser));
@@ -57,7 +66,6 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
         return pref.getInt(ApplicationGridResizer.ROWS_SIZE_PREFERENCE_TAG, DEFAULT_ROWS_VALUE);
     }
 
-    private Context mContext;
     private int mMaxValue = 10; // Max value for the seeking bar in units
     private int mMinValue = 2; // Min value for the seeking bar in units
     private int mInterval = 1; // each unit is 1 percent
@@ -75,14 +83,12 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
     // constructor inherited from superclass
     public ApplicationGridResizer(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mContext = context;
         initPreference(context, attrs);
     }
 
     // constructor inherited from superclass
     public ApplicationGridResizer(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        mContext = context;
         initPreference(context, attrs);
     }
 
@@ -169,34 +175,6 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
     public void onBindView(View view) {
         super.onBindView(view);
 
-
-
-        /*
-        try {
-            // move our seekbar to the new view we've been given
-            ViewParent oldContainer = mRowsSeekBar.getParent();
-            ViewGroup newContainer = (ViewGroup) view.findViewById(R.id.seekBarPrefBarContainer);
-
-            if (oldContainer != newContainer) {
-                // remove the seekbar from the old view
-                if (oldContainer != null) {
-                    ((ViewGroup) oldContainer).removeView(mRowsSeekBar);
-                }
-                // remove the existing seekbar (there may not be one) and add ours
-                newContainer.removeAllViews();
-                newContainer.addView(mRowsSeekBar, ViewGroup.LayoutParams.FILL_PARENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT);
-            }
-        }
-        catch(Exception ex) {
-            Log.e(TAG, "Error binding view: " + ex.toString());
-        }
-
-        //if dependency is false from the beginning, disable the seek bar
-        if (view != null && !view.isEnabled())
-        {
-            mRowsSeekBar.setEnabled(false);
-        }*/
         final SharedPreferences pref = getSharedPreferences();
 
         mRowsCurrentValue = pref.getInt(ROWS_SIZE_PREFERENCE_TAG, DEFAULT_ROWS_VALUE);
@@ -221,19 +199,9 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
      */
     private void updateExampleGridSize(final int newRowSize, final int newColumnSize) {
 
-        //mExampleGridLayout.removeAllViews();
-
         mExampleGridLayout.setRowSize(newRowSize);
         mExampleGridLayout.setColumnSize(newColumnSize);
         mExampleGridLayout.invalidate();
-        /*
-        int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(, View.MeasureSpec.EXACTLY);
-        int heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(mExampleGridLayout.getLayoutParams().height, View.MeasureSpec.EXACTLY);
-
-        mExampleGridLayout.measure(widthMeasureSpec, heightMeasureSpec);
-        */
-
-        final int elementCount = newRowSize * newColumnSize;
 
         // Save the inital size
         if (initialGridWidth == -1 && initialGridHeight == -1) {
@@ -278,24 +246,6 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
     @Override
     public void onProgressChanged(final SeekBar seekBar, int progress, final boolean fromUser) {
 
-
-        // Ensure that the new value is within bounds of the min and max
-        /*
-        if (newValue > mMaxValue)
-            newValue = mMaxValue;
-        else if (newValue < mMinValue)
-            newValue = mMinValue;
-        else if (mInterval != 1 && newValue % mInterval != 0)
-            newValue = Math.round(((float) newValue) / mInterval) * mInterval;
-        */
-        // change rejected, revert to the previous value
-        /*
-        if (!callChangeListener(newValue)) {
-            seekBar.setProgress(mColumnsCurrentValue - mMinValue);
-            return;
-        }
-        */
-
         // change accepted, store it
         mRowsCurrentValue = mRowsSeekBar.getProgress();
         mColumnsCurrentValue = mColumnsSeekBar.getProgress();
@@ -326,7 +276,7 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
         }
 
         if (fromUser) {
-            //mStatusText.setText(String.valueOf(newValue));
+
             SharedPreferences.Editor editor = getSharedPreferences().edit();
 
             mRowsCurrentValue += mMinValue;
