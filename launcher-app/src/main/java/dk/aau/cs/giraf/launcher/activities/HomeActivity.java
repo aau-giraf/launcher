@@ -60,21 +60,15 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
     private ArrayList<AppInfo> mCurrentLoadedApps;
 
     private boolean mWidgetRunning = false;
-    private boolean mDrawerAnimationRunning = false;
 
-
-    private GWidgetUpdater mWidgetUpdater;
-    private GWidgetProfileSelection mWidgetProfileSelection;
-    private GProfileSelector mProfileSelectorDialog;
-    private GDialog mLogoutDialog;
+    private GWidgetUpdater widgetUpdater;
+    private GWidgetProfileSelection widgetProfileSelection;
+    private GProfileSelector profileSelectorDialog;
+    private GDialog logoutDialog;
 
     private RelativeLayout mDrawerContentView;
-    //private RelativeLayout mSidebarView;
     private DrawerLayout mDrawerView;
-    //private LinearLayout mAppsContainer;
-    //private ScrollView mAppsScrollView;
     private ViewPager mAppViewPager;
-    //private AppsFragmentAdapter appsFragmentAdapter;
 
     private Timer mAppsUpdater;
 
@@ -108,7 +102,6 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
         mDrawerView = (DrawerLayout) this.findViewById(R.id.DrawerView);
         mAppViewPager = (ViewPager) this.findViewById(R.id.appsViewPager);
 
-        loadDrawer();                 //Temporarily disabled, see JavaDoc.
         loadWidgets();
         setupLogoutDialog();
 
@@ -187,8 +180,8 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
         reloadApplications();
 
         //startObservingApps();
-        if (mWidgetUpdater != null) {
-            mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_START);
+        if (widgetUpdater != null) {
+            widgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_START);
         }
     }
 
@@ -206,15 +199,14 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
             Log.d(Constants.ERROR_TAG, "Applications are no longer observed.");
         }
 
-        if (mWidgetUpdater != null) {
-            mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_STOP);
+        if (widgetUpdater != null) {
+            widgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_STOP);
         }
         if (loadHomeActivityApplicationTask != null) {
             loadHomeActivityApplicationTask.cancel(true);
         }
 
     }
-
 
     /**
      * Does nothing, to prevent the user from returning to the authentication_activity or native OS.
@@ -238,7 +230,6 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
     private void loadApplications() {
         loadHomeActivityApplicationTask = new LoadHomeActivityApplicationTask(this, mCurrentUser, mLoggedInGuardian, mAppViewPager, null);
         loadHomeActivityApplicationTask.execute();
-
     }
 
     /**
@@ -247,161 +238,16 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
     private void setupLogoutDialog() {
         String logoutHeadline = this.getResources().getString(R.string.Log_out);
         String logoutDescription = this.getResources().getString(R.string.Log_out_description);
-        mLogoutDialog = new GDialogMessage(this, R.drawable.large_switch_profile, logoutHeadline, logoutDescription, new View.OnClickListener() {
+        logoutDialog = new GDialogMessage(this, R.drawable.large_switch_profile, logoutHeadline, logoutDescription, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(LauncherUtility.logOutIntent(HomeActivity.this));
-                mLogoutDialog.dismiss();
+                logoutDialog.dismiss();
                 HomeActivity.this.finish();
             }
         });
-        mLogoutDialog.setOwnerActivity(this);
+        logoutDialog.setOwnerActivity(this);
     }
-
-    /**
-     * Load the drawer and its functionality.
-     * This has been temporarily disabled, as it turned out that the clients had no use for it.
-     * It is left in, as it may become useful at a later date.
-     * You can read more in the report about the Launcher from 2014.
-     */
-    private void loadDrawer() {
-        /*
-        // If result = true, the onTouch-function will be run again.
-		mSidebarView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent e) {
-                boolean result = true;
-
-                switch (e.getActionMasked()) {
-                    case MotionEvent.ACTION_MOVE:
-                        break;
-                    case MotionEvent.ACTION_DOWN:
-                        placeDrawer();
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        break;
-                }
-                return result;
-            }
-        });
-        */
-
-        /*mAppsScrollView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent e) {
-                boolean result = true;
-
-                switch (e.getActionMasked()) {
-                    case MotionEvent.ACTION_MOVE:
-                        break;
-                    case MotionEvent.ACTION_DOWN:
-                        popBackDrawer();
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        break;
-                }
-                return result;
-            }
-        });
-        */
-        /*
-        // This closes the drawer after starting to drag a color and
-        // opens it again once you stop dragging.
-        mSidebarView.setOnDragListener(new View.OnDragListener() {
-            int offset = 0;
-            @Override
-            public boolean onDrag(View v, DragEvent e) {
-                boolean result = true;
-
-                switch (e.getAction()) {
-                    case DragEvent.ACTION_DRAG_STARTED:
-                        placeDrawer();
-                        break;
-                    case DragEvent.ACTION_DRAG_ENDED:
-                        placeDrawer();
-                        break;
-                }
-                return result;
-            }
-        });
-        */
-    }
-
-    /**
-     * Supporting function for {@link HomeActivity#loadDrawer()}
-     */
-    private void popBackDrawer() {
-        int to;
-
-        if (!mDrawerView.isSideBarHidden) {
-            to = -mDrawerContentView.getWidth();
-
-            // then animate the view translating from (0, 0)
-            TranslateAnimation ta = new TranslateAnimation(0, to, 0, 0);
-            ta.setDuration(500);
-
-            if (!mDrawerAnimationRunning) {
-                mDrawerView.startAnimation(ta);
-                mDrawerAnimationRunning = true;
-            }
-
-            ta.setAnimationListener(new TranslateAnimation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                    // Sets the left margin of the scrollview based on the width of the homebar
-                    //mAppsScrollView.setLeft(mDrawerContentView.getWidth());
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    mDrawerAnimationRunning = false;
-                }
-            });
-        }
-    }
-
-    /**
-     * Supporting function for {@link HomeActivity#loadDrawer()}
-     */
-    /*
-    private void placeDrawer(){
-        int to;
-
-        if(mDrawerView.isSideBarHidden)
-            to = mDrawerContentView.getWidth();
-        else
-            to = -mDrawerContentView.getWidth();
-
-        // then animate the view translating from (0, 0)
-        TranslateAnimation ta = new TranslateAnimation(0, to, 0, 0);
-        ta.setDuration(500);
-        if(!mDrawerAnimationRunning){
-            mDrawerView.startAnimation(ta);
-            mDrawerAnimationRunning = true;
-        }
-
-        ta.setAnimationListener(new TranslateAnimation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                // Sets the left margin of the scrollview based on the width of the homebar
-                mAppsScrollView.setLeft(mDrawerContentView.getWidth());
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                mDrawerAnimationRunning = false;
-            }
-        });
-    }
-    */
 
     /**
      * Loads the sidebar's widgets.
@@ -413,19 +259,19 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
      */
     private void loadWidgets() {
         GWidgetLogout logoutWidget = (GWidgetLogout) findViewById(R.id.logoutwidget);
-        mWidgetProfileSelection = (GWidgetProfileSelection) findViewById(R.id.profile_widget);
+        widgetProfileSelection = (GWidgetProfileSelection) findViewById(R.id.profile_widget);
         GButtonSettings settingsButton = (GButtonSettings) findViewById(R.id.settingsbutton);
         mDrawerContentView = (RelativeLayout) findViewById(R.id.DrawerContentView);
 
         /*Setup the profile selector dialog. If the current user is not a guardian, the guardian is used
           as the current user.*/
         if (mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
-            mProfileSelectorDialog = new GProfileSelector(this, mLoggedInGuardian, mCurrentUser);
+            profileSelectorDialog = new GProfileSelector(this, mLoggedInGuardian, mCurrentUser);
         else
-            mProfileSelectorDialog = new GProfileSelector(this, mLoggedInGuardian, null);
+            profileSelectorDialog = new GProfileSelector(this, mLoggedInGuardian, null);
 
         //Set up widget updater, which updates the widget's view regularly, according to its status.
-        mWidgetUpdater = new GWidgetUpdater();
+        widgetUpdater = new GWidgetUpdater();
         if (mCurrentUser.getRole().getValue() < Profile.Roles.CHILD.getValue()) {
             settingsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -445,15 +291,15 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
         }
 
 
-        mWidgetProfileSelection.setOnClickListener(new View.OnClickListener() {
+        widgetProfileSelection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mCurrentUser.getRole().getValue() < Profile.Roles.CHILD.getValue()) {
-                    mProfileSelectorDialog.show();
+                    profileSelectorDialog.show();
                 }
             }
         });
-        mWidgetProfileSelection.setImageBitmap(mCurrentUser.getImage());
+        widgetProfileSelection.setImageBitmap(mCurrentUser.getImage());
 
         updatesProfileSelector();
 
@@ -462,7 +308,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
             public void onClick(View v) {
                 if (!mWidgetRunning) {
                     mWidgetRunning = true;
-                    mLogoutDialog.show();
+                    logoutDialog.show();
                     mWidgetRunning = false;
                 }
             }
@@ -479,19 +325,19 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
      * listener is needed, and the app container has to be reloaded.
      */
     private void updatesProfileSelector() {
-        mProfileSelectorDialog.setOnListItemClick(new AdapterView.OnItemClickListener() {
+        profileSelectorDialog.setOnListItemClick(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 ProfileController pc = new ProfileController(HomeActivity.this);
                 mCurrentUser = pc.getProfileById((int) l);
-                mProfileSelectorDialog.dismiss();
+                profileSelectorDialog.dismiss();
 
                 if (mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
-                    mProfileSelectorDialog = new GProfileSelector(HomeActivity.this, mLoggedInGuardian, mCurrentUser);
+                    profileSelectorDialog = new GProfileSelector(HomeActivity.this, mLoggedInGuardian, mCurrentUser);
                 else
-                    mProfileSelectorDialog = new GProfileSelector(HomeActivity.this, mLoggedInGuardian, null);
+                    profileSelectorDialog = new GProfileSelector(HomeActivity.this, mLoggedInGuardian, null);
 
-                mWidgetProfileSelection.setImageBitmap(mCurrentUser.getImage());
+                widgetProfileSelection.setImageBitmap(mCurrentUser.getImage());
 
                 updatesProfileSelector();
 
