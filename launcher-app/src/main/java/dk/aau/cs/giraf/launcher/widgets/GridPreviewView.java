@@ -49,6 +49,7 @@ public class GridPreviewView extends View {
     /**
      * Sets the rowSize of this GridPreviewView
      * Clients should call .invalidate() to update the view
+     *
      * @param rowSize
      */
     public void setRowSize(final int rowSize) {
@@ -58,6 +59,7 @@ public class GridPreviewView extends View {
     /**
      * Sets the columnSize of this GridPreviewView
      * Clients should call .invalidate() to update the view
+     *
      * @param columnSize
      */
     public void setColumnSize(final int columnSize) {
@@ -66,6 +68,7 @@ public class GridPreviewView extends View {
 
     /**
      * Override on draw to draw a grid with this.rowSize rows and this.columnSize columns
+     *
      * @param canvas
      */
     @Override
@@ -78,13 +81,35 @@ public class GridPreviewView extends View {
         final int columnSpacing = width / columnSize;
         final int rowSpacing = height / rowSize;
 
+        int restWidth = width % columnSize;
+        int restHeight = height % rowSize;
+
+        int xOffset = 0;
+        int yOffset = 0;
+
         for (int columnCounter = 0; columnCounter <= columnSize; columnCounter++) {
 
-            canvas.drawLine(columnCounter * columnSpacing, 0, columnCounter * columnSpacing, height, paint);
+            if (restWidth > 0 && columnCounter != 0) {
+                xOffset = columnCounter;
+                restWidth--;
+            }
+
+            final int x = columnCounter * columnSpacing + xOffset;
+
+            canvas.drawLine(x, 0, x, height, paint);
         }
 
         for (int rowCounter = 0; rowCounter <= rowSize; rowCounter++) {
-            canvas.drawLine(0, rowCounter * rowSpacing , width , rowCounter * rowSpacing, paint);
+
+
+            if (restHeight > 0 && rowCounter != 0) {
+                yOffset = rowCounter;
+                restHeight--;
+            }
+
+            final int y = rowCounter * rowSpacing + yOffset;
+
+            canvas.drawLine(0, y, width, y, paint);
         }
     }
 }
