@@ -39,7 +39,6 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.launcher.layoutcontroller.DrawerLayout;
 import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
-import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
 import dk.aau.cs.giraf.oasis.lib.Helper;
@@ -60,7 +59,6 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
 
     private ArrayList<AppInfo> mCurrentLoadedApps;
 
-    private boolean mIsAppsContainerInitialized = false;
     private boolean mWidgetRunning = false;
     private boolean mDrawerAnimationRunning = false;
 
@@ -161,7 +159,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
 
-        if (!mIsAppsContainerInitialized && mAppViewPager.getViewTreeObserver() != null) {
+        if (mAppViewPager.getViewTreeObserver() != null) {
             mAppViewPager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 
                 @Override
@@ -186,9 +184,8 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
     protected void onResume() {
         super.onResume();
 
-        if (mIsAppsContainerInitialized) {
-            reloadApplications();
-        }
+        reloadApplications();
+
         //startObservingApps();
         if (mWidgetUpdater != null) {
             mWidgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_START);
@@ -203,7 +200,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
     @Override
     protected void onPause() {
         super.onPause();
-        mIsAppsContainerInitialized = true; //This makes the Launcher load applications if it was paused before loading them.
+
         if (mAppsUpdater != null) {
             mAppsUpdater.cancel();
             Log.d(Constants.ERROR_TAG, "Applications are no longer observed.");
@@ -216,7 +213,6 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
             loadHomeActivityApplicationTask.cancel(true);
         }
 
-        //mAppViewPager.setAdapter(null);
     }
 
 
@@ -604,7 +600,6 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
             super.onPostExecute(appInfos);
 
             mCurrentLoadedApps = appInfos;
-            mIsAppsContainerInitialized = true;
 
             startObservingApps();
         }
