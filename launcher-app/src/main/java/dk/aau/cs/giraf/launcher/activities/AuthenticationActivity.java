@@ -71,6 +71,11 @@ public class AuthenticationActivity extends CaptureActivity {
             @Override
             public void onClick(View view) {
                 Helper h = new Helper(mContext);
+                if (h.profilesHelper.getProfiles().size() == 0)
+                {
+                    Toast.makeText(mContext, "Databasen indeholder ingen profiler", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 Profile profile = h.profilesHelper.getProfilesByName("sw615f14").get(0);
                 login(profile);
             }
