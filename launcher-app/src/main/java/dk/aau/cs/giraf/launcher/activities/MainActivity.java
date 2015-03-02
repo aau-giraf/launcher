@@ -41,13 +41,13 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      * If {@code true}, the Launcher is stated in debugging mode, where the splash screen and
      * authentication_activity is skipped.
      */
-    private final boolean DEBUG_MODE = true;
+    private final boolean DEBUG_MODE = false;
 
     /**
      * If {@code true}, the authentication_activity screen is shown, despite debugging mode. Has no
      * effect if {@code DEBUG_MODE} is {@code false}.
      */
-    private final boolean SKIP_AUTHENTICATION = true;
+    private final boolean SKIP_AUTHENTICATION = false;
 
     /**
      * If {@code true}, the splash screen is shown, despite debugging mode. Has no
@@ -209,6 +209,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 
         //Add the profile ID to the intent, and save information on the session.
         intent.putExtra(Constants.GUARDIAN_ID, profile.getId());
+
         LauncherUtility.saveLogInData(this, profile.getId(), new Date().getTime());
         return intent;
     }

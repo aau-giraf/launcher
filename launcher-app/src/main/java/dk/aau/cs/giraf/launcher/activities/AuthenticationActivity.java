@@ -1,6 +1,5 @@
 package dk.aau.cs.giraf.launcher.activities;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -8,9 +7,11 @@ import android.graphics.RectF;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,7 +21,6 @@ import com.google.zxing.Result;
 import com.google.zxing.client.android.CaptureActivity;
 
 import java.util.Date;
-import java.util.List;
 
 import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.launcher.R;
@@ -35,17 +35,18 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
  * is valid, session information is saved in preferences, and {@code HomeActivity} is started.
  */
 public class AuthenticationActivity extends CaptureActivity {
-	
+
 	private Intent mHomeIntent;
-	private GButton mGLoginButton;
 	private TextView mLoginNameView;
 	private TextView mInfoView;
+	private Context mContext;
 	private Vibrator mVibrator;
 	private Profile mPreviousProfile;
     private View mCameraFeed;
-    private Helper mHelper;
+    private TextView mScanStatus;
 
     private boolean isFramingRectangleRedrawn = false;
+    private boolean scanFailed = false;
 
     /**
      * Sets up the activity. Specifically view variables are instantiated, the login button listener
@@ -58,31 +59,27 @@ public class AuthenticationActivity extends CaptureActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.authentication_activity);
 
-		//mContext = this;
-		mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);		
-		mGLoginButton = (GButton)this.findViewById(R.id.loginGButton);
+		mContext = this;
+		mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 		mLoginNameView = (TextView)this.findViewById(R.id.loginname);
 		mInfoView = (TextView)this.findViewById(R.id.authentication_step1);
+        mScanStatus = (TextView)this.findViewById(R.id.scanStatusTextView);
 
-        mHelper = new Helper(this);
+        Button guardianButton = (Button)this.findViewById(R.id.loginAsGuardianButton);
 
-        addLoginButtonsForDebugging();
+        guardianButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Helper h = new Helper(mContext);
+                Profile profile = h.profilesHelper.getProfilesByName("sw615f14").get(0);
+                login(profile);
+            }
+        });
 
         // Show warning if in debugging mode
         if (LauncherUtility.isDebugging()) {
             LauncherUtility.showDebugInformation(this);
         }
-
-		mGLoginButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// If authentication_activity was not launched by the launcher...
-				if (!getIntent().hasCategory("dk.aau.cs.giraf.launcher.GIRAF")) {
-                    LauncherUtility.saveLogInData(AuthenticationActivity.this, mPreviousProfile.getId(), new Date().getTime());
-					startActivity(mHomeIntent);
-				}
-			}
-		});
 
         // Simulate the AnimationDrawable class
         final ImageView instructImageView = (ImageView) findViewById(R.id.animation);
@@ -91,30 +88,6 @@ public class AuthenticationActivity extends CaptureActivity {
         // Start logging this activity
         EasyTracker.getInstance(this).activityStart(this);
 	}
-
-    private void addLoginButtonsForDebugging() {
-        GButton guardianButton = (GButton) this.findViewById(R.id.loginGuardianGButton);
-
-        guardianButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            Profile guardianProfile = mHelper.profilesHelper.getProfilesByName("sw615f14").get(0);
-
-            if (guardianProfile == null)
-            {
-                mInfoView.setText("Kunne ikke finde bruger: SW615f14");
-                return;
-            }
-
-            if (!getIntent().hasCategory("dk.aau.cs.giraf.launcher.GIRAF")) {
-                mHomeIntent = new Intent(AuthenticationActivity.this, HomeActivity.class);
-                mHomeIntent.putExtra(Constants.GUARDIAN_ID, guardianProfile.getId());
-                LauncherUtility.saveLogInData(AuthenticationActivity.this, guardianProfile.getId(), new Date().getTime());
-                startActivity(mHomeIntent);
-            }
-        }
-        });
-    }
 
     /**
      * Draws the feed's framing rectangle if necessary.
@@ -147,13 +120,13 @@ public class AuthenticationActivity extends CaptureActivity {
      *
 	 * @param color The color which the border should have
 	 */
-	private void changeCameraFeedBorderColor(int color) {
+	public void changeCameraFeedBorderColor(int color) {
 		ViewGroup cameraFeedView = (ViewGroup)this.findViewById(R.id.camerafeed);
-		
+
 		RectF rectf = new RectF(10,10,10,10);
 		RoundRectShape rect = new RoundRectShape( new float[] {15,15, 15,15, 15,15, 15,15}, rectf, null);
 		ShapeDrawable shapeDrawable = new ShapeDrawable(rect);
-		
+
 		shapeDrawable.getPaint().setColor(color);
 		cameraFeedView.setBackgroundDrawable(shapeDrawable);
 	}
@@ -167,7 +140,7 @@ public class AuthenticationActivity extends CaptureActivity {
 	 * @param barcode A greyscale bitmap of the camera data which was decoded.
 	 */
 	@Override
-	public void handleDecode(Result rawResult, Bitmap barcode){
+	public void handleDecode(Result rawResult, final Bitmap barcode){
         try {
             Helper helper = new Helper(this);
             Profile profile = helper.profilesHelper.authenticateProfile(rawResult.getText());
@@ -177,21 +150,28 @@ public class AuthenticationActivity extends CaptureActivity {
                 if (mPreviousProfile == null || !profile.toString().equals(mPreviousProfile.toString())) {
                     mVibrator.vibrate(400);
                 }
-                mPreviousProfile = profile;
 
-                this.changeCameraFeedBorderColor(0xFF3AAA35);
-                mLoginNameView.setText(profile.getName());
-                mLoginNameView.setVisibility(View.VISIBLE);
-                mGLoginButton.setVisibility(View.VISIBLE);
-                mInfoView.setText(R.string.saadan);
+                login(profile);
 
-                mHomeIntent = new Intent(AuthenticationActivity.this, HomeActivity.class);
-                mHomeIntent.putExtra(Constants.GUARDIAN_ID, profile.getId());
             } else {
-                this.changeCameraFeedBorderColor(0xFFFF0000);
-                mGLoginButton.setVisibility(View.INVISIBLE);
                 mLoginNameView.setVisibility(View.INVISIBLE);
                 mInfoView.setText(R.string.authentication_step1);
+
+                if (scanFailed == false) {
+                    changeCameraFeedBorderColor(0xFFFF0000); // Error color (red)
+                    mScanStatus.setText(getString(R.string.wrong_qr_code_msg));
+                    scanFailed = true;
+
+                    Handler h = new Handler();
+                    h.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            changeCameraFeedBorderColor(0xFFDD9639); // Default color (orange)
+                            mScanStatus.setText(getString(R.string.scan_qr_code_msg));
+                            scanFailed = false;
+                        }
+                    }, 2000);
+                }
             }
         } catch (Exception e) {
             Toast.makeText(this, getString(R.string.could_not_verify_msg), Toast.LENGTH_LONG).show();
@@ -203,6 +183,32 @@ public class AuthenticationActivity extends CaptureActivity {
 		 */
 		this.getHandler().sendEmptyMessageDelayed(R.id.restart_preview, 500);
 	}
+
+    private void login(Profile profile) {
+        mPreviousProfile = profile;
+
+        this.changeCameraFeedBorderColor(0xFF3AAA35); // Success color (green)
+        mLoginNameView.setText(profile.getName());
+        mLoginNameView.setVisibility(View.VISIBLE);
+
+        mHomeIntent = new Intent(AuthenticationActivity.this, HomeActivity.class);
+        mHomeIntent.putExtra(Constants.GUARDIAN_ID, profile.getId());
+
+        // If authentication_activity was not launched by the launcher...
+        if (!getIntent().hasCategory("dk.aau.cs.giraf.launcher.GIRAF")) {
+            Handler h = new Handler();
+
+            mScanStatus.setText(getString(R.string.logging_in_msg));
+
+            h.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    LauncherUtility.saveLogInData(mContext, mPreviousProfile.getId(), new Date().getTime());
+                    startActivity(mHomeIntent);
+                }
+            }, 800);
+        }
+    }
 
     /**
      * Does nothing, to prevent the user from returning to the splash screen or native OS.

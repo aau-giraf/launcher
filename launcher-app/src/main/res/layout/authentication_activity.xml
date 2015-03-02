@@ -2,12 +2,14 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
+
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="horizontal"
         android:background="@drawable/gbackground"
-        android:weightSum="5">
+        android:weightSum="5"
+        android:layout_gravity="right|center_vertical">
 
         <FrameLayout
             android:layout_width="fill_parent"
@@ -66,13 +68,20 @@
                     android:layout_height="match_parent"
                     layout="@layout/debug_mode_overlay" />
 
+            <Button
+            android:id="@+id/loginAsGuardianButton"
+                android:text="Guardian Log ind"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|bottom" />
+
         </FrameLayout>
 
         <FrameLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_marginTop="100dp"
-            android:layout_marginBottom="100dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="50dp"
             android:layout_marginRight="75dp"
             android:layout_weight="2"
             android:id="@+id/Camerafeed_container">
@@ -80,12 +89,13 @@
             <RelativeLayout
                 android:id="@+id/camerafeed"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="481dp"
                 android:layout_gravity="center"
                 android:background="@drawable/cameraborder"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true">
-                <include layout="@layout/capture"/>
+                <include layout="@layout/capture"
+                    android:layout_alignParentTop="true" />
 
                 <ImageView
                     android:id="@+id/scanicon"
@@ -97,26 +107,18 @@
                     android:src="@drawable/scanicon" />
 
             </RelativeLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Scanner"
+                android:id="@+id/scanStatusTextView"
+                android:layout_gravity="center_horizontal|top"
+                android:textSize="40sp"
+                android:textColor="#FFFFFFFF"/>
+
         </FrameLayout>
 
     </LinearLayout>
 
-    <dk.aau.cs.giraf.gui.GVerifyButton
-        android:visibility="invisible"
-        android:id="@+id/loginGButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="40sp"
-        android:text="Log ind"
-        android:layout_margin="20dp"
-        android:layout_gravity="center_horizontal|bottom" />
-
-    <dk.aau.cs.giraf.gui.GVerifyButton
-        android:id="@+id/loginGuardianGButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="40sp"
-        android:text="Guardian log ind"
-        android:layout_margin="20dp"
-        android:layout_gravity="left|bottom" />
 </FrameLayout>
