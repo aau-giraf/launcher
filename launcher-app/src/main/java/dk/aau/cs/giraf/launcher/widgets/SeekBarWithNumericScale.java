@@ -99,7 +99,7 @@ public class SeekBarWithNumericScale extends SeekBar {
             final int distanceBetweenScaleElements = (width - paddingLeft - paddingRight) / (scaleElementCount - 1);
 
             for (int scaleElementCounter = 0; scaleElementCounter < scaleElementCount; scaleElementCounter++) {
-                canvas.drawText("" + (scaleElementCounter + firstScaleItemValue), paddingLeft + distanceBetweenScaleElements * scaleElementCounter, height / 2 + textSize * 1.5f, paint);
+                canvas.drawText("" + (scaleElementCounter + firstScaleItemValue) + " × " + (firstScaleItemValue + 1) , paddingLeft + distanceBetweenScaleElements * scaleElementCounter, height / 2 + textSize * 1.5f, paint);
             }
         }
     }
