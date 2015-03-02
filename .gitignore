@@ -1,4 +1,4 @@
-﻿#Ignore the build directory
+#Ignore the build directory
 /build
 /.gradle
 /.idea
@@ -31,3 +31,4 @@ proguard/
 *.iml
 *.ipr
 *.iws
+gradle
