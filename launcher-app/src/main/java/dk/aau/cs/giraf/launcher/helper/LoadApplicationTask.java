@@ -26,6 +26,7 @@ import dk.aau.cs.giraf.launcher.activities.MainActivity;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
+import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
@@ -45,7 +46,6 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
     protected Profile guardian;
     protected Context context;
     protected ViewPager appsViewPager;
-    protected int iconSize;
     protected View.OnClickListener onClickListener;
 
     protected Set<String> selectedApps;
@@ -58,15 +58,13 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
      * @param currentUser     The user of the current activity. If set to null, the user will be found based on the context
      * @param guardian        The guardian of the current user.
      * @param appsViewPager    The layout that the AppImageViews should be put into
-     * @param iconSize        The size of the AppImageViews being generated
      * @param onClickListener The onClickListener attached to each AppImageView. These vary depending on the purpose of the layout they are loaded into.
      */
-    public LoadApplicationTask(Context context, Profile currentUser, Profile guardian, ViewPager appsViewPager, int iconSize, View.OnClickListener onClickListener) {
+    public LoadApplicationTask(Context context, Profile currentUser, Profile guardian, ViewPager appsViewPager, View.OnClickListener onClickListener) {
         this.context = context;
         this.currentUser = currentUser;
         this.guardian = guardian;
         this.appsViewPager = appsViewPager;
-        this.iconSize = LauncherUtility.intToDP(context, iconSize);
         this.onClickListener = onClickListener;
     }
 
@@ -221,7 +219,10 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
         {
             changeVisibilityOfNoAppsMessage(View.GONE);
 
-            ((AppsFragmentAdapter)this.appsViewPager.getAdapter()).swapApps(appInfos , MainActivity.rowSize, MainActivity.columnSize);
+            final int rowsSize = ApplicationGridResizer.getGridRowSize(this.context, currentUser);
+            final int columnsSize = ApplicationGridResizer.getGridColumnSize(this.context, currentUser);
+
+            ((AppsFragmentAdapter)this.appsViewPager.getAdapter()).swapApps(appInfos , rowsSize, columnsSize);
             //this.appsViewPager.setAdapter(new AppsFragmentAdapter(getFragmentMangerForAppsFragmentAdapter(),appInfos , MainActivity.rowSize, MainActivity.columnSize));
         }
         else

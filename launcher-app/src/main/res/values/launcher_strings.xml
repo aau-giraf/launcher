@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="giraf_debug_mode">GIRAF launcher is debuging, logged in</string>
+    <string name="giraf_debug_mode">GIRAF launcher is debugging, logged in</string>
     <string name="giraf_debug_as_guardian">as a guardian</string>
     <string name="giraf_debug_as_child">as a child</string>
 

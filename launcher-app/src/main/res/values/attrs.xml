@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SeekBarWithNumericScale">
+        <attr name="firstScaleItemValue" format="integer" />
+        <attr name="lastScaleItemValue" format="integer" />
+        <attr name="scaleTextSize" format="dimension" />
+    </declare-styleable>
+</resources>

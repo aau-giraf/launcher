@@ -10,21 +10,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <SwitchPreference
+    <dk.aau.cs.giraf.launcher.settings.components.LeftAlignedSwitchPreference
         android:key="@string/show_animation_preference_key"
         android:title="@string/setting_launcher_animation_title"
         android:summary="@string/setting_launcher_animation_summary"
         android:switchTextOff="@string/setting_launcher_animation_off"
         android:switchTextOn="@string/setting_launcher_animation_on"
-        android:defaultValue="true"/>
+        android:defaultValue="true"
+        android:layout_gravity="left"/>
 
-    <dk.aau.cs.giraf.launcher.settings.components.IconResizer
+    <dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer
         android:id="@+id/icon_resizer"
-        android:key="@string/icon_size_preference_key"
-        android:title="@string/setting_launcher_icon_size_title"
-        android:summary="@string/setting_launcher_icon_size_summary"
-        android:defaultValue="200"
-        android:max="200"
-        giraf:min="96"/>
+        android:key="@string/grid_size_preference_key"
+        android:title="@string/setting_launcher_grid_size_title"
+        android:summary="@string/setting_launcher_grid_size_summary"
+        android:defaultValue="4"
+        android:max="7"
+        giraf:min="2"/>
 
 </PreferenceScreen>

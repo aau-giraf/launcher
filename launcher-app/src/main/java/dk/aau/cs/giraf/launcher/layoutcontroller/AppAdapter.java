@@ -56,7 +56,7 @@ public class AppAdapter extends ArrayAdapter<AppInfo> {
             convertView = inflater.inflate(R.layout.apps_container, parent, false);
         }
 
-        ImageView appIconView = (ImageView) convertView.findViewById(R.id.app_icon);
+        ImageView appIconView = (ImageView) convertView.findViewById(R.id.example_grid_layout);
         TextView appTextView = (TextView) convertView.findViewById(R.id.app_text);
 
         appTextView.setText(appInfo.getShortenedName());

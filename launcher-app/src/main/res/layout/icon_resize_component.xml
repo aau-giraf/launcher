@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:paddingBottom="5dp"
-    android:paddingLeft="15dp"
-    android:paddingRight="10dp"
-    android:paddingTop="5dp"
-    android:baselineAligned="false">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:custom="http://schemas.android.com/apk/res/dk.aau.cs.giraf.launcher"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:paddingBottom="5dp"
+              android:paddingLeft="15dp"
+              android:paddingRight="10dp"
+              android:paddingTop="5dp"
+              android:orientation="horizontal"
+              android:baselineAligned="false">
 
     <RelativeLayout
         android:id="@android:id/widget_frame"
         android:layout_width="0dip"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
+        android:layout_weight="1"
         android:layout_gravity="center_vertical"
         android:paddingRight="15dp">
 
@@ -22,73 +24,83 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@+id/seekBarPrefUnitsRight"
-            android:orientation="horizontal" >
+            android:orientation="vertical">
 
-            <!-- TODO: Implement this with GIRAF-specific SeekBar -->
-            <SeekBar
-                android:id="@+id/seekBarPrefSeekBar"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/setting_launcher_grid_row_title"
+                android:paddingTop="15dp"/>
+
+            <dk.aau.cs.giraf.launcher.widgets.SeekBarWithNumericScale
+                android:id="@+id/gridResizerSeekBar"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                custom:firstScaleItemValue="2"
+                custom:lastScaleItemValue="7"
+                custom:scaleTextSize="14sp"
+                />
+            <!--
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/setting_launcher_grid_column_title"/>
+
+            <dk.aau.cs.giraf.launcher.widgets.SeekBarWithNumericScale
+                android:id="@+id/iconsResizerColumnsSeekBar"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                custom:firstScaleItemValue="2"
+                custom:lastScaleItemValue="10"
+                custom:scaleTextSize="14sp"/>-->
         </LinearLayout>
 
     </RelativeLayout>
+
     <RelativeLayout
-        android:layout_width="200dp"
-        android:layout_height="225dp"
-        android:layout_gravity="right|center_vertical">
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|center_vertical"
+        android:layout_weight="1">
+
         <TextView
             android:id="@+id/example_text"
-            android:layout_width="wrap_content"
+            android:layout_width="213dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:gravity="center"
-            android:text="Eksempel"/>
-            <LinearLayout
-                android:id="@+id/app_bg"
-                android:visibility="gone"
-                android:layout_height="200dp"
-                android:layout_width="200dp"
-                android:orientation="vertical"
-                android:background="@drawable/appborder"
-                >
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:text="@string/setting_launcher_grid_example_text"/>
 
-                <ImageView
-                    android:id="@+id/app_icon"
-                    android:layout_height="120dp"
-                    android:layout_width="120dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_giraf"
-                    android:paddingTop="5dp"
-                    android:layout_weight="2"
-                    />
+        <dk.aau.cs.giraf.launcher.widgets.GridPreviewView
+            android:id="@+id/example_grid_layout"
+            android:layout_height="120dp"
+            android:layout_width="213dp"
+            android:layout_below="@id/example_text"
+            android:layout_alignRight="@id/example_text"
+            android:gravity="center"
+            android:background="@drawable/example_grid_layout_drawable"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            />
 
-                <TextView
-                    android:id="@+id/app_text"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
-                    android:ellipsize="none"
-                    android:scrollHorizontally="false"
-                    android:gravity="center_horizontal"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@android:color/black"
-                    android:text="Giraf"
-                    android:layout_weight="1"
-                    />
-            </LinearLayout> <!-- this is hidden after instantiation -->
+        <!-- this is hidden after instantiation -->
+        <!--
         <FrameLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_below="@id/example_text">
+
             <ImageView
                 android:id="@+id/app_image"
                 android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-            android:gravity="center"/>
+                android:gravity="center"/>
         </FrameLayout>
+        -->
     </RelativeLayout>
 </LinearLayout>

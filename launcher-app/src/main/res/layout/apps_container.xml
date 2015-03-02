@@ -14,7 +14,7 @@
     	android:background="@drawable/appborder">
 
         <ImageView
-            android:id="@+id/app_icon"
+            android:id="@+id/example_grid_layout"
             android:layout_height="120dp"
             android:layout_width="120dp"
             android:layout_gravity="center"/>
