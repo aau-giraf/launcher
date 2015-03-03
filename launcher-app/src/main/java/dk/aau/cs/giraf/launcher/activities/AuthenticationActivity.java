@@ -22,7 +22,6 @@ import com.google.zxing.client.android.CaptureActivity;
 
 import java.util.Date;
 
-import dk.aau.cs.giraf.gui.GButton;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
@@ -162,7 +161,7 @@ public class AuthenticationActivity extends CaptureActivity {
                 mLoginNameView.setVisibility(View.INVISIBLE);
                 mInfoView.setText(R.string.authentication_step1);
 
-                if (scanFailed == false) {
+                if (!scanFailed) {
                     changeCameraFeedBorderColor(0xFFFF0000); // Error color (red)
                     mScanStatus.setText(getString(R.string.wrong_qr_code_msg));
                     scanFailed = true;

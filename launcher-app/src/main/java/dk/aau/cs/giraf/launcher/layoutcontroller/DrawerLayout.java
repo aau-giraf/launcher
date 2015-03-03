@@ -4,8 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.RelativeLayout;
 
-import dk.aau.cs.giraf.launcher.R;
-
 /**
  * In order to easily handle the animation of the drawer, we extended the native RelativeLayout,
  * to handle the additional animations that the drawer needed.

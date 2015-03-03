@@ -3,16 +3,15 @@ package dk.aau.cs.giraf.launcher.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
-import android.widget.RelativeLayout;
 
 import com.google.analytics.tracking.android.EasyTracker;
 
@@ -144,6 +143,8 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
      *
      * @param hasFocus {@code true} if the activity has focus.
      */
+
+    /*
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -162,7 +163,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
             Log.e(Constants.ERROR_TAG, "ViewTreeObserver is null.");
         }
     }
-
+    */
     /**
      * Redraws the application container and resumes the timer looking for updates in the set of
      * available apps.
@@ -249,14 +250,14 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
      * Loads the sidebar's widgets.
      *
      * @see dk.aau.cs.giraf.gui.GWidgetConnectivity
-     * @see dk.aau.cs.giraf.gui.GWidgetLogout
      * @see dk.aau.cs.giraf.gui.GWidgetProfileSelection
-     * @see dk.aau.cs.giraf.gui.GButtonSettings
+     * @see dk.aau.cs.giraf.gui.GirafButton
      */
     private void loadWidgets() {
-        GWidgetLogout logoutWidget = (GWidgetLogout) findViewById(R.id.logoutwidget);
+        GirafButton logoutButton = (GirafButton) findViewById(R.id.logout_button);
         widgetProfileSelection = (GWidgetProfileSelection) findViewById(R.id.profile_widget);
-        GirafButton settingsButton = (GirafButton) findViewById(R.id.settingsbutton);
+        GirafButton settingsButton = (GirafButton) findViewById(R.id.settings_button);
+        GirafButton changeUserButton = (GirafButton) findViewById(R.id.change_user_button);
 
         /*Setup the profile selector dialog. If the current user is not a guardian, the guardian is used
           as the current user.*/
@@ -281,12 +282,13 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
                     startActivity(intent);
                 }
             });
-        } else {
+        } else { // The uer had citizen permissions
             settingsButton.setVisibility(View.GONE);
+            changeUserButton.setVisibility(View.GONE);
         }
 
-
-        widgetProfileSelection.setOnClickListener(new View.OnClickListener() {
+        // Set the change user button to open the change user dialog
+        changeUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mCurrentUser.getRole().getValue() < Profile.Roles.CHILD.getValue()) {
@@ -294,11 +296,23 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
                 }
             }
         });
-        widgetProfileSelection.setImageBitmap(mCurrentUser.getImage());
+
+        // Fetch the profile picture
+        Bitmap profilePicture = mCurrentUser.getImage();
+
+        // If there were no profile picture use the default template
+        if(profilePicture == null) {
+            // Fetch the default template
+            profilePicture = ((BitmapDrawable) this.getResources().getDrawable(R.drawable.no_profile_pic)).getBitmap();
+        }
+
+        // Set the profile picture
+        widgetProfileSelection.setImageBitmap(profilePicture);
 
         updatesProfileSelector();
 
-        logoutWidget.setOnClickListener(new View.OnClickListener() {
+        // Set the logout button to show the logout dialog
+        logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!mWidgetRunning) {
@@ -309,11 +323,6 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
             }
         });
     }
-
-    /**
-     * Updates the user's preferred icon size from SharedPreferences. This preference it set in Launcher's
-     * PreferenceFragment. The size is saved in {@link HomeActivity#mIconSize}.
-     */
 
     /**
      * Updates the ProfileSelector. It is needed when a new user has been selected, as a different
