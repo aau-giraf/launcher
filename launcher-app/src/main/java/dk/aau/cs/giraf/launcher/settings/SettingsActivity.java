@@ -36,7 +36,7 @@ public class SettingsActivity extends FragmentActivity
     private android.support.v4.app.FragmentManager mSupportFragManager;
     private Fragment mActiveFragment;
     private android.support.v4.app.Fragment mActiveSupportFragment;
-    private Profile mCurrentUser;
+    private Profile mCurrentUser = null;
     private Profile mLoggedInGuardian;
     private Helper mHelper;
 
@@ -69,8 +69,20 @@ public class SettingsActivity extends FragmentActivity
         setContentView(R.layout.settings_activity);
 
         mHelper = LauncherUtility.getOasisHelper(this);
-        mCurrentUser = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
-        mLoggedInGuardian = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
+
+        final int childId = getIntent().getExtras().getInt(Constants.CHILD_ID);
+        final int guardianId = getIntent().getExtras().getInt(Constants.GUARDIAN_ID);
+
+        if(childId != Constants.NO_CHILD_SELECTED_ID)
+        {
+            mCurrentUser = mHelper.profilesHelper.getProfileById(childId);
+        }
+        else
+        {
+            mCurrentUser = mHelper.profilesHelper.getProfileById(guardianId);
+        }
+
+        mLoggedInGuardian = mHelper.profilesHelper.getProfileById(guardianId);
 
         // Used to handle fragment changes within the containing View
         mFragManager = this.getFragmentManager();
@@ -93,8 +105,6 @@ public class SettingsActivity extends FragmentActivity
                 // Load the fragment just selected into view
                 mSupportFragManager.beginTransaction().add(R.id.settingsContainer, mActiveSupportFragment).commit();
             }
-
-
         }
     }
 

@@ -63,17 +63,5 @@ public class DrawerLayout extends RelativeLayout {
     @Override
     protected void onAnimationEnd() {
         super.onAnimationEnd();
-
-        DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams) this.getLayoutParams();
-        RelativeLayout homeDrawer = (RelativeLayout) findViewById(R.id.DrawerContentView);
-
-        if (isSideBarHidden) {
-            params.leftMargin = homeDrawer.getLeft();
-            isSideBarHidden = false;
-        } else {
-            params.leftMargin -= homeDrawer.getMeasuredWidth();
-            isSideBarHidden = true;
-        }
-        this.setLayoutParams(params);
     }
 }

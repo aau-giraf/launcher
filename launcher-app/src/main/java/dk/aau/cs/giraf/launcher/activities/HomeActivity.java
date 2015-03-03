@@ -9,6 +9,8 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.RelativeLayout;
 
@@ -24,6 +26,7 @@ import java.util.TimerTask;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GProfileSelector;
+import dk.aau.cs.giraf.gui.GWidgetLogout;
 import dk.aau.cs.giraf.gui.GWidgetProfileSelection;
 import dk.aau.cs.giraf.gui.GWidgetUpdater;
 import dk.aau.cs.giraf.gui.GirafButton;
@@ -34,7 +37,6 @@ import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
-import dk.aau.cs.giraf.launcher.layoutcontroller.DrawerLayout;
 import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
 import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
@@ -63,8 +65,6 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
     private GProfileSelector profileSelectorDialog;
     private GDialog logoutDialog;
 
-    private RelativeLayout mDrawerContentView;
-    private DrawerLayout mDrawerView;
     private ViewPager mAppViewPager;
 
     private Timer mAppsUpdater;
@@ -96,7 +96,6 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
         mLoggedInGuardian = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
 
         // Fetch references to view objects
-        mDrawerView = (DrawerLayout) this.findViewById(R.id.DrawerView);
         mAppViewPager = (ViewPager) this.findViewById(R.id.appsViewPager);
 
         loadWidgets();
@@ -252,13 +251,12 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
      * @see dk.aau.cs.giraf.gui.GWidgetConnectivity
      * @see dk.aau.cs.giraf.gui.GWidgetLogout
      * @see dk.aau.cs.giraf.gui.GWidgetProfileSelection
-     * @see dk.aau.cs.giraf.gui.GirafButton
+     * @see dk.aau.cs.giraf.gui.GButtonSettings
      */
     private void loadWidgets() {
-        GirafButton logoutButton = (GirafButton) findViewById(R.id.logout_button);
+        GWidgetLogout logoutWidget = (GWidgetLogout) findViewById(R.id.logoutwidget);
         widgetProfileSelection = (GWidgetProfileSelection) findViewById(R.id.profile_widget);
-        GirafButton settingsButton = (GirafButton) findViewById(R.id.settings_button);
-        mDrawerContentView = (RelativeLayout) findViewById(R.id.DrawerContentView);
+        GirafButton settingsButton = (GirafButton) findViewById(R.id.settingsbutton);
 
         /*Setup the profile selector dialog. If the current user is not a guardian, the guardian is used
           as the current user.*/
@@ -300,7 +298,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
 
         updatesProfileSelector();
 
-        logoutButton.setOnClickListener(new View.OnClickListener() {
+        logoutWidget.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!mWidgetRunning) {
