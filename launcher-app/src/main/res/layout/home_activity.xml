@@ -8,34 +8,14 @@
     <dk.aau.cs.giraf.launcher.layoutcontroller.DrawerLayout
         android:id="@+id/DrawerView"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_marginLeft="-400dp">
-
-        <RelativeLayout
-            android:layout_width="400dp"
-            android:layout_height="fill_parent"
-            android:id="@+id/DrawerContentView"
-            android:background="@drawable/drawerbackground">
-
-            <GridView
-                android:id="@+id/appcolors"
-                android:layout_height="fill_parent"
-                android:layout_width="fill_parent"
-                android:layout_alignParentRight="true"
-                android:numColumns="auto_fit"
-
-                android:listSelector="#00000000"
-                android:padding="20dp"
-                android:columnWidth="90dp"
-                android:verticalSpacing="20dp" />
-        </RelativeLayout>
+        android:layout_height="fill_parent">
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/SidebarView"
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:layout_toRightOf="@id/DrawerContentView"
+            android:layout_toRightOf="@id/DrawerView"
             android:background="@drawable/homebar_back_land"
             android:paddingBottom="20dp"
             android:paddingLeft="20dp"
@@ -89,21 +69,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top"
             layout="@layout/debug_mode_overlay" />
-        <!--
-        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/appScrollView"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
-
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/appContainer"
-                android:orientation="vertical"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-
-            </LinearLayout>
-        </ScrollView>
-        -->
 
         <android.support.v4.view.ViewPager
             xmlns:android="http://schemas.android.com/apk/res/android"

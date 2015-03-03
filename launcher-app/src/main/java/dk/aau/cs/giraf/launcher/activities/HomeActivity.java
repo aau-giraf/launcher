@@ -37,7 +37,6 @@ import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
-import dk.aau.cs.giraf.launcher.layoutcontroller.DrawerLayout;
 import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
 import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
@@ -66,8 +65,6 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
     private GProfileSelector profileSelectorDialog;
     private GDialog logoutDialog;
 
-    private RelativeLayout mDrawerContentView;
-    private DrawerLayout mDrawerView;
     private ViewPager mAppViewPager;
 
     private Timer mAppsUpdater;
@@ -99,7 +96,6 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
         mLoggedInGuardian = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
 
         // Fetch references to view objects
-        mDrawerView = (DrawerLayout) this.findViewById(R.id.DrawerView);
         mAppViewPager = (ViewPager) this.findViewById(R.id.appsViewPager);
 
         loadWidgets();
@@ -261,7 +257,6 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
         GWidgetLogout logoutWidget = (GWidgetLogout) findViewById(R.id.logoutwidget);
         widgetProfileSelection = (GWidgetProfileSelection) findViewById(R.id.profile_widget);
         GirafButton settingsButton = (GirafButton) findViewById(R.id.settingsbutton);
-        mDrawerContentView = (RelativeLayout) findViewById(R.id.DrawerContentView);
 
         /*Setup the profile selector dialog. If the current user is not a guardian, the guardian is used
           as the current user.*/
