@@ -28,10 +28,19 @@
                 android:layout_centerHorizontal="true" />
 
             <dk.aau.cs.giraf.gui.GirafButton
-                android:id="@+id/logout_button"
+                android:id="@+id/change_user_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/profile_widget"
+                app:type="CHANGE_USER"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp" />
+
+            <dk.aau.cs.giraf.gui.GirafButton
+                android:id="@+id/logout_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/change_user_button"
                 app:type="LOG_OUT"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp" />
