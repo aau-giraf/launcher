@@ -23,13 +23,13 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import dk.aau.cs.giraf.gui.GButtonSettings;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.gui.GWidgetLogout;
 import dk.aau.cs.giraf.gui.GWidgetProfileSelection;
 import dk.aau.cs.giraf.gui.GWidgetUpdater;
+import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
@@ -260,7 +260,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
     private void loadWidgets() {
         GWidgetLogout logoutWidget = (GWidgetLogout) findViewById(R.id.logoutwidget);
         widgetProfileSelection = (GWidgetProfileSelection) findViewById(R.id.profile_widget);
-        GButtonSettings settingsButton = (GButtonSettings) findViewById(R.id.settingsbutton);
+        GirafButton settingsButton = (GirafButton) findViewById(R.id.settingsbutton);
         mDrawerContentView = (RelativeLayout) findViewById(R.id.DrawerContentView);
 
         /*Setup the profile selector dialog. If the current user is not a guardian, the guardian is used
