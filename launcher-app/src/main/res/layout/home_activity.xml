@@ -17,7 +17,7 @@
             android:layout_height="fill_parent"
             android:layout_toRightOf="@id/DrawerView"
             android:background="@drawable/launcher_sidebar_background"
-            android:padding="15dp">
+            android:padding="20dp" >
 
             <dk.aau.cs.giraf.gui.GWidgetProfileSelection
                 android:visibility="visible"
@@ -34,7 +34,7 @@
                 android:layout_below="@id/profile_widget"
                 app:type="CHANGE_USER"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="@dimen/sidebar_item_spacing" />
 
             <dk.aau.cs.giraf.gui.GirafButton
                 android:id="@+id/logout_button"
@@ -43,16 +43,16 @@
                 android:layout_below="@id/change_user_button"
                 app:type="LOG_OUT"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="@dimen/sidebar_item_spacing" />
 
             <dk.aau.cs.giraf.gui.GirafButton
                 android:id="@+id/settings_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_marginTop="@dimen/drawer_widget_marginTop"
                 app:type="SETTING"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/sidebar_item_spacing"/>
 
         </RelativeLayout>
         
