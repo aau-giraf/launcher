@@ -88,10 +88,8 @@ public class AppsGridFragment extends Fragment {
                 newAppView.setLayoutParams(params);
 
                 // Application icons should only have their check state set when in the SettingsActivity
-                if (activity instanceof SettingsActivity) {
-                    if (currentAppInfo != null && (doesProfileApplicationExist(pac, currentAppInfo.getApp(), currentUser) || selectedApps.contains(currentAppInfo.getActivity()))) {
-                        newAppView.setChecked(true);
-                    }
+                if (activity instanceof SettingsActivity && currentAppInfo != null && (doesProfileApplicationExist(pac, currentAppInfo.getApp(), currentUser) || selectedApps.contains(currentAppInfo.getActivity()))) {
+                    newAppView.setChecked(true);
                 }
                 appsGridLayout.addView(newAppView, appCounter);
 
