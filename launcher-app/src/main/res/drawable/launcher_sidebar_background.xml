@@ -5,7 +5,7 @@
             <solid android:color="@color/sidebar_border_color" />
         </shape>
     </item>
-    <item android:right="1dp">
+    <item android:right="2dp">
         <shape>
             <gradient
                 android:angle="180"
