@@ -254,9 +254,9 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
      * @see dk.aau.cs.giraf.gui.GButtonSettings
      */
     private void loadWidgets() {
-        GWidgetLogout logoutWidget = (GWidgetLogout) findViewById(R.id.logoutwidget);
+        GirafButton logoutWidget = (GirafButton) findViewById(R.id.logout_button);
         widgetProfileSelection = (GWidgetProfileSelection) findViewById(R.id.profile_widget);
-        GirafButton settingsButton = (GirafButton) findViewById(R.id.settingsbutton);
+        GirafButton settingsButton = (GirafButton) findViewById(R.id.settings_button);
 
         /*Setup the profile selector dialog. If the current user is not a guardian, the guardian is used
           as the current user.*/
