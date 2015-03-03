@@ -38,7 +38,6 @@ public class SettingsActivity extends FragmentActivity
     private android.support.v4.app.Fragment mActiveSupportFragment;
     private Profile mCurrentUser = null;
     private Profile mLoggedInGuardian;
-    private Helper mHelper;
 
     /**
      * Global variable containing giraf applications with settings.
@@ -68,7 +67,7 @@ public class SettingsActivity extends FragmentActivity
 
         setContentView(R.layout.settings_activity);
 
-        mHelper = LauncherUtility.getOasisHelper(this);
+        Helper mHelper = LauncherUtility.getOasisHelper(this);
 
         final int childId = getIntent().getExtras().getInt(Constants.CHILD_ID);
         final int guardianId = getIntent().getExtras().getInt(Constants.GUARDIAN_ID);

@@ -11,10 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
-import android.widget.RelativeLayout;
 
 import com.google.analytics.tracking.android.EasyTracker;
 
@@ -146,6 +143,8 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
      *
      * @param hasFocus {@code true} if the activity has focus.
      */
+
+    /*
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -164,7 +163,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
             Log.e(Constants.ERROR_TAG, "ViewTreeObserver is null.");
         }
     }
-
+    */
     /**
      * Redraws the application container and resumes the timer looking for updates in the set of
      * available apps.
