@@ -9,8 +9,6 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.RelativeLayout;
 
@@ -26,7 +24,6 @@ import java.util.TimerTask;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GProfileSelector;
-import dk.aau.cs.giraf.gui.GWidgetLogout;
 import dk.aau.cs.giraf.gui.GWidgetProfileSelection;
 import dk.aau.cs.giraf.gui.GWidgetUpdater;
 import dk.aau.cs.giraf.gui.GirafButton;
@@ -255,12 +252,12 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
      * @see dk.aau.cs.giraf.gui.GWidgetConnectivity
      * @see dk.aau.cs.giraf.gui.GWidgetLogout
      * @see dk.aau.cs.giraf.gui.GWidgetProfileSelection
-     * @see dk.aau.cs.giraf.gui.GButtonSettings
+     * @see dk.aau.cs.giraf.gui.GirafButton
      */
     private void loadWidgets() {
-        GWidgetLogout logoutWidget = (GWidgetLogout) findViewById(R.id.logoutwidget);
+        GirafButton logoutButton = (GirafButton) findViewById(R.id.logout_button);
         widgetProfileSelection = (GWidgetProfileSelection) findViewById(R.id.profile_widget);
-        GirafButton settingsButton = (GirafButton) findViewById(R.id.settingsbutton);
+        GirafButton settingsButton = (GirafButton) findViewById(R.id.settings_button);
         mDrawerContentView = (RelativeLayout) findViewById(R.id.DrawerContentView);
 
         /*Setup the profile selector dialog. If the current user is not a guardian, the guardian is used
@@ -303,7 +300,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
 
         updatesProfileSelector();
 
-        logoutWidget.setOnClickListener(new View.OnClickListener() {
+        logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!mWidgetRunning) {
