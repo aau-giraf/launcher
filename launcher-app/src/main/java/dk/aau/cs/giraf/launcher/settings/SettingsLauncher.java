@@ -11,14 +11,14 @@ import dk.aau.cs.giraf.launcher.R;
  */
 public class SettingsLauncher extends PreferenceFragment {
 
-    private static final String TEXT_STRING_TAG = "content";
+    private static final String USER_IDENTIFICATION_STRING_TAG = "content";
 
     public static SettingsLauncher newInstance(final String text)
     {
-        SettingsLauncher newFragment = new SettingsLauncher();
+        final SettingsLauncher newFragment = new SettingsLauncher();
 
         Bundle args = new Bundle();
-        args.putString(TEXT_STRING_TAG, text);
+        args.putString(USER_IDENTIFICATION_STRING_TAG, text);
         newFragment.setArguments(args);
 
         return newFragment;
@@ -37,7 +37,7 @@ public class SettingsLauncher extends PreferenceFragment {
 
         if (arguments != null)
         {
-            final String text = arguments.getString(TEXT_STRING_TAG);
+            final String text = arguments.getString(USER_IDENTIFICATION_STRING_TAG);
 
             if (text != null)
             {
