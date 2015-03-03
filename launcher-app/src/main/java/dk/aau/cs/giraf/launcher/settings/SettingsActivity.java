@@ -105,8 +105,6 @@ public class SettingsActivity extends FragmentActivity
                 // Load the fragment just selected into view
                 mSupportFragManager.beginTransaction().add(R.id.settingsContainer, mActiveSupportFragment).commit();
             }
-
-
         }
     }
 
