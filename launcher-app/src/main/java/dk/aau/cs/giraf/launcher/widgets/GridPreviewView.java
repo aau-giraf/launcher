@@ -34,6 +34,9 @@ public class GridPreviewView extends View {
         init();
     }
 
+    /**
+     * Calculates gridLines size and initializes paint object
+     */
     public void init() {
 
         gridLinesSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
@@ -87,6 +90,7 @@ public class GridPreviewView extends View {
         int xOffset = 0;
         int yOffset = 0;
 
+        //Draw all vertical lines
         for (int columnCounter = 0; columnCounter <= columnSize; columnCounter++) {
 
             if (restWidth > 0 && columnCounter != 0) {
@@ -99,8 +103,8 @@ public class GridPreviewView extends View {
             canvas.drawLine(x, 0, x, height, paint);
         }
 
+        //Draw all horizontal lines
         for (int rowCounter = 0; rowCounter <= rowSize; rowCounter++) {
-
 
             if (restHeight > 0 && rowCounter != 0) {
                 yOffset = rowCounter;

@@ -15,6 +15,7 @@ import dk.aau.cs.giraf.launcher.R;
  * Created by Marhlder on 26-02-2015.
  */
 public class SeekBarWithNumericScale extends SeekBar {
+
     private Paint paint;
 
     private float textSize;
@@ -27,7 +28,7 @@ public class SeekBarWithNumericScale extends SeekBar {
         init(firstScaleItemValue, lastScaleItemValue, ToSp(scaleFontSize));
     }
 
-    public SeekBarWithNumericScale(Context context, AttributeSet attrs) {
+    public SeekBarWithNumericScale(final Context context, final AttributeSet attrs) {
         super(context, attrs);
 
         final TypedArray a = context.getTheme().obtainStyledAttributes(
@@ -36,7 +37,7 @@ public class SeekBarWithNumericScale extends SeekBar {
         init(a.getInteger(R.styleable.SeekBarWithNumericScale_firstScaleItemValue, -1), a.getInteger(R.styleable.SeekBarWithNumericScale_lastScaleItemValue, -1), a.getDimension(R.styleable.SeekBarWithNumericScale_scaleTextSize, ToSp(14)));
     }
 
-    public SeekBarWithNumericScale(Context context, AttributeSet attrs, int defStyle) {
+    public SeekBarWithNumericScale(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
 
         final TypedArray a = context.getTheme().obtainStyledAttributes(
@@ -67,12 +68,14 @@ public class SeekBarWithNumericScale extends SeekBar {
 
         textSize = fontSize;
 
+        // Initialize paint object for text drawing
         paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.BLACK);
         paint.setTextSize(textSize);
         paint.setAntiAlias(true);
 
+        // Add some more padding to the bottom to allow text to be within canvas
         setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), getPaddingBottom() + (int) textSize);
     }
 
@@ -100,8 +103,7 @@ public class SeekBarWithNumericScale extends SeekBar {
 
             final int distanceBetweenScaleElements = (width - paddingLeft - paddingRight) / (scaleElementCount - 1);
 
-            for (int scaleElementCounter = 0; scaleElementCounter < scaleElementCount; scaleElementCounter++)
-            {
+            for (int scaleElementCounter = 0; scaleElementCounter < scaleElementCount; scaleElementCounter++) {
                 final int rowCount = (scaleElementCounter + firstScaleItemValue);
                 final int columnCount = (scaleElementCounter + firstScaleItemValue + 1);
 
