@@ -336,10 +336,11 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
                 mCurrentUser = pc.getProfileById((int) l);
                 profileSelectorDialog.dismiss();
 
-                if (mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
+                if (mCurrentUser.getRole() != Profile.Roles.GUARDIAN) {
                     profileSelectorDialog = new GProfileSelector(HomeActivity.this, mLoggedInGuardian, mCurrentUser);
-                else
+                } else {
                     profileSelectorDialog = new GProfileSelector(HomeActivity.this, mLoggedInGuardian, null);
+                }
 
                 widgetProfileSelection.setImageBitmap(mCurrentUser.getImage());
 
