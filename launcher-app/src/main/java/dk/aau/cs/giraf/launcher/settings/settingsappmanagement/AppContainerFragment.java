@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
@@ -124,4 +125,6 @@ public abstract class AppContainerFragment extends Fragment {
 
         return listener;
     }
+
+
 }

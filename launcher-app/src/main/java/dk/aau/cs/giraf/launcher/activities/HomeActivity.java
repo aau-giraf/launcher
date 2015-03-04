@@ -376,7 +376,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
             Set<String> androidAppsPackagenames = prefs.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
             List<Application> androidAppsList = ApplicationControlUtility.convertPackageNamesToApplications(HomeActivity.this, androidAppsPackagenames);
             girafAppsList.addAll(androidAppsList);
-            if (mCurrentLoadedApps == null || mCurrentLoadedApps.size() != girafAppsList.size()) {
+            if (AppInfo.isAppListsDifferent(mCurrentLoadedApps, girafAppsList)) {
                 // run this on UI thread since UI might need to get updated
                 runOnUiThread(new Runnable() {
                     @Override

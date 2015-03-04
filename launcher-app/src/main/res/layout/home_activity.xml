@@ -12,19 +12,19 @@
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/SidebarView"
-            android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:layout_toRightOf="@id/DrawerView"
-            android:background="@drawable/launcher_sidebar_background"
-            android:padding="20dp" >
+            android:layout_centerInParent="true"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:background="@drawable/launcher_sidebar_background" >
 
             <dk.aau.cs.giraf.gui.GWidgetProfileSelection
-                android:visibility="visible"
                 android:id="@+id/profile_widget"
                 android:layout_width="@dimen/profile_selection_width"
                 android:layout_height="@dimen/profile_selection_height"
                 android:layout_alignParentLeft="true"
+                android:visibility="visible"
                 android:layout_centerHorizontal="true" />
 
             <dk.aau.cs.giraf.gui.GirafButton
@@ -55,10 +55,10 @@
                 android:layout_marginTop="@dimen/sidebar_item_spacing"/>
 
         </RelativeLayout>
-        
+
     </dk.aau.cs.giraf.launcher.layoutcontroller.DrawerLayout>
 
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_toRightOf="@id/DrawerView">
@@ -67,26 +67,33 @@
             android:id="@+id/noAppsMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:padding="20dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="30sp"
-            android:layout_gravity="center"
             android:text="@string/no_apps_available"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/darker_gray"
+            android:textSize="30sp"
             android:visibility="gone" />
 
+        <ProgressBar
+            android:id="@+id/ProgressBar"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerInParent="true"
+            android:visibility="invisible" />
+
         <include
+            layout="@layout/debug_mode_overlay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            layout="@layout/debug_mode_overlay" />
+            android:layout_alignParentTop="true" />
 
-        <android.support.v4.view.ViewPager
-            xmlns:android="http://schemas.android.com/apk/res/android"
+        <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/appsViewPager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true" />
 
-    </FrameLayout>
+    </RelativeLayout>
 
 </RelativeLayout>
