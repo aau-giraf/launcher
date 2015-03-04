@@ -16,7 +16,7 @@ import dk.aau.cs.giraf.oasis.lib.models.Application;
  * This includes the icon and background color of an app, along with methods for getting and setting these.
  *
  */
-public class AppInfo extends Application implements Parcelable {
+public class AppInfo extends Application implements Parcelable,Comparable<AppInfo> {
 
     /**
      * The application icon background color.
@@ -168,5 +168,8 @@ public class AppInfo extends Application implements Parcelable {
         }
     }
 
-
+    @Override
+    public int compareTo(final AppInfo another) {
+        return this.getActivity().compareTo(another.getActivity());
+    }
 }
