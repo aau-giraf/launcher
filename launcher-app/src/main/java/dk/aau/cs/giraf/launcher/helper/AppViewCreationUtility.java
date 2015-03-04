@@ -112,14 +112,13 @@ public class AppViewCreationUtility {
                         // could not get context, no animation.
                     }
 
-                    AppInfo app = null;
+                    AppInfo app;
 
                     /*
                     * This block is synchronized on the AppViewCreationUtility class to prevent
-                    * race condtions where mAppInfoHashMap is reinitialized in the background with
+                    * race conditions where mAppInfoHashMap is reinitialized in the background with
                     * updateAppInfoHashMap
-                    *
-                    * */
+                    */
                     synchronized (AppViewCreationUtility.class) {
                         app = mAppInfoHashMap.get(v.getTag());
                     }
