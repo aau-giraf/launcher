@@ -80,9 +80,10 @@ public class AppAdapter extends ArrayAdapter<AppInfo> {
 
         RoundRectShape roundRect = new RoundRectShape(new float[]{15, 15, 15, 15, 15, 15, 15, 15}, new RectF(), null);
         ShapeDrawable shapeDrawable = new ShapeDrawable(roundRect);
-
         shapeDrawable.getPaint().setColor(backgroundColor);
-
+        // We could use the methods corresponding to the android versions, however the methods are
+        // the same, just with a different name, so just ignore the deprecation.
+        //noinspection deprecation
         convertViewLayout.setBackgroundDrawable(shapeDrawable);
     }
 
