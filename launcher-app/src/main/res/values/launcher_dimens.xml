@@ -2,6 +2,5 @@
 <resources>
     <dimen name="profile_selection_width">80dp</dimen>
     <dimen name="profile_selection_height">100dp</dimen>
-    <dimen name="drawer_widget_dimension">80dp</dimen>
-    <dimen name="drawer_widget_marginTop">15dp</dimen>
+    <dimen name="sidebar_item_spacing">20dp</dimen>
 </resources>

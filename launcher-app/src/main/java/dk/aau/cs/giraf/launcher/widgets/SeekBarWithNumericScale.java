@@ -15,6 +15,7 @@ import dk.aau.cs.giraf.launcher.R;
  * Created by Marhlder on 26-02-2015.
  */
 public class SeekBarWithNumericScale extends SeekBar {
+
     private Paint paint;
 
     private float textSize;
@@ -27,7 +28,7 @@ public class SeekBarWithNumericScale extends SeekBar {
         init(firstScaleItemValue, lastScaleItemValue, ToSp(scaleFontSize));
     }
 
-    public SeekBarWithNumericScale(Context context, AttributeSet attrs) {
+    public SeekBarWithNumericScale(final Context context, final AttributeSet attrs) {
         super(context, attrs);
 
         final TypedArray a = context.getTheme().obtainStyledAttributes(
@@ -36,7 +37,7 @@ public class SeekBarWithNumericScale extends SeekBar {
         init(a.getInteger(R.styleable.SeekBarWithNumericScale_firstScaleItemValue, -1), a.getInteger(R.styleable.SeekBarWithNumericScale_lastScaleItemValue, -1), a.getDimension(R.styleable.SeekBarWithNumericScale_scaleTextSize, ToSp(14)));
     }
 
-    public SeekBarWithNumericScale(Context context, AttributeSet attrs, int defStyle) {
+    public SeekBarWithNumericScale(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
 
         final TypedArray a = context.getTheme().obtainStyledAttributes(
@@ -67,12 +68,14 @@ public class SeekBarWithNumericScale extends SeekBar {
 
         textSize = fontSize;
 
+        // Initialize paint object for text drawing
         paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.BLACK);
         paint.setTextSize(textSize);
         paint.setAntiAlias(true);
 
+        // Add some more padding to the bottom to allow text to be within canvas
         setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), getPaddingBottom() + (int) textSize);
     }
 
@@ -90,16 +93,28 @@ public class SeekBarWithNumericScale extends SeekBar {
 
             final int scaleElementCount = (lastScaleItemValue - firstScaleItemValue) + 1;
 
+            // Get the size of the canvas
             final int width = canvas.getWidth();
             final int height = canvas.getHeight();
 
+            // Get the padding
             final int paddingLeft = this.getPaddingLeft();
             final int paddingRight = this.getPaddingRight();
 
             final int distanceBetweenScaleElements = (width - paddingLeft - paddingRight) / (scaleElementCount - 1);
 
             for (int scaleElementCounter = 0; scaleElementCounter < scaleElementCount; scaleElementCounter++) {
-                canvas.drawText("" + (scaleElementCounter + firstScaleItemValue) + " × " + (firstScaleItemValue + 1) , paddingLeft + distanceBetweenScaleElements * scaleElementCounter, height / 2 + textSize * 1.5f, paint);
+                final int rowCount = (scaleElementCounter + firstScaleItemValue);
+                final int columnCount = (scaleElementCounter + firstScaleItemValue + 1);
+
+                // Hax math that makes it look pretty on the x axis
+                final float xCoordinate = paddingLeft / 2 + distanceBetweenScaleElements * scaleElementCounter - textSize / 4;
+
+                // We want the scale items to be slightly off the mid on the y axis (below the SeekBar)
+                final float yCoordinate = height / 2 + textSize * 1.5f;
+
+                // Print text for the current scale item for the SeekBar
+                canvas.drawText(rowCount + "×" + columnCount, xCoordinate, yCoordinate, paint);
             }
         }
     }

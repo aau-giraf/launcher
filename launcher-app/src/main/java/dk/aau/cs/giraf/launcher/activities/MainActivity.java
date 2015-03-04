@@ -38,13 +38,13 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      * If {@code true}, the Launcher is stated in debugging mode, where the splash screen and
      * authentication_activity is skipped.
      */
-    private final boolean DEBUG_MODE = false;
+    private final boolean DEBUG_MODE = true;
 
     /**
      * If {@code true}, the authentication_activity screen is shown, despite debugging mode. Has no
      * effect if {@code DEBUG_MODE} is {@code false}.
      */
-    private final boolean SKIP_AUTHENTICATION = false;
+    private final boolean SKIP_AUTHENTICATION = true;
 
     /**
      * If {@code true}, the splash screen is shown, despite debugging mode. Has no

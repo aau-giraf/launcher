@@ -4,8 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.RelativeLayout;
 
-import dk.aau.cs.giraf.launcher.R;
-
 /**
  * In order to easily handle the animation of the drawer, we extended the native RelativeLayout,
  * to handle the additional animations that the drawer needed.
@@ -63,17 +61,5 @@ public class DrawerLayout extends RelativeLayout {
     @Override
     protected void onAnimationEnd() {
         super.onAnimationEnd();
-
-        DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams) this.getLayoutParams();
-        RelativeLayout homeDrawer = (RelativeLayout) findViewById(R.id.DrawerContentView);
-
-        if (isSideBarHidden) {
-            params.leftMargin = homeDrawer.getLeft();
-            isSideBarHidden = false;
-        } else {
-            params.leftMargin -= homeDrawer.getMeasuredWidth();
-            isSideBarHidden = true;
-        }
-        this.setLayoutParams(params);
     }
 }
