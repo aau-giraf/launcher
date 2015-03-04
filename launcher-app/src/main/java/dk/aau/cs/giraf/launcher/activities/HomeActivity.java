@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 
 import com.google.analytics.tracking.android.EasyTracker;
@@ -25,7 +24,6 @@ import java.util.TimerTask;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GProfileSelector;
-import dk.aau.cs.giraf.gui.GWidgetLogout;
 import dk.aau.cs.giraf.gui.GWidgetProfileSelection;
 import dk.aau.cs.giraf.gui.GWidgetUpdater;
 import dk.aau.cs.giraf.gui.GirafButton;
