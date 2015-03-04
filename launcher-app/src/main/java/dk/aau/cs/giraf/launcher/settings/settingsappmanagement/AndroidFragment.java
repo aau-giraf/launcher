@@ -272,7 +272,7 @@ public class AndroidFragment extends AppContainerFragment {
         @Override
         public void run() {
             apps = ApplicationControlUtility.getAndroidAppsOnDeviceAsApplicationList(getActivity());
-            if (loadedApps == null || loadedApps.size() != apps.size()) {
+            if (AppInfo.isAppListsDifferent(loadedApps, apps)) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

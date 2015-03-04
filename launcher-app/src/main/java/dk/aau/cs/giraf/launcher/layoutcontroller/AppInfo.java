@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Collections;
 import java.util.List;
 
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
@@ -16,7 +17,7 @@ import dk.aau.cs.giraf.oasis.lib.models.Application;
  * This includes the icon and background color of an app, along with methods for getting and setting these.
  *
  */
-public class AppInfo extends Application implements Parcelable,Comparable<AppInfo> {
+public class AppInfo extends Application implements Parcelable {
 
     /**
      * The application icon background color.
@@ -168,8 +169,31 @@ public class AppInfo extends Application implements Parcelable,Comparable<AppInf
         }
     }
 
-    @Override
-    public int compareTo(final AppInfo another) {
-        return this.getActivity().compareTo(another.getActivity());
+    public static boolean isAppListsDifferent(final List<AppInfo> appInfos, final List<Application> applications)
+    {
+        Collections.sort(appInfos);
+        Collections.sort(applications);
+
+        if (appInfos == null && applications == null) {
+            return false;
+        }
+        if (appInfos != null && applications == null || appInfos == null && applications != null) {
+            return true;
+        }
+        if (appInfos.size() != applications.size()) {
+            return true;
+        }
+        else
+        {
+            for(int appCounter = 0; appCounter < appInfos.size(); appCounter++)
+            {
+                if(!appInfos.get(appCounter).equals(applications.get(appCounter)))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

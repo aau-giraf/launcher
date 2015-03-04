@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
@@ -125,31 +126,5 @@ public abstract class AppContainerFragment extends Fragment {
         return listener;
     }
 
-    protected boolean checkAppListsDifferent(ArrayList<AppInfo> appInfos, ArrayList<Application> applications)
-    {
-        if (appInfos == null && applications == null) {
-            return false;
-        }
-        if (appInfos != null && applications == null || appInfos == null && applications != null) {
-            return true;
-        }
-        if (appInfos.size() != applications.size()) {
-            return true;
 
-        } else {
-            for (AppInfo loadedApps : appInfos) {
-                boolean isInList = false;
-                for (Application girafApps : applications) {
-                    if (loadedApps.getActivity() == girafApps.getActivity()) {
-                        isInList = true;
-                        break;
-                    }
-                }
-                if (!isInList) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
 }
