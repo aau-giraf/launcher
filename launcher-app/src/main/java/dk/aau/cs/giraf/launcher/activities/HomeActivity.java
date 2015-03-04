@@ -14,6 +14,7 @@ import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 
 import com.google.analytics.tracking.android.EasyTracker;
+import com.viewpagerindicator.TitlePageIndicator;
 
 import java.util.ArrayList;
 import java.util.HashSet;
