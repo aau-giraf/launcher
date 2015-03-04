@@ -121,7 +121,7 @@ public class AppViewCreationUtility {
                     *
                     * */
                     synchronized (AppViewCreationUtility.class) {
-                        app = mAppInfoHashMap.get((String) v.getTag());
+                        app = mAppInfoHashMap.get(v.getTag());
                     }
 
                     Intent intent = new Intent(Intent.ACTION_MAIN);
