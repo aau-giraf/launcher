@@ -171,10 +171,7 @@ public class AppInfo extends Application implements Parcelable {
 
     public static boolean isAppListsDifferent(final List<AppInfo> appInfos, final List<Application> applications)
     {
-        Collections.sort(appInfos);
-        Collections.sort(applications);
-
-        if (appInfos == null && applications == null) {
+        if ((appInfos == null || appInfos.isEmpty()) && (applications == null || applications.isEmpty())) {
             return false;
         }
         if (appInfos != null && applications == null || appInfos == null && applications != null) {
@@ -185,6 +182,9 @@ public class AppInfo extends Application implements Parcelable {
         }
         else
         {
+            Collections.sort(appInfos);
+            Collections.sort(applications);
+
             for(int appCounter = 0; appCounter < appInfos.size(); appCounter++)
             {
                 if(!appInfos.get(appCounter).equals(applications.get(appCounter)))
