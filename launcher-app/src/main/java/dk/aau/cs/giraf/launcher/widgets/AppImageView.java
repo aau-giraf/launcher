@@ -7,13 +7,12 @@ import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 
 /**
- * When apps are created as a view and filled into a targetlayout,
+ * When apps are created as a view and filled into a target layout,
  * this is the type they are made of. The class adds a few methods to the native ImageView
  */
 public class AppImageView extends ImageView {
 
     private boolean checked = false;
-    private Context context;
     public final AppInfo appInfo;
 
     /**
@@ -23,7 +22,6 @@ public class AppImageView extends ImageView {
      */
     public AppImageView(final Context context, final AppInfo appInfo) {
         super(context);
-        this.context = context;
         this.appInfo = appInfo;
     }
 
@@ -40,7 +38,7 @@ public class AppImageView extends ImageView {
     }
 
     /**
-     * Sets the right backgroundcolor of the AppImageView
+     * Sets the right background color of the AppImageView
      * If checked is not set, sets the background color to transparent
      * If checked is set, sets the background color to light orange.
      * This is only relevant for SettingsActivity to show which apps have been chosen by a user.
@@ -52,15 +50,6 @@ public class AppImageView extends ImageView {
         } else {
             setBackgroundDrawable(null);
         }
-    }
-
-    /**
-     * Returns whether this AppImageView has been set as checked or unchecked
-     *
-     * @return the value of checked.
-     */
-    public boolean isChecked() {
-        return checked;
     }
 
     /**
