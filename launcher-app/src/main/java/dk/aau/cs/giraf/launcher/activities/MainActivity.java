@@ -244,9 +244,10 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 
         /**
          * Looks if data has already been loaded.
-         * If yes, continue, otherwise, startloading data
+         * If yes, continue, otherwise, start loading data
+         *
          * @param activities This is not used for anything
-         * @return
+         * @return always {@code null}
          */
         @Override
         protected Void doInBackground(Activity... activities) {

@@ -2,9 +2,10 @@ include ':barcodescanner'
 include ':GIRAF_Components'
 include ':launcher-app'
 include ':OasisLib'
+project(':OasisLib').projectDir = new File('GIRAF_Components/OasisLib')
 include ':metadata'
-project(':metadata').projectDir = new File('OasisLib/metadata')
+project(':metadata').projectDir = new File('GIRAF_Components/OasisLib/metadata')
 include ':local-db'
-project(':local-db').projectDir = new File('OasisLib/local-db')
+project(':local-db').projectDir = new File('GIRAF_Components/OasisLib/local-db')
 include ':metadata_local'
-project(':metadata_local').projectDir = new File('OasisLib/local-db/metadata_local')
+project(':metadata_local').projectDir = new File('GIRAF_Components/OasisLib/local-db/metadata_local')

@@ -66,7 +66,7 @@ public abstract class AppContainerFragment extends Fragment {
      * If we attempt to call reloadApplications without the Observer, the view is not inflated yet.
      * This means that the width of the view, which we use to see how many apps we can fill into a row, is 0.
      * @param view The view that has been created
-     * @param savedInstanceState The previously saved instancestate.
+     * @param savedInstanceState The previously saved savedInstanceState.
      */
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
@@ -76,7 +76,7 @@ public abstract class AppContainerFragment extends Fragment {
 
                 @Override
                 public void onGlobalLayout() {
-                    // Ensure you call it only once :
+                    // Ensure you call it only once
                     appView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 }
             });

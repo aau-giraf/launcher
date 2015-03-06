@@ -53,7 +53,7 @@ public class GridPreviewView extends View {
      * Sets the rowSize of this GridPreviewView
      * Clients should call .invalidate() to update the view
      *
-     * @param rowSize
+     * @param rowSize the row size of the grid
      */
     public void setRowSize(final int rowSize) {
         this.rowSize = rowSize;
@@ -63,7 +63,7 @@ public class GridPreviewView extends View {
      * Sets the columnSize of this GridPreviewView
      * Clients should call .invalidate() to update the view
      *
-     * @param columnSize
+     * @param columnSize the column size of the grid
      */
     public void setColumnSize(final int columnSize) {
         this.columnSize = columnSize;
@@ -72,7 +72,7 @@ public class GridPreviewView extends View {
     /**
      * Override on draw to draw a grid with this.rowSize rows and this.columnSize columns
      *
-     * @param canvas
+     * @param canvas the canvas on which will be drawn on
      */
     @Override
     protected void onDraw(Canvas canvas) {
