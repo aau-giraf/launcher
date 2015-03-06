@@ -18,6 +18,7 @@ public class AppImageView extends ImageView {
 
     /**
      * A constructor for the class
+     *
      * @param context The context of the current activity
      */
     public AppImageView(final Context context, final AppInfo appInfo) {
@@ -30,9 +31,10 @@ public class AppImageView extends ImageView {
      * Set an AppView as checked.
      * This is used in SettingsActivity for displaying which apps a user has chosen.
      * Also calls updateColor to set the background color to the correct one.
+     *
      * @param checked
      */
-    public void setChecked(boolean checked){
+    public void setChecked(boolean checked) {
         this.checked = checked;
         updateColor();
     }
@@ -43,21 +45,21 @@ public class AppImageView extends ImageView {
      * If checked is set, sets the background color to light orange.
      * This is only relevant for SettingsActivity to show which apps have been chosen by a user.
      */
-    private void updateColor(){
-        if (checked){
+    private void updateColor() {
+        if (checked) {
             //setBackgroundColor(context.getResources().getColor(android.R.color.holo_orange_light));
             setBackgroundResource(R.drawable.app_image_view_marked_background);
-        }
-        else{
+        } else {
             setBackgroundDrawable(null);
         }
     }
 
     /**
      * Returns whether this AppImageView has been set as checked or unchecked
+     *
      * @return the value of checked.
      */
-    public boolean isChecked(){
+    public boolean isChecked() {
         return checked;
     }
 
@@ -65,13 +67,13 @@ public class AppImageView extends ImageView {
      * Toogles an AppView as checked or unchecked.
      * This is used in SettingsActivity for displaying which apps a user has chosen.
      * Also calls updateColor to set the background color to the correct one.
+     *
      * @return Whether checked was set to true or false
      */
-    public boolean toggle(){
-        if (!checked){
+    public boolean toggle() {
+        if (!checked) {
             checked = true;
-        }
-        else{
+        } else {
             checked = false;
         }
 
