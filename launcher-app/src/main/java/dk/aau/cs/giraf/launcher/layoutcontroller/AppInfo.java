@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Collections;
 import java.util.List;
 
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
@@ -89,8 +90,6 @@ public class AppInfo extends Application implements Parcelable {
         this.setPackage(stringdata[2]);
         this.setActivity(stringdata[3]);
         this.setDescription(stringdata[4]);
-
-
     }
 
     @Override
@@ -168,5 +167,31 @@ public class AppInfo extends Application implements Parcelable {
         }
     }
 
+    public static boolean isAppListsDifferent(final List<AppInfo> appInfos, final List<Application> applications)
+    {
+        if ((appInfos == null || appInfos.isEmpty()) && (applications == null || applications.isEmpty())) {
+            return false;
+        }
+        if (appInfos != null && applications == null || appInfos == null && applications != null) {
+            return true;
+        }
+        if (appInfos.size() != applications.size()) {
+            return true;
+        }
+        else
+        {
+            Collections.sort(appInfos);
+            Collections.sort(applications);
 
+            for(int appCounter = 0; appCounter < appInfos.size(); appCounter++)
+            {
+                if(!appInfos.get(appCounter).equals(applications.get(appCounter)))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
 }

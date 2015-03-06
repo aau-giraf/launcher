@@ -24,8 +24,8 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
 public class ApplicationGridResizer extends Preference implements SeekBar.OnSeekBarChangeListener {
 
     // Namespaces for preference properties
-    private static final String ANDROIDNS = "http://schemas.android.com/apk/res/android";
-    private static final String APPLICATIONNS = "http://giraf.cs.aau.dk";
+    private static final String ANDROID_SCHEMA = "http://schemas.android.com/apk/res/android";
+    private static final String APPLICATIONS = "http://giraf.cs.aau.dk";
 
     private static final String COLUMNS_SIZE_PREFERENCE_TAG = "COLUMNS_SIZE_PREFERENCE_TAG";
     private static final String ROWS_SIZE_PREFERENCE_TAG = "ROWS_SIZE_PREFERENCE_TAG";
@@ -97,8 +97,8 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
      * @param attrs See {@link ApplicationGridResizer#initPreference(android.util.AttributeSet)}.
      */
     private void setValuesFromXml(final AttributeSet attrs) {
-        mMaxValue = attrs.getAttributeIntValue(ANDROIDNS, "max", mMaxValue);
-        mMinValue = attrs.getAttributeIntValue(APPLICATIONNS, "min", mMinValue);
+        mMaxValue = attrs.getAttributeIntValue(ANDROID_SCHEMA, "max", mMaxValue);
+        mMinValue = attrs.getAttributeIntValue(APPLICATIONS, "min", mMinValue);
     }
 
     @Override

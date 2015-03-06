@@ -8,6 +8,7 @@
     <color name="color_preloader_end">#464646</color>
 
     <color name="giraf_yellow">#FFFFDC4A</color>
+    <color name="giraf_page_indicator_stroke">#ffab45</color>
     <color name="actionbar_background">#333</color>
     <color name="actionbar_text_color">#fff</color>
     <color name="giraf_loading_textColor">#ff9b5100</color>

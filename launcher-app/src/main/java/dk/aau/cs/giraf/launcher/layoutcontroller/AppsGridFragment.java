@@ -21,6 +21,7 @@ import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppContainerFragment;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
+import dk.aau.cs.giraf.launcher.widgets.AppImageView;
 import dk.aau.cs.giraf.oasis.lib.controllers.ProfileApplicationController;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -88,10 +89,8 @@ public class AppsGridFragment extends Fragment {
                 newAppView.setLayoutParams(params);
 
                 // Application icons should only have their check state set when in the SettingsActivity
-                if (activity instanceof SettingsActivity) {
-                    if (currentAppInfo != null && (doesProfileApplicationExist(pac, currentAppInfo.getApp(), currentUser) || selectedApps.contains(currentAppInfo.getActivity()))) {
-                        newAppView.setChecked(true);
-                    }
+                if (activity instanceof SettingsActivity && currentAppInfo != null && (doesProfileApplicationExist(pac, currentAppInfo.getApp(), currentUser) || selectedApps.contains(currentAppInfo.getActivity()))) {
+                    newAppView.setChecked(true);
                 }
                 appsGridLayout.addView(newAppView, appCounter);
 
@@ -118,13 +117,11 @@ public class AppsGridFragment extends Fragment {
 
     protected View.OnClickListener getOnClickListener() {
 
-        Fragment parentFragment = null;
+        Fragment parentFragment;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-
             parentFragment = getParentFragment();
-        } else
-        {
+        } else {
             FragmentManager manager = getFragmentManager();
 
             parentFragment = manager.findFragmentById(R.id.app_settings_fragmentlayout);
@@ -141,5 +138,4 @@ public class AppsGridFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
     }
-
 }

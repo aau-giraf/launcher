@@ -1,9 +1,10 @@
-package dk.aau.cs.giraf.launcher.layoutcontroller;
+package dk.aau.cs.giraf.launcher.widgets;
 
 import android.content.Context;
 import android.widget.ImageView;
 
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 
 /**
  * When apps are created as a view and filled into a targetlayout,
@@ -44,10 +45,11 @@ public class AppImageView extends ImageView {
      */
     private void updateColor(){
         if (checked){
-            setBackgroundColor(context.getResources().getColor(android.R.color.holo_orange_light));
+            //setBackgroundColor(context.getResources().getColor(android.R.color.holo_orange_light));
+            setBackgroundResource(R.drawable.app_image_view_marked_background);
         }
         else{
-            setBackgroundColor(context.getResources().getColor(R.color.app_color_transparent));
+            setBackgroundDrawable(null);
         }
     }
 

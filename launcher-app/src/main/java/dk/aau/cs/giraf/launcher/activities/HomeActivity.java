@@ -10,10 +10,11 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 
 import com.google.analytics.tracking.android.EasyTracker;
+import com.viewpagerindicator.CirclePageIndicator;
+import com.viewpagerindicator.TitlePageIndicator;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -25,7 +26,6 @@ import java.util.TimerTask;
 import dk.aau.cs.giraf.gui.GDialog;
 import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GProfileSelector;
-import dk.aau.cs.giraf.gui.GWidgetLogout;
 import dk.aau.cs.giraf.gui.GWidgetProfileSelection;
 import dk.aau.cs.giraf.gui.GWidgetUpdater;
 import dk.aau.cs.giraf.gui.GirafButton;
@@ -336,10 +336,11 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
                 mCurrentUser = pc.getProfileById((int) l);
                 profileSelectorDialog.dismiss();
 
-                if (mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
+                if (mCurrentUser.getRole() != Profile.Roles.GUARDIAN) {
                     profileSelectorDialog = new GProfileSelector(HomeActivity.this, mLoggedInGuardian, mCurrentUser);
-                else
+                } else {
                     profileSelectorDialog = new GProfileSelector(HomeActivity.this, mLoggedInGuardian, null);
+                }
 
                 widgetProfileSelection.setImageBitmap(mCurrentUser.getImage());
 
@@ -374,7 +375,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
             Set<String> androidAppsPackagenames = prefs.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
             List<Application> androidAppsList = ApplicationControlUtility.convertPackageNamesToApplications(HomeActivity.this, androidAppsPackagenames);
             girafAppsList.addAll(androidAppsList);
-            if (mCurrentLoadedApps == null || mCurrentLoadedApps.size() != girafAppsList.size()) {
+            if (AppInfo.isAppListsDifferent(mCurrentLoadedApps, girafAppsList)) {
                 // run this on UI thread since UI might need to get updated
                 runOnUiThread(new Runnable() {
                     @Override
@@ -450,6 +451,9 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
             super.onPostExecute(appInfos);
 
             mCurrentLoadedApps = appInfos;
+
+            CirclePageIndicator titleIndicator = (CirclePageIndicator)findViewById(R.id.pageIndicator);
+            titleIndicator.setViewPager(mAppViewPager);
 
             startObservingApps();
         }

@@ -12,7 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -77,16 +79,18 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
 
         changeVisibilityOfNoAppsMessage(View.GONE);
 
-        progressbar = new ProgressBar(context);
+        ViewGroup parent = getProgressBarParent();
+        progressbar = (ProgressBar) parent.findViewById(R.id.ProgressBar);
         progressbar.setVisibility(View.VISIBLE);
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(100, 100);
-        params.gravity = Gravity.CENTER;
+
+        /*
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(100, 100);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
         progressbar.setLayoutParams(params);
         progressbar.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.progressbar));
-        ViewGroup parent = getProgressBarParent();
+        */
 
-        parent.addView(progressbar);
-
+        //parent.addView(progressbar);
         //targetLayout.removeAllViews();
     }
 
@@ -106,18 +110,15 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
         selectedApps = preferences.getStringSet(context.getResources().getString(R.string.selected_android_apps_key), new HashSet<String>());
 
         // Only creates AppImageViews if there actually are applications to generate
-        HashMap<String, AppInfo> appInfoHash = new HashMap<String, AppInfo>();
-
         if (applications != null && applications.length != 0)
         {
-            //if the currentuser was null, find the user based on the context
-            if (currentUser == null)
+            // If the current user is null, find the user based on the context
+            if (currentUser == null) {
                 currentUser = LauncherUtility.getCurrentUser(context);
-
-
+            }
 
             //update the HashMap with information of the apps being generated and sort it
-            appInfoHash = AppViewCreationUtility.updateAppInfoHashMap(context, applications);
+            HashMap<String, AppInfo> appInfoHash = AppViewCreationUtility.updateAppInfoHashMap(context, applications);
 
             ArrayList<AppInfo> appInfoList = new ArrayList<AppInfo>(appInfoHash.values());
             Collections.sort(appInfoList, new AppComparator(context));
@@ -212,25 +213,21 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
     protected void onPostExecute(ArrayList<AppInfo> appInfos) {
 
 
-        progressbar.setVisibility(View.GONE);
+        progressbar.setVisibility(View.INVISIBLE);
+
+        final int rowsSize = ApplicationGridResizer.getGridRowSize(this.context, currentUser);
+        final int columnsSize = ApplicationGridResizer.getGridColumnSize(this.context, currentUser);
 
         if (appInfos!= null && appInfos.size() > 0)
         {
             changeVisibilityOfNoAppsMessage(View.GONE);
-
-            final int rowsSize = ApplicationGridResizer.getGridRowSize(this.context, currentUser);
-            final int columnsSize = ApplicationGridResizer.getGridColumnSize(this.context, currentUser);
-
-            ((AppsFragmentAdapter)this.appsViewPager.getAdapter()).swapApps(appInfos , rowsSize, columnsSize);
-            //this.appsViewPager.setAdapter(new AppsFragmentAdapter(getFragmentMangerForAppsFragmentAdapter(),appInfos , MainActivity.rowSize, MainActivity.columnSize));
         }
         else
         {
             changeVisibilityOfNoAppsMessage(View.VISIBLE);
         }
 
-        removeStrayProgressbars();
-
+        ((AppsFragmentAdapter)this.appsViewPager.getAdapter()).swapApps(appInfos , rowsSize, columnsSize);
 
     }
 
@@ -255,9 +252,12 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
      * @return
      */
     private ViewGroup getProgressBarParent() {
+
         ViewGroup parent = (ViewGroup) appsViewPager.getParent();
-        while (parent instanceof ScrollView)
+
+        while (parent instanceof ScrollView) {
             parent = (ViewGroup) parent.getParent();
+        }
 
         return parent;
     }
@@ -289,14 +289,10 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
      * @param visibility
      */
     private void changeVisibilityOfNoAppsMessage(int visibility) {
-        View noAppsTextView = null;
-        if (context instanceof SettingsActivity)
-            noAppsTextView = ((Activity) context).findViewById(R.id.no_apps_textview);
-        else if (context instanceof HomeActivity)
-            noAppsTextView = ((Activity) context).findViewById(R.id.noAppsMessage);
 
-        if (noAppsTextView != null)
-            noAppsTextView.setVisibility(visibility);
+        View noAppsTextView = ((Activity) context).findViewById(R.id.noAppsMessage);
+        noAppsTextView.setVisibility(visibility);
+
     }
 
 

@@ -22,7 +22,7 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
 /**
  * This class was used to add an adapter to the AppImageViews in HomeActivity
  * It was used to handle the dragging of colors over the apps, which was disabled, since the clients did not want it
- * We still kept the classes, just in case future groups would want or need to reenable it.
+ * We still kept the classes, just in case future groups would want or need to re-enable it.
  */
 public class AppAdapter extends ArrayAdapter<AppInfo> {
 
@@ -40,7 +40,7 @@ public class AppAdapter extends ArrayAdapter<AppInfo> {
     }
 
     /**
-     * This function is overridden to add more infomation to the view affected by the adapter
+     * This function is overridden to add more information to the view affected by the adapter
      * @param position the position of the view
      * @param convertView the converted view
      * @param parent the parent of the view
@@ -80,9 +80,10 @@ public class AppAdapter extends ArrayAdapter<AppInfo> {
 
         RoundRectShape roundRect = new RoundRectShape(new float[]{15, 15, 15, 15, 15, 15, 15, 15}, new RectF(), null);
         ShapeDrawable shapeDrawable = new ShapeDrawable(roundRect);
-
         shapeDrawable.getPaint().setColor(backgroundColor);
-
+        // We could use the methods corresponding to the android versions, however the methods are
+        // the same, just with a different name, so just ignore the deprecation.
+        //noinspection deprecation
         convertViewLayout.setBackgroundDrawable(shapeDrawable);
     }
 
@@ -100,7 +101,7 @@ public class AppAdapter extends ArrayAdapter<AppInfo> {
         final Helper helper = LauncherUtility.getOasisHelper(context);
         final Profile currentUser = LauncherUtility.getCurrentUser(context);
 
-        //TODO: The OasisLib group still needs to fix their dataformat
+        //TODO: The OasisLib group still needs to fix their data format
 //		Application launcher = helper.applicationHelper.getApplicationById(currentUser.getId());
 //		Setting<String, String, String> launchSetting = launcher.getSettings();
 //        AppInfo appInfo = HomeActivity.getAppInfo(String.valueOf(convertView.getTag()));

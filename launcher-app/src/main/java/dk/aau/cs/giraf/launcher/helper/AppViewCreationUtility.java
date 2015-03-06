@@ -22,7 +22,7 @@ import android.widget.TextView;
 import java.util.HashMap;
 
 import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
+import dk.aau.cs.giraf.launcher.widgets.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -90,10 +90,10 @@ public class AppViewCreationUtility {
      * @param targetLayout The layout we want to add the AppImageView to.
      * @return
      */
-    public static AppImageView createAppImageView(Context context, final Profile currentUser, final Profile guardian, AppInfo appInfo, GridLayout targetLayout, View.OnClickListener listener) {
+    public static AppImageView createAppImageView(Context context, final Profile currentUser, final Profile guardian, final AppInfo appInfo, GridLayout targetLayout, View.OnClickListener listener) {
 
-        AppImageView appImageView = new AppImageView(context, appInfo);
-        View appView = addContentToView(context, targetLayout, appInfo.getName(), appInfo.getIconImage());
+        final AppImageView appImageView = new AppImageView(context, appInfo);
+        final View appView = addContentToView(context, targetLayout, appInfo.getName(), appInfo.getIconImage());
 
         setAppBackground(appView, appInfo.getBgColor());
 
@@ -112,16 +112,15 @@ public class AppViewCreationUtility {
                         // could not get context, no animation.
                     }
 
-                    AppInfo app = null;
+                    AppInfo app;
 
                     /*
                     * This block is synchronized on the AppViewCreationUtility class to prevent
-                    * race condtions where mAppInfoHashMap is reinitialized in the background with
+                    * race conditions where mAppInfoHashMap is reinitialized in the background with
                     * updateAppInfoHashMap
-                    *
-                    * */
+                    */
                     synchronized (AppViewCreationUtility.class) {
-                        app = mAppInfoHashMap.get((String) v.getTag());
+                        app = mAppInfoHashMap.get(v.getTag());
                     }
 
                     Intent intent = new Intent(Intent.ACTION_MAIN);

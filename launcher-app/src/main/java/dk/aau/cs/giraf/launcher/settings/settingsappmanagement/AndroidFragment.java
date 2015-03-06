@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.viewpagerindicator.CirclePageIndicator;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,7 +23,7 @@ import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
-import dk.aau.cs.giraf.launcher.layoutcontroller.AppImageView;
+import dk.aau.cs.giraf.launcher.widgets.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
@@ -60,6 +62,7 @@ public class AndroidFragment extends AppContainerFragment {
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
         appView = (ViewPager) view.findViewById(R.id.appsViewPager);
+
         preferences = LauncherUtility.getSharedPreferencesForCurrentUser(getActivity(), currentUser);
         selectedApps = preferences.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
 
@@ -74,6 +77,8 @@ public class AndroidFragment extends AppContainerFragment {
             appView.setAdapter(new AppsFragmentAdapter(getFragmentManager(), appInfos, rowsSize, columnsSize));
         }
 
+        CirclePageIndicator titleIndicator = (CirclePageIndicator)view.findViewById(R.id.pageIndicator);
+        titleIndicator.setViewPager(appView);
 
         return view;
     }
@@ -272,7 +277,7 @@ public class AndroidFragment extends AppContainerFragment {
         @Override
         public void run() {
             apps = ApplicationControlUtility.getAndroidAppsOnDeviceAsApplicationList(getActivity());
-            if (loadedApps == null || loadedApps.size() != apps.size()) {
+            if (AppInfo.isAppListsDifferent(loadedApps, apps)) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
