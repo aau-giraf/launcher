@@ -21,7 +21,7 @@
                   android:layout_weight="6"
                   android:id="@+id/settingsContainer"
                   android:background="#ffdd55"
-                  android:padding="@dimen/giraf_settings_container_padding">
+                  >
     </FrameLayout>
 
 </LinearLayout>

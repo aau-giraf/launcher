@@ -90,8 +90,6 @@ public class AppInfo extends Application implements Parcelable {
         this.setPackage(stringdata[2]);
         this.setActivity(stringdata[3]);
         this.setDescription(stringdata[4]);
-
-
     }
 
     @Override

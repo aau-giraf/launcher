@@ -1,5 +1,4 @@
 apply plugin: 'android'
-
 android {
     compileSdkVersion 19
     buildToolsVersion '21.1.2'
@@ -25,12 +24,24 @@ android {
     }
 }
 
+allprojects {
+    repositories
+            {
+                mavenCentral()
+            }
+}
 dependencies {
-    compile 'com.android.support:support-v4:+'
+    compile ('com.android.support:support-v4:+')
+    compile ('fr.avianey.com.viewpagerindicator:library:2.4.1') {
+        exclude module:'support-v4'
+    }
     compile fileTree(include: '*.jar', dir: 'libs')
     compile project(':barcodescanner')
     compile project(':GIRAF_Components')
     compile project(':OasisLib')
     compile files('libs/libGoogleAnalyticsServices.jar')
-    compile files('libs/viewpagerindicator.jar')
+
 }
+
+
+

@@ -14,6 +14,7 @@ import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 
 import com.google.analytics.tracking.android.EasyTracker;
+import com.viewpagerindicator.CirclePageIndicator;
 import com.viewpagerindicator.TitlePageIndicator;
 
 import java.util.ArrayList;
@@ -452,6 +453,9 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
             super.onPostExecute(appInfos);
 
             mCurrentLoadedApps = appInfos;
+
+            CirclePageIndicator titleIndicator = (CirclePageIndicator)findViewById(R.id.pageIndicator);
+            titleIndicator.setViewPager(mAppViewPager);
 
             startObservingApps();
         }
