@@ -32,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/profile_widget"
-                app:type="CHANGE_USER"
+                app:icon="@drawable/icon_change_user"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/sidebar_item_spacing" />
 
@@ -41,7 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/change_user_button"
-                app:type="LOG_OUT"
+                app:icon="@drawable/icon_logout"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/sidebar_item_spacing" />
 
@@ -50,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                app:type="SETTING"
+                app:icon="@drawable/icon_settings"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/sidebar_item_spacing"/>
 
