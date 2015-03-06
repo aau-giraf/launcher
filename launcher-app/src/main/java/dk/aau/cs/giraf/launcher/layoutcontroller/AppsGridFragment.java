@@ -116,13 +116,11 @@ public class AppsGridFragment extends Fragment {
 
     protected View.OnClickListener getOnClickListener() {
 
-        Fragment parentFragment = null;
+        Fragment parentFragment;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-
             parentFragment = getParentFragment();
-        } else
-        {
+        } else {
             FragmentManager manager = getFragmentManager();
 
             parentFragment = manager.findFragmentById(R.id.app_settings_fragmentlayout);

@@ -106,18 +106,15 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
         selectedApps = preferences.getStringSet(context.getResources().getString(R.string.selected_android_apps_key), new HashSet<String>());
 
         // Only creates AppImageViews if there actually are applications to generate
-        HashMap<String, AppInfo> appInfoHash = new HashMap<String, AppInfo>();
-
         if (applications != null && applications.length != 0)
         {
-            //if the currentuser was null, find the user based on the context
-            if (currentUser == null)
+            // If the current user is null, find the user based on the context
+            if (currentUser == null) {
                 currentUser = LauncherUtility.getCurrentUser(context);
-
-
+            }
 
             //update the HashMap with information of the apps being generated and sort it
-            appInfoHash = AppViewCreationUtility.updateAppInfoHashMap(context, applications);
+            HashMap<String, AppInfo> appInfoHash = AppViewCreationUtility.updateAppInfoHashMap(context, applications);
 
             ArrayList<AppInfo> appInfoList = new ArrayList<AppInfo>(appInfoHash.values());
             Collections.sort(appInfoList, new AppComparator(context));
