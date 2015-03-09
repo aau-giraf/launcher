@@ -6,14 +6,14 @@
         android:layout_height="match_parent"
         android:visibility="gone"
         android:orientation="horizontal"
-        android:background="#ff0000">
+        android:background="#aaff0000">
 
     <TextView
             android:id="@+id/debug_text_view"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:textColor="#fff"
-            android:textSize="24dp"
+            android:textColor="#aaffffff"
+            android:textSize="24sp"
             android:gravity="center_horizontal"
             android:text="GIRAF LAUNCHER IS RUNNING IN DEBUG MODE!"
             android:textStyle="bold"
