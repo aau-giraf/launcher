@@ -2,31 +2,21 @@ package dk.aau.cs.giraf.launcher.helper;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
-import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
 import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -103,9 +93,7 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
             }
 
             // update the HashMap with information of the apps being generated and sort it
-            final HashMap<String, AppInfo> appInfoHash = AppViewCreationUtility.updateAppInfoHashMap(context, applications);
-
-            ArrayList<AppInfo> appInfoList = new ArrayList<AppInfo>(appInfoHash.values());
+            ArrayList<AppInfo> appInfoList = AppViewCreationUtility.updateAppInfoList(context, applications);
             Collections.sort(appInfoList, new AppComparator(context));
 
             return appInfoList;

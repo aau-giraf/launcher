@@ -20,11 +20,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.launcher.widgets.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
+import dk.aau.cs.giraf.launcher.widgets.AppImageView;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
@@ -36,7 +36,7 @@ import static android.content.Context.LAYOUT_INFLATER_SERVICE;
  */
 public class AppViewCreationUtility {
 
-    private static HashMap<String, AppInfo> mAppInfoHashMap;
+    //private static HashMap<String, AppInfo> mAppInfoHashMap;
 
     /**
      * Loads the AppInfo object of app from the list, into the {@code mAppInfoHashMap} hash map, making
@@ -46,19 +46,19 @@ public class AppViewCreationUtility {
      * @param context  The context of the current activity
      * @param appsList The array of accessible apps
      */
-    public synchronized static HashMap<String, AppInfo> updateAppInfoHashMap(Context context, Application[] appsList) {
-        mAppInfoHashMap = new HashMap<String, AppInfo>();
+    public synchronized static ArrayList<AppInfo> updateAppInfoList(final Context context, final Application[] appsList) {
+        final ArrayList<AppInfo> appInfoList = new ArrayList<AppInfo>();
 
         for (Application app : appsList) {
             AppInfo appInfo = new AppInfo(app);
 
             appInfo.loadIcon(context);
-            appInfo.setBgColor(context.getResources().getColor(R.color.app_color_transparent));
+            //appInfo.setBgColor(context.getResources().getColor(R.color.app_color_transparent));
 
-            mAppInfoHashMap.put(String.valueOf(appInfo.getId()), appInfo);
+            appInfoList.add(appInfo);
         }
 
-        return mAppInfoHashMap;
+        return appInfoList;
     }
 
     /**
@@ -119,7 +119,7 @@ public class AppViewCreationUtility {
                     /*
                     * This block is synchronized on the AppViewCreationUtility class to prevent
                     * race conditions where mAppInfoHashMap is reinitialized in the background with
-                    * updateAppInfoHashMap
+                    * updateAppInfoList
                     */
 
                     /*synchronized (AppViewCreationUtility.class) {
@@ -127,11 +127,6 @@ public class AppViewCreationUtility {
                     }*/
 
                     appInfo = ((AppImageView) v).appInfo;
-
-                    if(appInfo == null)
-                    {
-                        Log.e("ØV ØV", "appInfo er null");
-                    }
 
                     Intent intent = new Intent(Intent.ACTION_MAIN);
                     intent.addCategory(Intent.CATEGORY_LAUNCHER);
