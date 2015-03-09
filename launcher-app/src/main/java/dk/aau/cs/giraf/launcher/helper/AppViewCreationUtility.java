@@ -9,6 +9,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +57,7 @@ public class AppViewCreationUtility {
 
             mAppInfoHashMap.put(String.valueOf(appInfo.getId()), appInfo);
         }
+
         return mAppInfoHashMap;
     }
 
@@ -112,21 +114,29 @@ public class AppViewCreationUtility {
                         // could not get context, no animation.
                     }
 
-                    AppInfo app;
+                    AppInfo appInfo;
 
                     /*
                     * This block is synchronized on the AppViewCreationUtility class to prevent
                     * race conditions where mAppInfoHashMap is reinitialized in the background with
                     * updateAppInfoHashMap
                     */
-                    synchronized (AppViewCreationUtility.class) {
-                        app = mAppInfoHashMap.get(v.getTag());
+
+                    /*synchronized (AppViewCreationUtility.class) {
+                        appInfo = mAppInfoHashMap.get(v.getTag());
+                    }*/
+
+                    appInfo = ((AppImageView) v).appInfo;
+
+                    if(appInfo == null)
+                    {
+                        Log.e("ØV ØV", "appInfo er null");
                     }
 
                     Intent intent = new Intent(Intent.ACTION_MAIN);
                     intent.addCategory(Intent.CATEGORY_LAUNCHER);
 
-                    intent.setComponent(new ComponentName(app.getPackage(), app.getActivity()));
+                    intent.setComponent(new ComponentName(appInfo.getPackage(), appInfo.getActivity()));
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                             | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 
@@ -136,9 +146,9 @@ public class AppViewCreationUtility {
                         intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
 
                     intent.putExtra(Constants.GUARDIAN_ID, guardian.getId());
-                    intent.putExtra(Constants.APP_COLOR, app.getBgColor());
-                    intent.putExtra(Constants.APP_PACKAGE_NAME, app.getPackage());
-                    intent.putExtra(Constants.APP_ACTIVITY_NAME, app.getActivity());
+                    intent.putExtra(Constants.APP_COLOR, appInfo.getBgColor());
+                    intent.putExtra(Constants.APP_PACKAGE_NAME, appInfo.getPackage());
+                    intent.putExtra(Constants.APP_ACTIVITY_NAME, appInfo.getActivity());
 
                     // Verify the intent will resolve to at least one activity
                     LauncherUtility.secureStartActivity(v.getContext(), intent);

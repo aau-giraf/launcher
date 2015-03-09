@@ -49,7 +49,6 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
     protected ViewPager appsViewPager;
     protected View.OnClickListener onClickListener;
 
-    protected Set<String> selectedApps;
     protected ProgressBar progressbar;
 
     /**
@@ -82,16 +81,6 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
         ViewGroup parent = getProgressBarParent();
         progressbar = (ProgressBar) parent.findViewById(R.id.ProgressBar);
         progressbar.setVisibility(View.VISIBLE);
-
-        /*
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(100, 100);
-        params.addRule(RelativeLayout.CENTER_IN_PARENT);
-        progressbar.setLayoutParams(params);
-        progressbar.setIndeterminateDrawable(context.getResources().getDrawable(R.drawable.progressbar));
-        */
-
-        //parent.addView(progressbar);
-        //targetLayout.removeAllViews();
     }
 
     /**
@@ -105,10 +94,6 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
     @Override
     protected ArrayList<AppInfo> doInBackground(Application... applications)
     {
-        // Thread starts working and gets the settings for the given user.
-        SharedPreferences preferences = LauncherUtility.getSharedPreferencesForCurrentUser(context, currentUser);
-        selectedApps = preferences.getStringSet(context.getResources().getString(R.string.selected_android_apps_key), new HashSet<String>());
-
         // Only creates AppImageViews if there actually are applications to generate
         if (applications != null && applications.length != 0)
         {
@@ -117,87 +102,17 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
                 currentUser = LauncherUtility.getCurrentUser(context);
             }
 
-            //update the HashMap with information of the apps being generated and sort it
-            HashMap<String, AppInfo> appInfoHash = AppViewCreationUtility.updateAppInfoHashMap(context, applications);
+            // update the HashMap with information of the apps being generated and sort it
+            final HashMap<String, AppInfo> appInfoHash = AppViewCreationUtility.updateAppInfoHashMap(context, applications);
 
             ArrayList<AppInfo> appInfoList = new ArrayList<AppInfo>(appInfoHash.values());
             Collections.sort(appInfoList, new AppComparator(context));
 
-            //Get the width and height of the targetlayout to be populated
-            //int containerWidth = ((ScrollView) targetLayout.getParent()).getWidth();
-            //int containerHeight = ((ScrollView) targetLayout.getParent()).getHeight();
-
-            //If we are in portrait swap width and height
-            /*if (containerHeight > containerWidth) {
-                int temp = containerWidth;
-                containerWidth = containerHeight;
-                containerHeight = temp;
-                Log.d(Constants.ERROR_TAG, "Portrait mode detected. Width and height swapped.");
-            }
-            */
-
-            //Calculate how many apps the screen can fit on each row, and how much space is available for horizontal padding
-            /*
-            int appsPrRow = getAmountOfAppsWithinBounds(containerWidth, iconSize);
-
-            //Calculate how many apps the screen can fit vertically on a single screen, and how much space is available for vertical padding
-            int appsPrColumn = getAmountOfAppsWithinBounds(containerHeight, iconSize);
-            int paddingHeight = getLayoutPadding(containerHeight, appsPrColumn, iconSize);
-            */
-
-
-
-
-
-            /*
-            //Add the first row to the list of rows to add to the container
-            LinearLayout currentAppRow = createNewRow(appsPrRow, paddingHeight, true);
-            appRowsToAdd.add(currentAppRow);
-
-            //Insert apps into the rows, and add new rows as needed
-            for (AppInfo appInfo : appInfoList) {
-                //If the current row is full, insert the current row into the list of rows to add and create a new row
-                if (currentAppRow.getChildCount() == appsPrRow)
-                {
-                    currentAppRow = createNewRow(appsPrRow, paddingHeight, false);
-                    appRowsToAdd.add(currentAppRow);
-                }
-
-                //Create a new AppImageView and set its properties
-                AppImageView newAppView = AppViewCreationUtility.createAppImageView(context, currentUser, guardian, appInfo, targetLayout, onClickListener);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
-                params.setMargins(2, 2, 2, 2);
-                params.weight = 1f;
-                newAppView.setLayoutParams(params);
-                currentAppRow.addView(newAppView);
-                if (isCancelled()) {
-                    break;
-                }
-            }
-
-            //If last row is not full, fill it with empty elements, to get the icon alignment right
-            int appsInLastRow = (appInfoList.size() % appsPrRow);
-            if (appsInLastRow > 0) {
-                while (appsInLastRow < appsPrRow) {
-                    AppImageView newAppView = new AppImageView(context);
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
-                    params.setMargins(2, 2, 2, 2);
-                    params.weight = 1f;
-                    newAppView.setLayoutParams(params);
-                    newAppView.setTag(Constants.NO_APP_TAG);
-                    currentAppRow.addView(newAppView);
-                    appsInLastRow++;
-                }
-            }
-            */
             return appInfoList;
         } else {
             // show no apps available message
             Log.e(Constants.ERROR_TAG, "App list is null");
         }
-        //mark the applications if they were selected by the user
-        //NOTE: This is only relevant for SettingsAcitivty, which markApplications checks for itself.
-        //markApplications(appInfoHash);
 
         return null;
     }
@@ -293,85 +208,5 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
         View noAppsTextView = ((Activity) context).findViewById(R.id.noAppsMessage);
         noAppsTextView.setVisibility(visibility);
 
-    }
-
-
-
-    /**
-     * This function goes through all the applications and marks the relevant ones as selected.
-     * The relevant ones are the ones for which a ProfileApplication based on the user and the application exists or
-     * the sharedPreferences for the user contains the app.
-     * Since this is only relevant for SettingsActivity, the function terminates if the context is an instance of something else.
-     *
-     * @param appInfos the list of AppInfos that we are checking to be marked
-     */
-    /*
-    private void markApplications(final HashMap<String, AppInfo> appInfos) {
-        if (context instanceof SettingsActivity) {
-            final ProfileApplicationController pac = new ProfileApplicationController(context);
-            for (final LinearLayout row : appRowsToAdd) {
-                for (int j = 0; j < row.getChildCount(); j++) {
-                    AppImageView appImageView = (AppImageView) row.getChildAt(j);
-                    if (appImageView.getTag() != Constants.NO_APP_TAG) {
-                        AppInfo app = null;
-                        try {
-                            app = appInfos.get(appImageView.getTag().toString());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        if (app != null && (doesProfileApplicationExist(pac, app.getApp(), currentUser) || selectedApps.contains(app.getActivity()))) {
-                            appImageView.setChecked(true);
-                        }
-                    }
-                }
-            }
-        }
-    }
-    */
-    /**
-     * This function creates a new row to be added to the targetlayout, with all the properties it needs
-     *
-     * @param appsPrRow     The amount of apps there can be contained in a row
-     * @param paddingHeight The amount of padding that should be added to the row
-     * @param isFirstRow    Should be set to true if this is the first row being added, false otherwise
-     * @return the row that we are about to add.
-     */
-    /*
-    private LinearLayout createNewRow(int appsPrRow, int paddingHeight, boolean isFirstRow) {
-        LinearLayout newAppRow = new LinearLayout(context);
-        newAppRow = new LinearLayout(context);
-        newAppRow.setWeightSum(appsPrRow);
-        newAppRow.setOrientation(LinearLayout.HORIZONTAL);
-        if (!isFirstRow)
-            newAppRow.setPadding(0, 0, 0, paddingHeight);
-        else
-            newAppRow.setPadding(0, paddingHeight, 0, paddingHeight);
-
-        newAppRow.setLayoutParams(targetLayout.getLayoutParams());
-
-        return newAppRow;
-    }
-    */
-    /**
-     * Returns the amount of applications that can fit within a container
-     *
-     * @param containerSize The size of the container we fill AppImageViews into
-     * @param iconSize      The size of the AppImageViews we fill the container with
-     * @return the amount of applications that can fit within a container
-     */
-    protected static int getAmountOfAppsWithinBounds(int containerSize, int iconSize) {
-        return containerSize / iconSize;
-    }
-
-    /**
-     * This function returns the amount of padding that the row should receive.
-     *
-     * @param containerSize the size of the row
-     * @param appsPrRow     The amount of apps that can be contained in a row
-     * @param iconSize      The size of the AppImageViews
-     * @return the amount of padding that the row should receive.
-     */
-    protected static int getLayoutPadding(int containerSize, int appsPrRow, int iconSize) {
-        return (containerSize % iconSize) / (appsPrRow + 1);
     }
 }
