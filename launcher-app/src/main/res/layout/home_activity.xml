@@ -84,12 +84,6 @@
             android:layout_centerInParent="true"
             android:visibility="invisible" />
 
-        <include
-            layout="@layout/debug_mode_overlay"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true" />
-
         <com.viewpagerindicator.CirclePageIndicator
             android:id="@+id/pageIndicator"
             android:layout_width="match_parent"
@@ -106,6 +100,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@id/pageIndicator" />
+
+        <include
+            layout="@layout/debug_mode_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true" />
 
     </RelativeLayout>
 
