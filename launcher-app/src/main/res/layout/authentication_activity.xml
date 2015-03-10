@@ -40,7 +40,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:layout_below="@+id/headline"
-                    android:contentDescription="Instructions"
+                    android:contentDescription="@string/instructions"
                     android:scaleX="0.8"
                     android:scaleY="0.8"
                     android:src="@drawable/ani_00000" />
