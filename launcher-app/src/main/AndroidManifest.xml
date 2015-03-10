@@ -67,7 +67,7 @@
         <activity
                 android:name=".settings.SettingsActivity"
                 android:label="@string/settings_tablist_tablet"
-                android:theme="@style/GirafTheme.NoTitleBar"
+                android:theme="@style/GirafTheme"
                 android:screenOrientation="landscape">
         </activity>
         <provider
