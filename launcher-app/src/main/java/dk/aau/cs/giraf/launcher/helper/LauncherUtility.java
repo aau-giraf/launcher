@@ -60,11 +60,11 @@ public abstract class LauncherUtility {
      * animation and the login screen. {@code loginAsChild} decides whether the logged in profile is a child or
      * a guardian. If debug mode is enabled, a warning is shown in {@code activity}.
      *
-     * @param debugging If {@code true} Launcher will run in debugging mode.
+     * @param debugging    If {@code true} Launcher will run in debugging mode.
      * @param loginAsChild If {@code true} Launcher will automatically log in with a child profile. If
      *                     {@code false} launcher will log in as a guardian.
-     * @param activity An activity in which to display a message indicating that debugging is enabled,
-     *                 if this is the case. (See {@link dk.aau.cs.giraf.launcher.helper.LauncherUtility#showDebugInformation(android.app.Activity)})
+     * @param activity     An activity in which to display a message indicating that debugging is enabled,
+     *                     if this is the case. (See {@link dk.aau.cs.giraf.launcher.helper.LauncherUtility#showDebugInformation(android.app.Activity)})
      */
     public static void setDebugging(boolean debugging, boolean loginAsChild, Activity activity) {
         DEBUG_MODE = debugging;
@@ -78,8 +78,9 @@ public abstract class LauncherUtility {
     /**
      * Starts an activity indicated in {@code intent}. If the activity does not exist, Google Analytics is notified,
      * and a toast is shown.
+     *
      * @param context The context from which to start the activity. In case of failure, a toast is shown in this context.
-     * @param intent The intent describing the requested activity.
+     * @param intent  The intent describing the requested activity.
      */
     public static void secureStartActivity(Context context, Intent intent) {
         try {
@@ -124,7 +125,7 @@ public abstract class LauncherUtility {
      * Send the exception {@code ex} to Google Analytics.
      *
      * @param context Context of the current activity.
-     * @param ex       The caught exception.
+     * @param ex      The caught exception.
      */
     public static void sendExceptionGoogleAnalytics(Context context, Exception ex) {
         // May return null if EasyTracker has not yet been initialized with a
@@ -133,12 +134,12 @@ public abstract class LauncherUtility {
 
         // StandardExceptionParser is provided to help get meaningful Exception descriptions.
         easyTracker.send(MapBuilder
-                .createException(new StandardExceptionParser(context, null)    // Context and optional collection of package names
-                        // to be used in reporting the exception.
-                        .getDescription(Thread.currentThread().getName(),           // The name of the thread on which the exception occurred.
-                                ex),                                         // The exception.
-                        false)                                      // False indicates a fatal exception
-                .build()
+                        .createException(new StandardExceptionParser(context, null)    // Context and optional collection of package names
+                                        // to be used in reporting the exception.
+                                        .getDescription(Thread.currentThread().getName(),           // The name of the thread on which the exception occurred.
+                                                ex),                                         // The exception.
+                                false)                                      // False indicates a fatal exception
+                        .build()
         );
     }
 
@@ -147,8 +148,8 @@ public abstract class LauncherUtility {
      * This information is used to determine when to automatically logout the user.
      * The information is saved in a {@code SharedPreferences} file.
      *
-     * @param context Context in which the preferences should be saved.
-     * @param id      ID of the guardian logging in.
+     * @param context   Context in which the preferences should be saved.
+     * @param id        ID of the guardian logging in.
      * @param loginTime The time of login (UNIX time, milliseconds).
      */
     public static void saveLogInData(Context context, int id, long loginTime) {
@@ -238,6 +239,7 @@ public abstract class LauncherUtility {
     /**
      * This function tries generates an OasisLib Helper, based on the current context.
      * If it succeeds, returns the helper, otherwise sends information to Google Analytics about the error and return null
+     *
      * @param context The context of the current activity
      * @return The generated helper
      */
@@ -256,15 +258,16 @@ public abstract class LauncherUtility {
      * This function returns substring of the correct preference string based on the user profile.
      * Checks for the role and appends the correct role prefix to the profiles ID.
      * This is used to find out which settings file to read.
+     *
      * @param profile The profile to generate a string for
      * @return The substring generated.
      */
-    public static String getSharedPreferenceUser(Profile profile){
+    public static String getSharedPreferenceUser(Profile profile) {
         String fileName = "";
         if (profile == null)
             fileName += "u";
         else {
-            switch (profile.getRole()){
+            switch (profile.getRole()) {
                 case GUARDIAN:
                     fileName += "g";
                     break;
@@ -284,7 +287,7 @@ public abstract class LauncherUtility {
             fileName += String.valueOf(profile.getId());
         }
 
-        return  fileName;
+        return fileName;
     }
 
     /**
@@ -292,10 +295,11 @@ public abstract class LauncherUtility {
      * This user profile is extracted from the context given.
      * Checks for the role and appends the correct role prefix to the profiles ID.
      * This is used to find out which settings file to read.
+     *
      * @param context The context of the current activity
      * @return The substring generated.
      */
-    public static String getSharedPreferenceUserFromContext(Context context){
+    public static String getSharedPreferenceUserFromContext(Context context) {
         Profile currentUser = getCurrentUser(context);
         return getSharedPreferenceUser(currentUser);
     }
@@ -304,11 +308,12 @@ public abstract class LauncherUtility {
      * This function retrives the shared preferences for the given user.
      * it uses calls to other functions to generate the correct filename string and
      * subsequently retrieves the preferences from the context given
+     *
      * @param context The context of the current activity
      * @param profile The profile we are retrieving settings for
      * @return The settings for the given user in the given context.
      */
-    public static SharedPreferences getSharedPreferencesForCurrentUser(Context context, Profile profile){
+    public static SharedPreferences getSharedPreferencesForCurrentUser(Context context, Profile profile) {
         String fileName = Constants.TAG + ".";
         fileName += getSharedPreferenceUser(profile);
         return context.getSharedPreferences(fileName, Context.MODE_PRIVATE);
@@ -319,10 +324,11 @@ public abstract class LauncherUtility {
      * Finds the user based on the given context.
      * it uses calls to other functions to generate the correct filename string and
      * subsequently retrieves the preferences from the context given
+     *
      * @param context The context of the current activity
      * @return The settings for the user in the given context.
      */
-    public static SharedPreferences getSharedPreferencesForCurrentUser(Context context){
+    public static SharedPreferences getSharedPreferencesForCurrentUser(Context context) {
         Profile currentUser = getCurrentUser(context);
         return getSharedPreferencesForCurrentUser(context, currentUser);
     }
