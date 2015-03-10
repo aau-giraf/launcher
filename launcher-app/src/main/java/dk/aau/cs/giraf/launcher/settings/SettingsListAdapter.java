@@ -127,15 +127,11 @@ public class SettingsListAdapter extends BaseAdapter {
         // Get the item we are rendering the view for in the list
         SettingsListItem item = mApplicationList.get(position);
 
-        // Set the visibility of the right shadow of current view
         if (position == mLastSelectedItem) {
-            setShadowVisibility(holder.shadowRight, false);
             // Set the selected item in the ListView coming from the constructor
             // Minimizes the use of findViewById
             mListView.setItemChecked(position, true);
         }
-        else
-            setShadowVisibility(holder.shadowRight, true);
 
         // Set the visibility of bottom shadow in the view above
         if (position == mLastSelectedItem - 1)
