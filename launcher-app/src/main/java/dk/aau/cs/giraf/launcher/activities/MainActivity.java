@@ -5,10 +5,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
+import android.os.Handler;
 
 import java.util.Date;
 
@@ -31,6 +34,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
     private int oldSessionGuardianID = -1;
     Animation startingAnimation;
     Animation loadAnimation;
+    Handler messageHandler = new MessageHandler();
 
     /* ************* DEBUGGING MODE ************* */
     // TODO: ONLY USED FOR DEBUGGING PURPOSES!!!
@@ -69,16 +73,16 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      * @see dk.aau.cs.giraf.launcher.activities.MainActivity#SKIP_SPLASH_SCREEN
      */
     @Override
-	public void onCreate(Bundle savedInstanceState)
+    public void onCreate(Bundle savedInstanceState)
     {
-	    super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);
 
         boolean showAnimation = true;
 
-	    setContentView(R.layout.main_activity);
+        setContentView(R.layout.main_activity);
 
         // Start the remote syncing service
-        new main(this).startSynch();
+        new main(this).startSynch(messageHandler);
 
         //Load the preference determining whether the animation should be shown
         findOldSession();
@@ -105,7 +109,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 
         findViewById(R.id.giraficon).startAnimation(startingAnimation);
         startingAnimation.setAnimationListener(this);
-	}
+    }
 
     /**
      * Overrides the backbutton to do nothing, as the user should not be able to back out of this activity
@@ -129,8 +133,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
     public void onAnimationEnd(Animation animation) {
         TextView welcomeText = (TextView) findViewById(R.id.welcome_text);
         welcomeText.setText("Henter data...");
-        LoadDataTask loadDataTask = new LoadDataTask();
-        loadDataTask.execute(this);
+        findViewById(R.id.giraficon).startAnimation(loadAnimation);
     }
 
     /**
@@ -229,45 +232,18 @@ public class MainActivity extends Activity implements Animation.AnimationListene
     }
 
     /**
-     * This class is used to load in data in a thread running asynchronously with the UI thread.
+     * Used to communicate with DownloadService
+     * To determine if a download is complete
      */
-    private class LoadDataTask extends AsyncTask<Activity, View, Void>
-    {
-        /**
-         * Starts the loadinganimation before we start loading data
-         */
+    public class MessageHandler extends Handler {
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            findViewById(R.id.giraficon).startAnimation(loadAnimation);
-        }
-
-        /**
-         * Looks if data has already been loaded.
-         * If yes, continue, otherwise, start loading data
-         *
-         * @param activities This is not used for anything
-         * @return always {@code null}
-         */
-        @Override
-        protected Void doInBackground(Activity... activities) {
-/*
-            Helper helper = LauncherUtility.getOasisHelper(mContext);
-            int size = helper.profilesHelper.getProfiles().size();
-            if (size <= 0) {
-                //helper.CreateDummyData();
-            }*/
-            return null;
-        }
-
-        /**
-         * Starts the next activity once the data has been loaded.
-         * @param aVoid This is not used for anything
-         */
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            startNextActivity();
+        public void handleMessage(Message message) {
+            int progress = message.arg1;
+            if(progress == 100){
+                startNextActivity();
+            } else {
+                Log.d("Progress",Integer.toString(progress));
+            }
         }
     }
 }
