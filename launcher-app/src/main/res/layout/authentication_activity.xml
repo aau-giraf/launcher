@@ -89,8 +89,6 @@
                 android:id="@+id/camerafeed"
                 android:layout_width="fill_parent"
                 android:layout_height="481dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
                 android:layout_gravity="center"
                 android:background="@drawable/cameraborder">
 
