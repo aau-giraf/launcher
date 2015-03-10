@@ -2,33 +2,33 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:background="@drawable/gbackground" >
+    android:background="@drawable/gbackground"
+    android:orientation="vertical">
 
     <include
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            layout="@layout/debug_mode_overlay" />
+        layout="@layout/debug_mode_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
-    	<ImageView
-    	    android:id="@+id/giraficon"
-    	    android:layout_width="wrap_content"
-    	    android:layout_height="wrap_content"
-    	    android:layout_centerHorizontal="true"
-    	    android:layout_centerVertical="true"
-    	    android:src="@drawable/giraf_loading" />
+    <ImageView
+        android:id="@+id/giraficon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/giraf_loading" />
 
     <TextView
         android:id="@+id/welcome_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/giraficon"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_below="@+id/giraficon"
         android:layout_marginTop="35dp"
+        android:text="Velkommen til Giraf!"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/giraf_loading_textColor"
-        android:textStyle="bold"
-        android:text="Velkommen til Giraf!"/>
+        android:textStyle="bold" />
 
 </RelativeLayout>
