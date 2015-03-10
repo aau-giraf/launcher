@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
@@ -91,10 +92,8 @@ public class ApplicationControlUtility {
             return new ArrayList<Application>();
         }
 
-        //TODO: Launcher name should not be hardcoded!
         for (int i = 0; i < dbApps.size(); i++) {
-            String name = dbApps.get(i).getName();
-            if (!doesResolveInfoListContainApp(deviceApps, dbApps.get(i)) || name.toLowerCase().equals("giraf")) {
+            if (!doesResolveInfoListContainApp(deviceApps, dbApps.get(i)) || dbApps.get(i).getPackage().equals(context.getString(R.string.launcher_namespace))) {
                 dbApps.remove(i);
                 i--;
             }
@@ -118,7 +117,7 @@ public class ApplicationControlUtility {
 
         // Remove all non-GIRAF apps from the list of apps in the system.
         for (int i = 0; i < systemApps.size(); i++) {
-            if (!systemApps.get(i).toString().toLowerCase().contains("dk.aau.cs.giraf")) {
+            if (!systemApps.get(i).toString().toLowerCase().contains(context.getString(R.string.giraf_namespace))) {
                 systemApps.remove(i);
                 i--;
             }

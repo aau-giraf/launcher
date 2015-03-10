@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="giraf_settings_user_prompt">Vælg en person</string>
     <string name="giraf_settings_selectUser_text">Tryk for at vælge:</string>
     <string name="google_play_button">Butik</string>
     <string name="android_applications_button">Android</string>
     <string name="giraf_applications_button">GIRAF</string>
     <string name="giraf_settings_profile_user">Aktive Bruger</string>
-    <string name="apps_list_label">Apps</string>
     <string name="settings_activity_not_found_msg">Indstillingsmenuen kunne ikke åbnes.</string>
 
     <!-- Launcher preference keys -->
@@ -22,7 +20,6 @@
     <string name="setting_launcher_grid_size_title">Gitterstørrelse</string>
     <string name="setting_launcher_grid_size_summary">Indstil størrelsen på gitteret for hjemmeskærmen.</string>
     <string name="setting_launcher_grid_title">Gitter</string>
-    <string name="setting_launcher_grid_column_title">Søjler</string>
     <string name="setting_launcher_grid_example_text">Eksempel:</string>
     <string name="settings_tablist_general">Generelt</string>
     <string name="settings_tablist_applications">Aktive applikationer</string>
