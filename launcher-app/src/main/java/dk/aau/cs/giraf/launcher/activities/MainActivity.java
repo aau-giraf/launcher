@@ -28,8 +28,7 @@ import dk.aau.cs.giraf.oasis.localdb.main;
  * Displays the splash logo of Launcher, and then starts {@link dk.aau.cs.giraf.launcher.activities.AuthenticationActivity}.
  * Provides variables for enabling debug mode before compilation.
  */
-public class MainActivity extends Activity implements Animation.AnimationListener
-{
+public class MainActivity extends Activity implements Animation.AnimationListener {
     //private Context mContext;
     private int oldSessionGuardianID = -1;
     Animation startingAnimation;
@@ -67,14 +66,13 @@ public class MainActivity extends Activity implements Animation.AnimationListene
     /**
      * Sets up the activity. Adds dummy data to the database if it's empty. Starts the splash animation,
      * if this is not disabled through debugging mode.
-     * @param savedInstanceState Information from the last launch of the activity.
      *
+     * @param savedInstanceState Information from the last launch of the activity.
      * @see dk.aau.cs.giraf.launcher.activities.MainActivity#DEBUG_MODE
      * @see dk.aau.cs.giraf.launcher.activities.MainActivity#SKIP_SPLASH_SCREEN
      */
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         boolean showAnimation = true;
@@ -87,16 +85,14 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         //Load the preference determining whether the animation should be shown
         findOldSession();
 
-        if (oldSessionGuardianID != -1)
-        {
+        if (oldSessionGuardianID != -1) {
             Profile oldSessionProfile = new ProfileController(this).getProfileById(oldSessionGuardianID);
             SharedPreferences prefs = SettingsUtility.getLauncherSettings(this, LauncherUtility.getSharedPreferenceUser(oldSessionProfile));
             showAnimation = prefs.getBoolean(getString(R.string.show_animation_preference_key), true);
         }
 
         //Decide whether to skip animation, according to debug mode
-        if ((DEBUG_MODE && SKIP_SPLASH_SCREEN) || !showAnimation)
-        {
+        if ((DEBUG_MODE && SKIP_SPLASH_SCREEN) || !showAnimation) {
             startNextActivity();
         }
         //Load the splash animation
@@ -115,18 +111,22 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      * Overrides the backbutton to do nothing, as the user should not be able to back out of this activity
      */
     @Override
-    public void onBackPressed() {}
+    public void onBackPressed() {
+    }
 
     /**
      * Must be overridden to implement AnimationListener.
      * We do not need it for anything, though.
+     *
      * @param animation The animation the function should act upon.
      */
     @Override
-    public void onAnimationStart(Animation animation) {}
+    public void onAnimationStart(Animation animation) {
+    }
 
     /**
      * Changed the welcome text to a "fetching data" text and makes the application start loading data.
+     *
      * @param animation The animation the function should act upon.
      */
     @Override
@@ -139,10 +139,12 @@ public class MainActivity extends Activity implements Animation.AnimationListene
     /**
      * Must be overridden to implement AnimationListener.
      * We do not need it for anything, though.
+     *
      * @param animation The animation the function should act upon.
      */
     @Override
-    public void onAnimationRepeat(Animation animation) {}
+    public void onAnimationRepeat(Animation animation) {
+    }
 
     /**
      * Launches the next relevant activity, according to the current debugging mode, and to
@@ -151,13 +153,14 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      * @see dk.aau.cs.giraf.launcher.activities.MainActivity#DEBUG_MODE
      * @see dk.aau.cs.giraf.launcher.activities.MainActivity#SKIP_AUTHENTICATION
      * @see dk.aau.cs.giraf.launcher.activities.MainActivity#DEBUG_AS_CHILD
-     * @see dk.aau.cs.giraf.launcher.helper.LauncherUtility#sessionExpired(android.content.Context) */
-    public void startNextActivity(){
+     * @see dk.aau.cs.giraf.launcher.helper.LauncherUtility#sessionExpired(android.content.Context)
+     */
+    public void startNextActivity() {
         Intent intent;
         TextView welcomeText = (TextView) findViewById(R.id.welcome_text);
         welcomeText.setText("Klar!");
 
-        if (DEBUG_MODE && SKIP_AUTHENTICATION){
+        if (DEBUG_MODE && SKIP_AUTHENTICATION) {
             intent = skipAuthentication(DEBUG_AS_CHILD);
         }
         //If no valid session is found, start authentication_activity
@@ -175,7 +178,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         }
 
         //If in debugging mode, set global variables.
-        if(DEBUG_MODE) {
+        if (DEBUG_MODE) {
             LauncherUtility.setDebugging(DEBUG_MODE, DEBUG_AS_CHILD, this);
         }
 
@@ -188,6 +191,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      * Overrides the authentication by authenticating a test profile, and creating an intent
      * for starting {@code HomeActivity}. The guardian profile used is 'Tony Stark', and the child profile used
      * is 'Johnathan Doerwald'.
+     *
      * @param asChild If {@code true}, a child profile is used for authentication. If {@code false}, a guardian
      *                profile is used for authentication.
      * @return An intent for starting {@code MainActivity} with the authenticated profile ID as an extra.
@@ -197,10 +201,9 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         Profile profile;
 
         //Get the relevant profile info.
-        if(asChild) {
+        if (asChild) {
             profile = helper.profilesHelper.authenticateProfile("childqkxlnftvxquwrwcdloaumdhzkgyglezzsebpvnethrlstvmlorrolymdynjcyonkrtvcuagwigdqqkftsxxhklcnbhznthcqjxnjzzdoqvmfdlxrudcyakvrnfcbohdumawlwmfndjascmvrsoxfjgwzhdvcvqcroxoyjeazmxtrjtlkldoevgdrqvgfbklhtgm");
-        }
-        else {
+        } else {
             //profile = helper.profilesHelper.authenticateProfile("jkkxlagqyrztlrexhzofekyzrnppajeobqxcmunkqhsbrgpxdtqgygnmbhrgnpphaxsjshlpupgakmirhpyfaivvtpynqarxsghhilhkqvpelpreevykxurtppcggkzfaepihlodgznrmbrzgqucstflhmndibuymmvwauvdlyqnnlxkurinuypmqypspmkqavuhfwsh");
             profile = helper.profilesHelper.authenticateProfile("d74ecba82569eafc763256e45a126b4ce882f8a81327f28a380faa13eb2ec8f3");
         }
@@ -218,14 +221,10 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      * Looks for a previously loaded session.
      * Loads the sharedpreferences if one exists
      */
-    private void findOldSession()
-    {
-        if (LauncherUtility.sessionExpired(this))
-        {
+    private void findOldSession() {
+        if (LauncherUtility.sessionExpired(this)) {
             oldSessionGuardianID = -1;
-        }
-        else
-        {
+        } else {
             SharedPreferences sharedPreferences = getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
             oldSessionGuardianID = sharedPreferences.getInt(Constants.GUARDIAN_ID, -1);
         }
@@ -239,10 +238,10 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         @Override
         public void handleMessage(Message message) {
             int progress = message.arg1;
-            if(progress == 100){
+            if (progress == 100) {
                 startNextActivity();
             } else {
-                Log.d("Progress",Integer.toString(progress));
+                Log.d("Progress", Integer.toString(progress));
             }
         }
     }
