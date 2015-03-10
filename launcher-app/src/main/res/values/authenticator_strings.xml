@@ -2,4 +2,5 @@
 <resources>
     <string name="instructions">Instruktioner</string>
     <string name="login_as_guardian">Guardian Log ind</string>
+    <string name="scan_icon">Scan icon</string>
 </resources>
