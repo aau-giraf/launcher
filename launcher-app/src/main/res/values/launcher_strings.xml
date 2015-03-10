@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="launcher_namespace">dk.aau.cs.giraf.launcher</string>
 
     <string name="giraf_debug_mode">GIRAF launcher is debugging, logged in</string>
     <string name="giraf_debug_as_guardian">as a guardian</string>
