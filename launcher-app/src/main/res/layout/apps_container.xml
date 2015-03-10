@@ -5,19 +5,19 @@
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
-	<LinearLayout
+    <LinearLayout
         android:id="@+id/app_bg"
-        android:layout_height="200dp"
         android:layout_width="200dp"
-    	android:gravity="center"
-    	android:orientation="vertical"
-    	android:background="@drawable/appborder">
+        android:layout_height="200dp"
+        android:background="@drawable/appborder"
+        android:gravity="center"
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/example_grid_layout"
-            android:layout_height="120dp"
             android:layout_width="120dp"
-            android:layout_gravity="center"/>
+            android:layout_height="120dp"
+            android:layout_gravity="center" />
 
         <TextView
             android:id="@+id/app_text"
@@ -26,10 +26,10 @@
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:ellipsize="none"
-            android:scrollHorizontally="false"
             android:gravity="center_horizontal"
-            android:textColor="#000000"
-            android:textAppearance="?android:attr/textAppearanceLarge"/>
+            android:scrollHorizontally="false"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#000000" />
 
     </LinearLayout>
 </LinearLayout>
