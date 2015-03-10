@@ -5,11 +5,6 @@
     android:background="@drawable/gbackground"
     android:orientation="vertical">
 
-    <include
-        layout="@layout/debug_mode_overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
     <ImageView
         android:id="@+id/giraficon"
         android:layout_width="wrap_content"
@@ -30,5 +25,10 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/giraf_loading_textColor"
         android:textStyle="bold" />
+
+    <include
+        layout="@layout/debug_mode_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>
