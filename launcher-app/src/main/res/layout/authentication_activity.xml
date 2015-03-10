@@ -63,11 +63,6 @@
                     android:layout_marginTop="15dp" />
             </RelativeLayout>
 
-            <include
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    layout="@layout/debug_mode_overlay" />
-
             <Button
             android:id="@+id/loginAsGuardianButton"
                 android:text="Guardian Log ind"
@@ -123,5 +118,10 @@
         </FrameLayout>
 
     </LinearLayout>
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content "
+        layout="@layout/debug_mode_overlay" />
 
 </FrameLayout>
