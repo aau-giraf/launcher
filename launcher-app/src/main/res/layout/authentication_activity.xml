@@ -70,7 +70,7 @@
                 android:id="@+id/loginAsGuardianButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left|bottom"
+                android:layout_gravity="start|bottom"
                 android:text="Guardian Log ind" />
 
         </FrameLayout>
