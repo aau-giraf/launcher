@@ -5,5 +5,4 @@
     <dimen name="giraf_settings_list_row_imageView_marginRight">10dp</dimen>
     <dimen name="giraf_settings_list_shadowSize">8dp</dimen>
     <dimen name="giraf_settings_container_selectedUser_padding">2dp</dimen>
-    <dimen name="giraf_settings_container_padding">20dp</dimen>
 </resources>
