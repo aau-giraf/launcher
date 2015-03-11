@@ -40,12 +40,6 @@ public class GirafFragment extends AppContainerFragment {
     private loadGirafApplicationTask loadApplicationTask;
     private View.OnClickListener listener;
 
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
     /**
      * Because we are dealing with a Fragment, OnCreateView is where most of the variables are set.
      * The context is set by the superclass.
@@ -91,6 +85,7 @@ public class GirafFragment extends AppContainerFragment {
         if (haveAppsBeenAdded) {
             startObservingApps();
         }
+
         reloadApplications();
     }
 
@@ -134,7 +129,7 @@ public class GirafFragment extends AppContainerFragment {
      */
     @Override
     public void loadApplications() {
-        if (loadedApps == null || loadedApps.size() != apps.size()) {
+        if (loadedApps == null || AppInfo.isAppListsDifferent(loadedApps, apps)) {
             //Remember that the apps have been added, so they are not added again by the listener
 
             loadApplicationTask = new loadGirafApplicationTask(getActivity(), currentUser, null, appView, listener);
@@ -156,7 +151,6 @@ public class GirafFragment extends AppContainerFragment {
                 appImageView.toggle();
                 ProfileApplicationController pac = new ProfileApplicationController(getActivity());
                 AppInfo app = appImageView.appInfo;
-
 
                 if (userHasApplicationInView(pac, app.getApp(), currentUser)) {
                     pac.removeProfileApplicationByProfileAndApplication(app.getApp(), currentUser);

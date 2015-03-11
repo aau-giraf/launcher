@@ -23,10 +23,10 @@ import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
-import dk.aau.cs.giraf.launcher.widgets.AppImageView;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
+import dk.aau.cs.giraf.launcher.widgets.AppImageView;
 import dk.aau.cs.giraf.oasis.lib.models.Application;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
@@ -40,12 +40,6 @@ public class AndroidFragment extends AppContainerFragment {
     private Set<String> selectedApps;
     private ArrayList<AppInfo> appInfos;
     private LoadAndroidApplicationTask loadApplicationsTask;
-
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     /**
      * Because we are dealing with a Fragment, OnCreateView is where most of the variables are set.
@@ -77,7 +71,7 @@ public class AndroidFragment extends AppContainerFragment {
             appView.setAdapter(new AppsFragmentAdapter(getFragmentManager(), appInfos, rowsSize, columnsSize));
         }
 
-        CirclePageIndicator titleIndicator = (CirclePageIndicator)view.findViewById(R.id.pageIndicator);
+        CirclePageIndicator titleIndicator = (CirclePageIndicator) view.findViewById(R.id.pageIndicator);
         titleIndicator.setViewPager(appView);
 
         return view;
@@ -87,7 +81,7 @@ public class AndroidFragment extends AppContainerFragment {
      * We override onResume to make the observer start observing apps.
      */
     @Override
-    public void onResume() {
+    public synchronized void onResume() {
         super.onResume();
         if (haveAppsBeenAdded) {
             startObservingApps();
@@ -104,7 +98,7 @@ public class AndroidFragment extends AppContainerFragment {
      * Finally, if the fragment is still loadapplications in the ASyncTask, it cancels the task
      */
     @Override
-    public void onPause() {
+    public synchronized void onPause() {
         super.onPause();
         if (selectedApps == null)
             selectedApps = new HashSet<String>();
@@ -114,13 +108,10 @@ public class AndroidFragment extends AppContainerFragment {
             Log.d(Constants.ERROR_TAG, "Applications are no longer observed.");
         }
 
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.remove(getString(R.string.selected_android_apps_key)).commit(); // Remove to ensure that the new set is written to file.
-        editor.putStringSet(getString(R.string.selected_android_apps_key), selectedApps);
-        editor.apply();
 
-        loadApplicationsTask.cancel(true);
-
+        if (loadApplicationsTask != null) {
+            loadApplicationsTask.cancel(true);
+        }
     }
 
     /**
@@ -143,10 +134,12 @@ public class AndroidFragment extends AppContainerFragment {
      * while GirafFragment uses LoadGirafApplicationTask, which is why it must be overridden
      */
     @Override
-    public void loadApplications() {
-        loadApplicationsTask = new LoadAndroidApplicationTask(getActivity(), currentUser, null, appView, listener);
-        loadApplicationsTask.execute();
+    public synchronized void loadApplications() {
 
+        if (loadedApps == null || AppInfo.isAppListsDifferent(loadedApps, apps)) {
+            loadApplicationsTask = new LoadAndroidApplicationTask(getActivity(), currentUser, null, appView, listener);
+            loadApplicationsTask.execute();
+        }
     }
 
     /**
@@ -159,23 +152,31 @@ public class AndroidFragment extends AppContainerFragment {
         super.listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppImageView appImageView = (AppImageView) v;
-                appImageView.toggle();
 
-                if (selectedApps == null)
-                    selectedApps = new HashSet<String>();
+                synchronized (AndroidFragment.this) {
+                    AppImageView appImageView = (AppImageView) v;
+                    appImageView.toggle();
 
-                AppInfo app = appImageView.appInfo;
-                String activityName = app.getActivity();
+                    if (selectedApps == null)
+                        selectedApps = new HashSet<String>();
 
-                /** If the user had previously selected the app, removed it from the list of selected apps
-                 * otherwise add it to the list of selected apps.*/
-                if (selectedApps.contains(activityName)) {
-                    selectedApps.remove(activityName);
-                    Log.d(Constants.ERROR_TAG, "Removed '" + activityName + "' to list: " + selectedApps.size());
-                } else {
-                    selectedApps.add(activityName);
-                    Log.d(Constants.ERROR_TAG, "Added '" + activityName + "' to list: " + selectedApps.size());
+                    AppInfo app = appImageView.appInfo;
+                    String activityName = app.getActivity();
+
+                    /** If the user had previously selected the app, removed it from the list of selected apps
+                     * otherwise add it to the list of selected apps.*/
+                    if (selectedApps.contains(activityName)) {
+                        selectedApps.remove(activityName);
+                        Log.d(Constants.ERROR_TAG, "Removed '" + activityName + "' to list: " + selectedApps.size());
+                    } else {
+                        selectedApps.add(activityName);
+                        Log.d(Constants.ERROR_TAG, "Added '" + activityName + "' to list: " + selectedApps.size());
+                    }
+
+                    final SharedPreferences.Editor editor = preferences.edit();
+                    editor.remove(getString(R.string.selected_android_apps_key)).commit(); // Remove to ensure that the new set is written to file.
+                    editor.putStringSet(getString(R.string.selected_android_apps_key), selectedApps);
+                    editor.apply();
                 }
             }
         };
@@ -184,6 +185,7 @@ public class AndroidFragment extends AppContainerFragment {
     /**
      * Starts a timer that looks for updates in the set of available applications every 5 seconds.
      */
+
     private void startObservingApps() {
         appsUpdater = new Timer();
         AppsObserver timerTask = new AppsObserver();
