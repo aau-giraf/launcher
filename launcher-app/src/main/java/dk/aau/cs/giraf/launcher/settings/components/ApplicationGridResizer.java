@@ -197,7 +197,7 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
             editor.putInt(ROWS_SIZE_PREFERENCE_TAG, mRowsCurrentValue);
             editor.putInt(COLUMNS_SIZE_PREFERENCE_TAG, mColumnsCurrentValue);
 
-            editor.commit();
+            editor.apply();
 
             ExampleTextView.setText(getContext().getString(R.string.setting_launcher_grid_example_text) + " " + mRowsCurrentValue + " × " + mColumnsCurrentValue);
 
