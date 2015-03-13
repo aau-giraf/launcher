@@ -172,9 +172,11 @@ public class MainActivity extends Activity implements Animation.AnimationListene
             intent = new Intent(this, HomeActivity.class);
 
             SharedPreferences sharedPreferences = getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
-            int guardianID = sharedPreferences.getInt(Constants.GUARDIAN_ID, -1);
+            final int guardianID = sharedPreferences.getInt(Constants.GUARDIAN_ID, -1);
+            final int childID = sharedPreferences.getInt(Constants.CHILD_ID, -1);
 
             intent.putExtra(Constants.GUARDIAN_ID, guardianID);
+            intent.putExtra(Constants.CHILD_ID, childID);
         }
 
         //If in debugging mode, set global variables.

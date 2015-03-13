@@ -91,8 +91,13 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
 
         mHelper = LauncherUtility.getOasisHelper(this);
 
-        mCurrentUser = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
+        mCurrentUser = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.CHILD_ID, -1));
         mLoggedInGuardian = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
+
+        if(mCurrentUser == null)
+        {
+            mCurrentUser = mLoggedInGuardian;
+        }
 
         // Fetch references to view objects
         mAppViewPager = (ViewPager) this.findViewById(R.id.appsViewPager);
@@ -268,6 +273,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
 
         //Set up widget updater, which updates the widget's view regularly, according to its status.
         widgetUpdater = new GWidgetUpdater();
+
         if (mCurrentUser.getRole().getValue() < Profile.Roles.CHILD.getValue()) {
             settingsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
