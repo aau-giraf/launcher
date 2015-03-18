@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentActivity;
 
 import java.util.ArrayList;
 
+import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
@@ -25,7 +26,7 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
 * Activity responsible for handling Launcher settings_activity and starting
 * other setting-related activities.
 */
-public class SettingsActivity extends FragmentActivity
+public class SettingsActivity extends GirafActivity
         implements SettingsListFragment.SettingsListFragmentListener,
         AppsFragmentInterface {
 

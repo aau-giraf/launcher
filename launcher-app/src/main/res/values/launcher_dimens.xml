@@ -2,5 +2,6 @@
 <resources>
     <dimen name="profile_selection_width">80dp</dimen>
     <dimen name="profile_selection_height">100dp</dimen>
-    <dimen name="sidebar_item_spacing">20dp</dimen>
+    <dimen name="sidebar_item_spacing">30dp</dimen>
+    <dimen name="sidebar_width">120dp</dimen>
 </resources>

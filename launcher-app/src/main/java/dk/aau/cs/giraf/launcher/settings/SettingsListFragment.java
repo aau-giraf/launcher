@@ -121,6 +121,7 @@ public class SettingsListFragment extends Fragment {
         // Update the name of the user
         mProfileName.setText(currentUserName);
 
+        /*
         ActionBar actionBar = getActivity().getActionBar();
 
         // Check if the actionbar is null
@@ -139,6 +140,7 @@ public class SettingsListFragment extends Fragment {
             // Set the title of the actionbar (text view)
             actionBarTitle.setText(getString(R.string.settings_for) + " " + currentUserName);
         }
+        */
 
         // Instantiates a new adapter to render the items in the ListView with a list of installed (available) apps
         mAdapter = new SettingsListAdapter(getActivity(), mSettingsListView, mCallback.getInstalledSettingsApps());

@@ -12,12 +12,12 @@
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                         android:id="@+id/SidebarView"
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/sidebar_width"
                         android:layout_height="fill_parent"
                         android:layout_centerInParent="true"
                         android:background="@drawable/launcher_sidebar_background"
                         android:orientation="vertical"
-                        android:padding="20dp">
+                        android:padding="@dimen/sidebar_item_spacing">
 
             <dk.aau.cs.giraf.gui.GWidgetProfileSelection
                 android:id="@+id/profile_widget"
@@ -30,7 +30,7 @@
 
             <dk.aau.cs.giraf.gui.GirafButton
                 android:id="@+id/change_user_button"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/profile_widget"
                 android:layout_centerHorizontal="true"

@@ -7,8 +7,4 @@
     <color name="actionbar_text_color">#fff</color>
     <color name="giraf_loading_textColor">#ff9b5100</color>
 
-    <!-- Colors for the sidebar of the home activity -->
-    <color name="sidebar_border_color">#dd9639</color>
-    <color name="sidebar_background_gradient_start_color">#fdbb55</color>
-    <color name="sidebar_background_gradient_end_color">#fed76c</color>
 </resources>
