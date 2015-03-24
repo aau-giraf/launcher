@@ -3,7 +3,7 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/giraf_yellow">
+                android:background="@color/giraf_background">
 
     <dk.aau.cs.giraf.launcher.layoutcontroller.DrawerLayout
         android:id="@+id/DrawerView"
@@ -91,8 +91,8 @@
             android:layout_alignParentBottom="true"
             android:layout_margin="3dp"
             android:padding="3dp"
-            app:fillColor="#FFFFFFFF"
-            app:pageColor="#50FFFFFF"
+            app:fillColor="@color/giraf_page_indicator_active"
+            app:pageColor="@color/giraf_page_indicator_inactive"
             app:radius="10dp"/>
 
         <dk.aau.cs.giraf.gui.GViewPager xmlns:android="http://schemas.android.com/apk/res/android"
