@@ -36,7 +36,6 @@ public class SettingsListFragment extends Fragment {
 
     private Profile mLoggedInGuardian;
     private Profile mCurrentUser;
-    private GProfileSelector mProfileSelector;
 
     // Callback to containing Activity implementing the SettingsListFragmentListener interface
     private SettingsListFragmentListener mCallback;
@@ -107,10 +106,8 @@ public class SettingsListFragment extends Fragment {
         // The childID is -1 meaning that no childs are available
         if(childID == -1) {
             mCurrentUser = pc.getProfileById(getActivity().getIntent().getIntExtra(Constants.GUARDIAN_ID, -1));
-            mProfileSelector = new GProfileSelector(getActivity(), mLoggedInGuardian, null);
         } else { // A child is found - set it as active and add its profile selector
             mCurrentUser = pc.getProfileById(childID);
-            mProfileSelector = new GProfileSelector(getActivity(), mLoggedInGuardian, mCurrentUser);
         }
         // Notify about the current user
         mCallback.setCurrentUser(mCurrentUser);
@@ -120,25 +117,6 @@ public class SettingsListFragment extends Fragment {
 
         // Update the name of the user
         mProfileName.setText(currentUserName);
-
-        ActionBar actionBar = getActivity().getActionBar();
-
-        // Check if the actionbar is null
-        if (actionBar != null) {
-
-            // Inflate the activity with the settings_actionbar
-            View actionBarView = getActivity().getLayoutInflater().inflate(R.layout.settings_actionbar, null);
-
-            // Override the actionbar
-            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-            actionBar.setCustomView(actionBarView);
-
-            // Find the title (text view) of the actionbar
-            TextView actionBarTitle = (TextView) actionBar.getCustomView().findViewById(R.id.settings_actionbar_title);
-
-            // Set the title of the actionbar (text view)
-            actionBarTitle.setText(getString(R.string.settings_for) + " " + currentUserName);
-        }
 
         // Instantiates a new adapter to render the items in the ListView with a list of installed (available) apps
         mAdapter = new SettingsListAdapter(getActivity(), mSettingsListView, mCallback.getInstalledSettingsApps());
@@ -218,7 +196,6 @@ public class SettingsListFragment extends Fragment {
                         mCallback.setActiveFragment(fragmentItem.fragment);
                     }
 
-
                     // Update the adapter to reflect the selection
                     mAdapter.setSelected(position);
                 }
@@ -242,50 +219,5 @@ public class SettingsListFragment extends Fragment {
             }
         });
 
-        // Handles a click on the profile selector
-        mProfileButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Show the profile select dialog
-                mProfileSelector.show();
-            }
-        });
-
-        // Set listerner for the dialog
-        setProfileSelectorClickListener();
-    }
-
-    /**
-     * This is used to set the onClickListener for a new ProfileSelector
-     * It must be used everytime a new selector is set.
-     * */
-    private void setProfileSelectorClickListener(){
-        // Handles a selection returned from the profile select dialog
-        mProfileSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                ProfileController pc = new ProfileController(getActivity());
-                // Get a profile from id returned from dialog
-                mCurrentUser = pc.getProfileById((int) id);
-                // Close it when a selection has been made
-                mProfileSelector.dismiss();
-
-                // Set a new profile select button according to the role of active user
-                if (mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
-                    mProfileSelector = new GProfileSelector(getActivity(), mLoggedInGuardian, mCurrentUser);
-                else
-                    mProfileSelector = new GProfileSelector(getActivity(), mLoggedInGuardian, null);
-
-                // Notify that a profile selection has been made
-                mCallback.setCurrentUser(mCurrentUser);
-                // Reload activity to reflect different user settings
-                mCallback.reloadActivity();
-                mProfileButton.setImageBitmap(mCurrentUser.getImage());
-
-
-                // Call this method again to set listerners for the newly selected profile
-                setProfileSelectorClickListener();
-            }
-        });
     }
 }

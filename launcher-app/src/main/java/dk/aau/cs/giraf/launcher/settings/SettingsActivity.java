@@ -10,22 +10,28 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
+import android.widget.AdapterView;
 
 import java.util.ArrayList;
 
+import dk.aau.cs.giraf.activity.GirafActivity;
+import dk.aau.cs.giraf.gui.GProfileSelector;
+import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementFragment;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
 import dk.aau.cs.giraf.oasis.lib.Helper;
+import dk.aau.cs.giraf.oasis.lib.controllers.ProfileController;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 /**
 * Activity responsible for handling Launcher settings_activity and starting
 * other setting-related activities.
 */
-public class SettingsActivity extends FragmentActivity
+public class SettingsActivity extends GirafActivity
         implements SettingsListFragment.SettingsListFragmentListener,
         AppsFragmentInterface {
 
@@ -38,6 +44,7 @@ public class SettingsActivity extends FragmentActivity
     private android.support.v4.app.Fragment mActiveSupportFragment;
     private Profile mCurrentUser = null;
     private Profile mLoggedInGuardian;
+    private GProfileSelector mProfileSelector;
 
     /**
      * Global variable containing giraf applications with settings.
@@ -67,21 +74,40 @@ public class SettingsActivity extends FragmentActivity
 
         setContentView(R.layout.settings_activity);
 
-        Helper mHelper = LauncherUtility.getOasisHelper(this);
+        GirafButton changeUserButton = new GirafButton(this, this.getResources().getDrawable(R.drawable.icon_change_user));
+        changeUserButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                mProfileSelector.show();
+            }
+        });
+
+        addGirafButtonToActionBar(changeUserButton,LEFT);
+
+        final Helper mHelper = LauncherUtility.getOasisHelper(this);
 
         final int childId = getIntent().getExtras().getInt(Constants.CHILD_ID);
         final int guardianId = getIntent().getExtras().getInt(Constants.GUARDIAN_ID);
 
+        mLoggedInGuardian = mHelper.profilesHelper.getProfileById(guardianId);
+
         if(childId != Constants.NO_CHILD_SELECTED_ID)
         {
             mCurrentUser = mHelper.profilesHelper.getProfileById(childId);
+            mProfileSelector = new GProfileSelector(this, mLoggedInGuardian, null);
         }
         else
         {
             mCurrentUser = mHelper.profilesHelper.getProfileById(guardianId);
+            mProfileSelector = new GProfileSelector(this, mLoggedInGuardian, mCurrentUser);
         }
 
-        mLoggedInGuardian = mHelper.profilesHelper.getProfileById(guardianId);
+        // Change the title of the action bar to include the name of the current user
+        if(mCurrentUser != null) {
+            this.setActionBarTitle(getString(R.string.settingsFor) + mCurrentUser.getName());
+        }
+
 
         // Used to handle fragment changes within the containing View
         mFragManager = this.getFragmentManager();
@@ -105,6 +131,41 @@ public class SettingsActivity extends FragmentActivity
                 mSupportFragManager.beginTransaction().add(R.id.settingsContainer, mActiveSupportFragment).commit();
             }
         }
+
+        setProfileSelectorClickListener();
+    }
+
+    /**
+     * This is used to set the onClickListener for a new ProfileSelector
+     * It must be used everytime a new selector is set.
+     * */
+    private void setProfileSelectorClickListener(){
+        // Handles a selection returned from the profile select dialog
+        mProfileSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                ProfileController pc = new ProfileController(SettingsActivity.this);
+                // Get a profile from id returned from dialog
+                mCurrentUser = pc.getProfileById((int) id);
+                // Close it when a selection has been made
+                mProfileSelector.dismiss();
+
+                // Set a new profile select button according to the role of active user
+                if (mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
+                    mProfileSelector = new GProfileSelector(SettingsActivity.this, mLoggedInGuardian, mCurrentUser);
+                else
+                    mProfileSelector = new GProfileSelector(SettingsActivity.this, mLoggedInGuardian, null);
+
+                // Notify that a profile selection has been made
+                setCurrentUser(mCurrentUser);
+
+                // Reload activity to reflect different user settings
+                reloadActivity();
+
+                // Call this method again to set listerners for the newly selected profile
+                setProfileSelectorClickListener();
+            }
+        });
     }
 
     /**
@@ -286,25 +347,6 @@ public class SettingsActivity extends FragmentActivity
      * @param fragment Fragment with settings that should be started.
      * @param icon     Custom icon to add to list entry.
      */
-    private void addApplicationByTitle(String title, Fragment fragment, Drawable icon) {
-        // Create the new item
-        FragmentSettingsListItem item = new FragmentSettingsListItem(
-                title,
-                icon,
-                fragment
-        );
-
-        // Add item to the list of applications
-        mAppList.add(item);
-    }
-
-    /**
-     * Add another application to the list by Intent.
-     *
-     * @param title    Name of the application to add.
-     * @param fragment Fragment with settings that should be started.
-     * @param icon     Custom icon to add to list entry.
-     */
     private void addApplicationByTitle(String title, android.support.v4.app.Fragment fragment, Drawable icon) {
         // Create the new item
         FragmentSettingsListItem item = new FragmentSettingsListItem(
@@ -423,10 +465,18 @@ public class SettingsActivity extends FragmentActivity
         mCurrentUser = profile;
     }
 
+    /**
+     * gets the current user
+     * @return
+     */
     public Profile getCurrentUser() {
         return mCurrentUser;
     }
 
+    /**
+     * get the current logged in guardian
+     * @return
+     */
     @Override
     public Profile getLoggedInGuardian() {
         return mLoggedInGuardian;

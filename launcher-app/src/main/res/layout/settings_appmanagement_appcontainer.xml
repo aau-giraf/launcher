@@ -29,9 +29,9 @@
         android:padding="3dp"
         android:layout_alignParentBottom="true"
         android:layout_height="28dp"
-        app:fillColor="#FFFFFFFF"
+        app:fillColor="@color/giraf_page_indicator_active"
         app:radius="10dp"
-        app:pageColor="#50FFFFFF"
+        app:pageColor="@color/giraf_page_indicator_inactive"
         android:layout_width="match_parent"/>
 
     <dk.aau.cs.giraf.gui.GViewPager
