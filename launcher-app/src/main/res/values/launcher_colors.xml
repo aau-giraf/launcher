@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="app_color_transparent">#00FFFFFF</color>
-
-    <color name="giraf_yellow">#FFFFDC4A</color>
     <color name="actionbar_background">#333</color>
     <color name="actionbar_text_color">#fff</color>
     <color name="giraf_loading_textColor">#ff9b5100</color>
-
+    <color name="app_selection_background">#fed76c</color>
 </resources>
