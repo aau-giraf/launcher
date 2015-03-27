@@ -33,7 +33,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
     private int oldSessionGuardianID = -1;
     Animation startingAnimation;
     Animation loadAnimation;
-    Handler messageHandler = new MessageHandler();
+    Handler messageHandler;
 
     /* ************* DEBUGGING MODE ************* */
     // TODO: ONLY USED FOR DEBUGGING PURPOSES!!!
@@ -75,15 +75,14 @@ public class MainActivity extends Activity implements Animation.AnimationListene
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        boolean showAnimation = true;
-
         setContentView(R.layout.main_activity);
 
-        // Start the remote syncing service
-        new main(this).startSynch(messageHandler);
+        messageHandler = new MessageHandler();
 
         //Load the preference determining whether the animation should be shown
         findOldSession();
+
+        boolean showAnimation = true;
 
         if (oldSessionGuardianID != -1) {
             Profile oldSessionProfile = new ProfileController(this).getProfileById(oldSessionGuardianID);
@@ -96,8 +95,8 @@ public class MainActivity extends Activity implements Animation.AnimationListene
             startNextActivity();
         }
         //Load the splash animation
-        startingAnimation = AnimationUtils.loadAnimation(this, R.animator.main_activity_rotatelogo_once);
-        loadAnimation = AnimationUtils.loadAnimation(this, R.animator.main_activity_rotatelogo_infinite);
+        startingAnimation = AnimationUtils.loadAnimation(this, R.anim.main_activity_rotatelogo_once);
+        loadAnimation = AnimationUtils.loadAnimation(this, R.anim.main_activity_rotatelogo_infinite);
 
         startingAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
         loadAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
@@ -105,6 +104,9 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 
         findViewById(R.id.giraficon).startAnimation(startingAnimation);
         startingAnimation.setAnimationListener(this);
+
+        // Start the remote syncing service
+        new main(this).startSynch(messageHandler);
     }
 
     /**
