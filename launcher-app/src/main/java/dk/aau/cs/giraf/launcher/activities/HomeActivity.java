@@ -11,10 +11,10 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.viewpagerindicator.CirclePageIndicator;
-import com.viewpagerindicator.TitlePageIndicator;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -23,12 +23,12 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import dk.aau.cs.giraf.gui.GDialog;
-import dk.aau.cs.giraf.gui.GDialogMessage;
 import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.gui.GWidgetProfileSelection;
 import dk.aau.cs.giraf.gui.GWidgetUpdater;
 import dk.aau.cs.giraf.gui.GirafButton;
+import dk.aau.cs.giraf.gui.GirafConfirmDialog;
+import dk.aau.cs.giraf.gui.GirafNotifyDialog;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
@@ -48,7 +48,7 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
  * The primary activity of Launcher. Allows the user to start other GIRAF apps and access the settings
  * activity. It requires a user id in the parent intent.
  */
-public class HomeActivity extends FragmentActivity implements AppsFragmentInterface {
+public class HomeActivity extends FragmentActivity implements AppsFragmentInterface, GirafConfirmDialog.Confirmation, GirafNotifyDialog.Notification {
 
     private Profile mCurrentUser;
     private Profile mLoggedInGuardian;
@@ -57,16 +57,15 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
 
     private ArrayList<AppInfo> mCurrentLoadedApps;
 
-    private boolean mWidgetRunning = false;
-
     private GWidgetUpdater widgetUpdater;
     private GWidgetProfileSelection widgetProfileSelection;
     private GProfileSelector profileSelectorDialog;
-    private GDialog logoutDialog;
 
     private ViewPager mAppViewPager;
 
     private Timer mAppsUpdater;
+
+    private final int METHOD_ID_LOGOUT  = 1;
 
     @Override
     public Profile getCurrentUser() {
@@ -103,7 +102,6 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
         mAppViewPager = (ViewPager) this.findViewById(R.id.appsViewPager);
 
         loadWidgets();
-        setupLogoutDialog();
 
         // Show warning if DEBUG_MODE is true
         if (LauncherUtility.isDebugging()) {
@@ -149,26 +147,6 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
      * @param hasFocus {@code true} if the activity has focus.
      */
 
-    /*
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-
-        if (mAppViewPager.getViewTreeObserver() != null) {
-            mAppViewPager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-
-                @Override
-                public void onGlobalLayout() {
-                    // Ensure you call it only once :
-                    mAppViewPager.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                    loadApplications();
-                }
-            });
-        } else if (mAppViewPager.getViewTreeObserver() == null) {
-            Log.e(Constants.ERROR_TAG, "ViewTreeObserver is null.");
-        }
-    }
-    */
     /**
      * Redraws the application container and resumes the timer looking for updates in the set of
      * available apps.
@@ -215,7 +193,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
      */
     @Override
     public void onBackPressed() {
-        //Do nothing, as the user should not be able to back out of this activity
+        // Do nothing
     }
 
     /**
@@ -232,23 +210,6 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
     private void loadApplications() {
         loadHomeActivityApplicationTask = new LoadHomeActivityApplicationTask(this, mCurrentUser, mLoggedInGuardian, mAppViewPager, null);
         loadHomeActivityApplicationTask.execute();
-    }
-
-    /**
-     * Initialises the logout dialog.
-     */
-    private void setupLogoutDialog() {
-        String logoutHeadline = this.getResources().getString(R.string.Log_out);
-        String logoutDescription = this.getResources().getString(R.string.Log_out_description);
-        logoutDialog = new GDialogMessage(this, R.drawable.large_switch_profile, logoutHeadline, logoutDescription, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(LauncherUtility.logOutIntent(HomeActivity.this));
-                logoutDialog.dismiss();
-                HomeActivity.this.finish();
-            }
-        });
-        logoutDialog.setOwnerActivity(this);
     }
 
     /**
@@ -274,6 +235,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
         //Set up widget updater, which updates the widget's view regularly, according to its status.
         widgetUpdater = new GWidgetUpdater();
 
+        // Check if the user was a guardian
         if (mCurrentUser.getRole().getValue() < Profile.Roles.CHILD.getValue()) {
             settingsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -321,11 +283,8 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!mWidgetRunning) {
-                    mWidgetRunning = true;
-                    logoutDialog.show();
-                    mWidgetRunning = false;
-                }
+                GirafConfirmDialog girafConfirmDialog = GirafConfirmDialog.newInstance("Log ud", "Vil du logge ud?", METHOD_ID_LOGOUT);
+                girafConfirmDialog.show(getSupportFragmentManager(), "logout_dialog");
             }
         });
     }
@@ -359,6 +318,21 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
                 reloadApplications();
             }
         });
+    }
+
+    @Override
+    public void confirmDialog(int methodID) {
+        switch (methodID) {
+            case METHOD_ID_LOGOUT :
+                startActivity(LauncherUtility.logOutIntent(HomeActivity.this));
+                Toast.makeText(this,"Logget ud", Toast.LENGTH_LONG).show(); break;
+        }
+
+    }
+
+    @Override
+    public void noticeDialog(int methodID) {
+        Toast.makeText(this,"TÅÅÅÅOAST!", Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -444,9 +418,8 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
             girafAppsList.addAll(androidAppsList);
 
             applications = girafAppsList.toArray(applications);
-            ArrayList<AppInfo> appInfos = super.doInBackground(applications);
 
-            return appInfos;
+            return super.doInBackground(applications);
         }
 
         /**
