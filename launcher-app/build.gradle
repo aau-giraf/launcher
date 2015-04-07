@@ -44,6 +44,30 @@ android {
         debug.setRoot('build-types/debug')
         release.setRoot('build-types/release')
     }
+    signingConfigs {
+        unsigned {
+            storePassword = ""
+            keyAlias = ""
+            keyPassword = ""
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.unsigned
+        }
+        unsignedBuild {
+            debuggable false
+            versionNameSuffix '-unsigned'
+            signingConfig signingConfigs.unsigned
+        }
+        debug {
+
+        }
+    }
+
+
 }
 
 allprojects {
