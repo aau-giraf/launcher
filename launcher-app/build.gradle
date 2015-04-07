@@ -53,10 +53,6 @@ android {
     }
 
     buildTypes {
-        release {
-            minifyEnabled false
-            signingConfig signingConfigs.unsigned
-        }
         unsignedBuild {
             debuggable false
             versionNameSuffix '-unsigned'
