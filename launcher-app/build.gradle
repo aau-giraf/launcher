@@ -59,7 +59,7 @@ android {
             signingConfig signingConfigs.unsigned
         }
         debug {
-
+            testCoverageEnabled true
         }
     }
 
