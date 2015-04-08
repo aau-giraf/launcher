@@ -4,7 +4,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@drawable/settings_list_view_listitem_selector">
+        android:background="@drawable/list_view_listitem_selector">
 
     <LinearLayout
             android:layout_width="fill_parent"

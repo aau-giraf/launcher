@@ -64,7 +64,7 @@ public class AuthenticationActivity extends CaptureActivity {
 		mInfoView = (TextView)this.findViewById(R.id.authentication_step1);
         mScanStatus = (TextView)this.findViewById(R.id.scanStatusTextView);
 
-        Button guardianButton = (Button)this.findViewById(R.id.loginAsGuardianButton);
+        /*Button guardianButton = (Button)this.findViewById(R.id.loginAsGuardianButton);
 
         guardianButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,6 +79,7 @@ public class AuthenticationActivity extends CaptureActivity {
                 login(profile);
             }
         });
+        */
 
         // Show warning if in debugging mode
         if (LauncherUtility.isDebugging()) {

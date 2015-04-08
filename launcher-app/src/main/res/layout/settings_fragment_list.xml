@@ -4,7 +4,7 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@color/giraf_settings_container_spinner_background"
+              android:background="@color/giraf_container_spinner_background"
               android:orientation="vertical">
 
     <FrameLayout
@@ -49,7 +49,7 @@
             android:layout_below="@id/settingsListProfileButton"
             android:verticalScrollbarPosition="left"
             android:choiceMode="singleChoice"
-            android:divider="@color/giraf_settings_list_shadow"
+            android:divider="@color/giraf_list_shadow"
             android:dividerHeight="1dp"
             tools:listitem="@layout/settings_fragment_list_row"/>
 
