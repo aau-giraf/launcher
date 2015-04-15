@@ -54,6 +54,10 @@ android {
             testCoverageEnabled true
         }
     }
+
+    packagingOptions {
+        exclude 'LICENSE.txt'
+    }
 }
 
 allprojects {
