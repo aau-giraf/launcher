@@ -65,14 +65,13 @@
                     android:textSize="50sp"
                     android:visibility="invisible" />
             </RelativeLayout>
-<!--
             <Button
+                android:visibility="gone"
                 android:id="@+id/loginAsGuardianButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|bottom"
                 android:text="@string/login_as_guardian" />
--->
         </FrameLayout>
 
         <FrameLayout

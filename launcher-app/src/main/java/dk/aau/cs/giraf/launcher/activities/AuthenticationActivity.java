@@ -22,6 +22,7 @@ import com.google.zxing.client.android.CaptureActivity;
 
 import java.util.Date;
 
+import dk.aau.cs.giraf.launcher.BuildConfig;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
@@ -64,22 +65,23 @@ public class AuthenticationActivity extends CaptureActivity {
 		mInfoView = (TextView)this.findViewById(R.id.authentication_step1);
         mScanStatus = (TextView)this.findViewById(R.id.scanStatusTextView);
 
-        /*Button guardianButton = (Button)this.findViewById(R.id.loginAsGuardianButton);
-
-        guardianButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Helper h = new Helper(mContext);
-                if (h.profilesHelper.getProfiles().size() == 0)
-                {
-                    Toast.makeText(mContext, "Databasen indeholder ingen profiler", Toast.LENGTH_LONG).show();
-                    return;
+        if(BuildConfig.DEBUG) {
+            Button guardianButton = (Button)this.findViewById(R.id.loginAsGuardianButton);
+            guardianButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Helper h = new Helper(mContext);
+                    if (h.profilesHelper.getProfiles().size() == 0)
+                    {
+                        Toast.makeText(mContext, "Databasen indeholder ingen profiler", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    Profile profile = h.profilesHelper.getProfileById(37); // Hardcoded value. It's the ID for group sw615f14.
+                    login(profile);
                 }
-                Profile profile = h.profilesHelper.getProfileById(37); // Hardcoded value. It's the ID for group sw615f14.
-                login(profile);
-            }
-        });
-        */
+            });
+            guardianButton.setVisibility(View.VISIBLE);
+        }
 
         // Show warning if in debugging mode
         if (LauncherUtility.isDebugging()) {
