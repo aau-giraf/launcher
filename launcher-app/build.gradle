@@ -4,11 +4,17 @@ buildscript {
         maven {
             url 'http://cs-cust06-int.cs.aau.dk/artifactory/libraries'
         }
+        mavenLocal()
     }
     dependencies {
         classpath 'dk.aau.cs.giraf:auto-deploy-gradle-plugin:1.1'
         classpath 'com.github.triplet.gradle:play-publisher:1.0.2'
     }
+}
+
+// Always download latest snapshot
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
 
 apply plugin: 'android'
@@ -57,6 +63,8 @@ android {
 
     packagingOptions {
         exclude 'LICENSE.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
     }
 }
 
@@ -65,6 +73,7 @@ allprojects {
     {
         mavenCentral()
     }
+
 }
 dependencies {
     androidTestCompile 'com.android.support.test:testing-support-lib:0.1'
@@ -77,7 +86,7 @@ dependencies {
     compile project(':barcodescanner')
     compile(group: 'dk.aau.cs.giraf', name: 'girafComponent', version: '1.3-SNAPSHOT', ext: 'aar')
     compile(group: 'dk.aau.cs.giraf', name: 'oasisLib', version: '1.1-SNAPSHOT', ext: 'aar')
-    compile(group: 'dk.aau.cs.giraf', name: 'localDb', version: '1.1-SNAPSHOT', ext: 'aar')
+    compile(group: 'dk.aau.cs.giraf', name: 'localDb', version: '0.0-SNAPSHOT', ext: 'aar')
     compile(group: 'dk.aau.cs.giraf', name: 'meta-database', version: '1.2')
     compile files('libs/libGoogleAnalyticsServices.jar')
 
