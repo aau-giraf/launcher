@@ -5,4 +5,7 @@
     <color name="actionbar_text_color">#fff</color>
     <color name="giraf_loading_textColor">#ff9b5100</color>
     <color name="app_selection_background">#fed76c</color>
+    <color name="default_camera_border_color">#FFDD9639</color>
+    <color name="wrong_qr_camera_border_color">#FFFF0000</color>
+    <color name="success_qr_camera_border_color">#FF3AAA35</color>
 </resources>
