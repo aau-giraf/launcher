@@ -1,28 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:orientation="horizontal"
-              android:baselineAligned="false">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:baselineAligned="false"
+    android:orientation="horizontal">
 
     <fragment
         android:id="@+id/settingsListFragment"
-        android:layout_width="0dp"
-        android:layout_weight="2"
-        android:layout_height="match_parent"
         class="dk.aau.cs.giraf.launcher.settings.SettingsListFragment"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
         tools:layout="@layout/settings_fragment_list">
         <!-- Preview: layout=@layout/details -->
     </fragment>
 
     <FrameLayout
+        android:id="@+id/settingsContainer"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="6"
-        android:id="@+id/settingsContainer"
-        android:background="@color/giraf_background"
-        >
-    </FrameLayout>
+        android:background="@color/giraf_background"/>
 
 </LinearLayout>

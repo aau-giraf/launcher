@@ -28,7 +28,6 @@ import dk.aau.cs.giraf.gui.GWidgetProfileSelection;
 import dk.aau.cs.giraf.gui.GWidgetUpdater;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GirafConfirmDialog;
-import dk.aau.cs.giraf.gui.GirafNotifyDialog;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
@@ -48,7 +47,7 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
  * The primary activity of Launcher. Allows the user to start other GIRAF apps and access the settings
  * activity. It requires a user id in the parent intent.
  */
-public class HomeActivity extends FragmentActivity implements AppsFragmentInterface, GirafConfirmDialog.Confirmation, GirafNotifyDialog.Notification {
+public class HomeActivity extends FragmentActivity implements AppsFragmentInterface, GirafConfirmDialog.Confirmation {
 
     private Profile mCurrentUser;
     private Profile mLoggedInGuardian;
@@ -189,14 +188,6 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
     }
 
     /**
-     * Does nothing, to prevent the user from returning to the authentication_activity or native OS.
-     */
-    @Override
-    public void onBackPressed() {
-        // Do nothing
-    }
-
-    /**
      * Force loadApplications to redraw but setting mCurrentlyLoadedApps to null
      */
     private void reloadApplications() {
@@ -283,7 +274,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GirafConfirmDialog girafConfirmDialog = GirafConfirmDialog.newInstance("Log ud", "Vil du logge ud?", METHOD_ID_LOGOUT);
+                GirafConfirmDialog girafConfirmDialog = GirafConfirmDialog.newInstance("Log ud", "Vil du logge ud?", METHOD_ID_LOGOUT, "Log ud", R.drawable.icon_logout, "Fortryd", R.drawable.icon_cancel);
                 girafConfirmDialog.show(getSupportFragmentManager(), "logout_dialog");
             }
         });
@@ -330,10 +321,6 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
 
     }
 
-    @Override
-    public void noticeDialog(int methodID) {
-        Toast.makeText(this,"TÅÅÅÅOAST!", Toast.LENGTH_LONG).show();
-    }
 
     /**
      * Task for observing if the set of available apps has changed.
