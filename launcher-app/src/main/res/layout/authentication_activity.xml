@@ -53,6 +53,10 @@
                     android:text="@string/authentication_step1"
                     android:textColor="#FFFFFFFF"
                     android:textSize="30sp" />
+                <ListView
+                    android:layout_width="300dp"
+                    android:layout_height="500dp"
+                    android:id="@+id/users_list"/>
 
                 <TextView
                     android:id="@+id/loginname"

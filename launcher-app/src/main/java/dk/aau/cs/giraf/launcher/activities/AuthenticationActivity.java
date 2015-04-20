@@ -11,8 +11,10 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +22,7 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.google.zxing.Result;
 import com.google.zxing.client.android.CaptureActivity;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import dk.aau.cs.giraf.launcher.BuildConfig;
@@ -28,7 +31,13 @@ import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.layoutcontroller.SimulateAnimationDrawable;
 import dk.aau.cs.giraf.oasis.lib.Helper;
+import dk.aau.cs.giraf.oasis.lib.controllers.AdminOfController;
+import dk.aau.cs.giraf.oasis.lib.controllers.PictogramController;
+import dk.aau.cs.giraf.oasis.lib.controllers.UserController;
+import dk.aau.cs.giraf.oasis.lib.models.AdminOf;
+import dk.aau.cs.giraf.oasis.lib.models.Pictogram;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.oasis.lib.models.User;
 
 /**
  * Handles authentication of the user's QR code through a camera feed. If the the user's QR code
@@ -44,6 +53,7 @@ public class AuthenticationActivity extends CaptureActivity {
 	private Profile mPreviousProfile;
     private View mCameraFeed;
     private TextView mScanStatus;
+    private ListView listUsers;
 
     private boolean isFramingRectangleRedrawn = false;
     private boolean scanFailed = false;
@@ -64,6 +74,15 @@ public class AuthenticationActivity extends CaptureActivity {
 		mLoginNameView = (TextView)this.findViewById(R.id.loginname);
 		mInfoView = (TextView)this.findViewById(R.id.authentication_step1);
         mScanStatus = (TextView)this.findViewById(R.id.scanStatusTextView);
+        listUsers = (ListView)this.findViewById(R.id.users_list);
+
+        ArrayList<String> arr = new ArrayList<String>();
+        for (User u : new UserController(this).getUsers())
+            arr.add(u.getUsername()+ " - " + u.getId());
+
+        final ArrayAdapter<String> usersAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, arr);
+        listUsers.setAdapter(usersAdapter);
+
 
         if(BuildConfig.DEBUG) {
             Button guardianButton = (Button)this.findViewById(R.id.loginAsGuardianButton);
@@ -76,8 +95,11 @@ public class AuthenticationActivity extends CaptureActivity {
                         Toast.makeText(mContext, "Databasen indeholder ingen profiler", Toast.LENGTH_LONG).show();
                         return;
                     }
-                    Profile profile = h.profilesHelper.getProfileById(37); // Hardcoded value. It's the ID for group sw615f14.
-                    login(profile);
+                    /*Profile profile = h.profilesHelper.getProfileById(37); // Hardcoded value. It's the ID for group sw615f14.
+                    login(profile);*/
+                    PictogramController ctrl = new PictogramController(mContext);
+                    Pictogram p = ctrl.getPictogramById(13969);
+                    ctrl.removePictogram(p);
                 }
             });
             guardianButton.setVisibility(View.VISIBLE);
