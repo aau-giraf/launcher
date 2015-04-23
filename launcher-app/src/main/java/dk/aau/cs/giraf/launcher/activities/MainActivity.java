@@ -1,6 +1,8 @@
 package dk.aau.cs.giraf.launcher.activities;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -88,6 +90,14 @@ public class MainActivity extends Activity implements Animation.AnimationListene
             Profile oldSessionProfile = new ProfileController(this).getProfileById(oldSessionGuardianID);
             SharedPreferences prefs = SettingsUtility.getLauncherSettings(this, LauncherUtility.getSharedPreferenceUser(oldSessionProfile));
             showAnimation = prefs.getBoolean(getString(R.string.show_animation_preference_key), true);
+        }
+
+        // Skip loading screen if monkey test
+        if (ActivityManager.isUserAMonkey()) {
+            Helper h = new Helper(this);
+            h.CreateDummyData();
+
+            startNextActivity();
         }
 
         //Decide whether to skip animation, according to debug mode

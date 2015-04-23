@@ -76,7 +76,7 @@ public class AuthenticationActivity extends CaptureActivity {
                         Toast.makeText(mContext, "Databasen indeholder ingen profiler", Toast.LENGTH_LONG).show();
                         return;
                     }
-                    Profile profile = h.profilesHelper.getProfileById(37); // Hardcoded value. It's the ID for group sw615f14.
+                    Profile profile = h.profilesHelper.getGuardians().get(0); // Gets the first guardian
                     login(profile);
                 }
             });
