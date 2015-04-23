@@ -4,9 +4,10 @@ buildscript {
         maven {
             url 'http://cs-cust06-int.cs.aau.dk/artifactory/libraries'
         }
+        mavenLocal()
     }
     dependencies {
-        classpath 'dk.aau.cs.giraf:auto-deploy-gradle-plugin:1.1'
+        classpath 'dk.aau.cs.giraf:auto-deploy-gradle-plugin:1.5.0'
         classpath 'com.github.triplet.gradle:play-publisher:1.0.2'
     }
 }
