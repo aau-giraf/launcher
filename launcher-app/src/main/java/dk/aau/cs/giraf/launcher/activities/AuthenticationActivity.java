@@ -73,7 +73,7 @@ public class AuthenticationActivity extends CaptureActivity {
                     Helper h = new Helper(mContext);
                     if (h.profilesHelper.getProfiles().size() == 0)
                     {
-                        Toast.makeText(mContext, "Databasen indeholder ingen profiler", Toast.LENGTH_LONG).show();
+                        Toast.makeText(mContext, getString(R.string.db_no_profiles_msg), Toast.LENGTH_LONG).show();
                         return;
                     }
                     Profile profile = h.profilesHelper.getGuardians().get(0); // Gets the first guardian
@@ -165,15 +165,16 @@ public class AuthenticationActivity extends CaptureActivity {
                 mInfoView.setText(R.string.authentication_step1);
 
                 if (!scanFailed) {
-                    changeCameraFeedBorderColor(0xFFFF0000); // Error color (red)
+                    changeCameraFeedBorderColor(getResources().getColor(R.color.wrong_qr_camera_border_color)); // Error color (red)
                     mScanStatus.setText(getString(R.string.wrong_qr_code_msg));
+
                     scanFailed = true;
 
                     Handler h = new Handler();
                     h.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            changeCameraFeedBorderColor(0xFFDD9639); // Default color (orange)
+                            changeCameraFeedBorderColor(getResources().getColor(R.color.default_camera_border_color));
                             mScanStatus.setText(getString(R.string.scan_qr_code_msg));
                             scanFailed = false;
                         }
@@ -194,7 +195,7 @@ public class AuthenticationActivity extends CaptureActivity {
     private void login(Profile profile) {
         mPreviousProfile = profile;
 
-        this.changeCameraFeedBorderColor(0xFF3AAA35); // Success color (green)
+        this.changeCameraFeedBorderColor(getResources().getColor(R.color.success_qr_camera_border_color)); // Success color (green)
         mLoginNameView.setText(profile.getName());
         mLoginNameView.setVisibility(View.VISIBLE);
 
