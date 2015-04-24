@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
-import dk.aau.cs.giraf.oasis.lib.models.Application;
+import dk.aau.cs.giraf.dblib.models.Application;
 
 /**
  * The Application class from OasisLib is extended, since Launcher requires some additional information.

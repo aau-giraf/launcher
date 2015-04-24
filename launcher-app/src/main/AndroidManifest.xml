@@ -72,12 +72,12 @@
             android:theme="@style/GirafTheme"></activity>
 
         <provider
-            android:name="dk.aau.cs.giraf.oasis.localdb.DatabaseProvider"
-            android:authorities="dk.aau.cs.giraf.oasis.localdb.provider"
+            android:name="dk.aau.cs.giraf.localdb.DatabaseProvider"
+            android:authorities="dk.aau.cs.giraf.localdb.provider"
             android:enabled="true"
             android:exported="true"></provider>
 
-        <service android:name="dk.aau.cs.giraf.oasis.localdb.DownloadService" />
+        <service android:name="dk.aau.cs.giraf.localdb.DownloadService" />
     </application>
 
 </manifest>

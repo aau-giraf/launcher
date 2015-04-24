@@ -27,8 +27,8 @@ import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.layoutcontroller.SimulateAnimationDrawable;
-import dk.aau.cs.giraf.oasis.lib.Helper;
-import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.dblib.Helper;
+import dk.aau.cs.giraf.dblib.models.Profile;
 
 /**
  * Handles authentication of the user's QR code through a camera feed. If the the user's QR code
@@ -77,7 +77,7 @@ public class AuthenticationActivity extends CaptureActivity {
                         return;
                     }
                     Profile profile = h.profilesHelper.getGuardians().get(0); // Gets the first guardian
-                    login(profile);
+                    //login(profile);
                 }
             });
             guardianButton.setVisibility(View.VISIBLE);

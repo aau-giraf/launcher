@@ -14,7 +14,7 @@ import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 import dk.aau.cs.giraf.launcher.activities.MainActivity;
 import dk.aau.cs.giraf.launcher.helper.Constants;
-import dk.aau.cs.giraf.oasis.lib.Helper;
+import dk.aau.cs.giraf.dblib.Helper;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.*;
