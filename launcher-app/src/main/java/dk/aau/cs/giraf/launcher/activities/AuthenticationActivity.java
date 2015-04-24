@@ -39,7 +39,6 @@ public class AuthenticationActivity extends CaptureActivity {
 	private Intent mHomeIntent;
 	private TextView mLoginNameView;
 	private TextView mInfoView;
-	private Context mContext;
 	private Vibrator mVibrator;
 	private Profile mPreviousProfile;
     private View mCameraFeed;
@@ -59,7 +58,6 @@ public class AuthenticationActivity extends CaptureActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.authentication_activity);
 
-		mContext = this;
 		mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 		mLoginNameView = (TextView)this.findViewById(R.id.loginname);
 		mInfoView = (TextView)this.findViewById(R.id.authentication_step1);
@@ -70,10 +68,10 @@ public class AuthenticationActivity extends CaptureActivity {
             guardianButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Helper h = new Helper(mContext);
+                    Helper h = new Helper(AuthenticationActivity.this);
                     if (h.profilesHelper.getProfiles().size() == 0)
                     {
-                        Toast.makeText(mContext, getString(R.string.db_no_profiles_msg), Toast.LENGTH_LONG).show();
+                        Toast.makeText(AuthenticationActivity.this, getString(R.string.db_no_profiles_msg), Toast.LENGTH_LONG).show();
                         return;
                     }
                     Profile profile = h.profilesHelper.getGuardians().get(0); // Gets the first guardian
@@ -211,7 +209,7 @@ public class AuthenticationActivity extends CaptureActivity {
             h.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    LauncherUtility.saveLogInData(mContext, mPreviousProfile.getId(), new Date().getTime());
+                    LauncherUtility.saveLogInData(AuthenticationActivity.this, mPreviousProfile.getId(), new Date().getTime());
                     startActivity(mHomeIntent);
                 }
             }, 800);
