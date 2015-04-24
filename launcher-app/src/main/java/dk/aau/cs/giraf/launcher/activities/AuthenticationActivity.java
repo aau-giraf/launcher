@@ -32,12 +32,11 @@ import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.layoutcontroller.SimulateAnimationDrawable;
 import dk.aau.cs.giraf.oasis.lib.Helper;
 import dk.aau.cs.giraf.oasis.lib.controllers.AdminOfController;
-import dk.aau.cs.giraf.oasis.lib.controllers.PictogramController;
 import dk.aau.cs.giraf.oasis.lib.controllers.UserController;
 import dk.aau.cs.giraf.oasis.lib.models.AdminOf;
-import dk.aau.cs.giraf.oasis.lib.models.Pictogram;
 import dk.aau.cs.giraf.oasis.lib.models.Profile;
 import dk.aau.cs.giraf.oasis.lib.models.User;
+import dk.aau.cs.giraf.oasis.metadata.AdminOfTable;
 
 /**
  * Handles authentication of the user's QR code through a camera feed. If the the user's QR code
@@ -57,7 +56,6 @@ public class AuthenticationActivity extends CaptureActivity {
 
     private boolean isFramingRectangleRedrawn = false;
     private boolean scanFailed = false;
-
     /**
      * Sets up the activity. Specifically view variables are instantiated, the login button listener
      * is set, and the instruction animation is set up.
@@ -97,9 +95,11 @@ public class AuthenticationActivity extends CaptureActivity {
                     }
                     /*Profile profile = h.profilesHelper.getProfileById(37); // Hardcoded value. It's the ID for group sw615f14.
                     login(profile);*/
-                    PictogramController ctrl = new PictogramController(mContext);
-                    Pictogram p = ctrl.getPictogramById(13969);
-                    ctrl.removePictogram(p);
+                    /*SequenceController ctrl = new SequenceController(mContext);
+                    ctrl.insertSequence(new Sequence(1, "tykke_agurker", 1, 321));*/
+
+                    AdminOfController ctrl = new AdminOfController(mContext);
+                    ctrl.insertAdminOf(new AdminOf(1, 2));
                 }
             });
             guardianButton.setVisibility(View.VISIBLE);
