@@ -94,9 +94,6 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 
         // Skip loading screen if monkey test
         if (ActivityManager.isUserAMonkey()) {
-            Helper h = new Helper(this);
-            h.CreateDummyData();
-
             startNextActivity();
         }
 
