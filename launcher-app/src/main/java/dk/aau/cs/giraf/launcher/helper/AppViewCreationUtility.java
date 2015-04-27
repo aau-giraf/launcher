@@ -92,7 +92,7 @@ public class AppViewCreationUtility {
      * @param targetLayout The layout we want to add the AppImageView to.
      * @return
      */
-    public static AppImageView createAppImageView(Context context, final Profile currentUser, final Profile guardian, final AppInfo appInfo, GridLayout targetLayout, View.OnClickListener listener) {
+    public static AppImageView createAppImageView(final Context context, final Profile currentUser, final Profile guardian, final AppInfo appInfo, GridLayout targetLayout, View.OnClickListener listener) {
 
         final AppImageView appImageView = new AppImageView(context, appInfo);
         final View appView = addContentToView(context, targetLayout, appInfo.getName(), appInfo.getIconImage());

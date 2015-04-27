@@ -153,7 +153,7 @@ public class GirafFragment extends AppContainerFragment {
                 AppInfo app = appImageView.appInfo;
 
                 if (userHasApplicationInView(pac, app.getApp(), currentUser)) {
-                    pac.removeProfileApplicationByProfileAndApplication(app.getApp(), currentUser);
+                    pac.remove(app.getApp().getId(), currentUser.getId());
                 } else {
                     ProfileApplication pa = new ProfileApplication(currentUser.getId(), app.getApp().getId());
                     pac.insertProfileApplication(pa);

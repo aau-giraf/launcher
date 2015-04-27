@@ -63,6 +63,10 @@ repositories {
         url 'http://cs-cust06-int.cs.aau.dk/artifactory/libraries'
     }
     mavenLocal()
+
+    flatDir{
+        dirs 'libs'
+    }
 }
 
 android {
@@ -117,9 +121,11 @@ dependencies {
         exclude module:'support-v4'
     }
     compile fileTree(include: '*.jar', dir: 'libs')
+    //compile fileTree(include: '*.aar', dir: 'libs')
+    ///compile(name:'library', ext:'aar')
     compile project(':barcodescanner')
     compile(group: 'dk.aau.cs.giraf', name: 'girafComponent', version: '3.0.0', ext: 'aar')
-    compile(group: 'dk.aau.cs.giraf', name: 'oasisLib', version: '3.2.4', ext: 'aar')
+    compile(group: 'dk.aau.cs.giraf', name: 'oasisLib', version: '0.0-SNAPSHOT', ext: 'aar')
     compile(group: 'dk.aau.cs.giraf', name: 'localDb', version: '2.0.3', ext: 'aar')
     compile(group: 'dk.aau.cs.giraf', name: 'meta-database', version: '1.4.1')
     compile files('libs/libGoogleAnalyticsServices.jar')
