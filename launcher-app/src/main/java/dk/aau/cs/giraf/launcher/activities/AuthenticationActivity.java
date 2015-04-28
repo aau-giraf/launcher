@@ -75,7 +75,7 @@ public class AuthenticationActivity extends CaptureActivity {
                         return;
                     }
 
-                    Profile profile = h.profilesHelper.getPeronsWithRole(Profile.Roles.GUARDIAN).get(0); // Gets the first guardian
+                    Profile profile = h.profilesHelper.getById(37L); // Gets the first guardian
                     login(profile);
                 }
             });

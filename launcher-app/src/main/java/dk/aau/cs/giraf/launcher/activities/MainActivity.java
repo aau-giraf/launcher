@@ -2,28 +2,25 @@ package dk.aau.cs.giraf.launcher.activities;
 
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
-import android.os.Handler;
 
 import java.util.Date;
 
+import dk.aau.cs.giraf.dblib.Helper;
+import dk.aau.cs.giraf.dblib.controllers.ProfileController;
+import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
-import dk.aau.cs.giraf.dblib.Helper;
-import dk.aau.cs.giraf.dblib.controllers.ProfileController;
-import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.localdb.main;
 
 /**
@@ -184,8 +181,8 @@ public class MainActivity extends Activity implements Animation.AnimationListene
             intent = new Intent(this, HomeActivity.class);
 
             SharedPreferences sharedPreferences = getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
-            final int guardianID = sharedPreferences.getInt(Constants.GUARDIAN_ID, -1);
-            final int childID = sharedPreferences.getInt(Constants.CHILD_ID, -1);
+            final long guardianID = sharedPreferences.getInt(Constants.GUARDIAN_ID, -1);
+            final long childID = sharedPreferences.getInt(Constants.CHILD_ID, -1);
 
             intent.putExtra(Constants.GUARDIAN_ID, guardianID);
             intent.putExtra(Constants.CHILD_ID, childID);

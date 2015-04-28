@@ -99,13 +99,13 @@ public class SettingsListFragment extends Fragment {
         mProfileName = (TextView) view.findViewById(R.id.profile_selected_name);
 
         ProfileController pc = new ProfileController(getActivity());
-        mLoggedInGuardian = pc.getProfileById(getActivity().getIntent().getIntExtra(Constants.GUARDIAN_ID, -1));
+        mLoggedInGuardian = pc.getProfileById(getActivity().getIntent().getLongExtra(Constants.GUARDIAN_ID, -1));
 
-        int childID = getActivity().getIntent().getIntExtra(Constants.CHILD_ID, -1);
+        long childID = getActivity().getIntent().getLongExtra(Constants.CHILD_ID, -1);
 
         // The childID is -1 meaning that no childs are available
         if(childID == -1) {
-            mCurrentUser = pc.getProfileById(getActivity().getIntent().getIntExtra(Constants.GUARDIAN_ID, -1));
+            mCurrentUser = pc.getProfileById(getActivity().getIntent().getLongExtra(Constants.GUARDIAN_ID, -1));
         } else { // A child is found - set it as active and add its profile selector
             mCurrentUser = pc.getProfileById(childID);
         }
