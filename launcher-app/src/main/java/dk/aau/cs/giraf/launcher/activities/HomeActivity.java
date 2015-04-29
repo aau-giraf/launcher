@@ -89,8 +89,8 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
 
         mHelper = LauncherUtility.getOasisHelper(this);
 
-        mCurrentUser = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.CHILD_ID, -1));
-        mLoggedInGuardian = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
+        mCurrentUser = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getLong(Constants.CHILD_ID, -1));
+        mLoggedInGuardian = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getLong(Constants.GUARDIAN_ID));
 
         if(mCurrentUser == null)
         {

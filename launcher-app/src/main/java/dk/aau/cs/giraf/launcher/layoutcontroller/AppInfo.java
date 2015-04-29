@@ -104,7 +104,7 @@ public class AppInfo extends Application implements Parcelable {
         dest.writeStringArray(new String[]{this.getName(), this.getVersion(), this.getPackage(), this.getActivity(), this.getDescription()});
 
         // Write integers
-        dest.writeIntArray(new int[]{this.getId(),this.getBgColor(), this.getAuthor() });
+        dest.writeIntArray(new int[]{ (int) this.getId(),this.getBgColor(), (int) this.getAuthor() });
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {

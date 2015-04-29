@@ -152,12 +152,12 @@ public abstract class LauncherUtility {
      * @param id        ID of the guardian logging in.
      * @param loginTime The time of login (UNIX time, milliseconds).
      */
-    public static void saveLogInData(Context context, int id, long loginTime) {
+    public static void saveLogInData(Context context, long id, long loginTime) {
         SharedPreferences sp = context.getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
         SharedPreferences.Editor editor = sp.edit();
 
         editor.putLong(Constants.LOGIN_TIME, loginTime);
-        editor.putInt(Constants.GUARDIAN_ID, id);
+        editor.putInt(Constants.GUARDIAN_ID, (int) id);
 
         editor.apply();
     }

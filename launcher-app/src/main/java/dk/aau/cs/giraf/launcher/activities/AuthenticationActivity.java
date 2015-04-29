@@ -69,13 +69,14 @@ public class AuthenticationActivity extends CaptureActivity {
                 @Override
                 public void onClick(View view) {
                     Helper h = new Helper(AuthenticationActivity.this);
-                    if (h.profilesHelper.getProfiles().size() == 0)
+                    if (h.profilesHelper.getProfiles() == null || h.profilesHelper.getProfiles().size() == 0)
                     {
                         Toast.makeText(AuthenticationActivity.this, getString(R.string.db_no_profiles_msg), Toast.LENGTH_LONG).show();
                         return;
                     }
-                    Profile profile = h.profilesHelper.getGuardians().get(0); // Gets the first guardian
-                    //login(profile);
+
+                    Profile profile = h.profilesHelper.getById(37L); // Gets the first guardian
+                    login(profile);
                 }
             });
             guardianButton.setVisibility(View.VISIBLE);

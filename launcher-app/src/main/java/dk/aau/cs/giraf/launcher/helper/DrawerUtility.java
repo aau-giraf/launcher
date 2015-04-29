@@ -9,7 +9,7 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.dblib.models.ProfileApplication;
-import dk.aau.cs.giraf.dblib.models.Setting;
+import dk.aau.cs.giraf.dblib.models.Settings;
 
 /**
  * This class contains the methods needed for the Drawer in HomeActivity to Work
@@ -63,24 +63,5 @@ public class DrawerUtility {
      * @param color Color to save.
      * @param appInfo The AppInfo object of the app to save the color for.
      */
-    private void saveNewBgColor(Context context, Profile currentUser, int color, AppInfo appInfo) {
-        Helper helper = LauncherUtility.getOasisHelper(context);
-        ProfileApplication profileApplication = helper.profileApplicationHelper.getProfileApplicationByProfileIdAndApplicationId(appInfo.getApp(), currentUser);
-        Setting<String, String, String> launcherSettings = profileApplication.getSettings();
 
-        if (launcherSettings == null) {
-            launcherSettings = new Setting<String, String, String>();
-        }
-
-        // If no app specific settings exist.
-        if (!launcherSettings.containsKey(String.valueOf(appInfo.getApp().getId()))) {
-            launcherSettings.addValue(String.valueOf(appInfo.getApp().getId()), "", String.valueOf(color));
-        } else if (!launcherSettings.get(String.valueOf(appInfo.getApp().getId())).containsKey("")) {
-			/* If no app specific color settings exist.*/
-            launcherSettings.get(String.valueOf(appInfo.getApp().getId())).put("", String.valueOf(color));
-        }
-
-        //mLauncher.setSettings(launcherSettings);
-        //mHelper.applicationHelper.modifyAppByProfile(mLauncher, mCurrentUser);
-    }
 }
