@@ -28,6 +28,7 @@ import dk.aau.cs.giraf.gui.GWidgetProfileSelection;
 import dk.aau.cs.giraf.gui.GWidgetUpdater;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GirafConfirmDialog;
+import dk.aau.cs.giraf.gui.GirafProfileSelectorDialog;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
@@ -47,8 +48,9 @@ import dk.aau.cs.giraf.dblib.models.Profile;
  * The primary activity of Launcher. Allows the user to start other GIRAF apps and access the settings
  * activity. It requires a user id in the parent intent.
  */
-public class HomeActivity extends FragmentActivity implements AppsFragmentInterface, GirafConfirmDialog.Confirmation {
+public class HomeActivity extends FragmentActivity implements AppsFragmentInterface, GirafConfirmDialog.Confirmation, GirafProfileSelectorDialog.OnSingleProfileSelectedListener {
 
+    private static final int CHANGE_USER_SELECTOR_DIALOG = 100;
     private Profile mCurrentUser;
     private Profile mLoggedInGuardian;
     private Helper mHelper;
@@ -216,13 +218,6 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
         GirafButton settingsButton = (GirafButton) findViewById(R.id.settings_button);
         GirafButton changeUserButton = (GirafButton) findViewById(R.id.change_user_button);
 
-        /*Setup the profile selector dialog. If the current user is not a guardian, the guardian is used
-          as the current user.*/
-        if (mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
-            profileSelectorDialog = new GProfileSelector(this, mLoggedInGuardian, mCurrentUser);
-        else
-            profileSelectorDialog = new GProfileSelector(this, mLoggedInGuardian, null);
-
         //Set up widget updater, which updates the widget's view regularly, according to its status.
         widgetUpdater = new GWidgetUpdater();
 
@@ -241,20 +236,23 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
                     startActivity(intent);
                 }
             });
+
+            // Set the change user button to open the change user dialog
+            changeUserButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    GirafProfileSelectorDialog changeUser = GirafProfileSelectorDialog.newInstance(HomeActivity.this,mCurrentUser.getId(),false, false, "Vælg den borger du vil skifte til.", CHANGE_USER_SELECTOR_DIALOG);
+                    changeUser.show(getSupportFragmentManager(),"" + CHANGE_USER_SELECTOR_DIALOG);
+                }
+            });
+
         } else { // The uer had citizen permissions
             settingsButton.setVisibility(View.GONE);
             changeUserButton.setVisibility(View.GONE);
+
         }
 
-        // Set the change user button to open the change user dialog
-        changeUserButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mCurrentUser.getRole().getValue() < Profile.Roles.CHILD.getValue()) {
-                    profileSelectorDialog.show();
-                }
-            }
-        });
+
 
         // Fetch the profile picture
         Bitmap profilePicture = mCurrentUser.getImage();
@@ -268,8 +266,6 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
         // Set the profile picture
         widgetProfileSelection.setImageBitmap(profilePicture);
 
-        updatesProfileSelector();
-
         // Set the logout button to show the logout dialog
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -280,43 +276,29 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
         });
     }
 
-    /**
-     * Updates the ProfileSelector. It is needed when a new user has been selected, as a different
-     * listener is needed, and the app container has to be reloaded.
-     */
-    private void updatesProfileSelector() {
-        profileSelectorDialog.setOnListItemClick(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                ProfileController pc = new ProfileController(HomeActivity.this);
-                mCurrentUser = pc.getProfileById((int) l);
-                profileSelectorDialog.dismiss();
-
-                if (mCurrentUser.getRole() != Profile.Roles.GUARDIAN) {
-                    profileSelectorDialog = new GProfileSelector(HomeActivity.this, mLoggedInGuardian, mCurrentUser);
-                } else {
-                    profileSelectorDialog = new GProfileSelector(HomeActivity.this, mLoggedInGuardian, null);
-                }
-
-                widgetProfileSelection.setImageBitmap(mCurrentUser.getImage());
-
-                updatesProfileSelector();
-
-                // Reload the widgets in the left side of the screen
-                loadWidgets();
-
-                // Reload the application container, as a new user has been selected.
-                reloadApplications();
-            }
-        });
-    }
-
     @Override
     public void confirmDialog(int methodID) {
         switch (methodID) {
             case METHOD_ID_LOGOUT :
                 startActivity(LauncherUtility.logOutIntent(HomeActivity.this));
                 Toast.makeText(this,"Logget ud", Toast.LENGTH_LONG).show(); break;
+        }
+
+    }
+
+    @Override
+    public void onProfileSelected(int i, Profile profile) {
+
+        if(i == CHANGE_USER_SELECTOR_DIALOG) {
+
+            // Update the profile
+            mCurrentUser = profile;
+
+            // Reload the widgets in the left side of the screen
+            loadWidgets();
+
+            // Reload the application container, as a new user has been selected.
+            reloadApplications();
         }
 
     }
