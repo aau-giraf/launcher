@@ -250,6 +250,8 @@ public class MainActivity extends Activity implements Animation.AnimationListene
                 startNextActivity();
             } else {
                 Log.d("Progress", Integer.toString(progress));
+                TextView welcomeText = (TextView) findViewById(R.id.welcome_text);
+                welcomeText.setText("Henter data... (" + progress + "%)");
             }
         }
     }
