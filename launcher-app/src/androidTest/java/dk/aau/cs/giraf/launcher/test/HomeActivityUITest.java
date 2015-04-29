@@ -35,12 +35,12 @@ public class HomeActivityUITest
         super.setUp();
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
 
-        Intent intent = new Intent();
-        intent.putExtra(Constants.GUARDIAN_ID, 1);
-        setActivityIntent(intent);
-
         Helper h = new Helper(getInstrumentation().getTargetContext().getApplicationContext());
         h.CreateDummyData();
+
+        Intent intent = new Intent();
+        intent.putExtra(Constants.GUARDIAN_ID, h.profilesHelper.getGuardians().get(0).getId());
+        setActivityIntent(intent);
 
         mActivity = getActivity();
     }
