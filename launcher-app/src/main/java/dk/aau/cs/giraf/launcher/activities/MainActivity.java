@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import java.util.Date;
 
+import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.dblib.controllers.ProfileController;
 import dk.aau.cs.giraf.dblib.models.Profile;
@@ -27,7 +28,7 @@ import dk.aau.cs.giraf.localdb.main;
  * Displays the splash logo of Launcher, and then starts {@link dk.aau.cs.giraf.launcher.activities.AuthenticationActivity}.
  * Provides variables for enabling debug mode before compilation.
  */
-public class MainActivity extends Activity implements Animation.AnimationListener {
+public class MainActivity extends GirafActivity implements Animation.AnimationListener {
     //private Context mContext;
     private int oldSessionGuardianID = -1;
     Animation startingAnimation;

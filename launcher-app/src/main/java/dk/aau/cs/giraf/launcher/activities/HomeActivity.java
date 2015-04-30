@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.gui.GProfileSelector;
 import dk.aau.cs.giraf.gui.GWidgetProfileSelection;
 import dk.aau.cs.giraf.gui.GWidgetUpdater;
@@ -48,7 +49,7 @@ import dk.aau.cs.giraf.dblib.models.Profile;
  * The primary activity of Launcher. Allows the user to start other GIRAF apps and access the settings
  * activity. It requires a user id in the parent intent.
  */
-public class HomeActivity extends FragmentActivity implements AppsFragmentInterface, GirafConfirmDialog.Confirmation, GirafProfileSelectorDialog.OnSingleProfileSelectedListener {
+public class HomeActivity extends GirafActivity implements AppsFragmentInterface, GirafConfirmDialog.Confirmation, GirafProfileSelectorDialog.OnSingleProfileSelectedListener {
 
     private static final int CHANGE_USER_SELECTOR_DIALOG = 100;
     private Profile mCurrentUser;
@@ -60,7 +61,6 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
 
     private GWidgetUpdater widgetUpdater;
     private GWidgetProfileSelection widgetProfileSelection;
-    private GProfileSelector profileSelectorDialog;
 
     private ViewPager mAppViewPager;
 
@@ -251,8 +251,6 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
             changeUserButton.setVisibility(View.GONE);
 
         }
-
-
 
         // Fetch the profile picture
         Bitmap profilePicture = mCurrentUser.getImage();
