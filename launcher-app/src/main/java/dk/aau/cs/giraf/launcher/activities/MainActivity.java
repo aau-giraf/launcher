@@ -2,18 +2,28 @@ package dk.aau.cs.giraf.launcher.activities;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.dblib.controllers.ProfileController;
@@ -77,8 +87,6 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 
         setContentView(R.layout.main_activity);
 
-        messageHandler = new MessageHandler();
-
         //Load the preference determining whether the animation should be shown
         findOldSession();
 
@@ -111,6 +119,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         startingAnimation.setAnimationListener(this);
 
         // Start the remote syncing service
+        messageHandler = new MessageHandler(loadAnimation);
         new main(this).startSynch(messageHandler);
     }
 
@@ -138,8 +147,6 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      */
     @Override
     public void onAnimationEnd(Animation animation) {
-        TextView welcomeText = (TextView) findViewById(R.id.welcome_text);
-        welcomeText.setText("Henter data...");
         findViewById(R.id.giraficon).startAnimation(loadAnimation);
     }
 
@@ -164,7 +171,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      */
     public void startNextActivity() {
         Intent intent;
-        TextView welcomeText = (TextView) findViewById(R.id.welcome_text);
+        TextView welcomeText = (TextView) findViewById(R.id.welcome_title);
         welcomeText.setText("Klar!");
 
         if (DEBUG_MODE && SKIP_AUTHENTICATION) {
@@ -244,18 +251,100 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      * To determine if a download is complete
      */
     public class MessageHandler extends Handler {
+
+        private Animation loadAnimation;
+
+        // Find the views that will be used
+        final TextView welcomeTitle;
+        final TextView welcomeDescription;
+        final TextView progressTextPercent;
+        final ProgressBar progressBar;
+
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+        private boolean isNetworkAvailable() {
+            ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null;
+        }
+
+        public MessageHandler(Animation loadAnimation) {
+            this.loadAnimation = loadAnimation;
+            this.welcomeTitle = (TextView) findViewById(R.id.welcome_title);
+            this.welcomeDescription = (TextView) findViewById(R.id.welcome_desciption);
+            this.progressTextPercent = (TextView) findViewById(R.id.progress_bar_text);
+            this.progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        }
+
         @Override
         public void handleMessage(Message message) {
-            int progress = message.arg1;
+            final int progress = message.arg1;
             if (progress == 100) {
+                executorService.shutdown();
                 startNextActivity();
-            } else {
-                Log.d("Progress", Integer.toString(progress));
-                ProgressBar progressBar= (ProgressBar) findViewById(R.id.progress_bar);
-                TextView progressText= (TextView) findViewById(R.id.progress_bar_text);
-                progressText.setText(progress + "%");
-                progressBar.setProgress(progress);
+            }
+            else {
+                // Run the check on a background-thread
+                executorService.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        boolean hasConnectionTemp = isNetworkAvailable();
 
+                        if(hasConnectionTemp) {
+                            try {
+                                HttpURLConnection urlc = (HttpURLConnection) new URL("http://clients3.google.com/generate_204").openConnection();
+                                urlc.setRequestProperty("User-Agent", "Android");
+                                urlc.setRequestProperty("Connection", "close");
+                                urlc.setConnectTimeout(1500);
+                                urlc.connect();
+                                hasConnectionTemp = (urlc.getResponseCode() == 204 && urlc.getContentLength() == 0);
+                            } catch (IOException e) {
+                                hasConnectionTemp = false;
+                            }
+                        }
+
+                        final boolean hasConnection = hasConnectionTemp;
+
+                        // Run the following on the UI-thread
+                        MainActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(hasConnection) {
+                                    loadAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
+
+                                    // Update the views accordingly to the progress
+                                    welcomeTitle.setText("Henter data...");
+
+                                    welcomeDescription.setVisibility(View.GONE);
+                                    progressBar.setVisibility(View.VISIBLE);
+                                    progressTextPercent.setVisibility(View.VISIBLE);
+
+                                    progressTextPercent.setText(progress + "%");
+                                    progressBar.setProgress(progress);
+
+                                    welcomeTitle.setTextColor(MainActivity.this.getResources().getColor(R.color.giraf_loading_textColor));
+                                }
+                                else {
+                                    // Cancel the animation and make is very slow (in order to stop it)
+                                    loadAnimation.cancel();
+                                    loadAnimation.setDuration(Long.MAX_VALUE);
+
+                                    progressBar.setVisibility(View.GONE);
+                                    progressTextPercent.setVisibility(View.GONE);
+                                    welcomeDescription.setVisibility(View.VISIBLE);
+
+                                    welcomeTitle.setText("Ingen internet forbindelse!");
+                                    welcomeDescription.setText("Opret forbindelse til internettet for at hente data");
+
+                                    welcomeTitle.setTextColor(Color.parseColor("#900000"));
+                                    welcomeDescription.setTextColor(Color.parseColor("#900000"));
+                                }
+                            }
+                        });
+
+                        Log.d("Progress", Integer.toString(progress));
+                    }
+                });
             }
         }
     }
