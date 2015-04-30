@@ -10,6 +10,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.Date;
@@ -250,8 +251,11 @@ public class MainActivity extends Activity implements Animation.AnimationListene
                 startNextActivity();
             } else {
                 Log.d("Progress", Integer.toString(progress));
-                TextView welcomeText = (TextView) findViewById(R.id.welcome_text);
-                welcomeText.setText("Henter data... (" + progress + "%)");
+                ProgressBar progressBar= (ProgressBar) findViewById(R.id.progress_bar);
+                TextView progressText= (TextView) findViewById(R.id.progress_bar_text);
+                progressText.setText(progress + "%");
+                progressBar.setProgress(progress);
+
             }
         }
     }
