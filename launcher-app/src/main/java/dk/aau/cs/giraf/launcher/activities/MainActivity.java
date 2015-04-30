@@ -2,17 +2,34 @@ package dk.aau.cs.giraf.launcher.activities;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Message;
 import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import junit.framework.Test;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.dblib.controllers.ProfileController;
@@ -76,8 +93,6 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 
         setContentView(R.layout.main_activity);
 
-        messageHandler = new MessageHandler();
-
         //Load the preference determining whether the animation should be shown
         findOldSession();
 
@@ -110,6 +125,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         startingAnimation.setAnimationListener(this);
 
         // Start the remote syncing service
+        messageHandler = new MessageHandler(loadAnimation);
         new main(this).startSynch(messageHandler);
     }
 
@@ -137,8 +153,6 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      */
     @Override
     public void onAnimationEnd(Animation animation) {
-        TextView welcomeText = (TextView) findViewById(R.id.welcome_text);
-        welcomeText.setText("Henter data...");
         findViewById(R.id.giraficon).startAnimation(loadAnimation);
     }
 
@@ -243,15 +257,86 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      * To determine if a download is complete
      */
     public class MessageHandler extends Handler {
+
+        private Animation loadAnimation;
+
+        // Find the views that will be used
+        final TextView welcomeText;
+        final TextView welcomeTextHelp;
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+        private boolean isNetworkAvailable() {
+            ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null;
+        }
+
+        public MessageHandler(Animation loadAnimation) {
+            this.loadAnimation = loadAnimation;
+            this.welcomeText = (TextView) findViewById(R.id.welcome_text);
+            this.welcomeTextHelp = (TextView) findViewById(R.id.welcome_helptext);
+        }
+
         @Override
         public void handleMessage(Message message) {
-            int progress = message.arg1;
+            final int progress = message.arg1;
             if (progress == 100) {
+                executorService.shutdown();
                 startNextActivity();
-            } else {
-                Log.d("Progress", Integer.toString(progress));
-                TextView welcomeText = (TextView) findViewById(R.id.welcome_text);
-                welcomeText.setText("Henter data... (" + progress + "%)");
+            }
+            else {
+                // Run the check on a background-thread
+                executorService.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        boolean hasConnectionTemp = isNetworkAvailable();
+
+                        if(hasConnectionTemp) {
+                            try {
+                                HttpURLConnection urlc = (HttpURLConnection) new URL("http://clients3.google.com/generate_204").openConnection();
+                                urlc.setRequestProperty("User-Agent", "Android");
+                                urlc.setRequestProperty("Connection", "close");
+                                urlc.setConnectTimeout(5);
+                                urlc.connect();
+                                hasConnectionTemp = (urlc.getResponseCode() == 204 && urlc.getContentLength() == 0);
+                            } catch (IOException e) {
+                                hasConnectionTemp = false;
+                            }
+                        }
+
+                        final boolean hasConnection = hasConnectionTemp;
+
+                        // Run the following on the UI-thread
+                        MainActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(hasConnection) {
+                                    loadAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
+
+                                    // Update the views accordingly to the progress
+                                    welcomeText.setText("Henter data...");
+                                    welcomeTextHelp.setText(progress + "%");
+
+                                    welcomeText.setTextColor(MainActivity.this.getResources().getColor(R.color.giraf_loading_textColor));
+                                    welcomeTextHelp.setTextColor(MainActivity.this.getResources().getColor(R.color.giraf_loading_textColor));
+                                }
+                                else {
+                                    // Cancel the animation and make is very slow (in order to stop it)
+                                    loadAnimation.cancel();
+                                    loadAnimation.setDuration(Long.MAX_VALUE);
+
+                                    welcomeText.setText("Ingen internet forbindelse!");
+                                    welcomeTextHelp.setText("Opret forbindelse til internettet for at hente data");
+
+                                    welcomeText.setTextColor(Color.parseColor("#900000"));
+                                    welcomeTextHelp.setTextColor(Color.parseColor("#900000"));
+                                }
+                            }
+                        });
+
+                        Log.d("Progress", Integer.toString(progress));
+                    }
+                });
             }
         }
     }
