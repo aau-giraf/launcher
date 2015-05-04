@@ -1,6 +1,5 @@
 package dk.aau.cs.giraf.launcher.settings;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,29 +26,29 @@ public class SettingsListAdapter extends BaseAdapter {
     /**
      * The variables needed by the adapter
      */
-    private Activity mActivity;
     private LayoutInflater mInflater;
 
     // The list containing the items to add
     private ArrayList<SettingsListItem> mApplicationList;
+
     // Reference to the ListView using the adapter
     private ListView mListView;
+
     // Ensures the first item in the associated ListView is selected at first startup
     private static int mLastSelectedItem = 0;
 
     /**
      * The constructor for the class
-     * @param activity The activity that contains the ListView
-     * @param listView The ListView to be inflated
+     * @param context The Context that contains the ListView
+     * @param listView The ListView to be used with this adapter
      * @param list the list of SettingsListItems that should populate the ListView.
      */
-    public SettingsListAdapter(Activity activity, ListView listView, ArrayList<SettingsListItem> list) {
-        mActivity = activity;
+    public SettingsListAdapter(Context context, ListView listView, ArrayList<SettingsListItem> list) {
         mApplicationList = list;
         mListView = listView;
 
         // Get the layout inflater from the activity
-        mInflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     /**

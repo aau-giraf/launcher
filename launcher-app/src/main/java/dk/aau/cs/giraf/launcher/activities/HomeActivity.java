@@ -50,13 +50,13 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     private static final int CHANGE_USER_SELECTOR_DIALOG = 100;
     private Profile mCurrentUser;
     private Profile mLoggedInGuardian;
-    private Helper mHelper;
+
     private LoadHomeActivityApplicationTask loadHomeActivityApplicationTask;
 
     private ArrayList<AppInfo> mCurrentLoadedApps;
 
     private GWidgetUpdater widgetUpdater;
-    private GWidgetProfileSelection widgetProfileSelection;
+
 
     private ViewPager mAppViewPager;
 
@@ -85,10 +85,10 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
 
-        mHelper = LauncherUtility.getOasisHelper(this);
+        Helper mHelper = LauncherUtility.getOasisHelper(this);
 
-        mCurrentUser = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getLong(Constants.CHILD_ID, -1));
-        mLoggedInGuardian = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getLong(Constants.GUARDIAN_ID));
+        mCurrentUser = mHelper.profilesHelper.getById(getIntent().getExtras().getLong(Constants.CHILD_ID, -1));
+        mLoggedInGuardian = mHelper.profilesHelper.getById(getIntent().getExtras().getLong(Constants.GUARDIAN_ID));
 
         if (mCurrentUser == null) {
             mCurrentUser = mLoggedInGuardian;
@@ -104,6 +104,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
             LauncherUtility.showDebugInformation(this);
         }
 
+        // Get the row and column size for the grids in the AppViewPager
         final int rowsSize = ApplicationGridResizer.getGridRowSize(this, mCurrentUser);
         final int columnsSize = ApplicationGridResizer.getGridColumnSize(this, mCurrentUser);
 
@@ -135,27 +136,13 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         EasyTracker.getInstance(this).activityStop(this);
     }
 
-    /**
-     * Loads app icons into the activity. Before this point in the activity lifecycle, it is not
-     * possible to determine the size of the app container, making et much more difficult to calculate
-     * icon spacing.
-     *
-     * @param hasFocus {@code true} if the activity has focus.
-     */
-
-    /**
-     * Redraws the application container and resumes the timer looking for updates in the set of
-     * available apps.
-     *
-     * @see HomeActivity#startObservingApps()
-     */
     @Override
     protected void onResume() {
         super.onResume();
 
+        // Reload applications (Some applications might have been (un)installed)
         reloadApplications();
 
-        //startObservingApps();
         if (widgetUpdater != null) {
             widgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_START);
         }
@@ -178,6 +165,8 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         if (widgetUpdater != null) {
             widgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_STOP);
         }
+
+        // Cancel any loading task still running
         if (loadHomeActivityApplicationTask != null) {
             loadHomeActivityApplicationTask.cancel(true);
         }
@@ -208,10 +197,13 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
      * @see dk.aau.cs.giraf.gui.GirafButton
      */
     private void loadWidgets() {
-        GirafButton logoutButton = (GirafButton) findViewById(R.id.logout_button);
-        widgetProfileSelection = (GWidgetProfileSelection) findViewById(R.id.profile_widget);
-        GirafButton settingsButton = (GirafButton) findViewById(R.id.settings_button);
-        GirafButton changeUserButton = (GirafButton) findViewById(R.id.change_user_button);
+
+        // Fetch references to buttons
+        final GirafButton logoutButton = (GirafButton) findViewById(R.id.logout_button);
+        final GirafButton settingsButton = (GirafButton) findViewById(R.id.settings_button);
+        final GirafButton changeUserButton = (GirafButton) findViewById(R.id.change_user_button);
+
+        final GWidgetProfileSelection widgetProfileSelection = (GWidgetProfileSelection) findViewById(R.id.profile_widget);
 
         //Set up widget updater, which updates the widget's view regularly, according to its status.
         widgetUpdater = new GWidgetUpdater();
@@ -283,7 +275,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     }
 
     @Override
-    public void onProfileSelected(int i, Profile profile) {
+    public void onProfileSelected(final int i, final Profile profile) {
 
         if (i == CHANGE_USER_SELECTOR_DIALOG) {
 
@@ -298,7 +290,6 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         }
 
     }
-
 
     /**
      * Task for observing if the set of available apps has changed.
@@ -315,10 +306,10 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
          */
         @Override
         public void run() {
-            List<Application> girafAppsList = ApplicationControlUtility.getAvailableGirafAppsForUser(HomeActivity.this, mCurrentUser); // For home_activity activity
-            SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(HomeActivity.this, mCurrentUser);
-            Set<String> androidAppsPackagenames = prefs.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
-            List<Application> androidAppsList = ApplicationControlUtility.convertPackageNamesToApplications(HomeActivity.this, androidAppsPackagenames);
+            final List<Application> girafAppsList = ApplicationControlUtility.getAvailableGirafAppsForUser(HomeActivity.this, mCurrentUser); // For home_activity activity
+            final SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(HomeActivity.this, mCurrentUser);
+            final Set<String> androidAppsPackagenames = prefs.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
+            final List<Application> androidAppsList = ApplicationControlUtility.convertPackageNamesToApplications(HomeActivity.this, androidAppsPackagenames);
             girafAppsList.addAll(androidAppsList);
             if (AppInfo.isAppListsDifferent(mCurrentLoadedApps, girafAppsList)) {
                 // run this on UI thread since UI might need to get updated
@@ -391,7 +382,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
          * Once we have loaded applications, we start observing for new apps
          */
         @Override
-        protected void onPostExecute(ArrayList<AppInfo> appInfos) {
+        protected void onPostExecute(final ArrayList<AppInfo> appInfos) {
             super.onPostExecute(appInfos);
 
             mCurrentLoadedApps = appInfos;

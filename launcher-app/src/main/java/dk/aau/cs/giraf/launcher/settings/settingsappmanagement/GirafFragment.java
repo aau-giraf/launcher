@@ -1,6 +1,5 @@
 package dk.aau.cs.giraf.launcher.settings.settingsappmanagement;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
@@ -69,11 +68,6 @@ public class GirafFragment extends AppContainerFragment {
         titleIndicator.setViewPager(appView);
 
         return view;
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
     }
 
     /**

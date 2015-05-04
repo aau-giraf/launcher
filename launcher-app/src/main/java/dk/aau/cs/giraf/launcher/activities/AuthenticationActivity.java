@@ -41,7 +41,7 @@ public class AuthenticationActivity extends CaptureActivity {
     private TextView mInfoView;
     private Vibrator mVibrator;
 
-    private View mCameraFeed;
+
     private TextView mScanStatus;
 
     private boolean isFramingRectangleRedrawn = false;
@@ -103,8 +103,8 @@ public class AuthenticationActivity extends CaptureActivity {
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (!isFramingRectangleRedrawn) {
-            mCameraFeed = this.findViewById(R.id.camerafeed);
-            super.setFramingRect(mCameraFeed.getWidth(), mCameraFeed.getHeight());
+            final View cameraFeed = this.findViewById(R.id.camerafeed);
+            super.setFramingRect(cameraFeed.getWidth(), cameraFeed.getHeight());
             isFramingRectangleRedrawn = true;
         }
     }

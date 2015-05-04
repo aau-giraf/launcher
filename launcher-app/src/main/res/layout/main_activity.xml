@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="35dp"
-            android:text="Velkommen til Giraf!"
+            android:text="@string/main_activity_welcome_text"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/giraf_loading_textColor"
             android:textStyle="bold"

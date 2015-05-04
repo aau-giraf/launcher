@@ -1,6 +1,5 @@
 package dk.aau.cs.giraf.launcher.activities;
 
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
@@ -44,7 +44,6 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
     private long oldSessionGuardianID = -1;
     Animation startingAnimation;
     Animation loadAnimation;
-    Handler messageHandler;
 
     /* ************* DEBUGGING MODE ************* */
     // TODO: ONLY USED FOR DEBUGGING PURPOSES!!!
@@ -115,13 +114,11 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
         startingAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
         loadAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
 
-
         findViewById(R.id.giraficon).startAnimation(startingAnimation);
         startingAnimation.setAnimationListener(this);
 
         // Start the remote syncing service
-        messageHandler = new MessageHandler(loadAnimation);
-        new main(this).startSynch(messageHandler);
+        new main(this).startSynch(new MessageHandler(this, loadAnimation));
     }
 
     /**
@@ -251,30 +248,32 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
      * Used to communicate with DownloadService
      * To determine if a download is complete
      */
-    public class MessageHandler extends Handler {
+    public static class MessageHandler extends Handler {
 
-        private Animation loadAnimation;
+        private final Animation loadAnimation;
 
         // Find the views that will be used
         final TextView welcomeTitle;
         final TextView welcomeDescription;
         final TextView progressTextPercent;
         final ProgressBar progressBar;
+        final WeakReference<MainActivity> activity;
 
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-        private boolean isNetworkAvailable() {
-            ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-            return activeNetworkInfo != null;
+        public MessageHandler(final MainActivity activity, final Animation loadAnimation) {
+            this.activity = new WeakReference<MainActivity>(activity);
+            this.loadAnimation = loadAnimation;
+            this.welcomeTitle = (TextView) activity.findViewById(R.id.welcome_title);
+            this.welcomeDescription = (TextView) activity.findViewById(R.id.welcome_desciption);
+            this.progressTextPercent = (TextView) activity.findViewById(R.id.progress_bar_text);
+            this.progressBar = (ProgressBar) activity.findViewById(R.id.progress_bar);
         }
 
-        public MessageHandler(Animation loadAnimation) {
-            this.loadAnimation = loadAnimation;
-            this.welcomeTitle = (TextView) findViewById(R.id.welcome_title);
-            this.welcomeDescription = (TextView) findViewById(R.id.welcome_desciption);
-            this.progressTextPercent = (TextView) findViewById(R.id.progress_bar_text);
-            this.progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        private boolean isNetworkAvailable() {
+            ConnectivityManager connectivityManager = (ConnectivityManager) this.activity.get().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null;
         }
 
         @Override
@@ -282,16 +281,15 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
             final int progress = message.arg1;
             if (progress == 100) {
                 executorService.shutdown();
-                startNextActivity();
-            }
-            else {
+                this.activity.get().startNextActivity();
+            } else {
                 // Run the check on a background-thread
                 executorService.submit(new Runnable() {
                     @Override
                     public void run() {
                         boolean hasConnectionTemp = isNetworkAvailable();
 
-                        if(hasConnectionTemp) {
+                        if (hasConnectionTemp) {
                             try {
                                 HttpURLConnection urlc = (HttpURLConnection) new URL("http://clients3.google.com/generate_204").openConnection();
                                 urlc.setRequestProperty("User-Agent", "Android");
@@ -307,10 +305,10 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
                         final boolean hasConnection = hasConnectionTemp;
 
                         // Run the following on the UI-thread
-                        MainActivity.this.runOnUiThread(new Runnable() {
+                        activity.get().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if(hasConnection) {
+                                if (hasConnection) {
                                     loadAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
 
                                     // Update the views accordingly to the progress
@@ -323,9 +321,8 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
                                     progressTextPercent.setText(progress + "%");
                                     progressBar.setProgress(progress);
 
-                                    welcomeTitle.setTextColor(MainActivity.this.getResources().getColor(R.color.giraf_loading_textColor));
-                                }
-                                else {
+                                    welcomeTitle.setTextColor(activity.get().getResources().getColor(R.color.giraf_loading_textColor));
+                                } else {
                                     // Cancel the animation and make is very slow (in order to stop it)
                                     loadAnimation.cancel();
                                     loadAnimation.setDuration(Long.MAX_VALUE);

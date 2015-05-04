@@ -1,18 +1,15 @@
 package dk.aau.cs.giraf.launcher.test;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.assertion.ViewAssertions;
 import android.test.ActivityInstrumentationTestCase2;
-import android.test.IsolatedContext;
 
 import org.junit.After;
 import org.junit.Before;
 
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.HomeActivity;
-import dk.aau.cs.giraf.launcher.activities.MainActivity;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.dblib.Helper;
 

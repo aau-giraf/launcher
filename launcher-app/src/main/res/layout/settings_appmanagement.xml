@@ -12,7 +12,8 @@
         android:paddingBottom="1dp"
         android:background="@android:color/holo_orange_dark"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true">
+        android:layout_alignParentLeft="true"
+        style="?android:attr/buttonBarButtonStyle">
 
         <Button
             android:id="@+id/settings_giraf_button"

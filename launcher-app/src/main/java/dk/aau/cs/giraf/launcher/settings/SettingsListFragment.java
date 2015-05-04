@@ -1,6 +1,5 @@
 package dk.aau.cs.giraf.launcher.settings;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.ActivityNotFoundException;
@@ -15,12 +14,11 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import dk.aau.cs.giraf.gui.GProfileSelector;
+import dk.aau.cs.giraf.dblib.controllers.ProfileController;
+import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.gui.GWidgetProfileSelection;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
-import dk.aau.cs.giraf.dblib.controllers.ProfileController;
-import dk.aau.cs.giraf.dblib.models.Profile;
 
 /**
  * This fragment contains all of the elements on the left side of SettingsActivity.
@@ -30,24 +28,24 @@ import dk.aau.cs.giraf.dblib.models.Profile;
 public class SettingsListFragment extends Fragment {
 
     private ListView mSettingsListView;
-    private TextView mProfileName;
-    private SettingsListAdapter mAdapter;
-    private GWidgetProfileSelection mProfileButton;
 
-    private Profile mLoggedInGuardian;
-    private Profile mCurrentUser;
+    private SettingsListAdapter mAdapter;
+
 
     // Callback to containing Activity implementing the SettingsListFragmentListener interface
     private SettingsListFragmentListener mCallback;
 
     /**
      * Interface to be implemented by the activity supporting callbacks from this fragment.
+     *
      * @see SettingsActivity
      */
+
     public interface SettingsListFragmentListener {
         /**
          * Used when an item in the ListView has been clicked
          * to send the to-be-active fragment back to the Activity.
+         *
          * @param fragment
          */
         public void setActiveFragment(Fragment fragment);
@@ -55,6 +53,7 @@ public class SettingsListFragment extends Fragment {
         /**
          * Used when an item in the ListView has been clicked
          * to send the to-be-active fragment back to the Activity.
+         *
          * @param fragment
          */
         public void setActiveFragment(android.support.v4.app.Fragment fragment);
@@ -62,12 +61,14 @@ public class SettingsListFragment extends Fragment {
         /**
          * Reloads the activity when user settings should be refreshed
          * based on a new profile selection.
+         *
          * @see SettingsListFragment
          */
         public void reloadActivity();
 
         /**
          * Method is called to load applications into ListView.
+         *
          * @return A list of apps that should be added to the ListView,
          * containing only valid/available apps.
          */
@@ -75,6 +76,7 @@ public class SettingsListFragment extends Fragment {
 
         /**
          * Called whenever a new user has been selected.
+         *
          * @param profile The selected profile.
          */
         public void setCurrentUser(Profile profile);
@@ -84,27 +86,29 @@ public class SettingsListFragment extends Fragment {
      * In OnCreateView we initialize most of the varibles needed by the class.
      * We do it in onCreateView instead of in OnCreate, since we are working with a Fragment and not an Activity.
      * More information about what exactly it does can be found in comments inside.
-     * @param inflater The inflator used to inflate the layout
-     * @param container The container to be inflated
+     *
+     * @param inflater           The inflator used to inflate the layout
+     * @param container          The container to be inflated
      * @param savedInstanceState The previously SavedInstanceState
      * @return The created View.
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.settings_fragment_list, container, false);
+        final View view = inflater.inflate(R.layout.settings_fragment_list, container, false);
 
-        mSettingsListView =  (ListView) view.findViewById(R.id.settingsListView);
+        mSettingsListView = (ListView) view.findViewById(R.id.settingsListView);
 
-        mProfileButton = (GWidgetProfileSelection) view.findViewById(R.id.profile_widget_settings);
-        mProfileName = (TextView) view.findViewById(R.id.profile_selected_name);
+        final GWidgetProfileSelection mProfileButton = (GWidgetProfileSelection) view.findViewById(R.id.profile_widget_settings);
+        final TextView mProfileName = (TextView) view.findViewById(R.id.profile_selected_name);
 
         ProfileController pc = new ProfileController(getActivity());
-        mLoggedInGuardian = pc.getProfileById(getActivity().getIntent().getLongExtra(Constants.GUARDIAN_ID, -1));
 
-        long childID = getActivity().getIntent().getLongExtra(Constants.CHILD_ID, -1);
+        final long childID = getActivity().getIntent().getLongExtra(Constants.CHILD_ID, -1);
+
+        Profile mCurrentUser;
 
         // The childID is -1 meaning that no childs are available
-        if(childID == -1) {
+        if (childID == -1) {
             mCurrentUser = pc.getProfileById(getActivity().getIntent().getLongExtra(Constants.GUARDIAN_ID, -1));
         } else { // A child is found - set it as active and add its profile selector
             mCurrentUser = pc.getProfileById(childID);
@@ -135,6 +139,7 @@ public class SettingsListFragment extends Fragment {
     /**
      * This makes sure that the container activity has implemented
      * the callback interface. If not, it throws an exception
+     *
      * @param activity The activity being attached
      */
     @Override
@@ -152,6 +157,7 @@ public class SettingsListFragment extends Fragment {
      * Set the selection in the adapter when the activity is created/reloaded
      * This is important when reloading the activity to show settings for
      * selected user.
+     *
      * @param savedInstanceState The previously SavedInstanceState
      */
     @Override
@@ -187,12 +193,9 @@ public class SettingsListFragment extends Fragment {
 
                     // Notify class implementing the callback interface that a new fragment has been selected
 
-                    if(fragmentItem.fragment == null)
-                    {
+                    if (fragmentItem.fragment == null) {
                         mCallback.setActiveFragment(fragmentItem.supportFragment);
-                    }
-                    else
-                    {
+                    } else {
                         mCallback.setActiveFragment(fragmentItem.fragment);
                     }
 
@@ -208,8 +211,7 @@ public class SettingsListFragment extends Fragment {
                     // Handle exception if the intended activity can not be started.
                     catch (ActivityNotFoundException e) {
                         Toast.makeText(parent.getContext(), R.string.settings_activity_not_found_msg, Toast.LENGTH_SHORT).show();
-                    }
-                    finally {
+                    } finally {
                         // Notify adapter to redraw views since we want to reset the visual style
                         // of the selected since its state should not be preserved (= reset selected item
                         // to the item selected when starting the Intent.

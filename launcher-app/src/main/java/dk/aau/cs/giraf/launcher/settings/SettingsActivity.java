@@ -44,7 +44,6 @@ public class SettingsActivity extends GirafActivity
     private android.support.v4.app.Fragment mActiveSupportFragment;
     private Profile mCurrentUser = null;
     private Profile mLoggedInGuardian;
-    //private GProfileSelector mProfileSelector;
 
     /**
      * Global variable containing giraf applications with settings.

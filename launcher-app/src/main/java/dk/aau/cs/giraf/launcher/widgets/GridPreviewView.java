@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.View;
 
 /**
@@ -13,7 +12,6 @@ import android.view.View;
  * View which draws a grid with rowSize rows and columnSize columns
  */
 public class GridPreviewView extends View {
-    private int gridLinesSize;
     private Paint paint;
 
     private int rowSize;
@@ -38,10 +36,6 @@ public class GridPreviewView extends View {
      * Calculates gridLines size and initializes paint object
      */
     public void init() {
-
-        gridLinesSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                8, getResources().getDisplayMetrics());
-
 
         paint = new Paint();
         paint.setStyle(Paint.Style.FILL);

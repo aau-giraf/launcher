@@ -133,9 +133,4 @@ public class AppsGridFragment extends Fragment {
 
         return null;
     }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
 }
