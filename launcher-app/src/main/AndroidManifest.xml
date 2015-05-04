@@ -29,6 +29,7 @@
             android:name=".activities.MainActivity"
             android:label="@string/application_name"
             android:noHistory="true"
+            android:launchMode="singleInstance"
             android:screenOrientation="landscape"
             android:theme="@style/GirafTheme.NoTitleBar">
             <intent-filter>
@@ -43,11 +44,11 @@
             android:name=".activities.AuthenticationActivity"
             android:label="@string/application_name"
             android:noHistory="true"
+            android:launchMode="singleInstance"
             android:screenOrientation="landscape"
             android:theme="@style/GirafTheme.NoTitleBar">
             <intent-filter>
                 <action android:name="dk.aau.cs.giraf.launcher.AUTHENTICATE" />
-
                 <category android:name="dk.aau.cs.giraf.launcher.GIRAF" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -57,7 +58,7 @@
             android:clearTaskOnLaunch="true"
             android:configChanges="orientation|screenSize"
             android:label="@string/application_name"
-            android:launchMode="singleTask"
+            android:launchMode="singleInstance"
             android:screenOrientation="landscape"
             android:stateNotNeeded="true"
             android:theme="@style/GirafTheme.NoTitleBar">
@@ -68,6 +69,7 @@
         <activity
             android:name=".settings.SettingsActivity"
             android:label="@string/settings_tablist_tablet"
+            android:launchMode="singleInstance"
             android:screenOrientation="landscape"
             android:theme="@style/GirafTheme"></activity>
 

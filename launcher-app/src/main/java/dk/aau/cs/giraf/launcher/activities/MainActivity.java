@@ -41,7 +41,7 @@ import dk.aau.cs.giraf.localdb.main;
  */
 public class MainActivity extends GirafActivity implements Animation.AnimationListener {
     //private Context mContext;
-    private int oldSessionGuardianID = -1;
+    private long oldSessionGuardianID = -1;
     Animation startingAnimation;
     Animation loadAnimation;
     Handler messageHandler;
@@ -187,8 +187,8 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
             intent = new Intent(this, HomeActivity.class);
 
             SharedPreferences sharedPreferences = getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
-            final long guardianID = sharedPreferences.getInt(Constants.GUARDIAN_ID, -1);
-            final long childID = sharedPreferences.getInt(Constants.CHILD_ID, -1);
+            final long guardianID = sharedPreferences.getLong(Constants.GUARDIAN_ID, -1);
+            final long childID = sharedPreferences.getLong(Constants.CHILD_ID, -1);
 
             intent.putExtra(Constants.GUARDIAN_ID, guardianID);
             intent.putExtra(Constants.CHILD_ID, childID);
@@ -214,7 +214,7 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
      * @return An intent for starting {@code MainActivity} with the authenticated profile ID as an extra.
      */
     private Intent skipAuthentication(boolean asChild) {
-        Helper helper = LauncherUtility.getOasisHelper(this);
+        final Helper helper = LauncherUtility.getOasisHelper(this);
         Profile profile;
 
         //Get the relevant profile info.
@@ -225,12 +225,12 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
             profile = helper.profilesHelper.authenticateProfile("d74ecba82569eafc763256e45a126b4ce882f8a81327f28a380faa13eb2ec8f3");
         }
 
-        Intent intent = new Intent(this, HomeActivity.class);
+        final Intent intent = new Intent(this, HomeActivity.class);
 
         //Add the profile ID to the intent, and save information on the session.
         intent.putExtra(Constants.GUARDIAN_ID, profile.getId());
 
-        LauncherUtility.saveLogInData(this, (int) profile.getId(), new Date().getTime());
+        LauncherUtility.saveLogInData(this, profile.getId(), new Date().getTime());
         return intent;
     }
 
@@ -240,10 +240,10 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
      */
     private void findOldSession() {
         if (LauncherUtility.sessionExpired(this)) {
-            oldSessionGuardianID = -1;
+            oldSessionGuardianID = -1L;
         } else {
-            SharedPreferences sharedPreferences = getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
-            oldSessionGuardianID = sharedPreferences.getInt(Constants.GUARDIAN_ID, -1);
+            final SharedPreferences sharedPreferences = getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
+            oldSessionGuardianID = sharedPreferences.getLong(Constants.GUARDIAN_ID, -1);
         }
     }
 

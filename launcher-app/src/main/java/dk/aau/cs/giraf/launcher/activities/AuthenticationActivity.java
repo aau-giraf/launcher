@@ -22,13 +22,13 @@ import com.google.zxing.client.android.CaptureActivity;
 
 import java.util.Date;
 
+import dk.aau.cs.giraf.dblib.Helper;
+import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.launcher.BuildConfig;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.layoutcontroller.SimulateAnimationDrawable;
-import dk.aau.cs.giraf.dblib.Helper;
-import dk.aau.cs.giraf.dblib.models.Profile;
 
 /**
  * Handles authentication of the user's QR code through a camera feed. If the the user's QR code
@@ -36,11 +36,11 @@ import dk.aau.cs.giraf.dblib.models.Profile;
  */
 public class AuthenticationActivity extends CaptureActivity {
 
-	private Intent mHomeIntent;
-	private TextView mLoginNameView;
-	private TextView mInfoView;
-	private Vibrator mVibrator;
-	private Profile mPreviousProfile;
+    private Intent mHomeIntent;
+    private TextView mLoginNameView;
+    private TextView mInfoView;
+    private Vibrator mVibrator;
+
     private View mCameraFeed;
     private TextView mScanStatus;
 
@@ -53,29 +53,28 @@ public class AuthenticationActivity extends CaptureActivity {
      *
      * @param savedInstanceState Information from the last launch of the activity.
      */
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.authentication_activity);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.authentication_activity);
 
-		mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-		mLoginNameView = (TextView)this.findViewById(R.id.loginname);
-		mInfoView = (TextView)this.findViewById(R.id.authentication_step1);
-        mScanStatus = (TextView)this.findViewById(R.id.scanStatusTextView);
+        mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        mLoginNameView = (TextView) this.findViewById(R.id.loginname);
+        mInfoView = (TextView) this.findViewById(R.id.authentication_step1);
+        mScanStatus = (TextView) this.findViewById(R.id.scanStatusTextView);
 
-        if(BuildConfig.DEBUG) {
-            Button guardianButton = (Button)this.findViewById(R.id.loginAsGuardianButton);
+        if (BuildConfig.DEBUG) {
+            Button guardianButton = (Button) this.findViewById(R.id.loginAsGuardianButton);
             guardianButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Helper h = new Helper(AuthenticationActivity.this);
-                    if (h.profilesHelper.getProfiles() == null || h.profilesHelper.getProfiles().size() == 0)
-                    {
+                    if (h.profilesHelper.getListOfObjects() == null || h.profilesHelper.getListOfObjects().size() == 0) {
                         Toast.makeText(AuthenticationActivity.this, getString(R.string.db_no_profiles_msg), Toast.LENGTH_LONG).show();
                         return;
                     }
 
-                    Profile profile = h.profilesHelper.getById(37L); // Gets the first guardian
+                    Profile profile = h.profilesHelper.getById(37L); // Get SW615f14 test guardian
                     login(profile);
                 }
             });
@@ -93,7 +92,7 @@ public class AuthenticationActivity extends CaptureActivity {
 
         // Start logging this activity
         EasyTracker.getInstance(this).activityStart(this);
-	}
+    }
 
     /**
      * Draws the feed's framing rectangle if necessary.
@@ -103,7 +102,7 @@ public class AuthenticationActivity extends CaptureActivity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (!isFramingRectangleRedrawn){
+        if (!isFramingRectangleRedrawn) {
             mCameraFeed = this.findViewById(R.id.camerafeed);
             super.setFramingRect(mCameraFeed.getWidth(), mCameraFeed.getHeight());
             isFramingRectangleRedrawn = true;
@@ -122,40 +121,38 @@ public class AuthenticationActivity extends CaptureActivity {
     }
 
     /**
-	 * Changes the color of the border around the camera feed of the QR code scanner.
+     * Changes the color of the border around the camera feed of the QR code scanner.
      *
-	 * @param color The color which the border should have
-	 */
-	public void changeCameraFeedBorderColor(int color) {
-		ViewGroup cameraFeedView = (ViewGroup)this.findViewById(R.id.camerafeed);
+     * @param color The color which the border should have
+     */
+    public void changeCameraFeedBorderColor(int color) {
+        ViewGroup cameraFeedView = (ViewGroup) this.findViewById(R.id.camerafeed);
 
-		RectF rectf = new RectF(10,10,10,10);
-		RoundRectShape rect = new RoundRectShape( new float[] {15,15, 15,15, 15,15, 15,15}, rectf, null);
-		ShapeDrawable shapeDrawable = new ShapeDrawable(rect);
+        RectF rectf = new RectF(10, 10, 10, 10);
+        RoundRectShape rect = new RoundRectShape(new float[]{15, 15, 15, 15, 15, 15, 15, 15}, rectf, null);
+        ShapeDrawable shapeDrawable = new ShapeDrawable(rect);
 
-		shapeDrawable.getPaint().setColor(color);
-		cameraFeedView.setBackgroundDrawable(shapeDrawable);
-	}
+        shapeDrawable.getPaint().setColor(color);
+        cameraFeedView.setBackgroundDrawable(shapeDrawable);
+    }
 
-	/**
-	 * Checks whether the string from a scanned QR code is a valid GIRAF certificate.
+    /**
+     * Checks whether the string from a scanned QR code is a valid GIRAF certificate.
      * If the certificate is valid, the certificate-holder's name is shown, and the login button
      * is displayed.
      *
-	 * @param rawResult Result which the scanned string is saved in.
-	 * @param barcode A greyscale bitmap of the camera data which was decoded.
-	 */
-	@Override
-	public void handleDecode(Result rawResult, final Bitmap barcode){
+     * @param rawResult Result which the scanned string is saved in.
+     * @param barcode   A greyscale bitmap of the camera data which was decoded.
+     */
+    @Override
+    public void handleDecode(Result rawResult, final Bitmap barcode) {
         try {
             Helper helper = new Helper(this);
             Profile profile = helper.profilesHelper.authenticateProfile(rawResult.getText());
 
             // If the certificate was not valid, profile is set to null.
             if (profile != null) {
-                if (mPreviousProfile == null || !profile.toString().equals(mPreviousProfile.toString())) {
-                    mVibrator.vibrate(400);
-                }
+                mVibrator.vibrate(400);
 
                 login(profile);
 
@@ -186,13 +183,12 @@ public class AuthenticationActivity extends CaptureActivity {
         }
 
 		/*
-		 * Needed by ZXing in order to continuously scan QR codes, and not halt after first scan.
+         * Needed by ZXing in order to continuously scan QR codes, and not halt after first scan.
 		 */
-		this.getHandler().sendEmptyMessageDelayed(R.id.restart_preview, 500);
-	}
+        this.getHandler().sendEmptyMessageDelayed(R.id.restart_preview, 500);
+    }
 
-    private void login(Profile profile) {
-        mPreviousProfile = profile;
+    private void login(final Profile profile) {
 
         this.changeCameraFeedBorderColor(getResources().getColor(R.color.success_qr_camera_border_color)); // Success color (green)
         mLoginNameView.setText(profile.getName());
@@ -200,17 +196,18 @@ public class AuthenticationActivity extends CaptureActivity {
 
         mHomeIntent = new Intent(AuthenticationActivity.this, HomeActivity.class);
         mHomeIntent.putExtra(Constants.GUARDIAN_ID, profile.getId());
+        mHomeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         // If authentication_activity was not launched by the launcher...
         if (!getIntent().hasCategory("dk.aau.cs.giraf.launcher.GIRAF")) {
-            Handler h = new Handler();
+            final Handler h = new Handler();
 
             mScanStatus.setText(getString(R.string.logging_in_msg));
 
             h.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    LauncherUtility.saveLogInData(AuthenticationActivity.this, mPreviousProfile.getId(), new Date().getTime());
+                    LauncherUtility.saveLogInData(AuthenticationActivity.this, profile.getId(), new Date().getTime());
                     startActivity(mHomeIntent);
                 }
             }, 800);

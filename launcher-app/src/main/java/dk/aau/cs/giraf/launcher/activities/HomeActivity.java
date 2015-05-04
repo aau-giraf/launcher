@@ -6,11 +6,9 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
@@ -24,7 +22,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import dk.aau.cs.giraf.activity.GirafActivity;
-import dk.aau.cs.giraf.gui.GProfileSelector;
+import dk.aau.cs.giraf.dblib.Helper;
+import dk.aau.cs.giraf.dblib.models.Application;
+import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.gui.GWidgetProfileSelection;
 import dk.aau.cs.giraf.gui.GWidgetUpdater;
 import dk.aau.cs.giraf.gui.GirafButton;
@@ -40,10 +40,6 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
 import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
-import dk.aau.cs.giraf.dblib.Helper;
-import dk.aau.cs.giraf.dblib.controllers.ProfileController;
-import dk.aau.cs.giraf.dblib.models.Application;
-import dk.aau.cs.giraf.dblib.models.Profile;
 
 /**
  * The primary activity of Launcher. Allows the user to start other GIRAF apps and access the settings
@@ -66,7 +62,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
 
     private Timer mAppsUpdater;
 
-    private final int METHOD_ID_LOGOUT  = 1;
+    private final int METHOD_ID_LOGOUT = 1;
 
     @Override
     public Profile getCurrentUser() {
@@ -94,8 +90,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         mCurrentUser = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getLong(Constants.CHILD_ID, -1));
         mLoggedInGuardian = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getLong(Constants.GUARDIAN_ID));
 
-        if(mCurrentUser == null)
-        {
+        if (mCurrentUser == null) {
             mCurrentUser = mLoggedInGuardian;
         }
 
@@ -241,8 +236,8 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
             changeUserButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    GirafProfileSelectorDialog changeUser = GirafProfileSelectorDialog.newInstance(HomeActivity.this,mCurrentUser.getId(),false, false, "Vælg den borger du vil skifte til.", CHANGE_USER_SELECTOR_DIALOG);
-                    changeUser.show(getSupportFragmentManager(),"" + CHANGE_USER_SELECTOR_DIALOG);
+                    GirafProfileSelectorDialog changeUser = GirafProfileSelectorDialog.newInstance(HomeActivity.this, mCurrentUser.getId(), false, false, "Vælg den borger du vil skifte til.", CHANGE_USER_SELECTOR_DIALOG);
+                    changeUser.show(getSupportFragmentManager(), "" + CHANGE_USER_SELECTOR_DIALOG);
                 }
             });
 
@@ -256,7 +251,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         Bitmap profilePicture = mCurrentUser.getImage();
 
         // If there were no profile picture use the default template
-        if(profilePicture == null) {
+        if (profilePicture == null) {
             // Fetch the default template
             profilePicture = ((BitmapDrawable) this.getResources().getDrawable(R.drawable.no_profile_pic)).getBitmap();
         }
@@ -277,9 +272,12 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     @Override
     public void confirmDialog(int methodID) {
         switch (methodID) {
-            case METHOD_ID_LOGOUT :
+            case METHOD_ID_LOGOUT: {
                 startActivity(LauncherUtility.logOutIntent(HomeActivity.this));
-                Toast.makeText(this,"Logget ud", Toast.LENGTH_LONG).show(); break;
+                Toast.makeText(this, "Logget ud", Toast.LENGTH_LONG).show();
+                finish();
+                break;
+            }
         }
 
     }
@@ -287,7 +285,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     @Override
     public void onProfileSelected(int i, Profile profile) {
 
-        if(i == CHANGE_USER_SELECTOR_DIALOG) {
+        if (i == CHANGE_USER_SELECTOR_DIALOG) {
 
             // Update the profile
             mCurrentUser = profile;
@@ -398,7 +396,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
 
             mCurrentLoadedApps = appInfos;
 
-            CirclePageIndicator titleIndicator = (CirclePageIndicator)findViewById(R.id.pageIndicator);
+            CirclePageIndicator titleIndicator = (CirclePageIndicator) findViewById(R.id.pageIndicator);
             titleIndicator.setViewPager(mAppViewPager);
 
             startObservingApps();
