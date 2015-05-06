@@ -29,7 +29,6 @@ import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.dblib.controllers.ProfileController;
 import dk.aau.cs.giraf.dblib.models.Profile;
-import dk.aau.cs.giraf.launcher.BuildConfig;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
@@ -119,7 +118,7 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
         startingAnimation.setAnimationListener(this);
 
         // Start the remote syncing service
-        new main(this).startSynch(new MessageHandler(this, loadAnimation), BuildConfig.ENABLE_SYMMETRICDS, BuildConfig.USE_TEST_SERVER, BuildConfig.USE_PRODUCTION_SERVER);
+        new main(this).startSynch(new MessageHandler(this, loadAnimation));
     }
 
     /**
