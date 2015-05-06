@@ -57,6 +57,18 @@ android {
         }
         debug {
             testCoverageEnabled true
+
+        }
+        debug {
+            testCoverageEnabled true
+            buildConfigField "boolean", "USE_TEST_SERVER", "true"
+            buildConfigField "boolean", "ENABLE_SYMMETRICDS", "false"
+            buildConfigField "boolean", "USE_PRODUCTION_SERVER", "false"
+        }
+        release {
+            buildConfigField "boolean", "USE_PRODUCTION_SERVER", "true"
+            buildConfigField "boolean", "USE_TEST_SERVER", "false"
+            buildConfigField "boolean", "ENABLE_SYMMETRICDS", "false"
         }
     }
 
