@@ -6,11 +6,9 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
@@ -23,11 +21,15 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import dk.aau.cs.giraf.gui.GProfileSelector;
+import dk.aau.cs.giraf.activity.GirafActivity;
+import dk.aau.cs.giraf.dblib.Helper;
+import dk.aau.cs.giraf.dblib.models.Application;
+import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.gui.GWidgetProfileSelection;
 import dk.aau.cs.giraf.gui.GWidgetUpdater;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GirafConfirmDialog;
+import dk.aau.cs.giraf.gui.GirafProfileSelectorDialog;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
@@ -38,33 +40,29 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
 import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
-import dk.aau.cs.giraf.oasis.lib.Helper;
-import dk.aau.cs.giraf.oasis.lib.controllers.ProfileController;
-import dk.aau.cs.giraf.oasis.lib.models.Application;
-import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 /**
  * The primary activity of Launcher. Allows the user to start other GIRAF apps and access the settings
  * activity. It requires a user id in the parent intent.
  */
-public class HomeActivity extends FragmentActivity implements AppsFragmentInterface, GirafConfirmDialog.Confirmation {
+public class HomeActivity extends GirafActivity implements AppsFragmentInterface, GirafConfirmDialog.Confirmation, GirafProfileSelectorDialog.OnSingleProfileSelectedListener {
 
+    private static final int CHANGE_USER_SELECTOR_DIALOG = 100;
     private Profile mCurrentUser;
     private Profile mLoggedInGuardian;
-    private Helper mHelper;
+
     private LoadHomeActivityApplicationTask loadHomeActivityApplicationTask;
 
     private ArrayList<AppInfo> mCurrentLoadedApps;
 
     private GWidgetUpdater widgetUpdater;
-    private GWidgetProfileSelection widgetProfileSelection;
-    private GProfileSelector profileSelectorDialog;
+
 
     private ViewPager mAppViewPager;
 
     private Timer mAppsUpdater;
 
-    private final int METHOD_ID_LOGOUT  = 1;
+    private final int METHOD_ID_LOGOUT = 1;
 
     @Override
     public Profile getCurrentUser() {
@@ -87,13 +85,12 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
 
-        mHelper = LauncherUtility.getOasisHelper(this);
+        Helper mHelper = LauncherUtility.getOasisHelper(this);
 
-        mCurrentUser = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.CHILD_ID, -1));
-        mLoggedInGuardian = mHelper.profilesHelper.getProfileById(getIntent().getExtras().getInt(Constants.GUARDIAN_ID));
+        mCurrentUser = mHelper.profilesHelper.getById(getIntent().getExtras().getLong(Constants.CHILD_ID, -1));
+        mLoggedInGuardian = mHelper.profilesHelper.getById(getIntent().getExtras().getLong(Constants.GUARDIAN_ID));
 
-        if(mCurrentUser == null)
-        {
+        if (mCurrentUser == null) {
             mCurrentUser = mLoggedInGuardian;
         }
 
@@ -107,6 +104,7 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
             LauncherUtility.showDebugInformation(this);
         }
 
+        // Get the row and column size for the grids in the AppViewPager
         final int rowsSize = ApplicationGridResizer.getGridRowSize(this, mCurrentUser);
         final int columnsSize = ApplicationGridResizer.getGridColumnSize(this, mCurrentUser);
 
@@ -138,27 +136,13 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
         EasyTracker.getInstance(this).activityStop(this);
     }
 
-    /**
-     * Loads app icons into the activity. Before this point in the activity lifecycle, it is not
-     * possible to determine the size of the app container, making et much more difficult to calculate
-     * icon spacing.
-     *
-     * @param hasFocus {@code true} if the activity has focus.
-     */
-
-    /**
-     * Redraws the application container and resumes the timer looking for updates in the set of
-     * available apps.
-     *
-     * @see HomeActivity#startObservingApps()
-     */
     @Override
     protected void onResume() {
         super.onResume();
 
+        // Reload applications (Some applications might have been (un)installed)
         reloadApplications();
 
-        //startObservingApps();
         if (widgetUpdater != null) {
             widgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_START);
         }
@@ -181,6 +165,8 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
         if (widgetUpdater != null) {
             widgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_STOP);
         }
+
+        // Cancel any loading task still running
         if (loadHomeActivityApplicationTask != null) {
             loadHomeActivityApplicationTask.cancel(true);
         }
@@ -211,17 +197,13 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
      * @see dk.aau.cs.giraf.gui.GirafButton
      */
     private void loadWidgets() {
-        GirafButton logoutButton = (GirafButton) findViewById(R.id.logout_button);
-        widgetProfileSelection = (GWidgetProfileSelection) findViewById(R.id.profile_widget);
-        GirafButton settingsButton = (GirafButton) findViewById(R.id.settings_button);
-        GirafButton changeUserButton = (GirafButton) findViewById(R.id.change_user_button);
 
-        /*Setup the profile selector dialog. If the current user is not a guardian, the guardian is used
-          as the current user.*/
-        if (mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
-            profileSelectorDialog = new GProfileSelector(this, mLoggedInGuardian, mCurrentUser);
-        else
-            profileSelectorDialog = new GProfileSelector(this, mLoggedInGuardian, null);
+        // Fetch references to buttons
+        final GirafButton logoutButton = (GirafButton) findViewById(R.id.logout_button);
+        final GirafButton settingsButton = (GirafButton) findViewById(R.id.settings_button);
+        final GirafButton changeUserButton = (GirafButton) findViewById(R.id.change_user_button);
+
+        final GWidgetProfileSelection widgetProfileSelection = (GWidgetProfileSelection) findViewById(R.id.profile_widget);
 
         //Set up widget updater, which updates the widget's view regularly, according to its status.
         widgetUpdater = new GWidgetUpdater();
@@ -241,34 +223,33 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
                     startActivity(intent);
                 }
             });
+
+            // Set the change user button to open the change user dialog
+            changeUserButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    GirafProfileSelectorDialog changeUser = GirafProfileSelectorDialog.newInstance(HomeActivity.this, mCurrentUser.getId(), false, false, "Vælg den borger du vil skifte til.", CHANGE_USER_SELECTOR_DIALOG);
+                    changeUser.show(getSupportFragmentManager(), "" + CHANGE_USER_SELECTOR_DIALOG);
+                }
+            });
+
         } else { // The uer had citizen permissions
             settingsButton.setVisibility(View.GONE);
             changeUserButton.setVisibility(View.GONE);
-        }
 
-        // Set the change user button to open the change user dialog
-        changeUserButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mCurrentUser.getRole().getValue() < Profile.Roles.CHILD.getValue()) {
-                    profileSelectorDialog.show();
-                }
-            }
-        });
+        }
 
         // Fetch the profile picture
         Bitmap profilePicture = mCurrentUser.getImage();
 
         // If there were no profile picture use the default template
-        if(profilePicture == null) {
+        if (profilePicture == null) {
             // Fetch the default template
             profilePicture = ((BitmapDrawable) this.getResources().getDrawable(R.drawable.no_profile_pic)).getBitmap();
         }
 
         // Set the profile picture
         widgetProfileSelection.setImageBitmap(profilePicture);
-
-        updatesProfileSelector();
 
         // Set the logout button to show the logout dialog
         logoutButton.setOnClickListener(new View.OnClickListener() {
@@ -280,47 +261,35 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
         });
     }
 
-    /**
-     * Updates the ProfileSelector. It is needed when a new user has been selected, as a different
-     * listener is needed, and the app container has to be reloaded.
-     */
-    private void updatesProfileSelector() {
-        profileSelectorDialog.setOnListItemClick(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                ProfileController pc = new ProfileController(HomeActivity.this);
-                mCurrentUser = pc.getProfileById((int) l);
-                profileSelectorDialog.dismiss();
-
-                if (mCurrentUser.getRole() != Profile.Roles.GUARDIAN) {
-                    profileSelectorDialog = new GProfileSelector(HomeActivity.this, mLoggedInGuardian, mCurrentUser);
-                } else {
-                    profileSelectorDialog = new GProfileSelector(HomeActivity.this, mLoggedInGuardian, null);
-                }
-
-                widgetProfileSelection.setImageBitmap(mCurrentUser.getImage());
-
-                updatesProfileSelector();
-
-                // Reload the widgets in the left side of the screen
-                loadWidgets();
-
-                // Reload the application container, as a new user has been selected.
-                reloadApplications();
-            }
-        });
-    }
-
     @Override
     public void confirmDialog(int methodID) {
         switch (methodID) {
-            case METHOD_ID_LOGOUT :
+            case METHOD_ID_LOGOUT: {
                 startActivity(LauncherUtility.logOutIntent(HomeActivity.this));
-                Toast.makeText(this,"Logget ud", Toast.LENGTH_LONG).show(); break;
+                Toast.makeText(this, "Logget ud", Toast.LENGTH_LONG).show();
+                finish();
+                break;
+            }
         }
 
     }
 
+    @Override
+    public void onProfileSelected(final int i, final Profile profile) {
+
+        if (i == CHANGE_USER_SELECTOR_DIALOG) {
+
+            // Update the profile
+            mCurrentUser = profile;
+
+            // Reload the widgets in the left side of the screen
+            loadWidgets();
+
+            // Reload the application container, as a new user has been selected.
+            reloadApplications();
+        }
+
+    }
 
     /**
      * Task for observing if the set of available apps has changed.
@@ -337,10 +306,10 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
          */
         @Override
         public void run() {
-            List<Application> girafAppsList = ApplicationControlUtility.getAvailableGirafAppsForUser(HomeActivity.this, mCurrentUser); // For home_activity activity
-            SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(HomeActivity.this, mCurrentUser);
-            Set<String> androidAppsPackagenames = prefs.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
-            List<Application> androidAppsList = ApplicationControlUtility.convertPackageNamesToApplications(HomeActivity.this, androidAppsPackagenames);
+            final List<Application> girafAppsList = ApplicationControlUtility.getAvailableGirafAppsForUser(HomeActivity.this, mCurrentUser); // For home_activity activity
+            final SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(HomeActivity.this, mCurrentUser);
+            final Set<String> androidAppsPackagenames = prefs.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
+            final List<Application> androidAppsList = ApplicationControlUtility.convertPackageNamesToApplications(HomeActivity.this, androidAppsPackagenames);
             girafAppsList.addAll(androidAppsList);
             if (AppInfo.isAppListsDifferent(mCurrentLoadedApps, girafAppsList)) {
                 // run this on UI thread since UI might need to get updated
@@ -413,12 +382,12 @@ public class HomeActivity extends FragmentActivity implements AppsFragmentInterf
          * Once we have loaded applications, we start observing for new apps
          */
         @Override
-        protected void onPostExecute(ArrayList<AppInfo> appInfos) {
+        protected void onPostExecute(final ArrayList<AppInfo> appInfos) {
             super.onPostExecute(appInfos);
 
             mCurrentLoadedApps = appInfos;
 
-            CirclePageIndicator titleIndicator = (CirclePageIndicator)findViewById(R.id.pageIndicator);
+            CirclePageIndicator titleIndicator = (CirclePageIndicator) findViewById(R.id.pageIndicator);
             titleIndicator.setViewPager(mAppViewPager);
 
             startObservingApps();

@@ -9,13 +9,12 @@ import android.os.Parcelable;
 import java.util.Collections;
 import java.util.List;
 
+import dk.aau.cs.giraf.dblib.models.Application;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
-import dk.aau.cs.giraf.oasis.lib.models.Application;
 
 /**
  * The Application class from OasisLib is extended, since Launcher requires some additional information.
  * This includes the icon and background color of an app, along with methods for getting and setting these.
- *
  */
 public class AppInfo extends Application implements Parcelable {
 
@@ -24,11 +23,14 @@ public class AppInfo extends Application implements Parcelable {
      */
     private int mBgColor;
 
-    /** The application icon. */
+    /**
+     * The application icon.
+     */
     private Drawable mIcon;
 
     /**
      * This function returns the application that this AppInfo extends.
+     *
      * @return The Application of the AppInfo.
      */
     public Application getApp() {
@@ -59,7 +61,7 @@ public class AppInfo extends Application implements Parcelable {
         this.setAuthor(parentApp.getAuthor());
     }
 
-    public AppInfo(Parcel in){
+    public AppInfo(Parcel in) {
 
         /* Data is put in, in this order:
         Int:
@@ -74,15 +76,15 @@ public class AppInfo extends Application implements Parcelable {
         private String description;
         */
         String[] stringdata = new String[5];
-        int[] intdata = new int[3];
+        long[] longdata = new long[3];
 
         in.readStringArray(stringdata);
-        in.readIntArray(intdata);
+        in.readLongArray(longdata);
 
         // Integers
-        this.setId(intdata[0]);
-        this.setBgColor(intdata[1]);
-        this.setAuthor(intdata[2]);
+        this.setId(longdata[0]);
+        this.setBgColor((int) longdata[1]);
+        this.setAuthor(longdata[2]);
 
         // Strings
         this.setName(stringdata[0]);
@@ -98,13 +100,12 @@ public class AppInfo extends Application implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags)
-    {
+    public void writeToParcel(Parcel dest, int flags) {
         // Write strings
         dest.writeStringArray(new String[]{this.getName(), this.getVersion(), this.getPackage(), this.getActivity(), this.getDescription()});
 
         // Write integers
-        dest.writeIntArray(new int[]{this.getId(),this.getBgColor(), this.getAuthor() });
+        dest.writeLongArray(new long[]{this.getId(), this.getBgColor(), (int) this.getAuthor()});
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
@@ -167,8 +168,7 @@ public class AppInfo extends Application implements Parcelable {
         }
     }
 
-    public static boolean isAppListsDifferent(final List<AppInfo> appInfos, final List<Application> applications)
-    {
+    public static boolean isAppListsDifferent(final List<AppInfo> appInfos, final List<Application> applications) {
         if ((appInfos == null || appInfos.isEmpty()) && (applications == null || applications.isEmpty())) {
             return false;
         }
@@ -177,16 +177,12 @@ public class AppInfo extends Application implements Parcelable {
         }
         if (appInfos.size() != applications.size()) {
             return true;
-        }
-        else
-        {
+        } else {
             Collections.sort(appInfos);
             Collections.sort(applications);
 
-            for(int appCounter = 0; appCounter < appInfos.size(); appCounter++)
-            {
-                if(!appInfos.get(appCounter).equals(applications.get(appCounter)))
-                {
+            for (int appCounter = 0; appCounter < appInfos.size(); appCounter++) {
+                if (!(appInfos.get(appCounter).getId() == applications.get(appCounter).getId())) {
                     return true;
                 }
             }

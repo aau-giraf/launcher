@@ -14,12 +14,12 @@ import android.widget.ScrollView;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import dk.aau.cs.giraf.dblib.models.Application;
+import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
-import dk.aau.cs.giraf.oasis.lib.models.Application;
-import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 /**
  * This is the main class that loads applications as AppImageViews into a given targetlayout
@@ -31,13 +31,13 @@ import dk.aau.cs.giraf.oasis.lib.models.Profile;
  * @see dk.aau.cs.giraf.launcher.settings.settingsappmanagement.GirafFragment.loadGirafApplicationTask
  * @see dk.aau.cs.giraf.launcher.activities.HomeActivity.LoadHomeActivityApplicationTask
  */
-public abstract class LoadApplicationTask extends AsyncTask<Application, View, ArrayList <AppInfo>> {
+public abstract class LoadApplicationTask extends AsyncTask<Application, View, ArrayList<AppInfo>> {
 
     protected Profile currentUser;
-    protected Profile guardian;
-    protected Context context;
-    protected ViewPager appsViewPager;
-    protected View.OnClickListener onClickListener;
+    protected final Profile guardian;
+    protected final Context context;
+    protected final ViewPager appsViewPager;
+    protected final View.OnClickListener onClickListener;
 
     protected ProgressBar progressbar;
 
@@ -47,10 +47,10 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
      * @param context         The context for the current activity
      * @param currentUser     The user of the current activity. If set to null, the user will be found based on the context
      * @param guardian        The guardian of the current user.
-     * @param appsViewPager    The layout that the AppImageViews should be put into
+     * @param appsViewPager   The layout that the AppImageViews should be put into
      * @param onClickListener The onClickListener attached to each AppImageView. These vary depending on the purpose of the layout they are loaded into.
      */
-    public LoadApplicationTask(Context context, Profile currentUser, Profile guardian, ViewPager appsViewPager, View.OnClickListener onClickListener) {
+    public LoadApplicationTask(final Context context, final Profile currentUser, final Profile guardian, final ViewPager appsViewPager, final View.OnClickListener onClickListener) {
         this.context = context;
         this.currentUser = currentUser;
         this.guardian = guardian;
@@ -82,11 +82,9 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
      * @return a HashMap containing all the apps that there was generated AppImageViews for.
      */
     @Override
-    protected ArrayList<AppInfo> doInBackground(Application... applications)
-    {
+    protected ArrayList<AppInfo> doInBackground(Application... applications) {
         // Only creates AppImageViews if there actually are applications to generate
-        if (applications != null && applications.length != 0)
-        {
+        if (applications != null && applications.length != 0) {
             // If the current user is null, find the user based on the context
             if (currentUser == null) {
                 currentUser = LauncherUtility.getCurrentUser(context);
@@ -121,22 +119,18 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
         final int rowsSize = ApplicationGridResizer.getGridRowSize(this.context, currentUser);
         final int columnsSize = ApplicationGridResizer.getGridColumnSize(this.context, currentUser);
 
-        if (appInfos!= null && appInfos.size() > 0)
-        {
+        if (appInfos != null && appInfos.size() > 0) {
             changeVisibilityOfNoAppsMessage(View.GONE);
-        }
-        else
-        {
+        } else {
             changeVisibilityOfNoAppsMessage(View.VISIBLE);
         }
 
-        ((AppsFragmentAdapter)this.appsViewPager.getAdapter()).swapApps(appInfos , rowsSize, columnsSize);
+        ((AppsFragmentAdapter) this.appsViewPager.getAdapter()).swapApps(appInfos, rowsSize, columnsSize);
 
     }
 
-    public android.support.v4.app.FragmentManager getFragmentMangerForAppsFragmentAdapter()
-    {
-        return ((FragmentActivity)context).getSupportFragmentManager();
+    public android.support.v4.app.FragmentManager getFragmentMangerForAppsFragmentAdapter() {
+        return ((FragmentActivity) context).getSupportFragmentManager();
     }
 
     /**

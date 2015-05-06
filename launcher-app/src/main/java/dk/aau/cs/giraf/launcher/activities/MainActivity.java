@@ -1,41 +1,49 @@
 package dk.aau.cs.giraf.launcher.activities;
 
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
+import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.os.Handler;
 
+import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import dk.aau.cs.giraf.activity.GirafActivity;
+import dk.aau.cs.giraf.dblib.Helper;
+import dk.aau.cs.giraf.dblib.controllers.ProfileController;
+import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
-import dk.aau.cs.giraf.oasis.lib.Helper;
-import dk.aau.cs.giraf.oasis.lib.controllers.ProfileController;
-import dk.aau.cs.giraf.oasis.lib.models.Profile;
-import dk.aau.cs.giraf.oasis.localdb.main;
+import dk.aau.cs.giraf.localdb.main;
 
 /**
  * Displays the splash logo of Launcher, and then starts {@link dk.aau.cs.giraf.launcher.activities.AuthenticationActivity}.
  * Provides variables for enabling debug mode before compilation.
  */
-public class MainActivity extends Activity implements Animation.AnimationListener {
+public class MainActivity extends GirafActivity implements Animation.AnimationListener {
     //private Context mContext;
-    private int oldSessionGuardianID = -1;
+    private long oldSessionGuardianID = -1;
     Animation startingAnimation;
     Animation loadAnimation;
-    Handler messageHandler;
 
     /* ************* DEBUGGING MODE ************* */
     // TODO: ONLY USED FOR DEBUGGING PURPOSES!!!
@@ -79,8 +87,6 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 
         setContentView(R.layout.main_activity);
 
-        messageHandler = new MessageHandler();
-
         //Load the preference determining whether the animation should be shown
         findOldSession();
 
@@ -94,9 +100,6 @@ public class MainActivity extends Activity implements Animation.AnimationListene
 
         // Skip loading screen if monkey test
         if (ActivityManager.isUserAMonkey()) {
-            Helper h = new Helper(this);
-            h.CreateDummyData();
-
             startNextActivity();
         }
 
@@ -111,12 +114,11 @@ public class MainActivity extends Activity implements Animation.AnimationListene
         startingAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
         loadAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
 
-
         findViewById(R.id.giraficon).startAnimation(startingAnimation);
         startingAnimation.setAnimationListener(this);
 
         // Start the remote syncing service
-        new main(this).startSynch(messageHandler);
+        new main(this).startSynch(new MessageHandler(this, loadAnimation));
     }
 
     /**
@@ -143,8 +145,6 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      */
     @Override
     public void onAnimationEnd(Animation animation) {
-        TextView welcomeText = (TextView) findViewById(R.id.welcome_text);
-        welcomeText.setText("Henter data...");
         findViewById(R.id.giraficon).startAnimation(loadAnimation);
     }
 
@@ -169,7 +169,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      */
     public void startNextActivity() {
         Intent intent;
-        TextView welcomeText = (TextView) findViewById(R.id.welcome_text);
+        TextView welcomeText = (TextView) findViewById(R.id.welcome_title);
         welcomeText.setText("Klar!");
 
         if (DEBUG_MODE && SKIP_AUTHENTICATION) {
@@ -184,8 +184,8 @@ public class MainActivity extends Activity implements Animation.AnimationListene
             intent = new Intent(this, HomeActivity.class);
 
             SharedPreferences sharedPreferences = getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
-            final int guardianID = sharedPreferences.getInt(Constants.GUARDIAN_ID, -1);
-            final int childID = sharedPreferences.getInt(Constants.CHILD_ID, -1);
+            final long guardianID = sharedPreferences.getLong(Constants.GUARDIAN_ID, -1);
+            final long childID = sharedPreferences.getLong(Constants.CHILD_ID, -1);
 
             intent.putExtra(Constants.GUARDIAN_ID, guardianID);
             intent.putExtra(Constants.CHILD_ID, childID);
@@ -211,7 +211,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      * @return An intent for starting {@code MainActivity} with the authenticated profile ID as an extra.
      */
     private Intent skipAuthentication(boolean asChild) {
-        Helper helper = LauncherUtility.getOasisHelper(this);
+        final Helper helper = LauncherUtility.getOasisHelper(this);
         Profile profile;
 
         //Get the relevant profile info.
@@ -222,7 +222,7 @@ public class MainActivity extends Activity implements Animation.AnimationListene
             profile = helper.profilesHelper.authenticateProfile("d74ecba82569eafc763256e45a126b4ce882f8a81327f28a380faa13eb2ec8f3");
         }
 
-        Intent intent = new Intent(this, HomeActivity.class);
+        final Intent intent = new Intent(this, HomeActivity.class);
 
         //Add the profile ID to the intent, and save information on the session.
         intent.putExtra(Constants.GUARDIAN_ID, profile.getId());
@@ -237,10 +237,10 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      */
     private void findOldSession() {
         if (LauncherUtility.sessionExpired(this)) {
-            oldSessionGuardianID = -1;
+            oldSessionGuardianID = -1L;
         } else {
-            SharedPreferences sharedPreferences = getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
-            oldSessionGuardianID = sharedPreferences.getInt(Constants.GUARDIAN_ID, -1);
+            final SharedPreferences sharedPreferences = getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
+            oldSessionGuardianID = sharedPreferences.getLong(Constants.GUARDIAN_ID, -1);
         }
     }
 
@@ -248,14 +248,101 @@ public class MainActivity extends Activity implements Animation.AnimationListene
      * Used to communicate with DownloadService
      * To determine if a download is complete
      */
-    public class MessageHandler extends Handler {
+    public static class MessageHandler extends Handler {
+
+        private final Animation loadAnimation;
+
+        // Find the views that will be used
+        final TextView welcomeTitle;
+        final TextView welcomeDescription;
+        final TextView progressTextPercent;
+        final ProgressBar progressBar;
+        final WeakReference<MainActivity> activity;
+
+        final ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+        public MessageHandler(final MainActivity activity, final Animation loadAnimation) {
+            this.activity = new WeakReference<MainActivity>(activity);
+            this.loadAnimation = loadAnimation;
+            this.welcomeTitle = (TextView) activity.findViewById(R.id.welcome_title);
+            this.welcomeDescription = (TextView) activity.findViewById(R.id.welcome_desciption);
+            this.progressTextPercent = (TextView) activity.findViewById(R.id.progress_bar_text);
+            this.progressBar = (ProgressBar) activity.findViewById(R.id.progress_bar);
+        }
+
+        private boolean isNetworkAvailable() {
+            ConnectivityManager connectivityManager = (ConnectivityManager) this.activity.get().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null;
+        }
+
         @Override
         public void handleMessage(Message message) {
-            int progress = message.arg1;
+            final int progress = message.arg1;
             if (progress == 100) {
-                startNextActivity();
+                executorService.shutdown();
+                this.activity.get().startNextActivity();
             } else {
-                Log.d("Progress", Integer.toString(progress));
+                // Run the check on a background-thread
+                executorService.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        boolean hasConnectionTemp = isNetworkAvailable();
+
+                        if (hasConnectionTemp) {
+                            try {
+                                HttpURLConnection urlc = (HttpURLConnection) new URL("http://clients3.google.com/generate_204").openConnection();
+                                urlc.setRequestProperty("User-Agent", "Android");
+                                urlc.setRequestProperty("Connection", "close");
+                                urlc.setConnectTimeout(1500);
+                                urlc.connect();
+                                hasConnectionTemp = (urlc.getResponseCode() == 204 && urlc.getContentLength() == 0);
+                            } catch (IOException e) {
+                                hasConnectionTemp = false;
+                            }
+                        }
+
+                        final boolean hasConnection = hasConnectionTemp;
+
+                        // Run the following on the UI-thread
+                        activity.get().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (hasConnection) {
+                                    loadAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
+
+                                    // Update the views accordingly to the progress
+                                    welcomeTitle.setText("Henter data...");
+
+                                    welcomeDescription.setVisibility(View.GONE);
+                                    progressBar.setVisibility(View.VISIBLE);
+                                    progressTextPercent.setVisibility(View.VISIBLE);
+
+                                    progressTextPercent.setText(progress + "%");
+                                    progressBar.setProgress(progress);
+
+                                    welcomeTitle.setTextColor(activity.get().getResources().getColor(R.color.giraf_loading_textColor));
+                                } else {
+                                    // Cancel the animation and make is very slow (in order to stop it)
+                                    loadAnimation.cancel();
+                                    loadAnimation.setDuration(Long.MAX_VALUE);
+
+                                    progressBar.setVisibility(View.GONE);
+                                    progressTextPercent.setVisibility(View.GONE);
+                                    welcomeDescription.setVisibility(View.VISIBLE);
+
+                                    welcomeTitle.setText("Ingen internet forbindelse!");
+                                    welcomeDescription.setText("Opret forbindelse til internettet for at hente data");
+
+                                    welcomeTitle.setTextColor(Color.parseColor("#900000"));
+                                    welcomeDescription.setTextColor(Color.parseColor("#900000"));
+                                }
+                            }
+                        });
+
+                        Log.d("Progress", Integer.toString(progress));
+                    }
+                });
             }
         }
     }

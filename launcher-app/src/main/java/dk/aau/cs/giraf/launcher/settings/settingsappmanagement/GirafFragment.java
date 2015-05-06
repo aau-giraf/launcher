@@ -1,6 +1,5 @@
 package dk.aau.cs.giraf.launcher.settings.settingsappmanagement;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +15,10 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import dk.aau.cs.giraf.dblib.controllers.ProfileApplicationController;
+import dk.aau.cs.giraf.dblib.models.Application;
+import dk.aau.cs.giraf.dblib.models.Profile;
+import dk.aau.cs.giraf.dblib.models.ProfileApplication;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
@@ -24,10 +27,6 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 import dk.aau.cs.giraf.launcher.widgets.AppImageView;
-import dk.aau.cs.giraf.oasis.lib.controllers.ProfileApplicationController;
-import dk.aau.cs.giraf.oasis.lib.models.Application;
-import dk.aau.cs.giraf.oasis.lib.models.Profile;
-import dk.aau.cs.giraf.oasis.lib.models.ProfileApplication;
 
 /**
  * This is the Fragment used to show the available Giraf apps installed on the device.
@@ -38,7 +37,7 @@ public class GirafFragment extends AppContainerFragment {
     private Timer appsUpdater;
     private ArrayList<AppInfo> appInfos;
     private loadGirafApplicationTask loadApplicationTask;
-    private View.OnClickListener listener;
+    //private View.OnClickListener listener;
 
     /**
      * Because we are dealing with a Fragment, OnCreateView is where most of the variables are set.
@@ -69,11 +68,6 @@ public class GirafFragment extends AppContainerFragment {
         titleIndicator.setViewPager(appView);
 
         return view;
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
     }
 
     /**
@@ -149,14 +143,16 @@ public class GirafFragment extends AppContainerFragment {
             public void onClick(View v) {
                 AppImageView appImageView = (AppImageView) v;
                 appImageView.toggle();
-                ProfileApplicationController pac = new ProfileApplicationController(getActivity());
-                AppInfo app = appImageView.appInfo;
+                final ProfileApplicationController pac = new ProfileApplicationController(getActivity());
+                final AppInfo app = appImageView.appInfo;
 
                 if (userHasApplicationInView(pac, app.getApp(), currentUser)) {
-                    pac.removeProfileApplicationByProfileAndApplication(app.getApp(), currentUser);
-                } else {
-                    ProfileApplication pa = new ProfileApplication(currentUser.getId(), app.getApp().getId());
-                    pac.insertProfileApplication(pa);
+                    pac.remove(currentUser.getId(), app.getApp().getId());
+                }
+                else
+                {
+                    final ProfileApplication pa = new ProfileApplication(currentUser.getId(), app.getApp().getId());
+                    pac.insert(pa);
                 }
             }
         };

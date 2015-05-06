@@ -18,10 +18,10 @@ import com.google.analytics.tracking.android.StandardExceptionParser;
 
 import java.util.Date;
 
+import dk.aau.cs.giraf.dblib.Helper;
+import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.AuthenticationActivity;
-import dk.aau.cs.giraf.oasis.lib.Helper;
-import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 /**
  * <Code>LauncherUtility</Code> contains static methods related to running the Launcher,
@@ -152,12 +152,12 @@ public abstract class LauncherUtility {
      * @param id        ID of the guardian logging in.
      * @param loginTime The time of login (UNIX time, milliseconds).
      */
-    public static void saveLogInData(Context context, int id, long loginTime) {
-        SharedPreferences sp = context.getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
-        SharedPreferences.Editor editor = sp.edit();
+    public static void saveLogInData(final Context context, final long id, final long loginTime) {
+        final SharedPreferences sp = context.getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
+        final SharedPreferences.Editor editor = sp.edit();
 
         editor.putLong(Constants.LOGIN_TIME, loginTime);
-        editor.putInt(Constants.GUARDIAN_ID, id);
+        editor.putLong(Constants.GUARDIAN_ID, id);
 
         editor.apply();
     }
@@ -169,12 +169,12 @@ public abstract class LauncherUtility {
      * @param context Context in which the login information was saved.
      * @return The currently logged in user. If no login information is found, {@code null} is returned.
      */
-    public static Profile getCurrentUser(Context context) {
-        Helper helper = getOasisHelper(context);
+    public static Profile getCurrentUser(final Context context) {
+        final Helper helper = getOasisHelper(context);
 
         //Get the ID of the logged in user from SharedPreferences.
-        SharedPreferences sp = context.getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
-        int currentUserID = sp.getInt(Constants.GUARDIAN_ID, -1);
+        final SharedPreferences sp = context.getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
+        final int currentUserID = sp.getInt(Constants.GUARDIAN_ID, -1);
 
         //Return null if no login information is found, otherwise return the the profile.
         if (currentUserID == -1) {
@@ -190,7 +190,7 @@ public abstract class LauncherUtility {
      * @param context Context of the current activity.
      * @return The intent required to launch authentication_activity.
      */
-    public static Intent logOutIntent(Context context) {
+    public static Intent logOutIntent(final Context context) {
         clearAuthData(context);
 
         return new Intent(context, AuthenticationActivity.class);
@@ -201,12 +201,14 @@ public abstract class LauncherUtility {
      *
      * @param context Context of the current activity.
      */
-    public static void clearAuthData(Context context) {
-        SharedPreferences sp = context.getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
-        SharedPreferences.Editor editor = sp.edit();
+    public static void clearAuthData(final Context context) {
+
+        final SharedPreferences sp = context.getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
+        final SharedPreferences.Editor editor = sp.edit();
 
         editor.putLong(Constants.LOGIN_TIME, 1);
         editor.putLong(Constants.GUARDIAN_ID, -1);
+        editor.putLong(Constants.CHILD_ID, -1);
 
         editor.apply();
     }
@@ -217,7 +219,7 @@ public abstract class LauncherUtility {
      * @param context Context of the current activity.
      * @return True if a log in is required; otherwise false.
      */
-    public static boolean sessionExpired(Context context) {
+    public static boolean sessionExpired(final Context context) {
         SharedPreferences sp = context.getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
         Long lastAuthTime = sp.getLong(Constants.LOGIN_TIME, 1);
         Date d = new Date();

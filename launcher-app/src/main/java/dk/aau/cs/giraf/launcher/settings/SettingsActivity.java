@@ -9,31 +9,31 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.widget.AdapterView;
 
 import java.util.ArrayList;
 
 import dk.aau.cs.giraf.activity.GirafActivity;
-import dk.aau.cs.giraf.gui.GProfileSelector;
+import dk.aau.cs.giraf.dblib.Helper;
+import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.gui.GirafButton;
+import dk.aau.cs.giraf.gui.GirafProfileSelectorDialog;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementFragment;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
-import dk.aau.cs.giraf.oasis.lib.Helper;
-import dk.aau.cs.giraf.oasis.lib.controllers.ProfileController;
-import dk.aau.cs.giraf.oasis.lib.models.Profile;
 
 /**
-* Activity responsible for handling Launcher settings_activity and starting
-* other setting-related activities.
-*/
+ * Activity responsible for handling Launcher settings_activity and starting
+ * other setting-related activities.
+ */
 public class SettingsActivity extends GirafActivity
         implements SettingsListFragment.SettingsListFragmentListener,
+        GirafProfileSelectorDialog.OnSingleProfileSelectedListener,
         AppsFragmentInterface {
+
+    private static final int CHANGE_USER_SELECTOR_DIALOG = 100;
 
     /**
      * The variables mostly used inside the class
@@ -44,7 +44,6 @@ public class SettingsActivity extends GirafActivity
     private android.support.v4.app.Fragment mActiveSupportFragment;
     private Profile mCurrentUser = null;
     private Profile mLoggedInGuardian;
-    private GProfileSelector mProfileSelector;
 
     /**
      * Global variable containing giraf applications with settings.
@@ -74,40 +73,36 @@ public class SettingsActivity extends GirafActivity
 
         setContentView(R.layout.settings_activity);
 
+
+        final Helper mHelper = LauncherUtility.getOasisHelper(this);
+
+        final long childId = getIntent().getExtras().getLong(Constants.CHILD_ID);
+        final long guardianId = getIntent().getExtras().getLong(Constants.GUARDIAN_ID);
+
+        mLoggedInGuardian = mHelper.profilesHelper.getById(guardianId);
+
+        if (childId != Constants.NO_CHILD_SELECTED_ID) {
+            mCurrentUser = mHelper.profilesHelper.getById(childId);
+        } else {
+            mCurrentUser = mHelper.profilesHelper.getById(guardianId);
+        }
+
+        // Change the title of the action bar to include the name of the current user
+        if (mCurrentUser != null) {
+            this.setActionBarTitle(getString(R.string.settingsFor) + mCurrentUser.getName());
+        }
+
         GirafButton changeUserButton = new GirafButton(this, this.getResources().getDrawable(R.drawable.icon_change_user));
         changeUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                mProfileSelector.show();
+                GirafProfileSelectorDialog changeUser = GirafProfileSelectorDialog.newInstance(SettingsActivity.this, mLoggedInGuardian.getId(), false, false, "Vælg den borger du vil skifte til.", CHANGE_USER_SELECTOR_DIALOG);
+                changeUser.show(getSupportFragmentManager(), "" + CHANGE_USER_SELECTOR_DIALOG);
             }
         });
 
-        addGirafButtonToActionBar(changeUserButton,LEFT);
-
-        final Helper mHelper = LauncherUtility.getOasisHelper(this);
-
-        final int childId = getIntent().getExtras().getInt(Constants.CHILD_ID);
-        final int guardianId = getIntent().getExtras().getInt(Constants.GUARDIAN_ID);
-
-        mLoggedInGuardian = mHelper.profilesHelper.getProfileById(guardianId);
-
-        if(childId != Constants.NO_CHILD_SELECTED_ID)
-        {
-            mCurrentUser = mHelper.profilesHelper.getProfileById(childId);
-            mProfileSelector = new GProfileSelector(this, mLoggedInGuardian, null);
-        }
-        else
-        {
-            mCurrentUser = mHelper.profilesHelper.getProfileById(guardianId);
-            mProfileSelector = new GProfileSelector(this, mLoggedInGuardian, mCurrentUser);
-        }
-
-        // Change the title of the action bar to include the name of the current user
-        if(mCurrentUser != null) {
-            this.setActionBarTitle(getString(R.string.settingsFor) + mCurrentUser.getName());
-        }
-
+        addGirafButtonToActionBar(changeUserButton, LEFT);
 
         // Used to handle fragment changes within the containing View
         mFragManager = this.getFragmentManager();
@@ -131,41 +126,6 @@ public class SettingsActivity extends GirafActivity
                 mSupportFragManager.beginTransaction().add(R.id.settingsContainer, mActiveSupportFragment).commit();
             }
         }
-
-        setProfileSelectorClickListener();
-    }
-
-    /**
-     * This is used to set the onClickListener for a new ProfileSelector
-     * It must be used everytime a new selector is set.
-     * */
-    private void setProfileSelectorClickListener(){
-        // Handles a selection returned from the profile select dialog
-        mProfileSelector.setOnListItemClick(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                ProfileController pc = new ProfileController(SettingsActivity.this);
-                // Get a profile from id returned from dialog
-                mCurrentUser = pc.getProfileById((int) id);
-                // Close it when a selection has been made
-                mProfileSelector.dismiss();
-
-                // Set a new profile select button according to the role of active user
-                if (mCurrentUser.getRole() != Profile.Roles.GUARDIAN)
-                    mProfileSelector = new GProfileSelector(SettingsActivity.this, mLoggedInGuardian, mCurrentUser);
-                else
-                    mProfileSelector = new GProfileSelector(SettingsActivity.this, mLoggedInGuardian, null);
-
-                // Notify that a profile selection has been made
-                setCurrentUser(mCurrentUser);
-
-                // Reload activity to reflect different user settings
-                reloadActivity();
-
-                // Call this method again to set listerners for the newly selected profile
-                setProfileSelectorClickListener();
-            }
-        });
     }
 
     /**
@@ -386,8 +346,7 @@ public class SettingsActivity extends GirafActivity
         // Only add new transaction if the user clicked a non-active fragment
         if (mActiveFragment == null || !mActiveFragment.equals(fragment)) {
 
-            if(mActiveSupportFragment != null)
-            {
+            if (mActiveSupportFragment != null) {
                 android.support.v4.app.FragmentTransaction ft = mSupportFragManager.beginTransaction();
                 ft.remove(mActiveSupportFragment);
                 ft.commit();
@@ -413,10 +372,8 @@ public class SettingsActivity extends GirafActivity
     public void setActiveFragment(android.support.v4.app.Fragment fragment) {
 
         // Only add new transaction if the user clicked a non-active fragment
-        if (mActiveSupportFragment == null || !mActiveSupportFragment.equals(fragment))
-        {
-            if(mActiveFragment != null)
-            {
+        if (mActiveSupportFragment == null || !mActiveSupportFragment.equals(fragment)) {
+            if (mActiveFragment != null) {
                 FragmentTransaction ft = mFragManager.beginTransaction();
                 ft.remove(mActiveFragment);
                 ft.commit();
@@ -467,6 +424,7 @@ public class SettingsActivity extends GirafActivity
 
     /**
      * gets the current user
+     *
      * @return
      */
     public Profile getCurrentUser() {
@@ -475,10 +433,25 @@ public class SettingsActivity extends GirafActivity
 
     /**
      * get the current logged in guardian
+     *
      * @return
      */
     @Override
     public Profile getLoggedInGuardian() {
         return mLoggedInGuardian;
+    }
+
+    @Override
+    public void onProfileSelected(final int i, final Profile profile) {
+
+        if (i == CHANGE_USER_SELECTOR_DIALOG) {
+
+            // Notify that a profile selection has been made
+            setCurrentUser(profile);
+
+            // Reload activity to reflect different user settings
+            reloadActivity();
+        }
+
     }
 }

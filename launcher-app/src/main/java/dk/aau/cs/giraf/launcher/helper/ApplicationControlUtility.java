@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Set;
 
 import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.oasis.lib.Helper;
-import dk.aau.cs.giraf.oasis.lib.models.Application;
-import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.dblib.Helper;
+import dk.aau.cs.giraf.dblib.models.Application;
+import dk.aau.cs.giraf.dblib.models.Profile;
 
 /**
  * This class contains functions that are used to either:

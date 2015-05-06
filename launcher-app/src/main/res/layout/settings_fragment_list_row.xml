@@ -28,8 +28,7 @@
             android:layout_gravity="center_vertical"
             android:textColor="@android:color/black"
             android:text="@string/settings_tablist_tablet"
-            android:textAppearance="?android:textAppearanceLarge"
-            android:layout_toRightOf="@id/settingsListAppLogo">
+            android:textAppearance="?android:textAppearanceLarge">
         </TextView>
 
     </LinearLayout>

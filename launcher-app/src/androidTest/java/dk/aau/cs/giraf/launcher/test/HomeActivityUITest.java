@@ -1,20 +1,17 @@
 package dk.aau.cs.giraf.launcher.test;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.assertion.ViewAssertions;
 import android.test.ActivityInstrumentationTestCase2;
-import android.test.IsolatedContext;
 
 import org.junit.After;
 import org.junit.Before;
 
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.HomeActivity;
-import dk.aau.cs.giraf.launcher.activities.MainActivity;
 import dk.aau.cs.giraf.launcher.helper.Constants;
-import dk.aau.cs.giraf.oasis.lib.Helper;
+import dk.aau.cs.giraf.dblib.Helper;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.*;
@@ -35,12 +32,12 @@ public class HomeActivityUITest
         super.setUp();
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
 
-        Intent intent = new Intent();
-        intent.putExtra(Constants.GUARDIAN_ID, 1);
-        setActivityIntent(intent);
-
         Helper h = new Helper(getInstrumentation().getTargetContext().getApplicationContext());
         h.CreateDummyData();
+
+        Intent intent = new Intent();
+        intent.putExtra(Constants.GUARDIAN_ID, h.profilesHelper.getGuardians().get(0).getId());
+        setActivityIntent(intent);
 
         mActivity = getActivity();
     }

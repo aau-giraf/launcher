@@ -9,7 +9,6 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +24,8 @@ import java.util.ArrayList;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.widgets.AppImageView;
-import dk.aau.cs.giraf.oasis.lib.models.Application;
-import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.dblib.models.Application;
+import dk.aau.cs.giraf.dblib.models.Profile;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
@@ -92,7 +91,7 @@ public class AppViewCreationUtility {
      * @param targetLayout The layout we want to add the AppImageView to.
      * @return
      */
-    public static AppImageView createAppImageView(Context context, final Profile currentUser, final Profile guardian, final AppInfo appInfo, GridLayout targetLayout, View.OnClickListener listener) {
+    public static AppImageView createAppImageView(final Context context, final Profile currentUser, final Profile guardian, final AppInfo appInfo, GridLayout targetLayout, View.OnClickListener listener) {
 
         final AppImageView appImageView = new AppImageView(context, appInfo);
         final View appView = addContentToView(context, targetLayout, appInfo.getName(), appInfo.getIconImage());

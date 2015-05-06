@@ -53,13 +53,4 @@ public class DrawerLayout extends RelativeLayout {
         super.onAnimationStart();
         this.bringToFront();
     }
-
-    /**
-     * Describes what should happen when the translate animation ends.
-     * sets the new parameters of the layout, depending on if the drawer was brough into view or out of view.
-     */
-    @Override
-    protected void onAnimationEnd() {
-        super.onAnimationEnd();
-    }
 }

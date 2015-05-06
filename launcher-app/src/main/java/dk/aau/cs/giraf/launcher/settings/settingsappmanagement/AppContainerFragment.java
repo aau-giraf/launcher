@@ -10,14 +10,12 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
-import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
-import dk.aau.cs.giraf.oasis.lib.models.Application;
-import dk.aau.cs.giraf.oasis.lib.models.Profile;
+import dk.aau.cs.giraf.dblib.models.Application;
+import dk.aau.cs.giraf.dblib.models.Profile;
 
 /**
  * This is the superclass that both AndroidFragment and GirafFragment inherits from
@@ -30,10 +28,10 @@ public abstract class AppContainerFragment extends Fragment {
     protected AppsFragmentInterface mCallback; // Callback to containing Activity implementing the SettingsListFragmentListener interface
     protected Profile currentUser;
     protected ArrayList<AppInfo> loadedApps;
+
     // This needs to be initialized in the subclasses
     protected List<Application> apps;
     protected ViewPager appView;
-    protected AppsFragmentAdapter appsFragmentAdapter;
     protected boolean haveAppsBeenAdded = false;
     public View.OnClickListener listener;
 
@@ -106,13 +104,7 @@ public abstract class AppContainerFragment extends Fragment {
         loadedApps = null; // Force loadApplications to redraw
     }
 
-    /**
-     * This function only exists to be overridden by inheriting classes.
-     * This is because the inheriting classes MUST use this method to loadapplications, but they
-     * must specify which ASyncTask class they use to load the applications as well.
-     */
-    protected void loadApplications(){
-    }
+    abstract void loadApplications();
 
     abstract void setListeners();
 

@@ -60,11 +60,8 @@ public class AppImageView extends ImageView {
      * @return Whether checked was set to true or false
      */
     public boolean toggle() {
-        if (!checked) {
-            checked = true;
-        } else {
-            checked = false;
-        }
+
+        checked = !checked;
 
         updateColor();
 
