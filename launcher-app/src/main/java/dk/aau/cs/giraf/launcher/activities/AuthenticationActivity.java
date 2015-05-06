@@ -27,6 +27,7 @@ import java.util.Date;
 
 import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.dblib.models.Profile;
+import dk.aau.cs.giraf.dblib.models.User;
 import dk.aau.cs.giraf.launcher.BuildConfig;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
@@ -151,7 +152,19 @@ public class AuthenticationActivity extends CaptureActivity {
     public void handleDecode(Result rawResult, final Bitmap barcode) {
         try {
             Helper helper = new Helper(this);
-            Profile profile = helper.profilesHelper.authenticateProfile(rawResult.getText());
+            Profile profile = null;
+
+            // SymDS synchronization uses Users for authentication
+            if(BuildConfig.ENABLE_SYMMETRICDS){
+                User user = helper.userHelper.authenticateUser(rawResult.getText());
+                if(user != null){
+                    // Profile could be found by user / userID instead
+                    profile = helper.profilesHelper.authenticateProfile(rawResult.getText());
+                }
+            }
+            else{
+                profile = helper.profilesHelper.authenticateProfile(rawResult.getText());
+            }
 
             // If the certificate was not valid, profile is set to null.
             if (profile != null) {
