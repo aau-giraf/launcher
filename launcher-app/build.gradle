@@ -59,11 +59,15 @@ android {
             debuggable false
             versionNameSuffix '-unsigned'
             signingConfig signingConfigs.unsigned
+
+            buildConfigField "boolean", "USE_TEST_SERVER", "true"
+            buildConfigField "boolean", "ENABLE_SYMMETRICDS", "false"
+            buildConfigField "boolean", "USE_PRODUCTION_SERVER", "false"
         }
         debug {
             testCoverageEnabled true
             buildConfigField "boolean", "USE_TEST_SERVER", "true"
-            buildConfigField "boolean", "ENABLE_SYMMETRICDS", "false"
+            buildConfigField "boolean", "ENABLE_SYMMETRICDS", "false" //Write true here to enable syncronization.
             buildConfigField "boolean", "USE_PRODUCTION_SERVER", "false"
         }
         release {
