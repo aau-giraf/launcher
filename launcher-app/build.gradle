@@ -67,9 +67,9 @@ android {
             buildConfigField "boolean", "USE_PRODUCTION_SERVER", "false"
         }
         release {
-            buildConfigField "boolean", "USE_PRODUCTION_SERVER", "true"
-            buildConfigField "boolean", "USE_TEST_SERVER", "false"
+            buildConfigField "boolean", "USE_TEST_SERVER", "true"
             buildConfigField "boolean", "ENABLE_SYMMETRICDS", "false"
+            buildConfigField "boolean", "USE_PRODUCTION_SERVER", "false" //Production server isn't created yet.
         }
     }
 
@@ -98,7 +98,7 @@ dependencies {
     compile project(':barcodescanner')
     compile(group: 'dk.aau.cs.giraf', name: 'girafComponent', version: '5.3.4', ext: 'aar')
     compile(group: 'dk.aau.cs.giraf', name: 'oasisLib', version: '4.1.0', ext: 'aar')
-    compile(group: 'dk.aau.cs.giraf', name: 'localDb', version: '3.0.0', ext: 'aar')
+    compile(group: 'dk.aau.cs.giraf', name: 'localDb', version: '4.0.0', ext: 'aar')
     compile(group: 'dk.aau.cs.giraf', name: 'meta-database', version: '1.4.1')
     compile files('libs/libGoogleAnalyticsServices.jar')
 
