@@ -78,7 +78,7 @@ public class AuthenticationActivity extends CaptureActivity {
                         return;
                     }
 
-                    Profile profile = h.profilesHelper.getById(37L); // Get SW615f14 test guardian
+                    Profile profile = h.profilesHelper.getById(h.profilesHelper.getGuardians().get(0).getId()); // Get SW615f14 test guardian
                     login(profile);
                 }
             });
