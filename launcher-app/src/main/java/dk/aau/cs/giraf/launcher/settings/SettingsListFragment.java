@@ -109,9 +109,9 @@ public class SettingsListFragment extends Fragment {
 
         // The childID is -1 meaning that no childs are available
         if (childID == -1) {
-            mCurrentUser = pc.getProfileById(getActivity().getIntent().getLongExtra(Constants.GUARDIAN_ID, -1));
+            mCurrentUser = pc.getById(getActivity().getIntent().getLongExtra(Constants.GUARDIAN_ID, -1));
         } else { // A child is found - set it as active and add its profile selector
-            mCurrentUser = pc.getProfileById(childID);
+            mCurrentUser = pc.getById(childID);
         }
         // Notify about the current user
         mCallback.setCurrentUser(mCurrentUser);
