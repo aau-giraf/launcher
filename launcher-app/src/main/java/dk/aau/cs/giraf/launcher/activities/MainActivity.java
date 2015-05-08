@@ -24,6 +24,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.dblib.Helper;
@@ -282,6 +283,9 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
             final int progress = message.arg1;
             if (progress == 100) {
                 executorService.shutdown();
+                try {
+                    while (!executorService.awaitTermination(10, TimeUnit.SECONDS)) ;
+                } catch (Exception e) { }
                 this.activity.get().startNextActivity();
             } else {
                 // Run the check on a background-thread
