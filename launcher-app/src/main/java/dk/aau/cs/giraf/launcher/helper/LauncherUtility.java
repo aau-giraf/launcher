@@ -174,13 +174,13 @@ public abstract class LauncherUtility {
 
         //Get the ID of the logged in user from SharedPreferences.
         final SharedPreferences sp = context.getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
-        final int currentUserID = sp.getInt(Constants.GUARDIAN_ID, -1);
+        final long currentUserID = sp.getLong(Constants.GUARDIAN_ID, -1);
 
         //Return null if no login information is found, otherwise return the the profile.
         if (currentUserID == -1) {
             return null;
         } else {
-            return helper.profilesHelper.getProfileById(currentUserID);
+            return helper.profilesHelper.getById(currentUserID);
         }
     }
 

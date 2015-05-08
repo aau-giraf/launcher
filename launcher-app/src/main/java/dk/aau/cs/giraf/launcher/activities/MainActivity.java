@@ -186,8 +186,8 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
             intent = new Intent(this, HomeActivity.class);
 
             SharedPreferences sharedPreferences = getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
-            final long guardianID = sharedPreferences.getLong(Constants.GUARDIAN_ID, -1);
-            final long childID = sharedPreferences.getLong(Constants.CHILD_ID, -1);
+            final long guardianID = sharedPreferences.getLong(Constants.GUARDIAN_ID, -1L);
+            final long childID = sharedPreferences.getLong(Constants.CHILD_ID, -1L);
 
             intent.putExtra(Constants.GUARDIAN_ID, guardianID);
             intent.putExtra(Constants.CHILD_ID, childID);
@@ -242,7 +242,7 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
             oldSessionGuardianID = -1L;
         } else {
             final SharedPreferences sharedPreferences = getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
-            oldSessionGuardianID = sharedPreferences.getLong(Constants.GUARDIAN_ID, -1);
+            oldSessionGuardianID = sharedPreferences.getLong(Constants.GUARDIAN_ID, -1L);
         }
     }
 
@@ -281,7 +281,7 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
         @Override
         public void handleMessage(Message message) {
             final int progress = message.arg1;
-            if (progress == 100) {
+            if (progress >= 100) {
                 executorService.shutdown();
                 try {
                     while (!executorService.awaitTermination(10, TimeUnit.SECONDS)) ;
