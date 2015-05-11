@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import dk.aau.cs.giraf.dblib.controllers.ProfileController;
 import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.gui.GWidgetProfileSelection;
+import dk.aau.cs.giraf.gui.GirafPictogramItemView;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 
@@ -98,8 +99,7 @@ public class SettingsListFragment extends Fragment {
 
         mSettingsListView = (ListView) view.findViewById(R.id.settingsListView);
 
-        final GWidgetProfileSelection mProfileButton = (GWidgetProfileSelection) view.findViewById(R.id.profile_widget_settings);
-        final TextView mProfileName = (TextView) view.findViewById(R.id.profile_selected_name);
+        final GirafPictogramItemView mProfileButton = (GirafPictogramItemView) view.findViewById(R.id.profile_widget_settings);
 
         ProfileController pc = new ProfileController(getActivity());
 
@@ -116,12 +116,6 @@ public class SettingsListFragment extends Fragment {
         // Notify about the current user
         mCallback.setCurrentUser(mCurrentUser);
 
-        // Get the name of the current user ensure the user and its name is not null
-        String currentUserName = mCurrentUser == null || mCurrentUser.getName() == null ? "Uknown" : mCurrentUser.getName();
-
-        // Update the name of the user
-        mProfileName.setText(currentUserName);
-
         // Instantiates a new adapter to render the items in the ListView with a list of installed (available) apps
         mAdapter = new SettingsListAdapter(getActivity(), mSettingsListView, mCallback.getInstalledSettingsApps());
         // Set the new adapter in the ListView
@@ -131,7 +125,8 @@ public class SettingsListFragment extends Fragment {
         setListeners();
 
         //Load the correct profile picture for the choosen profile
-        mProfileButton.setImageBitmap(mCurrentUser.getImage());
+        mProfileButton.setImageModel(mCurrentUser, this.getResources().getDrawable(R.drawable.no_profile_pic));
+        mProfileButton.setTitle(mCurrentUser.getName());
 
         return view;
     }

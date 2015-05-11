@@ -33,30 +33,4 @@
 
     </LinearLayout>
 
-    <!-- Shadow showing ABOVE active list item -->
-    <FrameLayout
-            android:id="@+id/settingsListRowShadowAbove"
-            android:layout_width="fill_parent"
-            android:layout_height="@dimen/giraf_settings_list_shadowSize"
-            android:layout_gravity="bottom"
-            android:background="@drawable/settings_list_view_shadow_top"
-            android:visibility="gone"/>
-
-    <!-- Shadow showing BELOW active list item -->
-    <FrameLayout
-            android:id="@+id/settingsListRowShadowBelow"
-            android:layout_width="fill_parent"
-            android:layout_height="@dimen/giraf_settings_list_shadowSize"
-            android:layout_gravity="top"
-            android:background="@drawable/settings_list_view_shadow_bottom"
-            android:visibility="gone"/>
-
-    <!-- Right shadow showing on a list item when inactive -->
-    <FrameLayout
-            android:id="@+id/settingsListRowShadowRight"
-            android:layout_width="@dimen/giraf_settings_list_shadowSize"
-            android:layout_height="fill_parent"
-            android:layout_gravity="right"
-            android:background="@drawable/settings_list_view_shadow_right"/>
-
 </FrameLayout>

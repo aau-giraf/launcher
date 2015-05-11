@@ -240,6 +240,7 @@ public class GirafFragment extends AppContainerFragment {
 
         @Override
         public android.support.v4.app.FragmentManager getFragmentMangerForAppsFragmentAdapter() {
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 return GirafFragment.this.getChildFragmentManager();
             } else {

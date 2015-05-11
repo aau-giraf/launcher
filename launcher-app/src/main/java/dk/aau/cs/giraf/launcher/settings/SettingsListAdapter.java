@@ -111,9 +111,6 @@ public class SettingsListAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.appIcon = (ImageView)convertView.findViewById(R.id.settingsListAppLogo);
             holder.appName = (TextView)convertView.findViewById(R.id.settingsListAppName);
-            holder.shadowTop = convertView.findViewById(R.id.settingsListRowShadowBelow);
-            holder.shadowBottom = convertView.findViewById(R.id.settingsListRowShadowAbove);
-            holder.shadowRight = convertView.findViewById(R.id.settingsListRowShadowRight);
 
             // Tag the view with the holder object to be able to retrieve it again
             convertView.setTag(holder);
@@ -132,18 +129,6 @@ public class SettingsListAdapter extends BaseAdapter {
             mListView.setItemChecked(position, true);
         }
 
-        // Set the visibility of bottom shadow in the view above
-        if (position == mLastSelectedItem - 1)
-            setShadowVisibility(holder.shadowBottom, true);
-        else
-            setShadowVisibility(holder.shadowBottom, false);
-
-        // Set the visibility of top shadow in the view below
-        if (position == mLastSelectedItem + 1)
-            setShadowVisibility(holder.shadowTop, true);
-        else
-            setShadowVisibility(holder.shadowTop, false);
-
         // Setting all values in ListView
         holder.appIcon.setBackgroundDrawable(item.icon);
         holder.appName.setText(item.title);
@@ -152,26 +137,10 @@ public class SettingsListAdapter extends BaseAdapter {
     }
 
     /**
-     * Set the visibility of the shadows according to list selection.
-     * @param shadowView The view to change visibility of.
-     * @param visible Boolean value reflecting if it should be visible or not.
-     * @see SettingsListAdapter
-     */
-    private void setShadowVisibility(View shadowView, boolean visible) {
-        if (visible)
-            shadowView.setVisibility(View.VISIBLE);
-        else
-            shadowView.setVisibility(View.GONE);
-    }
-
-    /**
      * Class used in the adapter to hold a reference to each view in a list item (row)
      */
     private class ViewHolder {
         public ImageView appIcon;
         public TextView appName;
-        public View shadowTop;
-        public View shadowBottom;
-        public View shadowRight;
     }
 }

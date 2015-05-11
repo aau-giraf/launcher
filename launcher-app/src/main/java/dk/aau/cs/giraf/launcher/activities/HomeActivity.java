@@ -3,12 +3,14 @@ package dk.aau.cs.giraf.launcher.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
@@ -25,10 +27,10 @@ import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.dblib.models.Application;
 import dk.aau.cs.giraf.dblib.models.Profile;
-import dk.aau.cs.giraf.gui.GWidgetProfileSelection;
 import dk.aau.cs.giraf.gui.GWidgetUpdater;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GirafConfirmDialog;
+import dk.aau.cs.giraf.gui.GirafPictogramItemView;
 import dk.aau.cs.giraf.gui.GirafProfileSelectorDialog;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
@@ -40,13 +42,17 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
 import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
+import dk.aau.cs.giraf.showcaseview.ShowcaseManager;
+import dk.aau.cs.giraf.showcaseview.ShowcaseView;
+import dk.aau.cs.giraf.showcaseview.targets.ViewTarget;
 
 /**
  * The primary activity of Launcher. Allows the user to start other GIRAF apps and access the settings
  * activity. It requires a user id in the parent intent.
  */
-public class HomeActivity extends GirafActivity implements AppsFragmentInterface, GirafConfirmDialog.Confirmation, GirafProfileSelectorDialog.OnSingleProfileSelectedListener {
+public class HomeActivity extends GirafActivity implements AppsFragmentInterface, GirafConfirmDialog.Confirmation, GirafProfileSelectorDialog.OnSingleProfileSelectedListener, ShowcaseManager.ShowcaseCapable {
 
+    private static final String IS_FIRST_RUN_KEY = "IS_FIRST_RUN_KEY_HOME_ACTIVITY";
     private static final int CHANGE_USER_SELECTOR_DIALOG = 100;
     private Profile mCurrentUser;
     private Profile mLoggedInGuardian;
@@ -57,6 +63,14 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
 
     private GWidgetUpdater widgetUpdater;
 
+    // Used to implement help functionality (ShowcaseView)
+    private ShowcaseManager showcaseManager;
+    private boolean isFirstRun;
+
+    /**
+     * Used in onResume and onPause for handling showcaseview for first run
+     */
+    //private ViewTreeObserver.OnGlobalLayoutListener globalLayoutListener;
 
     private ViewPager mAppViewPager;
 
@@ -146,6 +160,19 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         if (widgetUpdater != null) {
             widgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_START);
         }
+
+        // Check if this is the first run of the app
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        this.isFirstRun = prefs.getBoolean(IS_FIRST_RUN_KEY, true);
+
+        // If it is the first run display ShowcaseView
+        if (isFirstRun) {
+
+            showShowcase();
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean(IS_FIRST_RUN_KEY, false);
+            editor.commit();
+        }
     }
 
     /**
@@ -169,6 +196,10 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         // Cancel any loading task still running
         if (loadHomeActivityApplicationTask != null) {
             loadHomeActivityApplicationTask.cancel(true);
+        }
+
+        if (showcaseManager != null) {
+            showcaseManager.stop();
         }
 
     }
@@ -203,7 +234,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         final GirafButton settingsButton = (GirafButton) findViewById(R.id.settings_button);
         final GirafButton changeUserButton = (GirafButton) findViewById(R.id.change_user_button);
 
-        final GWidgetProfileSelection widgetProfileSelection = (GWidgetProfileSelection) findViewById(R.id.profile_widget);
+        final GirafPictogramItemView profilePictureView = (GirafPictogramItemView) findViewById(R.id.profile_widget);
 
         //Set up widget updater, which updates the widget's view regularly, according to its status.
         widgetUpdater = new GWidgetUpdater();
@@ -239,17 +270,9 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
 
         }
 
-        // Fetch the profile picture
-        Bitmap profilePicture = mCurrentUser.getImage();
-
-        // If there were no profile picture use the default template
-        if (profilePicture == null) {
-            // Fetch the default template
-            profilePicture = ((BitmapDrawable) this.getResources().getDrawable(R.drawable.no_profile_pic)).getBitmap();
-        }
-
         // Set the profile picture
-        widgetProfileSelection.setImageBitmap(profilePicture);
+        profilePictureView.setImageModel(mCurrentUser, this.getResources().getDrawable(R.drawable.no_profile_pic));
+        profilePictureView.setTitle(mCurrentUser.getName());
 
         // Set the logout button to show the logout dialog
         logoutButton.setOnClickListener(new View.OnClickListener() {
@@ -289,6 +312,73 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
             reloadApplications();
         }
 
+    }
+
+    @Override
+    public void showShowcase() {
+        /*
+        final ListView categoryListView = (ListView) getActivity().findViewById(R.id.giraf_sidebar_container);
+
+
+        // Targets for the Showcase
+        final ViewTarget createCategoryTarget = new ViewTarget(R.id.category_create_button, getActivity(), 1.5f);
+        final ViewTarget sideBarEmptyViewTarget = new ViewTarget(categoryListView.getEmptyView(), 1.0f);
+
+        // Create a relative location for the next button
+        final RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        final int margin = ((Number) (getResources().getDisplayMetrics().density * 12)).intValue();
+        lps.setMargins(margin, margin, margin, margin);
+
+        // Calculate position for the help text
+        final int textX = getActivity().findViewById(R.id.category_sidebar).getLayoutParams().width + margin * 2;
+        final int textY = getResources().getDisplayMetrics().heightPixels / 2 + margin;
+
+        showcaseManager = new ShowcaseManager();
+
+        showcaseManager.addShowCase(new ShowcaseManager.Showcase() {
+            @Override
+            public void configShowCaseView(final ShowcaseView showcaseView) {
+
+                showcaseView.setShowcase(createCategoryTarget, true);
+                showcaseView.setContentTitle(getString(R.string.create_category_button_showcase_help_titel_text));
+                showcaseView.setContentText(getString(R.string.create_category_button_showcase_help_content_text));
+                showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
+                showcaseView.setButtonPosition(lps);
+                showcaseView.setTextPostion(textX, textY);
+            }
+        });
+
+        showcaseManager.setOnDoneListener(new ShowcaseManager.OnDoneListener() {
+            @Override
+            public void onDone(ShowcaseView showcaseView) {
+                showcaseManager = null;
+                isFirstRun = false;
+            }
+        });
+
+        showcaseManager.start(this);
+        */
+    }
+
+    @Override
+    public synchronized void hideShowcase() {
+
+        if (showcaseManager != null) {
+            showcaseManager.stop();
+            showcaseManager = null;
+        }
+    }
+
+    @Override
+    public synchronized void toggleShowcase() {
+
+        if (showcaseManager != null) {
+            hideShowcase();
+        } else {
+            showShowcase();
+        }
     }
 
     /**
