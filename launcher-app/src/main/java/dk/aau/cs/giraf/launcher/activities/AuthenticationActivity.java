@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.RectF;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -44,7 +45,7 @@ public class AuthenticationActivity extends CaptureActivity {
     private TextView mLoginNameView;
     private TextView mInfoView;
     private Vibrator mVibrator;
-
+    private Button guardianButton;
 
     private TextView mScanStatus;
     private ListView listUsers;
@@ -68,33 +69,47 @@ public class AuthenticationActivity extends CaptureActivity {
         mScanStatus = (TextView) this.findViewById(R.id.scanStatusTextView);
 
         if (BuildConfig.DEBUG) {
-            Button guardianButton = (Button) this.findViewById(R.id.loginAsGuardianButton);
+            guardianButton = (Button) this.findViewById(R.id.loginAsGuardianButton);
             guardianButton.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
-                    Helper h = new Helper(AuthenticationActivity.this);
-                    if (h.profilesHelper.getListOfObjects() == null || h.profilesHelper.getListOfObjects().size() == 0) {
-                        Toast.makeText(AuthenticationActivity.this, getString(R.string.db_no_profiles_msg), Toast.LENGTH_LONG).show();
+                public synchronized void onClick(View view) {
+                    final Helper h = new Helper(AuthenticationActivity.this);
+
+                    if(!guardianButton.isEnabled()) {
                         return;
                     }
 
-                    // get SW615F14 test guardian
-                    Profile profile = h.profilesHelper.getById(37L);
+                    guardianButton.setEnabled(false);
 
-                    // If SW615F14 does not exists in current database, get the first guardian available instead
-                    if (profile == null){
-                       profile = h.profilesHelper.getGuardians().get(0);
-                    }
+                    new AsyncTask<Void, Void, Boolean>(){
 
-                    // Verify that we were able to get a guardian profile from either of the two calls.
-                    // If one is present, log in - otherwise display a toast saying none were available
-                    if(profile == null){
-                        Toast.makeText(AuthenticationActivity.this, R.string.no_guardian_profiles_available, Toast.LENGTH_SHORT).show();
-                    }
-                    else
-                    {
-                        login(profile);
-                    }
+                        @Override
+                        protected void onPreExecute() {
+                            super.onPreExecute();
+                        }
+
+                        @Override
+                        protected Boolean doInBackground(Void... params) {
+                            // Check if there are zero profiles in the profileshelper, if that is the case return true
+                            return h.profilesHelper.getListOfObjects() == null || h.profilesHelper.getListOfObjects().size() == 0;
+                        }
+
+                        @Override
+                        protected void onPostExecute(Boolean aBoolean) {
+                            super.onPostExecute(aBoolean);
+                            if (aBoolean) {
+                                Toast.makeText(AuthenticationActivity.this, getString(R.string.db_no_profiles_msg), Toast.LENGTH_LONG).show();
+                                guardianButton.setEnabled(true);
+                            }
+                            else{
+                                ProfileFetcherTask profileFetcherTask = new ProfileFetcherTask();
+                                profileFetcherTask.execute();
+
+                            }
+
+
+                        }
+                    }.execute();
 
                 }
             });
@@ -253,4 +268,41 @@ public class AuthenticationActivity extends CaptureActivity {
     public void onBackPressed() {
         //Do nothing, as the user should not be able to back out of this activity
     }
+
+    private class ProfileFetcherTask extends AsyncTask<Void, Void, Profile> {
+
+        @Override
+        protected Profile doInBackground(Void... params) {
+            Helper h = new Helper(AuthenticationActivity.this);
+
+            // get SW615F14 test guardian
+            Profile profile = h.profilesHelper.getById(37L);
+
+            // If SW615F14 does not exists in current database, get the first guardian available instead
+            if (profile == null){
+                profile = h.profilesHelper.getGuardians().get(0);
+            }
+
+
+            return profile;
+        }
+
+        @Override
+        protected void onPostExecute(Profile profile) {
+            super.onPostExecute(profile);
+
+            // Verify that we were able to get a guardian profile from either of the two in doinbackground.
+            // If one is present, log in - otherwise display a toast saying none were available
+            if(profile == null){
+                Toast.makeText(AuthenticationActivity.this, R.string.no_guardian_profiles_available, Toast.LENGTH_SHORT).show();
+                guardianButton.setEnabled(true);
+            }
+            else
+            {
+                guardianButton.setEnabled(true);
+                login(profile);
+            }
+        }
+    }
 }
+
