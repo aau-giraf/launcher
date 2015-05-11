@@ -16,9 +16,9 @@
     <string name="setting_launcher_animation_summary">Vis animation ved opstart af hjemmeskærmen.</string>
     <string name="setting_launcher_animation_off">SLUKKET</string>
     <string name="setting_launcher_animation_on">TÆNDT</string>
-    <string name="setting_launcher_grid_size_title">Gitterstørrelse</string>
-    <string name="setting_launcher_grid_size_summary">Indstil størrelsen på gitteret for hjemmeskærmen.</string>
-    <string name="setting_launcher_grid_title">Gitter</string>
+    <string name="setting_launcher_grid_size_title">Antal Apps</string>
+    <string name="setting_launcher_grid_size_summary">Indstil antallet af apps for hjemmeskærmen.</string>
+    <string name="setting_launcher_grid_title">Antal</string>
     <string name="setting_launcher_grid_example_text">Eksempel:</string>
     <string name="settings_tablist_general">Generelt</string>
     <string name="settings_tablist_applications">Aktive applikationer</string>

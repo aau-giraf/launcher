@@ -107,14 +107,16 @@ public class SeekBarWithNumericScale extends SeekBar {
                 final int rowCount = (scaleElementCounter + firstScaleItemValue);
                 final int columnCount = (scaleElementCounter + firstScaleItemValue + 1);
 
-                // Hax math that makes it look pretty on the x axis
-                final float xCoordinate = paddingLeft / 2 + distanceBetweenScaleElements * scaleElementCounter - textSize / 4;
+                final String text = "" + rowCount * columnCount;
+
+                // Lesser hax math that makes it look pretty on the x axis
+                final float xCoordinate = paddingLeft + distanceBetweenScaleElements * scaleElementCounter - paint.measureText(text) / 2;
 
                 // We want the scale items to be slightly off the mid on the y axis (below the SeekBar)
                 final float yCoordinate = height / 2 + textSize * 1.5f;
 
                 // Print text for the current scale item for the SeekBar
-                canvas.drawText(rowCount + "×" + columnCount, xCoordinate, yCoordinate, paint);
+                canvas.drawText(text, xCoordinate, yCoordinate, paint);
             }
         }
     }
