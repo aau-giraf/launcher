@@ -78,8 +78,24 @@ public class AuthenticationActivity extends CaptureActivity {
                         return;
                     }
 
-                    Profile profile = h.profilesHelper.getById(h.profilesHelper.getGuardians().get(0).getId()); // Get SW615f14 test guardian
-                    login(profile);
+                    // get SW615F14 test guardian
+                    Profile profile = h.profilesHelper.getById(37L);
+
+                    // If SW615F14 does not exists in current database, get the first guardian available instead
+                    if (profile == null){
+                       profile = h.profilesHelper.getGuardians().get(0);
+                    }
+
+                    // Verify that we were able to get a guardian profile from either of the two calls.
+                    // If one is present, log in - otherwise display a toast saying none were available
+                    if(profile == null){
+                        Toast.makeText(AuthenticationActivity.this, R.string.no_guardian_profiles_available, Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        login(profile);
+                    }
+
                 }
             });
             guardianButton.setVisibility(View.VISIBLE);
