@@ -2,5 +2,4 @@
 <resources>
     <string name="settingsFor">"Indstillinger for "</string>
     <string name="main_activity_welcome_text">Velkommen til Giraf!</string>
-    <string name="no_guardian_profiles_available">Der er ingen tilgængelig guardian profil</string>
 </resources>

@@ -8,15 +8,7 @@
     <string name="giraf_debug_as_child">as a child</string>
 
     <string name="application_name">GIRAF</string>
-    <string name="authentication_headline">Sådan logger du ind:</string>
-    <string name="authentication_step1">Scan dit GIRAF-kort, ved at holde det ca. 25cm foran kameraet.</string>
     <string name="no_apps_available">Der er ingen applikationer tilgængelige for denne profil.</string>
     <string name="no_giraf_apps_available">Der er ingen GIRAF applikationer tilgængelige for denne profil.</string>
     <string name="activity_not_found_msg">Applikationen kunne ikke startes.</string>
-    <string name="could_not_verify_msg">Kunne ikke verificere brugeren.</string>
-    <string name="wrong_qr_code_msg">Mislykket</string>
-    <string name="db_no_profiles_msg">Databasen indeholder ingen profiler</string>
-    <string name="scan_qr_code_msg">Scanner</string>
-    <string name="logging_in_msg">Logger ind</string>
-
 </resources>
