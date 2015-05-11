@@ -150,21 +150,6 @@ public class SettingsActivity extends GirafActivity
                 new AppManagementFragment(),
                 getResources().getDrawable(R.drawable.ic_apps));
 
-        /************************************************
-         *** Add applications in the giraf suite below ***
-         *************************************************/
-        // TODO: Add giraf applications with settings here
-
-        // Cars
-        addApplicationByPackageName("dk.aau.cs.giraf.cars", null);
-
-        // Zebra
-        addApplicationByPackageName("dk.aau.cs.giraf.zebra", null);
-
-        /*************************************************
-         *** Add applications in the giraf suite above ***
-         *************************************************/
-
         // Get intent for Native Android Settings
         Intent androidSettingsIntent = new Intent(Settings.ACTION_SETTINGS);
 
@@ -217,83 +202,7 @@ public class SettingsActivity extends GirafActivity
             final Drawable appIcon = pm.getApplicationIcon(appInfo);
 
             // Create the item
-            FragmentSettingsListItem item = new FragmentSettingsListItem(
-                    title,
-                    appIcon,
-                    fragment
-            );
-
-            // Add item to the list of applications
-            mAppList.add(item);
-        }
-    }
-
-    /**
-     * Add settings from another giraf application.
-     * The icon is automatically extracted from the package and the giraf intent action is
-     * appended to query the intent-filter the application should implement
-     * to start its settings_activity.
-     *
-     * @param packageName PackageName of the application to add.
-     */
-    private void addApplicationByPackageName(String packageName, String alias) {
-        // Get the package manager to query package name
-        final PackageManager pm = getApplicationContext().getPackageManager();
-
-        // New container for application we want to add, initially null
-        ApplicationInfo appInfo = null;
-
-        try {
-            // Check if the package name exists on the device
-            appInfo = pm.getApplicationInfo(packageName, 0);
-        } catch (final PackageManager.NameNotFoundException e) {
-            // Don't throw exception, just print stack trace
-            e.printStackTrace();
-
-            // The package does not exist, return
-            return;
-        }
-
-        // Create new empty intent
-        Intent intent = new Intent();
-
-        // Add SETTINGS_INTENT key to package name to open the
-        // settings of the application
-        intent.setAction(packageName + SETTINGS_INTENT);
-
-        // Start as a new task to enable stepping back to settings_activity
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        // Check if the intent exists
-        if (intent.resolveActivity(pm) != null && appInfo != null) {
-            String title;
-
-            // Test if the provided alias is set
-            if (alias == null || alias.isEmpty()) {
-                // Extract name of application
-                title = pm.getApplicationLabel(appInfo).toString();
-            } else {
-                title = alias;
-            }
-
-            // Extract icon of application
-            final Drawable appIcon = pm.getApplicationIcon(appInfo);
-
-            // A child profile has been selected, pass id
-            if (mCurrentUser.getRole() == Profile.Roles.CHILD) {
-                intent.putExtra(Constants.CHILD_ID, mCurrentUser.getId());
-            }
-            // We are a guardian, do not add a child
-            else {
-                intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
-            }
-
-            // Create new item
-            IntentSettingsListItem item = new IntentSettingsListItem(
-                    title,
-                    appIcon,
-                    intent
-            );
+            FragmentSettingsListItem item = new FragmentSettingsListItem(title, appIcon, fragment);
 
             // Add item to the list of applications
             mAppList.add(item);
@@ -309,11 +218,7 @@ public class SettingsActivity extends GirafActivity
      */
     private void addApplicationByTitle(String title, android.support.v4.app.Fragment fragment, Drawable icon) {
         // Create the new item
-        FragmentSettingsListItem item = new FragmentSettingsListItem(
-                title,
-                icon,
-                fragment
-        );
+        FragmentSettingsListItem item = new FragmentSettingsListItem(title, icon, fragment);
 
         // Add item to the list of applications
         mAppList.add(item);
@@ -327,11 +232,8 @@ public class SettingsActivity extends GirafActivity
      * @param icon   Custom icon to add to list entry.
      */
     private void addApplicationByTitle(String title, Intent intent, Drawable icon) {
-        IntentSettingsListItem item = new IntentSettingsListItem(
-                title,
-                icon,
-                intent
-        );
+
+        IntentSettingsListItem item = new IntentSettingsListItem(title, icon, intent);
         // Add item to the list of applications
         mAppList.add(item);
     }
