@@ -75,10 +75,12 @@ public class AuthenticationActivity extends CaptureActivity {
                 public synchronized void onClick(View view) {
                     final Helper h = new Helper(AuthenticationActivity.this);
 
+                    // "mutex" for the guardianbutton, so it returns immediately if one task is already trying to log in.
                     if(!guardianButton.isEnabled()) {
                         return;
                     }
 
+                    // claim the "mutex"
                     guardianButton.setEnabled(false);
 
                     new AsyncTask<Void, Void, Boolean>(){
@@ -98,16 +100,15 @@ public class AuthenticationActivity extends CaptureActivity {
                         protected void onPostExecute(Boolean aBoolean) {
                             super.onPostExecute(aBoolean);
                             if (aBoolean) {
+                                // If the profileshelper was empty, display message and reactivate guardianbutton.
                                 Toast.makeText(AuthenticationActivity.this, getString(R.string.db_no_profiles_msg), Toast.LENGTH_LONG).show();
                                 guardianButton.setEnabled(true);
                             }
                             else{
+                                // If there were profiles, run the profilefetchertask and try to login.
                                 ProfileFetcherTask profileFetcherTask = new ProfileFetcherTask();
                                 profileFetcherTask.execute();
-
                             }
-
-
                         }
                     }.execute();
 
@@ -269,6 +270,9 @@ public class AuthenticationActivity extends CaptureActivity {
         //Do nothing, as the user should not be able to back out of this activity
     }
 
+
+    // Asynctask implementation which attempts to get profile 37 or the first profile in the guardian list
+    // Once a profile has (or hasnt) been fetched, it is handled by logging in or displaying a toast with a message
     private class ProfileFetcherTask extends AsyncTask<Void, Void, Profile> {
 
         @Override
@@ -283,7 +287,6 @@ public class AuthenticationActivity extends CaptureActivity {
                 profile = h.profilesHelper.getGuardians().get(0);
             }
 
-
             return profile;
         }
 
@@ -291,7 +294,7 @@ public class AuthenticationActivity extends CaptureActivity {
         protected void onPostExecute(Profile profile) {
             super.onPostExecute(profile);
 
-            // Verify that we were able to get a guardian profile from either of the two in doinbackground.
+            // Verify that we were able to get a guardian profile from either of the two calls in doinbackground.
             // If one is present, log in - otherwise display a toast saying none were available
             if(profile == null){
                 Toast.makeText(AuthenticationActivity.this, R.string.no_guardian_profiles_available, Toast.LENGTH_SHORT).show();
