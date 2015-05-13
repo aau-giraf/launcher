@@ -3,13 +3,15 @@ package dk.aau.cs.giraf.launcher.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import android.view.ViewTreeObserver;
+import android.widget.GridLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -70,7 +72,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     /**
      * Used in onResume and onPause for handling showcaseview for first run
      */
-    //private ViewTreeObserver.OnGlobalLayoutListener globalLayoutListener;
+    private ViewTreeObserver.OnGlobalLayoutListener globalLayoutListener;
 
     private ViewPager mAppViewPager;
 
@@ -124,6 +126,17 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
 
         mAppViewPager.setAdapter(new AppsFragmentAdapter(getSupportFragmentManager(), mCurrentLoadedApps, rowsSize, columnsSize));
 
+
+        final GirafButton helpGirafButton = new GirafButton(this, getResources().getDrawable(R.drawable.icon_help));
+        helpGirafButton.setId(R.id.help_button);
+        helpGirafButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleShowcase();
+            }
+        });
+
+
         // Start logging this activity
         EasyTracker.getInstance(this).activityStart(this);
     }
@@ -167,11 +180,25 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
 
         // If it is the first run display ShowcaseView
         if (isFirstRun) {
+            this.findViewById(android.R.id.content).getViewTreeObserver().addOnGlobalLayoutListener(globalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    showShowcase();
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putBoolean(IS_FIRST_RUN_KEY, false);
+                    editor.commit();
 
-            showShowcase();
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean(IS_FIRST_RUN_KEY, false);
-            editor.commit();
+                    synchronized (HomeActivity.this) {
+                        globalLayoutListener = null;
+
+                        if (Build.VERSION.SDK_INT < 16) {
+                            HomeActivity.this.findViewById(android.R.id.content).getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                        } else {
+                            HomeActivity.this.findViewById(android.R.id.content).getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        }
+                    }
+                }
+            });
         }
     }
 
@@ -233,6 +260,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         final GirafButton logoutButton = (GirafButton) findViewById(R.id.logout_button);
         final GirafButton settingsButton = (GirafButton) findViewById(R.id.settings_button);
         final GirafButton changeUserButton = (GirafButton) findViewById(R.id.change_user_button);
+        final GirafButton helpButton = (GirafButton) findViewById(R.id.help_button);
 
         final GirafPictogramItemView profilePictureView = (GirafPictogramItemView) findViewById(R.id.profile_widget);
 
@@ -282,6 +310,13 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                 girafConfirmDialog.show(getSupportFragmentManager(), "logout_dialog");
             }
         });
+
+        helpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showShowcase();
+            }
+        });
     }
 
     @Override
@@ -316,24 +351,17 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
 
     @Override
     public void showShowcase() {
-        /*
-        final ListView categoryListView = (ListView) getActivity().findViewById(R.id.giraf_sidebar_container);
-
 
         // Targets for the Showcase
-        final ViewTarget createCategoryTarget = new ViewTarget(R.id.category_create_button, getActivity(), 1.5f);
-        final ViewTarget sideBarEmptyViewTarget = new ViewTarget(categoryListView.getEmptyView(), 1.0f);
+        final ViewTarget helpButtonTarget = new ViewTarget(R.id.help_button, this, 1.4f);
 
         // Create a relative location for the next button
         final RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        final int margin = ((Number) (getResources().getDisplayMetrics().density * 12)).intValue();
+        final int margin = ((Number) (getResources().getDisplayMetrics().density * 24)).intValue();
         lps.setMargins(margin, margin, margin, margin);
 
-        // Calculate position for the help text
-        final int textX = getActivity().findViewById(R.id.category_sidebar).getLayoutParams().width + margin * 2;
-        final int textY = getResources().getDisplayMetrics().heightPixels / 2 + margin;
 
         showcaseManager = new ShowcaseManager();
 
@@ -341,12 +369,94 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
             @Override
             public void configShowCaseView(final ShowcaseView showcaseView) {
 
-                showcaseView.setShowcase(createCategoryTarget, true);
-                showcaseView.setContentTitle(getString(R.string.create_category_button_showcase_help_titel_text));
-                showcaseView.setContentText(getString(R.string.create_category_button_showcase_help_content_text));
+                final ViewTarget settingsButtonTarget = new ViewTarget(R.id.settings_button, HomeActivity.this, 1.4f);
+
+                // Calculate position for the help text
+                final int textX = findViewById(R.id.settings_button).getRight() + margin * 2;
+                final int textY = findViewById(R.id.settings_button).getTop();
+
+                showcaseView.setShowcase(settingsButtonTarget, true);
+                showcaseView.setContentTitle("Indstillinger");
+                showcaseView.setContentText("Her kan du indstille hvor mange og hvilke apps der skal vises mm.");
                 showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
                 showcaseView.setButtonPosition(lps);
                 showcaseView.setTextPostion(textX, textY);
+            }
+        });
+
+        showcaseManager.addShowCase(new ShowcaseManager.Showcase() {
+            @Override
+            public void configShowCaseView(final ShowcaseView showcaseView) {
+
+                final ViewTarget logoutButtonTarget = new ViewTarget(R.id.logout_button, HomeActivity.this, 1.4f);
+
+                // Calculate position for the help text
+                final int textX = findViewById(R.id.logout_button).getRight() + margin * 2;
+                final int textY = findViewById(R.id.logout_button).getTop();
+
+                showcaseView.setShowcase(logoutButtonTarget, true);
+                showcaseView.setContentTitle("Log ud");
+                showcaseView.setContentText("Her kan du logge ud");
+                showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
+                showcaseView.setButtonPosition(lps);
+                showcaseView.setTextPostion(textX, textY);
+            }
+        });
+
+        showcaseManager.addShowCase(new ShowcaseManager.Showcase() {
+            @Override
+            public void configShowCaseView(final ShowcaseView showcaseView) {
+
+                final ViewTarget changeUserButtonTarget = new ViewTarget(R.id.change_user_button, HomeActivity.this, 1.4f);
+
+                // Calculate position for the help text
+                final int textX = findViewById(R.id.change_user_button).getRight() + margin * 2;
+                final int textY = findViewById(R.id.change_user_button).getTop();
+
+                showcaseView.setShowcase(changeUserButtonTarget, true);
+                showcaseView.setContentTitle("Skift til borger");
+                showcaseView.setContentText("Tryk her før du giver enheden videre til en borger");
+                showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
+                showcaseView.setButtonPosition(lps);
+                showcaseView.setTextPostion(textX, textY);
+            }
+        });
+
+        showcaseManager.addShowCase(new ShowcaseManager.Showcase() {
+            @Override
+            public void configShowCaseView(final ShowcaseView showcaseView) {
+
+                final GridLayout grid = (GridLayout) mAppViewPager.getChildAt(mAppViewPager.getCurrentItem());
+
+                if (grid == null || grid.getChildCount() == 0) {
+
+                    final ViewTarget noAppsMessageTarget = new ViewTarget(R.id.noAppsMessage, HomeActivity.this, 1.0f);
+
+                    // Calculate position for the help text
+                    final int textX = findViewById(R.id.noAppsMessage).getRight() + margin * 2;
+                    final int textY = findViewById(R.id.noAppsMessage).getBottom() + margin;
+
+                    showcaseView.setShowcase(noAppsMessageTarget, true);
+                    showcaseView.setContentTitle("Applikationer");
+                    showcaseView.setContentText("Her vil dine valgte applikationer dukke op");
+                    showcaseView.setStyle(R.style.GirafLastCustomShowcaseTheme);
+                    showcaseView.setButtonPosition(lps);
+                    showcaseView.setTextPostion(textX, textY);
+
+                } else {
+                    final ViewTarget firstAppView = new ViewTarget(grid.getChildAt(0), 1.4f);
+
+                    // Calculate position for the help text
+                    final int textX = grid.getChildAt(0).getRight() + margin * 2;
+                    final int textY = grid.getChildAt(0).getBottom() + margin;
+
+                    showcaseView.setShowcase(firstAppView, true);
+                    showcaseView.setContentTitle("Skift til borger");
+                    showcaseView.setContentText("Tryk her før du giver enheden videre til en borger");
+                    showcaseView.setStyle(R.style.GirafLastCustomShowcaseTheme);
+                    showcaseView.setButtonPosition(lps);
+                    showcaseView.setTextPostion(textX, textY);
+                }
             }
         });
 
@@ -359,7 +469,6 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         });
 
         showcaseManager.start(this);
-        */
     }
 
     @Override

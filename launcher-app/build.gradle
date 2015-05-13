@@ -27,7 +27,7 @@ repositories {
     }
     mavenLocal()
 
-    flatDir{
+    flatDir {
         dirs 'libs'
     }
 }
@@ -59,6 +59,7 @@ android {
             debuggable false
             versionNameSuffix '-unsigned'
             signingConfig signingConfigs.unsigned
+            minifyEnabled true
 
             buildConfigField "boolean", "USE_TEST_SERVER", "true"
             buildConfigField "boolean", "ENABLE_SYMMETRICDS", "false"
@@ -71,6 +72,7 @@ android {
             buildConfigField "boolean", "USE_PRODUCTION_SERVER", "false"
         }
         release {
+            minifyEnabled true
             buildConfigField "boolean", "USE_TEST_SERVER", "true"
             buildConfigField "boolean", "ENABLE_SYMMETRICDS", "false"
             buildConfigField "boolean", "USE_PRODUCTION_SERVER", "false" //Production server isn't created yet.
@@ -86,23 +88,23 @@ android {
 
 allprojects {
     repositories
-    {
-        mavenCentral()
-    }
+            {
+                mavenCentral()
+            }
 
 }
 dependencies {
     androidTestCompile 'com.android.support.test:testing-support-lib:0.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.0'
-    compile ('com.android.support:support-v4:+')
-    compile ('fr.avianey.com.viewpagerindicator:library:2.4.1') {
-        exclude module:'support-v4'
+    compile('com.android.support:support-v4:+')
+    compile('fr.avianey.com.viewpagerindicator:library:2.4.1') {
+        exclude module: 'support-v4'
     }
     compile fileTree(include: '*.jar', dir: 'libs')
     compile project(':barcodescanner')
     compile(group: 'dk.aau.cs.giraf', name: 'girafComponent', version: '7.4.0', ext: 'aar')
     compile(group: 'dk.aau.cs.giraf', name: 'oasisLib', version: '5.0.1', ext: 'aar')
-    compile(group: 'dk.aau.cs.giraf', name: 'localDb', version: '4.0.2', ext: 'aar')
+    compile(group: 'dk.aau.cs.giraf', name: 'localDb', version: '4.0.3', ext: 'aar')
     compile(group: 'dk.aau.cs.giraf', name: 'meta-database', version: '2.0.0')
     compile(group: 'dk.aau.cs.giraf', name: 'ShowcaseView', version: '1.0.0')
     compile files('libs/libGoogleAnalyticsServices.jar')
