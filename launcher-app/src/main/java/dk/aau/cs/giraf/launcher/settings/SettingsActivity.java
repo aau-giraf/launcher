@@ -578,27 +578,41 @@ public class SettingsActivity extends GirafActivity
             @Override
             public void configShowCaseView(final ShowcaseView showcaseView) {
 
-                mSettingsListView.setSelection(0);
-
-                mSettingsListView.post(new Runnable() {
+                // TODO: Last minute fix (Find a better way to call this once the layout is complete) (i.e. dont use postDelayed)
+                showcaseView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        final View generalTab = settingsList.getChildAt(0);
+                        mSettingsListView.setSelection(0);
 
-                        final ViewTarget generalTabTarget = new ViewTarget(generalTab, 1.4f);
+                        mSettingsListView.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                final View generalTab = settingsList.getChildAt(0);
 
-                        // Calculate position for the help text
-                        final int textX = generalTab.getRight() + margin * 2;
-                        final int textY = generalTab.getTop();
+                                final ViewTarget generalTabTarget = new ViewTarget(generalTab, 1.4f);
 
-                        showcaseView.setShowcase(generalTabTarget, true);
-                        showcaseView.setContentTitle("Generelt");
-                        showcaseView.setContentText("Generelle indstillinger for Giraf Launcheren");
-                        showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
-                        showcaseView.setButtonPosition(lps);
-                        showcaseView.setTextPostion(textX, textY);
+                                final int[] coords = new int[2];
+
+                                generalTab.getLocationOnScreen(coords);
+
+                                // Calculate position for the help text
+                                final int textX = coords[0] + margin * 6;
+                                final int textY = coords[1];
+
+                                showcaseView.setShowcase(generalTabTarget, true);
+                                showcaseView.setContentTitle("Generelt");
+                                showcaseView.setContentText("Generelle indstillinger for Giraf Launcheren");
+                                showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
+                                showcaseView.setButtonPosition(lps);
+                                showcaseView.setTextPostion(textX, textY);
+                            }
+                        }, 100);
                     }
-                });
+
+
+                }, 100);
+
+
             }
         });
 
@@ -615,9 +629,13 @@ public class SettingsActivity extends GirafActivity
 
                         final ViewTarget applicationManagementTarget = new ViewTarget(applicationManagementTab, 1.4f);
 
+                        final int[] coords = new int[2];
+
+                        applicationManagementTab.getLocationOnScreen(coords);
+
                         // Calculate position for the help text
-                        final int textX = applicationManagementTab.getRight() + margin * 2;
-                        final int textY = applicationManagementTab.getTop();
+                        final int textX = coords[0] + margin * 6;
+                        final int textY = coords[1];
 
                         showcaseView.setShowcase(applicationManagementTarget, true);
                         showcaseView.setContentTitle("Applikations håndtering");
@@ -640,13 +658,18 @@ public class SettingsActivity extends GirafActivity
                 mSettingsListView.post(new Runnable() {
                     @Override
                     public void run() {
+
                         final View androidSettingsTab = settingsList.getChildAt(2);
 
                         final ViewTarget androidSettingsTarget = new ViewTarget(androidSettingsTab, 1.4f);
 
+                        final int[] coords = new int[2];
+
+                        androidSettingsTab.getLocationOnScreen(coords);
+
                         // Calculate position for the help text
-                        final int textX = androidSettingsTab.getRight() + margin * 2;
-                        final int textY = androidSettingsTab.getTop();
+                        final int textX = coords[0] + margin * 6;
+                        final int textY = coords[1];
 
                         showcaseView.setShowcase(androidSettingsTarget, true);
                         showcaseView.setContentTitle("Tablet indstillinger");
