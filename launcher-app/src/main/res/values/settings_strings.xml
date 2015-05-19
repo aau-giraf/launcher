@@ -23,4 +23,14 @@
     <string name="settings_tablist_general">Generelt</string>
     <string name="settings_tablist_applications">Aktive applikationer</string>
     <string name="settings_tablist_tablet">Tablet Indstillinger</string>
+    <string name="settings_tablist_about">Omkring Giraf</string>
+
+    <!-- About Strings -->
+    <string name="settings_about_title">Omkring Giraf</string>
+
+
+    <!-- TODO: INDSÆT NAVN PÅ ÅBENSOVSEKODE! -->
+    <string name="settings_about_message">Mange tak til (indsæt navn på åbensovsekode) </string>
+    <!-- TODO: INDSÆT NAVN PÅ ÅBENSOVSEKODE! -->
+
 </resources>

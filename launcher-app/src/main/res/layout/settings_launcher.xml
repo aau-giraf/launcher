@@ -11,6 +11,7 @@
         android:layout_height="match_parent" />
 
     <dk.aau.cs.giraf.launcher.settings.components.LeftAlignedSwitchPreference
+        android:id="@+id/start_animation_setting"
         android:key="@string/show_animation_preference_key"
         android:title="@string/setting_launcher_animation_title"
         android:summary="@string/setting_launcher_animation_summary"
