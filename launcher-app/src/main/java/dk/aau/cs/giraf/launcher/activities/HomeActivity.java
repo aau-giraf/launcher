@@ -380,24 +380,32 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
             @Override
             public void configShowCaseView(final ShowcaseView showcaseView) {
 
-                final GirafPictogramItemView profilePictureView = (GirafPictogramItemView) findViewById(R.id.profile_widget);
+                // TODO: Last minute fix (Find a better way to call this once the layout is complete) (i.e. dont use postDelayed)
+                showcaseView.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
 
-                final ViewTarget settingsButtonTarget = new ViewTarget(profilePictureView, 1.2f);
+                        final GirafPictogramItemView profilePictureView = (GirafPictogramItemView) findViewById(R.id.profile_widget);
 
-                final int[] coords = new int[2];
+                        final ViewTarget settingsButtonTarget = new ViewTarget(profilePictureView, 1.1f);
 
-                profilePictureView.getLocationOnScreen(coords);
+                        final int[] coords = new int[2];
 
-                // Calculate position for the help text
-                final int textX = coords[0] + margin * 6;
-                final int textY = coords[1];
+                        profilePictureView.getLocationOnScreen(coords);
 
-                showcaseView.setShowcase(settingsButtonTarget, true);
-                showcaseView.setContentTitle("Nuværende bruger");
-                showcaseView.setContentText("Her kan du se den nuværende bruger af enheden");
-                showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
-                showcaseView.setButtonPosition(lps);
-                showcaseView.setTextPostion(textX, textY);
+                        // Calculate position for the help text
+                        final int textX = coords[0] + margin * 8;
+                        final int textY = coords[1] + profilePictureView.getMeasuredHeight() / 2;
+
+                        showcaseView.setShowcase(settingsButtonTarget, true);
+                        showcaseView.setContentTitle("Nuværende bruger");
+                        showcaseView.setContentText("Her kan du se den nuværende bruger af enheden");
+                        showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
+                        showcaseView.setButtonPosition(lps);
+                        showcaseView.setTextPostion(textX, textY);
+
+                    }
+                }, 100);
             }
         });
 

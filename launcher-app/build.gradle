@@ -69,7 +69,7 @@ android {
             testCoverageEnabled true
 
             buildConfigField "boolean", "USE_TEST_SERVER", "true"
-            buildConfigField "boolean", "ENABLE_SYMMETRICDS", "false" //Write true here to enable syncronization.
+            buildConfigField "boolean", "ENABLE_SYMMETRICDS", "true" //Write true here to enable syncronization.
             buildConfigField "boolean", "USE_PRODUCTION_SERVER", "false"
         }
         release {
@@ -104,7 +104,7 @@ dependencies {
     compile fileTree(include: '*.jar', dir: 'libs')
     compile project(':barcodescanner')
     compile(group: 'dk.aau.cs.giraf', name: 'girafComponent', version: '10.4.0', ext: 'aar')
-    compile(group: 'dk.aau.cs.giraf', name: 'oasisLib', version: '7.2.0', ext: 'aar')
+    compile(group: 'dk.aau.cs.giraf', name: 'oasisLib', version: '7.2.3', ext: 'aar')
     compile(group: 'dk.aau.cs.giraf', name: 'localDb', version: '5.1.2', ext: 'aar')
     compile(group: 'dk.aau.cs.giraf', name: 'meta-database', version: '3.2.0')
     compile(group: 'dk.aau.cs.giraf', name: 'ShowcaseView', version: '1.0.0')
