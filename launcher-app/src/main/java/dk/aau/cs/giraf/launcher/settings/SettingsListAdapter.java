@@ -115,13 +115,13 @@ public class SettingsListAdapter extends BaseAdapter {
             // Tag the view with the holder object to be able to retrieve it again
             convertView.setTag(holder);
         }
-        else
-            // The view has been tagged with a ViewHolder, so we can just retrieve it
+        else {    // The view has been tagged with a ViewHolder, so we can just retrieve it
             // to avoid finding them again
-            holder = (ViewHolder)convertView.getTag();
+            holder = (ViewHolder) convertView.getTag();
+        }
 
         // Get the item we are rendering the view for in the list
-        SettingsListItem item = mApplicationList.get(position);
+        final SettingsListItem item = mApplicationList.get(position);
 
         if (position == mLastSelectedItem) {
             // Set the selected item in the ListView coming from the constructor

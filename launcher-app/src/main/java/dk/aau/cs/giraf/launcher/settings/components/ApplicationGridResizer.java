@@ -66,7 +66,7 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
     private SeekBar gridSizeSeekBar;
 
     private GridPreviewView mExampleGridLayout;
-    private TextView ExampleTextView;
+    private TextView exampleTextView;
 
     // constructor inherited from superclass
     public ApplicationGridResizer(final Context context, final AttributeSet attrs) {
@@ -114,7 +114,7 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
         gridSizeSeekBar = (SeekBar) view.findViewById(R.id.gridResizerSeekBar);
         gridSizeSeekBar.setMax(mMaxValue - mMinValue);
 
-        ExampleTextView = (TextView) view.findViewById(R.id.example_text);
+        exampleTextView = (TextView) view.findViewById(R.id.example_text);
 
         mExampleGridLayout = (GridPreviewView) view.findViewById(R.id.example_grid_layout);
 
@@ -136,7 +136,7 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
         mRowsCurrentValue = pref.getInt(ROWS_SIZE_PREFERENCE_TAG, DEFAULT_ROWS_VALUE);
         mColumnsCurrentValue = pref.getInt(COLUMNS_SIZE_PREFERENCE_TAG, DEFAULT_COLUMNS_VALUE);
 
-        ExampleTextView.setText(getContext().getString(R.string.setting_launcher_grid_example_text) + " " + mRowsCurrentValue + " × " + mColumnsCurrentValue);
+        exampleTextView.setText(getContext().getString(R.string.setting_launcher_grid_example_text) + " " + mRowsCurrentValue * mColumnsCurrentValue);
 
         gridSizeSeekBar.setProgress(mRowsCurrentValue - mMinValue);
 
@@ -199,7 +199,7 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
 
             editor.apply();
 
-            ExampleTextView.setText(getContext().getString(R.string.setting_launcher_grid_example_text) + " " + mRowsCurrentValue + " × " + mColumnsCurrentValue);
+            exampleTextView.setText(getContext().getString(R.string.setting_launcher_grid_example_text) + " " + mRowsCurrentValue + " × " + mColumnsCurrentValue);
 
             updateExampleGridSize(mRowsCurrentValue, mColumnsCurrentValue);
         }

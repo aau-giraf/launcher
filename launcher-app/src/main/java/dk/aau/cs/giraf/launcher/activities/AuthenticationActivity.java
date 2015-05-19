@@ -6,13 +6,11 @@ import android.graphics.Bitmap;
 import android.graphics.RectF;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -23,7 +21,6 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.google.zxing.Result;
 import com.google.zxing.client.android.CaptureActivity;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 import dk.aau.cs.giraf.dblib.Helper;
@@ -52,6 +49,7 @@ public class AuthenticationActivity extends CaptureActivity {
 
     private boolean isFramingRectangleRedrawn = false;
     private boolean scanFailed = false;
+
     /**
      * Sets up the activity. Specifically view variables are instantiated, the login button listener
      * is set, and the instruction animation is set up.
@@ -72,18 +70,70 @@ public class AuthenticationActivity extends CaptureActivity {
             guardianButton = (Button) this.findViewById(R.id.loginAsGuardianButton);
             guardianButton.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public synchronized void onClick(View view) {
+                public synchronized void onClick(final View view) {
                     final Helper h = new Helper(AuthenticationActivity.this);
 
                     // "mutex" for the guardianbutton, so it returns immediately if one task is already trying to log in.
-                    if(!guardianButton.isEnabled()) {
+                    if (!guardianButton.isEnabled()) {
                         return;
                     }
 
                     // claim the "mutex"
                     guardianButton.setEnabled(false);
 
-                    new AsyncTask<Void, Void, Boolean>(){
+
+                    final Thread backgroundThread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            final boolean hasProfiles = !(h.profilesHelper.getListOfObjects() == null || h.profilesHelper.getListOfObjects().size() == 0);
+
+                            if (hasProfiles) {
+                                // If there were profiles, run the profilefetchertask and try to login.
+                                /*ProfileFetcherTask profileFetcherTask = new ProfileFetcherTask();
+                                profileFetcherTask.execute();*/
+
+                                // get SW615F14 test guardian
+                                Profile tempProfile = h.profilesHelper.getById(37L);
+
+                                // If SW615F14 does not exists in current database, get the first guardian available instead
+                                if (tempProfile == null) {
+                                    tempProfile = h.profilesHelper.getGuardians().get(0);
+                                }
+
+                                final Profile profile = tempProfile;
+
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (profile == null) {
+                                            Toast.makeText(AuthenticationActivity.this, R.string.no_guardian_profiles_available, Toast.LENGTH_SHORT).show();
+                                            guardianButton.setEnabled(true);
+                                        } else {
+                                            guardianButton.setEnabled(true);
+                                            login(profile);
+                                        }
+                                    }
+                                });
+
+
+                            } else {
+                                // If the profileshelper was empty, display message and reactivate guardianbutton.
+
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(AuthenticationActivity.this, getString(R.string.db_no_profiles_msg), Toast.LENGTH_LONG).show();
+                                        guardianButton.setEnabled(true);
+                                    }
+                                });
+
+                            }
+                        }
+                    });
+                    backgroundThread.start();
+                    /*
+                    final AsyncTask login = new AsyncTask<Void, Void, Boolean>() {
 
                         @Override
                         protected void onPreExecute() {
@@ -93,25 +143,22 @@ public class AuthenticationActivity extends CaptureActivity {
                         @Override
                         protected Boolean doInBackground(Void... params) {
                             // Check if there are zero profiles in the profileshelper, if that is the case return true
-                            return h.profilesHelper.getListOfObjects() == null || h.profilesHelper.getListOfObjects().size() == 0;
+                            return
                         }
 
                         @Override
                         protected void onPostExecute(Boolean aBoolean) {
                             super.onPostExecute(aBoolean);
                             if (aBoolean) {
-                                // If the profileshelper was empty, display message and reactivate guardianbutton.
-                                Toast.makeText(AuthenticationActivity.this, getString(R.string.db_no_profiles_msg), Toast.LENGTH_LONG).show();
-                                guardianButton.setEnabled(true);
-                            }
-                            else{
-                                // If there were profiles, run the profilefetchertask and try to login.
-                                ProfileFetcherTask profileFetcherTask = new ProfileFetcherTask();
-                                profileFetcherTask.execute();
+
+                            } else {
+
                             }
                         }
-                    }.execute();
+                    };
 
+                    login.execute();
+                    */
                 }
             });
             guardianButton.setVisibility(View.VISIBLE);
@@ -187,14 +234,13 @@ public class AuthenticationActivity extends CaptureActivity {
             Profile profile = null;
 
             // SymDS synchronization uses Users for authentication
-            if(BuildConfig.ENABLE_SYMMETRICDS){
+            if (BuildConfig.ENABLE_SYMMETRICDS) {
                 User user = helper.userHelper.authenticateUser(rawResult.getText());
-                if(user != null){
+                if (user != null) {
                     // Profile could be found by user / userID instead
                     profile = helper.profilesHelper.authenticateProfile(rawResult.getText());
                 }
-            }
-            else{
+            } else {
                 profile = helper.profilesHelper.authenticateProfile(rawResult.getText());
             }
 
@@ -268,44 +314,6 @@ public class AuthenticationActivity extends CaptureActivity {
     @Override
     public void onBackPressed() {
         //Do nothing, as the user should not be able to back out of this activity
-    }
-
-
-    // Asynctask implementation which attempts to get profile 37 or the first profile in the guardian list
-    // Once a profile has (or hasnt) been fetched, it is handled by logging in or displaying a toast with a message
-    private class ProfileFetcherTask extends AsyncTask<Void, Void, Profile> {
-
-        @Override
-        protected Profile doInBackground(Void... params) {
-            Helper h = new Helper(AuthenticationActivity.this);
-
-            // get SW615F14 test guardian
-            Profile profile = h.profilesHelper.getById(37L);
-
-            // If SW615F14 does not exists in current database, get the first guardian available instead
-            if (profile == null){
-                profile = h.profilesHelper.getGuardians().get(0);
-            }
-
-            return profile;
-        }
-
-        @Override
-        protected void onPostExecute(Profile profile) {
-            super.onPostExecute(profile);
-
-            // Verify that we were able to get a guardian profile from either of the two calls in doinbackground.
-            // If one is present, log in - otherwise display a toast saying none were available
-            if(profile == null){
-                Toast.makeText(AuthenticationActivity.this, R.string.no_guardian_profiles_available, Toast.LENGTH_SHORT).show();
-                guardianButton.setEnabled(true);
-            }
-            else
-            {
-                guardianButton.setEnabled(true);
-                login(profile);
-            }
-        }
     }
 }
 

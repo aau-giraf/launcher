@@ -48,7 +48,7 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
     Animation loadAnimation;
 
     /* ************* DEBUGGING MODE ************* */
-    // TODO: ONLY USED FOR DEBUGGING PURPOSES!!!
+    // NOTICE: ONLY USED FOR DEBUGGING PURPOSES!!!
     /**
      * If {@code true}, the Launcher is stated in debugging mode, where the splash screen and
      * authentication_activity is skipped.
@@ -95,7 +95,7 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
         boolean showAnimation = true;
 
         if (oldSessionGuardianID != -1) {
-            Profile oldSessionProfile = new ProfileController(this).getProfileById(oldSessionGuardianID);
+            Profile oldSessionProfile = new ProfileController(this).getById(oldSessionGuardianID);
             SharedPreferences prefs = SettingsUtility.getLauncherSettings(this, LauncherUtility.getSharedPreferenceUser(oldSessionProfile));
             showAnimation = prefs.getBoolean(getString(R.string.show_animation_preference_key), true);
         }
@@ -180,10 +180,12 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
         //If no valid session is found, start authentication_activity
         else if (LauncherUtility.sessionExpired(this)) {
             intent = new Intent(this, AuthenticationActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         }
         //If a valid session is found, pass the profile ID along with the intent.
         else {
             intent = new Intent(this, HomeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
             SharedPreferences sharedPreferences = getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
             final long guardianID = sharedPreferences.getLong(Constants.GUARDIAN_ID, -1L);
@@ -225,6 +227,7 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
         }
 
         final Intent intent = new Intent(this, HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         //Add the profile ID to the intent, and save information on the session.
         intent.putExtra(Constants.GUARDIAN_ID, profile.getId());

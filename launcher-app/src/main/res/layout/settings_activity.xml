@@ -6,15 +6,58 @@
     android:baselineAligned="false"
     android:orientation="horizontal">
 
+    <!--
     <fragment
         android:id="@+id/settingsListFragment"
         class="dk.aau.cs.giraf.launcher.settings.SettingsListFragment"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
+
         tools:layout="@layout/settings_fragment_list">
-        <!-- Preview: layout=@layout/details -->
-    </fragment>
+        <
+    </fragment> -->
+
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/giraf_sidebar_background"
+                    android:orientation="vertical">
+        <!--
+        <FrameLayout
+                android:layout_width="@dimen/giraf_settings_list_shadowSize"
+                android:layout_height="fill_parent"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/settings_list_view_shadow_right"/>
+        -->
+        <LinearLayout
+            android:id="@+id/settingsListProfileButton"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/giraf_settings_list_row_padding"
+            android:gravity="center_horizontal">
+
+            <dk.aau.cs.giraf.gui.GirafPictogramItemView
+                android:id="@+id/profile_widget_settings"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"/>
+
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/settingsListView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@id/settingsListProfileButton"
+            android:verticalScrollbarPosition="left"
+            android:choiceMode="singleChoice"
+            android:divider="@color/giraf_list_shadow"
+            android:dividerHeight="1dp"
+            tools:listitem="@layout/settings_fragment_list_row"/>
+
+    </RelativeLayout>
 
     <FrameLayout
         android:id="@+id/settingsContainer"

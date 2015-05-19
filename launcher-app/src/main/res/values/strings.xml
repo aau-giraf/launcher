@@ -2,4 +2,5 @@
 <resources>
     <string name="settingsFor">"Indstillinger for "</string>
     <string name="main_activity_welcome_text">Velkommen til Giraf!</string>
+    <string name="about_giraf_tab_title">Omkring Giraf</string>
 </resources>

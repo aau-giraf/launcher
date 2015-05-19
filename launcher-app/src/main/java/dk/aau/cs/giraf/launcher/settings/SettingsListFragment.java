@@ -95,6 +95,7 @@ public class SettingsListFragment extends Fragment {
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         final View view = inflater.inflate(R.layout.settings_fragment_list, container, false);
 
         mSettingsListView = (ListView) view.findViewById(R.id.settingsListView);

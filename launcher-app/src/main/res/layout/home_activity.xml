@@ -5,11 +5,12 @@
                 android:layout_height="match_parent"
                 android:background="@color/giraf_background">
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/SidebarView"
         android:layout_width="@dimen/sidebar_width"
-        android:layout_height="fill_parent"
+        android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
+        android:gravity="center_horizontal"
         android:background="@drawable/launcher_sidebar_background"
         android:orientation="vertical"
         >
@@ -18,54 +19,65 @@
             android:id="@+id/profile_widget"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
             android:visibility="visible"/>
 
-        <dk.aau.cs.giraf.gui.GirafButton
-            android:id="@+id/change_user_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/profile_widget"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="@dimen/sidebar_item_spacing"
-            android:layout_marginRight="@dimen/sidebar_item_spacing"
-            app:icon="@drawable/icon_change_user"/>
+        <ScrollView
+            android:id="@+id/sidebar_scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <dk.aau.cs.giraf.gui.GirafButton
-            android:id="@+id/logout_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/change_user_button"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/sidebar_item_spacing"
-            android:layout_marginLeft="@dimen/sidebar_item_spacing"
-            android:layout_marginRight="@dimen/sidebar_item_spacing"
-            app:icon="@drawable/icon_logout"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/sidebar_item_spacing">
 
-        <dk.aau.cs.giraf.gui.GirafButton
-            android:id="@+id/settings_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="@dimen/sidebar_item_spacing"
-            app:icon="@drawable/icon_settings"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:gravity="center_horizontal|top"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-        <dk.aau.cs.giraf.gui.GirafButton
-            android:id="@+id/help_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/settings_button"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="@dimen/sidebar_item_spacing"
-            android:layout_marginRight="@dimen/sidebar_item_spacing"
-            app:icon="@drawable/icon_help"/>
+                    <dk.aau.cs.giraf.gui.GirafButton
+                        android:id="@+id/change_user_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/sidebar_item_spacing"
+                        app:icon="@drawable/icon_give_tablet"/>
 
-    </RelativeLayout>
+                    <dk.aau.cs.giraf.gui.GirafButton
+                        android:id="@+id/logout_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/sidebar_item_spacing"
+                        app:icon="@drawable/icon_logout"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal|bottom"
+                    android:orientation="vertical">
+
+                    <dk.aau.cs.giraf.gui.GirafButton
+                        android:id="@+id/help_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/sidebar_item_spacing"
+                        app:icon="@drawable/icon_help"/>
+
+                    <dk.aau.cs.giraf.gui.GirafButton
+                        android:id="@+id/settings_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/sidebar_item_spacing"
+                        app:icon="@drawable/icon_settings"/>
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -102,6 +114,7 @@
             app:fillColor="@color/giraf_page_indicator_active"
             app:pageColor="@color/giraf_page_indicator_inactive"
             app:radius="10dp"/>
+
 
         <dk.aau.cs.giraf.gui.GViewPager
             android:id="@+id/appsViewPager"
