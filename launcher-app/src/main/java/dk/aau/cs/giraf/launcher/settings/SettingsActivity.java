@@ -459,7 +459,7 @@ public class SettingsActivity extends GirafActivity
     }
 
     /**
-     * get the current logged in guardian
+     * Get the current logged in guardian
      *
      * @return
      */
@@ -489,28 +489,10 @@ public class SettingsActivity extends GirafActivity
         this.isFirstRun = prefs.getBoolean(IS_FIRST_RUN_KEY, true);
 
         if (isFirstRun) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (!mAdapter.areAllItemsEnabled()) {
-                        try {
-                            Thread.sleep(100);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            showShowcase();
-                            SharedPreferences.Editor editor = prefs.edit();
-                            editor.putBoolean(IS_FIRST_RUN_KEY, false);
-                            editor.commit();
-                        }
-                    });
-                }
-            }).start();
+            showShowcase();
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean(IS_FIRST_RUN_KEY, false);
+            editor.commit();
         }
         /*
         // If it is the first run display ShowcaseView
@@ -579,25 +561,26 @@ public class SettingsActivity extends GirafActivity
             @Override
             public void configShowCaseView(final ShowcaseView showcaseView) {
 
-                // TODO: Last minute fix (Find a better way to call this once the layout is complete) (i.e. dont use postDelayed)
+                mSettingsListView.setSelection(0);
+
+                // TODO: Last minute fix (Find a better way to call this once the scroll is complete) (i.e. dont use postDelayed)
                 showcaseView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mSettingsListView.setSelection(0);
 
                         mSettingsListView.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 final View generalTab = settingsList.getChildAt(0);
 
-                                final ViewTarget generalTabTarget = new ViewTarget(generalTab, 1.4f);
+                                final ViewTarget generalTabTarget = new ViewTarget(generalTab, 1.2f);
 
                                 final int[] coords = new int[2];
 
                                 generalTab.getLocationOnScreen(coords);
 
                                 // Calculate position for the help text
-                                final int textX = coords[0] + margin * 6;
+                                final int textX = coords[0] + generalTab.getMeasuredWidth() + margin * 4;
                                 final int textY = coords[1];
 
                                 showcaseView.setShowcase(generalTabTarget, true);
@@ -612,8 +595,6 @@ public class SettingsActivity extends GirafActivity
 
 
                 }, 100);
-
-
             }
         });
 
@@ -623,19 +604,20 @@ public class SettingsActivity extends GirafActivity
 
                 mSettingsListView.setSelection(1);
 
-                mSettingsListView.post(new Runnable() {
+                // TODO: Last minute fix (Find a better way to call this once the scroll is complete) (i.e. dont use postDelayed)
+                mSettingsListView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         final View applicationManagementTab = settingsList.getChildAt(1);
 
-                        final ViewTarget applicationManagementTarget = new ViewTarget(applicationManagementTab, 1.4f);
+                        final ViewTarget applicationManagementTarget = new ViewTarget(applicationManagementTab, 1.2f);
 
                         final int[] coords = new int[2];
 
                         applicationManagementTab.getLocationOnScreen(coords);
 
                         // Calculate position for the help text
-                        final int textX = coords[0] + margin * 6;
+                        final int textX = coords[0] + applicationManagementTab.getMeasuredWidth() + margin * 4;
                         final int textY = coords[1];
 
                         showcaseView.setShowcase(applicationManagementTarget, true);
@@ -645,8 +627,7 @@ public class SettingsActivity extends GirafActivity
                         showcaseView.setButtonPosition(lps);
                         showcaseView.setTextPostion(textX, textY);
                     }
-                });
-
+                }, 100);
             }
         });
 
@@ -656,20 +637,21 @@ public class SettingsActivity extends GirafActivity
 
                 mSettingsListView.setSelection(2);
 
-                mSettingsListView.post(new Runnable() {
+                // TODO: Last minute fix (Find a better way to call this once the scroll is complete) (i.e. dont use postDelayed)
+                mSettingsListView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
 
                         final View androidSettingsTab = settingsList.getChildAt(2);
 
-                        final ViewTarget androidSettingsTarget = new ViewTarget(androidSettingsTab, 1.4f);
+                        final ViewTarget androidSettingsTarget = new ViewTarget(androidSettingsTab, 1.2f);
 
                         final int[] coords = new int[2];
 
                         androidSettingsTab.getLocationOnScreen(coords);
 
                         // Calculate position for the help text
-                        final int textX = coords[0] + margin * 6;
+                        final int textX = coords[0] + androidSettingsTab.getMeasuredWidth() + margin * 4;
                         final int textY = coords[1];
 
                         showcaseView.setShowcase(androidSettingsTarget, true);
@@ -679,7 +661,7 @@ public class SettingsActivity extends GirafActivity
                         showcaseView.setButtonPosition(lps);
                         showcaseView.setTextPostion(textX, textY);
                     }
-                });
+                }, 100);
             }
         });
 
@@ -693,7 +675,6 @@ public class SettingsActivity extends GirafActivity
 
                     // Find the currently active content fragment
                     final Fragment currentNormalSettingsContent = mFragManager.findFragmentById(R.id.settingsContainer);
-
 
                     final View noAppsMessageView = currentSupportSettingsContent.getView().findViewById(R.id.noAppsMessage);
                     final View appsViewPager = currentSupportSettingsContent.getView().findViewById(R.id.appsViewPager);
@@ -739,44 +720,6 @@ public class SettingsActivity extends GirafActivity
 
                     showcaseView.setButtonPosition(lps);
                     showcaseView.setStyle(R.style.GirafLastCustomShowcaseTheme);
-                /*
-                } else if (currentNormalSettingsContent != null && currentNormalSettingsContent instanceof SettingsLauncher) {
-
-
-                    // Calculate position for the help text
-                    final int textX = animationSettingView.getRight() + margin * 2;
-                    final int textY = animationSettingView.getBottom() + margin;
-
-                    final Target animationSettingTarget = new PointTarget()
-
-                    showcaseView.setShowcase(animationSettingTarget, true);
-                    showcaseView.setContentTitle("Opstartsanimation");
-                    showcaseView.setContentText("Her kan du slå opstartsanimationen til og fra");
-                    showcaseView.setTextPostion(textX, textY);
-                    showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
-
-                    // Add one more showcase
-                    showcaseManager.addShowCase(new ShowcaseManager.Showcase() {
-                        @Override
-                        public void configShowCaseView(final ShowcaseView showcaseView) {
-
-                            final View iconResizerView = currentNormalSettingsContent.getView().findViewById(R.id.icon_resizer);
-
-                            // Calculate position for the help text
-                            final int textX = iconResizerView.getRight() + margin * 2;
-                            final int textY = iconResizerView.getBottom() + margin;
-
-                            final Target animationSettingTarget = new ViewTarget(iconResizerView, 1.1f);
-
-                            showcaseView.setShowcase(animationSettingTarget, true);
-                            showcaseView.setContentTitle("Antal applikationer");
-                            showcaseView.setContentText("Her kan du instille hvor mange applikationer der skal vises af gangen i launcheren");
-                            showcaseView.setTextPostion(textX, textY);
-                            showcaseView.setStyle(R.style.GirafLastCustomShowcaseTheme);
-                        }
-                    });
-                }
-                */
                 }
 
             });
