@@ -4,16 +4,33 @@
     android:layout_height="match_parent"
     android:layout_gravity="center"
     android:background="@color/giraf_background"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="20dp">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:gravity="center"
-        android:text="@string/settings_about_title"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@android:color/black" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:gravity="center"
+            android:text="@string/settings_about_title"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@android:color/black" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:gravity="center"
+            android:text="Giraf er en række Apps designet specielt til autister med lidt eller intet verbalt sprog.\nAlle vores Apps er gratis og open source."
+            android:textColor="@color/giraf_text" />
+
+    </LinearLayout>
 
     <TextView
         android:layout_width="match_parent"
@@ -22,6 +39,6 @@
         android:gravity="center"
         android:text="@string/settings_about_message"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="@android:color/black" />
+        android:textColor="@android:color/darker_gray" />
 
 </LinearLayout>
