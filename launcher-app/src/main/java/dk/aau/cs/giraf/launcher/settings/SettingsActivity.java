@@ -260,7 +260,7 @@ public class SettingsActivity extends GirafActivity
         // Application management
         addApplicationByTitle(getString(R.string.settings_tablist_applications),
                 new AppManagementFragment(),
-                getResources().getDrawable(R.drawable.ic_apps));
+                getResources().getDrawable(R.drawable.icon_applications));
 
 
         // Get intent for Native Android Settings
@@ -270,7 +270,7 @@ public class SettingsActivity extends GirafActivity
         androidSettingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         addApplicationByTitle(getResources().getString(R.string.settings_tablist_tablet),
-                androidSettingsIntent, getResources().getDrawable(R.drawable.ic_android));
+                androidSettingsIntent, getResources().getDrawable(R.drawable.icon_android));
 
         // Launcher
         addApplicationByPackageName("dk.aau.cs.giraf.launcher",
@@ -318,7 +318,8 @@ public class SettingsActivity extends GirafActivity
             }
 
             // Extract icon of application
-            final Drawable appIcon = pm.getApplicationIcon(appInfo);
+            // TODO: This a quick fix to show the correct icon in the list. This is however alright since the sidebar is not used for any other apps
+            final Drawable appIcon = this.getResources().getDrawable(R.drawable.icon_giraf_no_background); //pm.getApplicationIcon(appInfo);
 
             // Create the item
             final FragmentSettingsListItem item = new FragmentSettingsListItem(title, appIcon, fragment);

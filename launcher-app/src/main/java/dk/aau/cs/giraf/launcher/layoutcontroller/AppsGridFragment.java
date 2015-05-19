@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -80,12 +81,13 @@ public class AppsGridFragment extends Fragment {
 
                 final AppsFragmentInterface activity = (AppsFragmentInterface) getActivity();
                 final Profile currentUser = activity.getCurrentUser();
+                final int margin = 10;
 
                 //Create a new AppImageView and set its properties
                 AppImageView newAppView = AppViewCreationUtility.createAppImageView(getActivity(), currentUser, activity.getLoggedInGuardian(), currentAppInfo, appsGridLayout, getOnClickListener());
                 //newAppView.setScaleType(ImageView.ScaleType.FIT_XY);
-                GridLayout.LayoutParams params = new GridLayout.LayoutParams(new ViewGroup.LayoutParams(container.getMeasuredWidth() / columnSize, container.getMeasuredHeight() / rowSize));
-                //params.setMargins(2, 2, 2, 2);
+                GridLayout.LayoutParams params = new GridLayout.LayoutParams(new ViewGroup.LayoutParams(container.getMeasuredWidth() / columnSize - margin * 2, container.getMeasuredHeight() / rowSize - margin * 2));
+                params.setMargins(margin, margin, margin, margin);
                 newAppView.setLayoutParams(params);
 
                 // Application icons should only have their check state set when in the SettingsActivity
