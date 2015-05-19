@@ -183,8 +183,6 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
             this.findViewById(android.R.id.content).getViewTreeObserver().addOnGlobalLayoutListener(globalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
-
-
                     showShowcase();
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putBoolean(IS_FIRST_RUN_KEY, false);

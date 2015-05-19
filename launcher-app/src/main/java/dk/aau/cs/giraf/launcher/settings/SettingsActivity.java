@@ -488,20 +488,20 @@ public class SettingsActivity extends GirafActivity
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         this.isFirstRun = prefs.getBoolean(IS_FIRST_RUN_KEY, true);
 
-        if (isFirstRun) {
+        /*if (isFirstRun) {
             showShowcase();
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean(IS_FIRST_RUN_KEY, false);
             editor.commit();
-        }
-        /*
+        }*/
+
         // If it is the first run display ShowcaseView
         if (isFirstRun) {
             mSettingsListView.getViewTreeObserver().addOnGlobalLayoutListener(globalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
 
-                    //showShowcase();
+                    showShowcase();
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putBoolean(IS_FIRST_RUN_KEY, false);
                     editor.commit();
@@ -519,7 +519,7 @@ public class SettingsActivity extends GirafActivity
                 }
             });
         }
-        */
+
     }
 
     @Override
