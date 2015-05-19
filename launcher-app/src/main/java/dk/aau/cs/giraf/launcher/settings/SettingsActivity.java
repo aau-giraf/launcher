@@ -557,43 +557,33 @@ public class SettingsActivity extends GirafActivity
 
         final ListView settingsList = mSettingsListView;
 
+        final int originalPos = mSettingsListView.getSelectedItemPosition();
+
         showcaseManager.addShowCase(new ShowcaseManager.Showcase() {
             @Override
             public void configShowCaseView(final ShowcaseView showcaseView) {
-
-                mSettingsListView.setSelection(0);
-
                 // TODO: Last minute fix (Find a better way to call this once the scroll is complete) (i.e. dont use postDelayed)
                 showcaseView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        final View profile = findViewById(R.id.profile_widget_settings);
+                        final ViewTarget profileTarget = new ViewTarget(profile, 1.2f);
 
-                        mSettingsListView.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                final View generalTab = settingsList.getChildAt(0);
+                        final int[] coords = new int[2];
 
-                                final ViewTarget generalTabTarget = new ViewTarget(generalTab, 1.2f);
+                        profile.getLocationOnScreen(coords);
 
-                                final int[] coords = new int[2];
+                        // Calculate position for the help text
+                        final int textX = coords[0] + profile.getMeasuredWidth() + margin * 4;
+                        final int textY = coords[1];
 
-                                generalTab.getLocationOnScreen(coords);
-
-                                // Calculate position for the help text
-                                final int textX = coords[0] + generalTab.getMeasuredWidth() + margin * 4;
-                                final int textY = coords[1];
-
-                                showcaseView.setShowcase(generalTabTarget, true);
-                                showcaseView.setContentTitle("Generelt");
-                                showcaseView.setContentText("Generelle indstillinger for Giraf Launcheren");
-                                showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
-                                showcaseView.setButtonPosition(lps);
-                                showcaseView.setTextPostion(textX, textY);
-                            }
-                        }, 100);
+                        showcaseView.setShowcase(profileTarget, true);
+                        showcaseView.setContentTitle("Nuværende profil");
+                        showcaseView.setContentText("Den profil der laves indstillinger for");
+                        showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
+                        showcaseView.setButtonPosition(lps);
+                        showcaseView.setTextPostion(textX, textY);
                     }
-
-
                 }, 100);
             }
         });
@@ -602,7 +592,44 @@ public class SettingsActivity extends GirafActivity
             @Override
             public void configShowCaseView(final ShowcaseView showcaseView) {
 
-                mSettingsListView.setSelection(1);
+                //mSettingsListView.setSelection(0);
+                mSettingsListView.smoothScrollToPositionFromTop(0, 0, 120);
+
+                // TODO: Last minute fix (Find a better way to call this once the scroll is complete) (i.e. dont use postDelayed)
+                showcaseView.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        final View generalTab = settingsList.getChildAt(0);
+
+                        final ViewTarget generalTabTarget = new ViewTarget(generalTab, 1.2f);
+
+                        final int[] coords = new int[2];
+
+                        generalTab.getLocationOnScreen(coords);
+
+                        // Calculate position for the help text
+                        final int textX = coords[0] + generalTab.getMeasuredWidth() + margin * 4;
+                        final int textY = coords[1];
+
+                        showcaseView.setShowcase(generalTabTarget, true);
+                        showcaseView.setContentTitle("Generelt");
+                        showcaseView.setContentText("Generelle indstillinger for Giraf Launcheren");
+                        showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
+                        showcaseView.setButtonPosition(lps);
+                        showcaseView.setTextPostion(textX, textY);
+                    }
+
+
+                }, 200);
+            }
+        });
+
+        showcaseManager.addShowCase(new ShowcaseManager.Showcase() {
+            @Override
+            public void configShowCaseView(final ShowcaseView showcaseView) {
+
+                mSettingsListView.smoothScrollToPositionFromTop(1, 0, 120);
 
                 // TODO: Last minute fix (Find a better way to call this once the scroll is complete) (i.e. dont use postDelayed)
                 mSettingsListView.postDelayed(new Runnable() {
@@ -627,7 +654,7 @@ public class SettingsActivity extends GirafActivity
                         showcaseView.setButtonPosition(lps);
                         showcaseView.setTextPostion(textX, textY);
                     }
-                }, 100);
+                }, 200);
             }
         });
 
@@ -635,7 +662,7 @@ public class SettingsActivity extends GirafActivity
             @Override
             public void configShowCaseView(final ShowcaseView showcaseView) {
 
-                mSettingsListView.setSelection(2);
+                mSettingsListView.smoothScrollToPositionFromTop(2, 0, 120);
 
                 // TODO: Last minute fix (Find a better way to call this once the scroll is complete) (i.e. dont use postDelayed)
                 mSettingsListView.postDelayed(new Runnable() {
@@ -661,7 +688,7 @@ public class SettingsActivity extends GirafActivity
                         showcaseView.setButtonPosition(lps);
                         showcaseView.setTextPostion(textX, textY);
                     }
-                }, 100);
+                }, 200);
             }
         });
 
@@ -730,6 +757,9 @@ public class SettingsActivity extends GirafActivity
             public void onDone(ShowcaseView showcaseView) {
                 showcaseManager = null;
                 isFirstRun = false;
+
+                // Scroll back to the original position
+                mSettingsListView.smoothScrollToPositionFromTop(originalPos, 0, 120);
             }
         });
 
