@@ -72,7 +72,7 @@ android {
             buildConfigField "boolean", "USE_PRODUCTION_SERVER", "false"
         }
         release {
-            minifyEnabled true
+            minifyEnabled false
             buildConfigField "boolean", "USE_TEST_SERVER", "true"
             buildConfigField "boolean", "ENABLE_SYMMETRICDS", "false"
             buildConfigField "boolean", "USE_PRODUCTION_SERVER", "false" //Production server isn't created yet.
