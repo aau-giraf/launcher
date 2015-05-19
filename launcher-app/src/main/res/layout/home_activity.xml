@@ -24,7 +24,9 @@
             android:id="@+id/sidebar_scrollview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fillViewport="true">
+            android:fadeScrollbars="false"
+            android:fillViewport="true"
+            android:overScrollMode="ifContentScrolls">
 
             <LinearLayout
                 android:layout_width="match_parent"
