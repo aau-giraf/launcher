@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/giraf_background">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/giraf_background">
 
     <LinearLayout
         android:id="@+id/SidebarView"
         android:layout_width="@dimen/sidebar_width"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
-        android:gravity="center_horizontal"
         android:background="@drawable/launcher_sidebar_background"
-        android:orientation="vertical"
-        >
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
         <dk.aau.cs.giraf.gui.GirafPictogramItemView
             android:id="@+id/profile_widget"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="visible"/>
+            android:visibility="visible" />
 
         <ScrollView
             android:id="@+id/sidebar_scrollview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:fillViewport="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -34,9 +34,9 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:gravity="center_horizontal|top"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:gravity="center_horizontal|top"
                     android:orientation="vertical">
 
                     <dk.aau.cs.giraf.gui.GirafButton
@@ -44,19 +44,19 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/sidebar_item_spacing"
-                        app:icon="@drawable/icon_give_tablet"/>
+                        app:icon="@drawable/icon_give_tablet" />
 
                     <dk.aau.cs.giraf.gui.GirafButton
                         android:id="@+id/logout_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/sidebar_item_spacing"
-                        app:icon="@drawable/icon_logout"/>
+                        app:icon="@drawable/icon_logout" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center_horizontal|bottom"
                     android:orientation="vertical">
@@ -66,14 +66,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/sidebar_item_spacing"
-                        app:icon="@drawable/icon_help"/>
+                        app:icon="@drawable/icon_help" />
 
                     <dk.aau.cs.giraf.gui.GirafButton
                         android:id="@+id/settings_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/sidebar_item_spacing"
-                        app:icon="@drawable/icon_settings"/>
+                        app:icon="@drawable/icon_settings" />
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>
@@ -95,14 +95,14 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/darker_gray"
             android:textSize="30sp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <ProgressBar
             android:id="@+id/ProgressBar"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_centerInParent="true"
-            android:visibility="invisible"/>
+            android:visibility="invisible" />
 
         <com.viewpagerindicator.CirclePageIndicator
             android:id="@+id/pageIndicator"
@@ -113,20 +113,20 @@
             android:padding="3dp"
             app:fillColor="@color/giraf_page_indicator_active"
             app:pageColor="@color/giraf_page_indicator_inactive"
-            app:radius="10dp"/>
+            app:radius="10dp" />
 
 
         <dk.aau.cs.giraf.gui.GViewPager
             android:id="@+id/appsViewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/pageIndicator"/>
+            android:layout_above="@id/pageIndicator" />
 
         <include
             layout="@layout/debug_mode_overlay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"/>
+            android:layout_alignParentTop="true" />
 
     </RelativeLayout>
 
