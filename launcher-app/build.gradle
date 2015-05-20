@@ -69,7 +69,7 @@ android {
             testCoverageEnabled true
 
             buildConfigField "boolean", "USE_TEST_SERVER", "true"
-            buildConfigField "boolean", "ENABLE_SYMMETRICDS", "true" //Write true here to enable syncronization.
+            buildConfigField "boolean", "ENABLE_SYMMETRICDS", "false" //Write true here to enable syncronization.
             buildConfigField "boolean", "USE_PRODUCTION_SERVER", "false"
         }
         release {
