@@ -1,30 +1,12 @@
 package dk.aau.cs.giraf.launcher.activities;
 
 import android.app.ActivityManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.io.IOException;
-import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Date;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.core.data.Data;
@@ -36,7 +18,6 @@ import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
-import dk.aau.cs.giraf.localdb.main;
 
 /**
  * Displays the splash logo of Launcher, and then starts {@link dk.aau.cs.giraf.launcher.activities.AuthenticationActivity}.
@@ -118,7 +99,7 @@ public class MainActivity extends GirafActivity {
 
 
         startActivity(downloadService);
-        
+
     }
 
 
