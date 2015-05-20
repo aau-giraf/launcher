@@ -27,6 +27,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import dk.aau.cs.giraf.activity.GirafActivity;
+import dk.aau.cs.giraf.core.data.Data;
 import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.dblib.controllers.ProfileController;
 import dk.aau.cs.giraf.dblib.models.Profile;
@@ -41,11 +42,9 @@ import dk.aau.cs.giraf.localdb.main;
  * Displays the splash logo of Launcher, and then starts {@link dk.aau.cs.giraf.launcher.activities.AuthenticationActivity}.
  * Provides variables for enabling debug mode before compilation.
  */
-public class MainActivity extends GirafActivity implements Animation.AnimationListener {
+public class MainActivity extends GirafActivity {
     //private Context mContext;
     private long oldSessionGuardianID = -1;
-    Animation startingAnimation;
-    Animation loadAnimation;
 
     /* ************* DEBUGGING MODE ************* */
     // TODO: ONLY USED FOR DEBUGGING PURPOSES!!!
@@ -87,7 +86,6 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.main_activity);
 
         //Load the preference determining whether the animation should be shown
         findOldSession();
@@ -109,56 +107,21 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
         if ((DEBUG_MODE && SKIP_SPLASH_SCREEN) || !showAnimation) {
             startNextActivity();
         }
-        //Load the splash animation
-        startingAnimation = AnimationUtils.loadAnimation(this, R.anim.main_activity_rotatelogo_once);
-        loadAnimation = AnimationUtils.loadAnimation(this, R.anim.main_activity_rotatelogo_infinite);
 
-        startingAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
-        loadAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
 
-        findViewById(R.id.giraficon).startAnimation(startingAnimation);
-        startingAnimation.setAnimationListener(this);
 
-        // Start the remote syncing service
-        new main(this).startSynch(new MessageHandler(this, loadAnimation), BuildConfig.ENABLE_SYMMETRICDS, BuildConfig.USE_TEST_SERVER, BuildConfig.USE_PRODUCTION_SERVER);
+        Intent downloadService = new Intent(this, Data.class); //dk.aau.cs.giarf.core.data.Data.class
+
+        downloadService.putExtra("ENABLE_SYMMETRICDS", BuildConfig.ENABLE_SYMMETRICDS);
+        downloadService.putExtra("USE_TEST_SERVER", BuildConfig.USE_TEST_SERVER);
+        downloadService.putExtra("USE_PRODUCTION_SERVER", BuildConfig.USE_PRODUCTION_SERVER);
+
+
+        startActivity(downloadService);
+        
     }
 
-    /**
-     * Overrides the backbutton to do nothing, as the user should not be able to back out of this activity
-     */
-    @Override
-    public void onBackPressed() {
-    }
 
-    /**
-     * Must be overridden to implement AnimationListener.
-     * We do not need it for anything, though.
-     *
-     * @param animation The animation the function should act upon.
-     */
-    @Override
-    public void onAnimationStart(Animation animation) {
-    }
-
-    /**
-     * Changed the welcome text to a "fetching data" text and makes the application start loading data.
-     *
-     * @param animation The animation the function should act upon.
-     */
-    @Override
-    public void onAnimationEnd(Animation animation) {
-        findViewById(R.id.giraficon).startAnimation(loadAnimation);
-    }
-
-    /**
-     * Must be overridden to implement AnimationListener.
-     * We do not need it for anything, though.
-     *
-     * @param animation The animation the function should act upon.
-     */
-    @Override
-    public void onAnimationRepeat(Animation animation) {
-    }
 
     /**
      * Launches the next relevant activity, according to the current debugging mode, and to
@@ -243,112 +206,6 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
         } else {
             final SharedPreferences sharedPreferences = getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
             oldSessionGuardianID = sharedPreferences.getLong(Constants.GUARDIAN_ID, -1L);
-        }
-    }
-
-    /**
-     * Used to communicate with DownloadService
-     * To determine if a download is complete
-     */
-    public static class MessageHandler extends Handler {
-
-        private final Animation loadAnimation;
-
-        // Find the views that will be used
-        final TextView welcomeTitle;
-        final TextView welcomeDescription;
-        final TextView progressTextPercent;
-        final ProgressBar progressBar;
-        final WeakReference<MainActivity> activity;
-
-        final ExecutorService executorService = Executors.newSingleThreadExecutor();
-
-        public MessageHandler(final MainActivity activity, final Animation loadAnimation) {
-            this.activity = new WeakReference<MainActivity>(activity);
-            this.loadAnimation = loadAnimation;
-            this.welcomeTitle = (TextView) activity.findViewById(R.id.welcome_title);
-            this.welcomeDescription = (TextView) activity.findViewById(R.id.welcome_desciption);
-            this.progressTextPercent = (TextView) activity.findViewById(R.id.progress_bar_text);
-            this.progressBar = (ProgressBar) activity.findViewById(R.id.progress_bar);
-        }
-
-        private boolean isNetworkAvailable() {
-            ConnectivityManager connectivityManager = (ConnectivityManager) this.activity.get().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-            return activeNetworkInfo != null;
-        }
-
-        @Override
-        public void handleMessage(Message message) {
-            final int progress = message.arg1;
-            if (progress >= 100) {
-                executorService.shutdown();
-                try {
-                    while (!executorService.awaitTermination(10, TimeUnit.SECONDS)) ;
-                } catch (Exception e) { }
-                this.activity.get().startNextActivity();
-            } else {
-                // Run the check on a background-thread
-                executorService.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        boolean hasConnectionTemp = isNetworkAvailable();
-
-                        if (hasConnectionTemp) {
-                            try {
-                                HttpURLConnection urlc = (HttpURLConnection) new URL("http://clients3.google.com/generate_204").openConnection();
-                                urlc.setRequestProperty("User-Agent", "Android");
-                                urlc.setRequestProperty("Connection", "close");
-                                urlc.setConnectTimeout(1500);
-                                urlc.connect();
-                                hasConnectionTemp = (urlc.getResponseCode() == 204 && urlc.getContentLength() == 0);
-                            } catch (IOException e) {
-                                hasConnectionTemp = false;
-                            }
-                        }
-
-                        final boolean hasConnection = hasConnectionTemp;
-
-                        // Run the following on the UI-thread
-                        activity.get().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (hasConnection) {
-                                    loadAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
-
-                                    // Update the views accordingly to the progress
-                                    welcomeTitle.setText("Henter data...");
-
-                                    welcomeDescription.setVisibility(View.GONE);
-                                    progressBar.setVisibility(View.VISIBLE);
-                                    progressTextPercent.setVisibility(View.VISIBLE);
-
-                                    progressTextPercent.setText(progress + "%");
-                                    progressBar.setProgress(progress);
-
-                                    welcomeTitle.setTextColor(activity.get().getResources().getColor(R.color.giraf_loading_textColor));
-                                } else {
-                                    // Cancel the animation and make is very slow (in order to stop it)
-                                    loadAnimation.cancel();
-                                    loadAnimation.setDuration(Long.MAX_VALUE);
-
-                                    progressBar.setVisibility(View.GONE);
-                                    progressTextPercent.setVisibility(View.GONE);
-                                    welcomeDescription.setVisibility(View.VISIBLE);
-
-                                    welcomeTitle.setText("Ingen internet forbindelse!");
-                                    welcomeDescription.setText("Opret forbindelse til internettet for at hente data");
-
-                                    welcomeTitle.setTextColor(Color.parseColor("#900000"));
-                                    welcomeDescription.setTextColor(Color.parseColor("#900000"));
-                                }
-                            }
-                        });
-
-                        Log.d("Progress", Integer.toString(progress));
-                    }
-                });
-            }
         }
     }
 }
