@@ -544,6 +544,8 @@ public class SettingsActivity extends GirafActivity
     @Override
     public void showShowcase() {
 
+        // TODO: This code gets runtime error on smaller screens (eg. phones)
+
         //TODO: Move string constants to xml files
 
         // Create a relative location for the next button
