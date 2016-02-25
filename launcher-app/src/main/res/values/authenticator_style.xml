@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="LoginText" parent="@style/GirafTheme.NoTitleBar">
+        <item name="android:textSize">25sp</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">20dp</item>
+    </style>
+    <style name="PasswordBox" parent="@style/GirafTheme.NoTitleBar">
+        <item name="android:textSize">25sp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:textColor">#dd000000</item>
+    </style>
+</resources>

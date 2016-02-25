@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content">
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_gravity="end|center_vertical"
-        android:background="@drawable/gbackground"
+        android:background="@drawable/bg"
         android:baselineAligned="false"
         android:orientation="horizontal"
         android:weightSum="5">
@@ -17,58 +19,6 @@
             android:layout_height="fill_parent"
             android:layout_weight="3">
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|center_horizontal">
-
-                <TextView
-                    android:id="@+id/headline"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:text="@string/authentication_headline"
-                    android:textColor="#FFFFFFFF"
-                    android:textSize="30sp" />
-
-                <ImageView
-                    android:id="@+id/animation"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_below="@+id/headline"
-                    android:contentDescription="@string/instructions"
-                    android:scaleX="0.8"
-                    android:scaleY="0.8"
-                    android:src="@drawable/ani_00000" />
-
-                <TextView
-                    android:id="@+id/authentication_step1"
-                    android:layout_width="300dp"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/animation"
-                    android:text="@string/authentication_step1"
-                    android:textColor="#FFFFFFFF"
-                    android:textSize="30sp" />
-                <ListView
-                    android:layout_width="300dp"
-                    android:layout_height="500dp"
-                    android:id="@+id/users_list"/>
-
-                <TextView
-                    android:id="@+id/loginname"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/authentication_step1"
-                    android:layout_marginTop="15dp"
-                    android:singleLine="false"
-                    android:textColor="#FFFFFFFF"
-                    android:textSize="50sp"
-                    android:visibility="invisible" />
-            </RelativeLayout>
             <Button
                 android:visibility="gone"
                 android:id="@+id/loginAsGuardianButton"
@@ -76,52 +26,69 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|bottom"
                 android:text="@string/login_as_guardian" />
-        </FrameLayout>
 
-        <FrameLayout
-            android:id="@+id/Camerafeed_container"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_marginBottom="50dp"
-            android:layout_marginEnd="75dp"
-            android:layout_marginRight="75dp"
-            android:layout_marginTop="30dp"
-            android:layout_weight="2">
-
-            <RelativeLayout
-                android:id="@+id/camerafeed"
-                android:layout_width="fill_parent"
-                android:layout_height="481dp"
-                android:layout_gravity="center"
-                android:background="@drawable/cameraborder">
-
-                <include
-                    layout="@layout/capture"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true" />
-
-                <ImageView
-                    android:id="@+id/scanicon"
-                    android:layout_width="250dp"
-                    android:layout_height="250dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:alpha="0.5"
-                    android:contentDescription="@string/scan_icon"
-                    android:src="@drawable/scanicon" />
-
-            </RelativeLayout>
-
-            <TextView
-                android:id="@+id/scanStatusTextView"
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|top"
-                android:text="@string/scanner"
-                android:textColor="#FFFFFFFF"
-                android:textSize="40sp" />
+                android:layout_gravity="center">
 
+                <ImageView
+                    android:layout_width="236dp"
+                    android:layout_height="197dp"
+                    android:id="@+id/giraflogo"
+                    android:layout_gravity="center_horizontal|top"
+                    android:background="@drawable/giraf_logo"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:contentDescription="@string/logo_description" />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/password"
+                        android:id="@+id/pass_label"
+                        android:textSize="44sp"
+                        android:textColor="#ddffffff"
+                        android:shadowColor="#000"
+                        android:shadowRadius="3" />
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:gravity="center_vertical|center_horizontal">
+
+                        <EditText
+                            android:layout_width="500dp"
+                            android:layout_height="fill_parent"
+                            android:inputType="textPassword"
+                            android:ems="10"
+                            android:id="@+id/pass_box"
+                            android:clickable="false"
+                            style="@style/PasswordBox"
+                            android:background="@drawable/passwordbox" />
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="fill_parent"
+                            android:text="@string/login"
+                            android:id="@+id/login_btn"
+                            android:singleLine="false"
+                            android:enabled="true"
+                            style="@style/LoginText"
+                            android:background="@drawable/loginbutton" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
         </FrameLayout>
 
     </LinearLayout>

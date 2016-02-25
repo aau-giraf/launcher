@@ -1,5 +1,6 @@
 package dk.aau.cs.giraf.launcher.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -11,6 +12,7 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -36,7 +38,7 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.SimulateAnimationDrawable;
  * Handles authentication of the user's QR code through a camera feed. If the the user's QR code
  * is valid, session information is saved in preferences, and {@code HomeActivity} is started.
  */
-public class AuthenticationActivity extends CaptureActivity {
+public class AuthenticationActivity extends Activity {
 
     private Intent mHomeIntent;
     private TextView mLoginNameView;
@@ -62,9 +64,6 @@ public class AuthenticationActivity extends CaptureActivity {
         setContentView(R.layout.authentication_activity);
 
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        mLoginNameView = (TextView) this.findViewById(R.id.loginname);
-        mInfoView = (TextView) this.findViewById(R.id.authentication_step1);
-        mScanStatus = (TextView) this.findViewById(R.id.scanStatusTextView);
 
         if (BuildConfig.DEBUG) {
             guardianButton = (Button) this.findViewById(R.id.loginAsGuardianButton);
@@ -170,8 +169,6 @@ public class AuthenticationActivity extends CaptureActivity {
         }
 
         // Simulate the AnimationDrawable class
-        final ImageView instructImageView = (ImageView) findViewById(R.id.animation);
-        new SimulateAnimationDrawable(instructImageView, Constants.INSTRUCTION_ANIMATION, Constants.INSTRUCTION_FRAME_DURATION);
 
         // Start logging this activity
         EasyTracker.getInstance(this).activityStart(this);
@@ -186,8 +183,6 @@ public class AuthenticationActivity extends CaptureActivity {
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (!isFramingRectangleRedrawn) {
-            final View cameraFeed = this.findViewById(R.id.camerafeed);
-            super.setFramingRect(cameraFeed.getWidth(), cameraFeed.getHeight());
             isFramingRectangleRedrawn = true;
         }
     }
@@ -209,14 +204,12 @@ public class AuthenticationActivity extends CaptureActivity {
      * @param color The color which the border should have
      */
     public void changeCameraFeedBorderColor(int color) {
-        ViewGroup cameraFeedView = (ViewGroup) this.findViewById(R.id.camerafeed);
 
         RectF rectf = new RectF(10, 10, 10, 10);
         RoundRectShape rect = new RoundRectShape(new float[]{15, 15, 15, 15, 15, 15, 15, 15}, rectf, null);
         ShapeDrawable shapeDrawable = new ShapeDrawable(rect);
 
         shapeDrawable.getPaint().setColor(color);
-        cameraFeedView.setBackgroundDrawable(shapeDrawable);
     }
 
     /**
@@ -227,7 +220,6 @@ public class AuthenticationActivity extends CaptureActivity {
      * @param rawResult Result which the scanned string is saved in.
      * @param barcode   A greyscale bitmap of the camera data which was decoded.
      */
-    @Override
     public void handleDecode(Result rawResult, final Bitmap barcode) {
         try {
             Helper helper = new Helper(this);
@@ -275,11 +267,6 @@ public class AuthenticationActivity extends CaptureActivity {
             Toast.makeText(this, getString(R.string.could_not_verify_msg), Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
-
-		/*
-         * Needed by ZXing in order to continuously scan QR codes, and not halt after first scan.
-		 */
-        this.getHandler().sendEmptyMessageDelayed(R.id.restart_preview, 500);
     }
 
     private void login(final Profile profile) {
