@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -29,6 +30,7 @@ import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.dblib.models.User;
 import dk.aau.cs.giraf.launcher.BuildConfig;
+import dk.aau.cs.giraf.launcher.ProfileAdapter;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
@@ -51,6 +53,10 @@ public class AuthenticationActivity extends Activity {
 
     private boolean isFramingRectangleRedrawn = false;
     private boolean scanFailed = false;
+
+    //Dummy data, should be removed after development
+    public static String[] users = {"John", "Doe", "Jeff", "SomeGuy", "What a guy"};
+    public static int[] images = {R.drawable.sample_7,R.drawable.sample_6, R.drawable.sample_5, R.drawable.sample_4, R.drawable.sample_3};
 
     /**
      * Sets up the activity. Specifically view variables are instantiated, the login button listener
