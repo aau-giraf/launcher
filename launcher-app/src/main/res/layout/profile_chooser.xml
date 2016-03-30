@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:background="@drawable/bg">
@@ -13,35 +14,25 @@
         android:textStyle="bold"
         android:text="Vælg din profil"/>
 
-    <LinearLayout
+    <GridView
+        android:layout_below="@+id/text_view1"
+        android:id="@+id/gridview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:layout_margin="10dp"
+        android:padding="10dp"
+        android:orientation="horizontal"
+        >
+    </GridView>
 
-        <Button
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:background="@drawable/triangular_button"
-            android:layout_gravity="center_vertical|center_horizontal">
-        </Button>
 
-        <GridView
-            android:id="@+id/gridview"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:gravity="center"
-            android:horizontalSpacing="10dp"
-            android:numColumns="3"
-            android:stretchMode="columnWidth"
-            android:layout_below="@+id/text_view1"
-        /GridView>
-        <Button
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:background="@drawable/triangular_button"
-            android:gravity="center_horizontal|center_vertical"
-            android:rotation="-90">
-        </Button>
 
-    </LinearLayout>
+    <Button
+        android:visibility="gone"
+        android:id="@+id/loginAsGuardianButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|bottom"
+        android:text="@string/login_as_guardian"
+        android:layout_below="@id/gridview"/>
 </RelativeLayout>

@@ -11,18 +11,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
+import android.widget.GridLayout;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.zxing.Result;
-import com.google.zxing.client.android.CaptureActivity;
 
 import java.util.Date;
 
@@ -34,7 +31,6 @@ import dk.aau.cs.giraf.launcher.ProfileAdapter;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
-import dk.aau.cs.giraf.launcher.layoutcontroller.SimulateAnimationDrawable;
 
 /**
  * Handles authentication of the user's QR code through a camera feed. If the the user's QR code
@@ -55,8 +51,8 @@ public class AuthenticationActivity extends Activity {
     private boolean scanFailed = false;
 
     //Dummy data, should be removed after development
-    public static String[] users = {"John", "Doe", "Jeff", "SomeGuy", "What a guy"};
-    public static int[] images = {R.drawable.sample_7,R.drawable.sample_6, R.drawable.sample_5, R.drawable.sample_4, R.drawable.sample_3};
+    public static String[] users = {"John", "Doe", "Jeff", "SomeGuy", "What a guy","Jeff2"};
+    public static int[] images = {R.drawable.sample_7,R.drawable.sample_6, R.drawable.sample_5, R.drawable.sample_4, R.drawable.sample_3,R.drawable.sample_2};
 
     /**
      * Sets up the activity. Specifically view variables are instantiated, the login button listener
@@ -67,7 +63,9 @@ public class AuthenticationActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.authentication_activity);
+        setContentView(R.layout.profile_chooser);
+        GridView gridview = (GridView) findViewById(R.id.gridview);
+        gridview.setAdapter(new ProfileAdapter(this, users, images));
 
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 

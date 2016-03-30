@@ -31,7 +31,7 @@ public class ProfileAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        return mUsers.length;
     }
 
     @Override
@@ -64,7 +64,7 @@ public class ProfileAdapter extends BaseAdapter {
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, "You clicked" + mUsers[position], Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, "You clicked " + mUsers[position], Toast.LENGTH_LONG).show();
             }
         });
         return rowView;
