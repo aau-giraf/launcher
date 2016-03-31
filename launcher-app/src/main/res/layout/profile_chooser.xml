@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:background="@drawable/bg">
@@ -12,27 +11,17 @@
         android:layout_height="wrap_content"
         android:textSize="25dp"
         android:textStyle="bold"
-        android:text="Vælg din profil"/>
+        android:text="Vælg din profil"
+        android:padding="10dp"/>
 
-    <GridView
-        android:layout_below="@+id/text_view1"
-        android:id="@+id/gridview"
+    <android.support.v4.view.ViewPager
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="10dp"
-        android:padding="10dp"
-        android:orientation="horizontal"
-        >
-    </GridView>
+        android:id="@+id/viewPager"
+        android:layout_margin="20dp"
+        android:layout_below="@+id/text_view1">
+
+    </android.support.v4.view.ViewPager>
 
 
-
-    <Button
-        android:visibility="gone"
-        android:id="@+id/loginAsGuardianButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start|bottom"
-        android:text="@string/login_as_guardian"
-        android:layout_below="@id/gridview"/>
 </RelativeLayout>

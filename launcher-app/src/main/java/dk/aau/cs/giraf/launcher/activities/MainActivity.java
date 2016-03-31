@@ -179,7 +179,8 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
         }
         //If no valid session is found, start authentication_activity
         else if (LauncherUtility.sessionExpired(this)) {
-            intent = new Intent(this, AuthenticationActivity.class);
+            //intent = new Intent(this, AuthenticationActivity.class);
+            intent = new Intent(this, ProfileChooserActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         }
         //If a valid session is found, pass the profile ID along with the intent.
