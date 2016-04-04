@@ -1,5 +1,9 @@
 package dk.aau.cs.giraf.launcher.helper;
 
+import java.util.Arrays;
+import java.util.List;
+
+import dk.aau.cs.giraf.gui.GirafNotifyDialog;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 
@@ -32,6 +36,10 @@ public final class Constants {
 	
 	// Error logging
 	public static final String ERROR_TAG = "launcher";
+
+    public static final List<String> OFFLINE_CAPABLE_APPS = Arrays.asList("dk.aau.cs.giraf.ugeplan", "dk.aau.cs.giraf.sequence", "dk.aau.cs.giraf.timer");
+    public static final int METHOD_ID_OFFLINE_NOTIFY = 69;
+    public static GirafNotifyDialog offlineNotify;
 
     /**
      * The duration each image of the instruction animation should be displayed. Unit is milliseconds.

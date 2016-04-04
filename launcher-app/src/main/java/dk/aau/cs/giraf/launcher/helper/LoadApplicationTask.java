@@ -2,6 +2,7 @@ package dk.aau.cs.giraf.launcher.helper;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
@@ -38,6 +39,7 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
     protected final Context context;
     protected final ViewPager appsViewPager;
     protected final View.OnClickListener onClickListener;
+    protected boolean offlineMode = false;
 
     protected ProgressBar progressbar;
 
@@ -56,6 +58,20 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
         this.guardian = guardian;
         this.appsViewPager = appsViewPager;
         this.onClickListener = onClickListener;
+    }
+    /**
+     * the contructor for the class but including a boolean for offlinemode
+     *
+     * @param context         The context for the current activity
+     * @param currentUser     The user of the current activity. If set to null, the user will be found based on the context
+     * @param guardian        The guardian of the current user.
+     * @param appsViewPager   The layout that the AppImageViews should be put into
+     * @param onClickListener The onClickListener attached to each AppImageView. These vary depending on the purpose of the layout they are loaded into.
+     * @param offlineMode     Indicate if the launcher is in offline mode
+     */
+    public LoadApplicationTask(final Context context, final Profile currentUser, final Profile guardian, final ViewPager appsViewPager, final View.OnClickListener onClickListener, final boolean offlineMode) {
+        this(context, currentUser, guardian, appsViewPager, onClickListener);
+        this.offlineMode = offlineMode;
     }
 
     /**
@@ -92,6 +108,18 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
 
             // update the HashMap with information of the apps being generated and sort it
             ArrayList<AppInfo> appInfoList = AppViewCreationUtility.updateAppInfoList(context, applications);
+            //If the launcher is in offline mode, some application should not be available
+            if (offlineMode){
+                for(AppInfo a: appInfoList){
+                    if (!Constants.OFFLINE_CAPABLE_APPS.contains(a.getPackage())) {
+                        Drawable iconImage = a.getIconImage().mutate();
+                        iconImage.setAlpha(context.getResources().getInteger(R.integer.giraf_disabled_app_alpha));
+                        a.setIconImage(iconImage);
+                        //Hack which makes the application unlaunchable -- queue evil 4chan laugh
+                        a.setPackage("");
+                    }
+                }
+            }
             Collections.sort(appInfoList, new AppComparator(context));
 
             return appInfoList;

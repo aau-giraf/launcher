@@ -106,6 +106,26 @@
             android:layout_centerInParent="true"
             android:visibility="invisible" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/offline_mode_enabled"
+            android:id="@+id/offlineModeText"
+            android:textColor="#000000"
+            android:textSize="@dimen/giraf_dialog_description_text_size"
+            android:layout_alignBottom="@+id/pageIndicator"
+            android:layout_toRightOf="@+id/noAppsMessage"
+            android:layout_toEndOf="@+id/noAppsMessage"
+            android:layout_marginLeft="@dimen/text_padding"
+            android:background="@color/giraf_bar_gradient_start"
+            android:textAlignment="center"
+            android:textStyle="bold"
+            android:visibility="invisible"
+            android:autoText="false"
+            android:gravity="center"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"/>
+
         <com.viewpagerindicator.CirclePageIndicator
             android:id="@+id/pageIndicator"
             android:layout_width="match_parent"
@@ -122,7 +142,8 @@
             android:id="@+id/appsViewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/pageIndicator" />
+            android:layout_above="@id/pageIndicator"
+            />
 
         <include
             layout="@layout/debug_mode_overlay"

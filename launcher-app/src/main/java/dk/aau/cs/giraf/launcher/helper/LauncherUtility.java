@@ -17,7 +17,6 @@ import com.google.analytics.tracking.android.MapBuilder;
 import com.google.analytics.tracking.android.StandardExceptionParser;
 
 import java.util.Date;
-
 import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.launcher.R;
@@ -28,7 +27,6 @@ import dk.aau.cs.giraf.launcher.activities.AuthenticationActivity;
  * but which do not inherently belong any specific class instance.
  */
 public abstract class LauncherUtility {
-
 
     /* Flags that indicate whether Launcher is in debug mode. These should not be changed from here,
         but from MainActivity.java.                                                                  */

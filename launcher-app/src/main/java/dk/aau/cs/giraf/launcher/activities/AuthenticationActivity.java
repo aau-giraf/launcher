@@ -132,33 +132,6 @@ public class AuthenticationActivity extends CaptureActivity {
                         }
                     });
                     backgroundThread.start();
-                    /*
-                    final AsyncTask login = new AsyncTask<Void, Void, Boolean>() {
-
-                        @Override
-                        protected void onPreExecute() {
-                            super.onPreExecute();
-                        }
-
-                        @Override
-                        protected Boolean doInBackground(Void... params) {
-                            // Check if there are zero profiles in the profileshelper, if that is the case return true
-                            return
-                        }
-
-                        @Override
-                        protected void onPostExecute(Boolean aBoolean) {
-                            super.onPostExecute(aBoolean);
-                            if (aBoolean) {
-
-                            } else {
-
-                            }
-                        }
-                    };
-
-                    login.execute();
-                    */
                 }
             });
             guardianButton.setVisibility(View.VISIBLE);

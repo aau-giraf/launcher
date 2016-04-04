@@ -9,6 +9,8 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
+import android.os.Vibrator;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +23,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import dk.aau.cs.giraf.gui.GirafNotifyDialog;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.widgets.AppImageView;
@@ -91,7 +94,13 @@ public class AppViewCreationUtility {
      * @param targetLayout The layout we want to add the AppImageView to.
      * @return
      */
-    public static AppImageView createAppImageView(final Context context, final Profile currentUser, final Profile guardian, final AppInfo appInfo, GridLayout targetLayout, View.OnClickListener listener) {
+    public static AppImageView createAppImageView(
+            final Context context,
+            final Profile currentUser,
+            final Profile guardian,
+            final AppInfo appInfo,
+            GridLayout targetLayout,
+            View.OnClickListener listener) {
 
         final AppImageView appImageView = new AppImageView(context, appInfo);
         final View appView = addContentToView(context, targetLayout, appInfo.getName(), appInfo.getIconImage());
@@ -106,6 +115,8 @@ public class AppViewCreationUtility {
             appImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                    vibrator.vibrate(100);
                     try {
                         Animation animation = AnimationUtils.loadAnimation(v.getContext(), R.anim.app_pressed_animation);
                         v.startAnimation(animation);
@@ -127,25 +138,29 @@ public class AppViewCreationUtility {
 
                     appInfo = ((AppImageView) v).appInfo;
 
-                    Intent intent = new Intent(Intent.ACTION_MAIN);
-                    intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                    if (appInfo.getPackage().isEmpty()){
+                        Constants.offlineNotify.show(((FragmentActivity) context).getSupportFragmentManager(), "DIALOG_TAG");
+                    } else {
+                        Intent intent = new Intent(Intent.ACTION_MAIN);
+                        intent.addCategory(Intent.CATEGORY_LAUNCHER);
 
-                    intent.setComponent(new ComponentName(appInfo.getPackage(), appInfo.getActivity()));
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                            | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                        intent.setComponent(new ComponentName(appInfo.getPackage(), appInfo.getActivity()));
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 
-                    if (currentUser.getRole() == Profile.Roles.CHILD)
-                        intent.putExtra(Constants.CHILD_ID, currentUser.getId());
-                    else
-                        intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
+                        if (currentUser.getRole() == Profile.Roles.CHILD)
+                            intent.putExtra(Constants.CHILD_ID, currentUser.getId());
+                        else
+                            intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
 
-                    intent.putExtra(Constants.GUARDIAN_ID, guardian.getId());
-                    intent.putExtra(Constants.APP_COLOR, appInfo.getBgColor());
-                    intent.putExtra(Constants.APP_PACKAGE_NAME, appInfo.getPackage());
-                    intent.putExtra(Constants.APP_ACTIVITY_NAME, appInfo.getActivity());
+                        intent.putExtra(Constants.GUARDIAN_ID, guardian.getId());
+                        intent.putExtra(Constants.APP_COLOR, appInfo.getBgColor());
+                        intent.putExtra(Constants.APP_PACKAGE_NAME, appInfo.getPackage());
+                        intent.putExtra(Constants.APP_ACTIVITY_NAME, appInfo.getActivity());
 
-                    // Verify the intent will resolve to at least one activity
-                    LauncherUtility.secureStartActivity(v.getContext(), intent);
+                        // Verify the intent will resolve to at least one activity
+                        LauncherUtility.secureStartActivity(v.getContext(), intent);
+                    }
                 }
             });
 

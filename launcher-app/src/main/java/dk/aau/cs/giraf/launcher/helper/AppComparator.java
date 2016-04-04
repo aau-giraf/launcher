@@ -39,7 +39,14 @@ public class AppComparator implements Comparator<Object> {
     public int compare(Object lhs, Object rhs) {
         int res = 0;
         if (lhs instanceof AppInfo && rhs instanceof AppInfo) {
-            res = ((AppInfo) lhs).getName().compareToIgnoreCase(((AppInfo) rhs).getName());
+            //Display unavailable apps last, i.e. when offline mode is enabled
+            if (((AppInfo) lhs).getPackage().isEmpty() && !((AppInfo) rhs).getPackage().isEmpty()) {
+                res = 1;
+            } else if (((AppInfo) rhs).getPackage().isEmpty() && !((AppInfo) lhs).getPackage().isEmpty()) {
+                res = -1;
+            } else {
+                res = ((AppInfo) lhs).getName().compareToIgnoreCase(((AppInfo) rhs).getName());
+            }
         } else if (lhs instanceof ResolveInfo && rhs instanceof ResolveInfo) {
             try {
                 PackageManager packageManager = context.getPackageManager();
