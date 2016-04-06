@@ -1,12 +1,16 @@
 package dk.aau.cs.giraf.launcher.activities;
 
+import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.SyncStateContract;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -29,6 +33,7 @@ import dk.aau.cs.giraf.dblib.controllers.ProfileController;
 import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GirafCustomButtonsDialog;
+import dk.aau.cs.giraf.gui.GirafNotifyDialog;
 import dk.aau.cs.giraf.launcher.BuildConfig;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
@@ -41,19 +46,19 @@ import dk.aau.cs.giraf.utilities.NetworkUtilities;
  * Displays the splash logo of Launcher, and then starts {@link dk.aau.cs.giraf.launcher.activities.AuthenticationActivity}.
  * Provides variables for enabling debug mode before compilation.
  */
-public class MainActivity extends GirafActivity implements Animation.AnimationListener, GirafCustomButtonsDialog.CustomButtons {
+public class MainActivity extends GirafActivity implements Animation.AnimationListener, GirafNotifyDialog.Notification {
     //private Context mContext;
     private long oldSessionGuardianID = -1;
     Animation startingAnimation;
     Animation loadAnimation;
 
     //Dialog for offline mode
+    private boolean offlineMode;
     private final int OFFLINE_DIALOG_ID = 1337;
-    private GirafCustomButtonsDialog offlineDialog;
+    private GirafNotifyDialog offlineDialog;
     private final String OFFLINE_DIALOG_TAG = "DIALOG_TAG";
-
-
-
+    private final Helper helper = new Helper(this);
+    private final Handler handler = new Handler();
     /* ************* DEBUGGING MODE ************* */
     // NOTICE: ONLY USED FOR DEBUGGING PURPOSES!!!
     /**
@@ -96,6 +101,7 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
 
         setContentView(R.layout.main_activity);
 
+
         //Load the preference determining whether the animation should be shown
         findOldSession();
 
@@ -127,11 +133,29 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
         startingAnimation.setAnimationListener(this);
 
         //Check network status
-        if (!NetworkUtilities.isNetworkAvailable(this)) {
-            //Show offline mode dialog
+        if (offlineMode()  && !hasProfiles()) {
+            //Show offline mode dialog because the local db has no profiles
             createAndShowOfflineDialog();
-        } else {
+            //use start sync to show "no connection" feedback
             startSync();
+            //Check every 2.5 seconds if internet is available
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(!offlineMode()){
+                        //If a connection to the internet is made
+                        restartLauncher();
+                        return;
+                    }
+                    handler.postDelayed(this, 2500);
+                }
+            }, 2500);
+        } else {
+            if (offlineMode()) {
+                startOffline();
+            } else {
+                startSync();
+            }
         }
     }
 
@@ -173,6 +197,33 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
     }
 
     /**
+     * Check if offline mode
+     * @return true if offline i.e. no connection to outside world
+     */
+    private boolean offlineMode(){
+        return !NetworkUtilities.isNetworkAvailable(this);
+    }
+
+    /**
+     * Restart the launcher by killing myself then launching again
+     */
+    private void restartLauncher(){
+        Intent mStartActivity = new Intent(getApplicationContext(), MainActivity.class);
+        int mPendingIntentId = 123456;
+        PendingIntent mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager mgr = (AlarmManager)getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
+        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+        System.exit(0);
+    }
+
+    /**
+     * Check if the local db has any profiles
+     */
+    private boolean hasProfiles(){
+        return !(helper.profilesHelper.getListOfObjects() == null || helper.profilesHelper.getListOfObjects().size() == 0);
+    }
+
+    /**
      * Starts the remote syncing service according to parameters set in the build config
      */
     private void startSync(){
@@ -191,7 +242,7 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
      * GIRAF in offline mode with limited functionality
      */
     private void createAndShowOfflineDialog(){
-        offlineDialog = GirafCustomButtonsDialog.newInstance(
+        offlineDialog = GirafNotifyDialog.newInstance(
                 getString(R.string.dialog_offline_title),
                 getString(R.string.dialog_offline_message),
                 OFFLINE_DIALOG_ID);
@@ -291,29 +342,14 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
      * Method which must be implemented for the CustomButtons dialog to work
      */
     @Override
-    public void fillButtonContainer(int dialog_id, GirafCustomButtonsDialog.ButtonContainer buttonContainer) {
-        if (dialog_id == OFFLINE_DIALOG_ID){
-            GirafButton continueOffline = new GirafButton(this, getResources().getDrawable(R.drawable.icon_accept), getString(R.string.dialog_offline_just_do_it));
-            continueOffline.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startOffline();
-                    offlineDialog.dismiss();
-                }
-            });
-            GirafButton waitForConnection = new GirafButton(this, getResources().getDrawable(R.drawable.icon_cancel), getString(R.string.dialog_offline_wait_4_webz));
-            waitForConnection.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startSync();
-                    offlineDialog.dismiss();
-                }
-            });
-
-            buttonContainer.addGirafButton(waitForConnection);
-            buttonContainer.addGirafButton(continueOffline);
+    public void noticeDialog(int i) {
+        switch (i){
+            case OFFLINE_DIALOG_ID:
+                offlineDialog.dismiss();
+                break;
         }
     }
+
 
     /**
      * Used to communicate with DownloadService
@@ -355,27 +391,12 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
                 executorService.submit(new Runnable() {
                     @Override
                     public void run() {
-                        boolean hasConnectionTemp = NetworkUtilities.isNetworkAvailable(activity.get());
-
-                        if (hasConnectionTemp) {
-                            try {
-                                HttpURLConnection urlc = (HttpURLConnection) new URL("http://clients3.google.com/generate_204").openConnection();
-                                urlc.setRequestProperty("User-Agent", "Android");
-                                urlc.setRequestProperty("Connection", "close");
-                                urlc.setConnectTimeout(1500);
-                                urlc.connect();
-                                hasConnectionTemp = (urlc.getResponseCode() == 204 && urlc.getContentLength() == 0);
-                            } catch (IOException e) {
-                                hasConnectionTemp = false;
-                            }
-                        }
-
-                        final boolean hasConnection = hasConnectionTemp;
 
                         // Run the following on the UI-thread
                         activity.get().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                boolean hasConnection = NetworkUtilities.isNetworkAvailable(activity.get());
                                 if (hasConnection) {
                                     loadAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
 
@@ -405,9 +426,9 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
                                     welcomeTitle.setTextColor(Color.parseColor("#900000"));
                                     welcomeDescription.setTextColor(Color.parseColor("#900000"));
                                 }
+                                Log.d("Connection", hasConnection ? "True" : "False");
                             }
                         });
-
                         Log.d("Progress", Integer.toString(progress));
                     }
                 });
