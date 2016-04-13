@@ -2,11 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="dk.aau.cs.giraf.launcher"
-    android:versionCode="5"
+    android:versionCode="102"
     android:versionName="2.3">
 
-    <!-- <uses-sdk/> is defined in build.gralde -->
+    <supports-screens android:smallScreens="false"
+        android:normalScreens="false"
+        android:largeScreens="true"
+        android:xlargeScreens="true"
+        android:requiresSmallestWidthDp="600" />
 
+    <!-- <uses-sdk/> is defined in build.gralde -->
     <uses-permission android:name="dk.aau.cs.giraf.oasis.app" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -18,6 +23,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+
 
     <application
         android:allowBackup="true"
