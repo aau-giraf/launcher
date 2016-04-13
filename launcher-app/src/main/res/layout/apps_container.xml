@@ -16,9 +16,9 @@
     <TextView
         android:id="@+id/app_text"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
+        android:layout_height="fill_parent"
+        android:layout_marginLeft="7dp"
+        android:layout_marginRight="7dp"
         android:ellipsize="none"
         android:gravity="center_horizontal"
         android:scrollHorizontally="false"

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -32,6 +33,7 @@ import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.gui.GWidgetUpdater;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GirafConfirmDialog;
+import dk.aau.cs.giraf.gui.GirafNotifyDialog;
 import dk.aau.cs.giraf.gui.GirafPictogramItemView;
 import dk.aau.cs.giraf.gui.GirafProfileSelectorDialog;
 import dk.aau.cs.giraf.launcher.R;
@@ -47,12 +49,13 @@ import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInter
 import dk.aau.cs.giraf.showcaseview.ShowcaseManager;
 import dk.aau.cs.giraf.showcaseview.ShowcaseView;
 import dk.aau.cs.giraf.showcaseview.targets.ViewTarget;
+import dk.aau.cs.giraf.utilities.NetworkUtilities;
 
 /**
  * The primary activity of Launcher. Allows the user to start other GIRAF apps and access the settings
  * activity. It requires a user id in the parent intent.
  */
-public class HomeActivity extends GirafActivity implements AppsFragmentInterface, GirafConfirmDialog.Confirmation, GirafProfileSelectorDialog.OnSingleProfileSelectedListener, ShowcaseManager.ShowcaseCapable {
+public class HomeActivity extends GirafActivity implements AppsFragmentInterface, GirafNotifyDialog.Notification, GirafConfirmDialog.Confirmation, GirafProfileSelectorDialog.OnSingleProfileSelectedListener, ShowcaseManager.ShowcaseCapable {
 
     private static final String IS_FIRST_RUN_KEY = "IS_FIRST_RUN_KEY_HOME_ACTIVITY";
     private static final int CHANGE_USER_SELECTOR_DIALOG = 100;
@@ -69,6 +72,9 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     private ShowcaseManager showcaseManager;
     private boolean isFirstRun;
 
+    private Handler h = new Handler();
+    private int delay = 5000;
+    private boolean offlineMode;
     /**
      * Used in onResume and onPause for handling showcaseview for first run
      */
@@ -101,6 +107,13 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
+
+        //Offline mode stuff
+        offlineMode = offlineMode();
+        Constants.offlineNotify = GirafNotifyDialog.newInstance(
+                getString(R.string.dialog_offline_notify_title),
+                getString(R.string.dialog_offline_notify_message),
+                Constants.METHOD_ID_OFFLINE_NOTIFY);
 
         Helper mHelper = LauncherUtility.getOasisHelper(this);
 
@@ -137,6 +150,23 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
             }
         });
 
+        offlineModeFeedback();
+        
+        //Setup a reoccuring check of network status aka. offline mode
+        // this also acts when changing from or to offline mode
+        h.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                boolean offlineModeNow = offlineMode();
+                if (offlineMode != offlineModeNow) {
+                    offlineMode = offlineModeNow;
+                    reloadApplications();
+                    offlineModeFeedback();
+                }
+                h.postDelayed(this, delay);
+            }
+        }, delay);
+
         // Start logging this activity
         EasyTracker.getInstance(this).activityStart(this);
     }
@@ -163,8 +193,14 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         EasyTracker.getInstance(this).activityStop(this);
     }
 
+    /**
+     *  This method is called whenever the launcher home screen is returned to
+     *  for example when returning from an app or the setitng page
+     */
     @Override
     protected void onResume() {
+        offlineMode = !NetworkUtilities.isNetworkAvailable(this);
+        offlineModeFeedback();
         super.onResume();
 
         // Reload applications (Some applications might have been (un)installed)
@@ -253,7 +289,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
      * Load the user's applications into the app container.
      */
     private void loadApplications() {
-        loadHomeActivityApplicationTask = new LoadHomeActivityApplicationTask(this, mCurrentUser, mLoggedInGuardian, mAppViewPager, null);
+        loadHomeActivityApplicationTask = new LoadHomeActivityApplicationTask(this, mCurrentUser, mLoggedInGuardian, mAppViewPager, null, offlineMode);
         loadHomeActivityApplicationTask.execute();
     }
 
@@ -329,6 +365,25 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         });
     }
 
+    /**
+     * Method used for displaying offline mode feedback
+     */
+    protected void offlineModeFeedback(){
+        if (offlineMode){
+            findViewById(R.id.offlineModeText).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.offlineModeText).setVisibility(View.INVISIBLE);
+        }
+    }
+
+    /**
+     * Method for checking if there is connection to the internet
+     * @return true if in offline mode i.e. no connection to the outside world
+     */
+    protected boolean offlineMode(){
+        return !NetworkUtilities.isNetworkAvailable(this);
+    }
+
     @Override
     public void confirmDialog(int methodID) {
         switch (methodID) {
@@ -339,7 +394,19 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                 break;
             }
         }
+    }
 
+    /**
+     * Gets called by the GirafNotify Dialog with the ID of the dialog
+     * @param i
+     */
+    @Override
+    public void noticeDialog(int i) {
+        switch (i){
+            case Constants.METHOD_ID_OFFLINE_NOTIFY:
+                Constants.offlineNotify.dismiss();
+                break;
+        }
     }
 
     @Override
@@ -574,9 +641,10 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
          * @param guardian        The guardian of the current user (or just the current user, if the user is a guardian)
          * @param appsViewPager   The layout to be populated with AppImageViews
          * @param onClickListener the onClickListener that each created app should have. In this case we feed it the global variable listener
+         * @param offlineMode     Indicate if the launcher is in offline mode
          */
-        public LoadHomeActivityApplicationTask(Context context, Profile currentUser, Profile guardian, ViewPager appsViewPager, View.OnClickListener onClickListener) {
-            super(context, currentUser, guardian, appsViewPager, onClickListener);
+        public LoadHomeActivityApplicationTask(Context context, Profile currentUser, Profile guardian, ViewPager appsViewPager, View.OnClickListener onClickListener, boolean offlineMode) {
+            super(context, currentUser, guardian, appsViewPager, onClickListener, offlineMode);
         }
 
         /**
@@ -617,7 +685,6 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         @Override
         protected void onPostExecute(final ArrayList<AppInfo> appInfos) {
             super.onPostExecute(appInfos);
-
             mCurrentLoadedApps = appInfos;
 
             CirclePageIndicator titleIndicator = (CirclePageIndicator) findViewById(R.id.pageIndicator);

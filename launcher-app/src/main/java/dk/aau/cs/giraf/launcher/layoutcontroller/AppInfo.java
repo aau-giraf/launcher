@@ -47,6 +47,15 @@ public class AppInfo extends Application implements Parcelable {
     }
 
     /**
+     * Set the icon image of the app.
+     *
+     * @param iconImage  The icon image.
+     */
+    public void setIconImage(Drawable iconImage) {
+        this.mIcon = iconImage;
+    }
+
+    /**
      * Creates a new AppInfo from a given parent app.
      *
      * @param parentApp App to get data from.
