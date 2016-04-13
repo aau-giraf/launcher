@@ -1,5 +1,2 @@
 include ':barcodescanner'
 include ':launcher-app'
-include 'library',':app'
-
-project(':library').projectDir = new File(settingsDir, '../restClientAPI/library')
