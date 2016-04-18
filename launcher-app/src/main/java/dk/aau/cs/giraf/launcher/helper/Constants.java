@@ -49,7 +49,7 @@ public final class Constants {
     /**
      * Array with images for the instruction animation
      */
-    public static final int[] INSTRUCTION_ANIMATION = { R.drawable.ani_00000, R.drawable.ani_00001,
+    public static final int[] INSTRUCTION_ANIMATION = { /*R.drawable.ani_00000, R.drawable.ani_00001,
             R.drawable.ani_00002, R.drawable.ani_00003, R.drawable.ani_00004, R.drawable.ani_00005,
             R.drawable.ani_00006, R.drawable.ani_00007, R.drawable.ani_00008, R.drawable.ani_00009,
             R.drawable.ani_00010, R.drawable.ani_00011, R.drawable.ani_00012, R.drawable.ani_00013,
@@ -71,6 +71,6 @@ public final class Constants {
             R.drawable.ani_00074, R.drawable.ani_00075, R.drawable.ani_00076, R.drawable.ani_00077,
             R.drawable.ani_00078, R.drawable.ani_00079, R.drawable.ani_00080, R.drawable.ani_00081,
             R.drawable.ani_00082, R.drawable.ani_00083, R.drawable.ani_00084, R.drawable.ani_00085,
-            R.drawable.ani_00086, R.drawable.ani_00087, R.drawable.ani_00088, R.drawable.ani_00089 };
+            R.drawable.ani_00086, R.drawable.ani_00087, R.drawable.ani_00088, R.drawable.ani_00089 */};
 
 }
