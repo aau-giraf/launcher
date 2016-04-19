@@ -7,6 +7,7 @@
 
     <!-- <uses-sdk/> is defined in build.gralde -->
 
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission android:name="dk.aau.cs.giraf.oasis.app" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />

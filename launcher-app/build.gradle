@@ -113,7 +113,7 @@ dependencies {
     compile 'dk.aau.cs.giraf:ShowcaseView:1.0.0'
     compile files('libs/libGoogleAnalyticsServices.jar')
     compile project(':restClientAPI')
-    compile 'com.android.support:multidex:1.0.0'
+    compile 'com.android.support:multidex:1.0.1'
 }
 
 play {
