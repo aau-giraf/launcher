@@ -87,6 +87,13 @@ android {
             buildConfigField "boolean", "USE_PRODUCTION_SERVER", "false" //Production server isn't created yet.
         }
     }
+    productFlavors {
+        dev {
+            targetSdkVersion 23
+            minSdkVersion 21
+        }
+        full {}
+    }
 
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES.txt'
@@ -117,7 +124,6 @@ dependencies {
         exclude module: 'support-v4'
     }
     compile fileTree(include: '*.jar', dir: 'libs')
-    //compile project(':barcodescanner')
     compile 'dk.aau.cs.giraf:girafComponent:10.8.3@aar'
     compile 'dk.aau.cs.giraf:oasisLib:9.0.2@aar'
     compile 'dk.aau.cs.giraf:localDb:5.1.5@aar'
