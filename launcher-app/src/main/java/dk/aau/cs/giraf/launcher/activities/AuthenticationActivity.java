@@ -22,8 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
-import com.google.zxing.Result;
-import com.google.zxing.client.android.CaptureActivity;
+//import com.google.zxing.Result;
+//import com.google.zxing.client.android.CaptureActivity;
 
 import java.util.Date;
 
@@ -196,7 +196,7 @@ public class AuthenticationActivity extends Activity {
      * @param rawResult Result which the scanned string is saved in.
      * @param barcode   A greyscale bitmap of the camera data which was decoded.
      */
-    public void handleDecode(Result rawResult, final Bitmap barcode) {
+    /*public void handleDecode(Result rawResult, final Bitmap barcode) {
         try {
             Helper helper = new Helper(this);
             Profile profile = null;
@@ -244,7 +244,7 @@ public class AuthenticationActivity extends Activity {
             e.printStackTrace();
         }
     }
-
+*/
     private void login(final Profile profile) {
 
         this.changeCameraFeedBorderColor(getResources().getColor(R.color.success_qr_camera_border_color)); // Success color (green)

@@ -1,2 +1,2 @@
-include ':barcodescanner'
+//include ':barcodescanner'
 include ':launcher-app'
