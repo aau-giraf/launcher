@@ -7,7 +7,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.5.0'
+        classpath 'com.android.tools.build:gradle:2.0.0'
         classpath 'dk.aau.cs.giraf:auto-deploy-gradle-plugin:1.6.6'
         classpath 'com.github.triplet.gradle:play-publisher:1.1.4'
     }
@@ -27,7 +27,6 @@ repositories {
     maven {
         url 'http://jenkins.giraf.cs.aau.dk:8080/artifactory/libraries'
     }
-    mavenLocal()
 
     flatDir {
         dirs 'libs'
@@ -106,9 +105,9 @@ dependencies {
     compile fileTree(include: '*.jar', dir: 'libs')
     compile project(':barcodescanner')
     compile(group: 'dk.aau.cs.giraf', name: 'girafComponent', version: '10.8.3', ext: 'aar')
-    compile(group: 'dk.aau.cs.giraf', name: 'oasisLib', version: '9.0.2', ext: 'aar')
+    compile(group: 'dk.aau.cs.giraf', name: 'oasisLib', version: '9.0.3', ext: 'aar')
     compile(group: 'dk.aau.cs.giraf', name: 'localDb', version: '5.1.5', ext: 'aar')
-    compile(group: 'dk.aau.cs.giraf', name: 'meta-database', version: '3.2.2')
+    compile(group: 'dk.aau.cs.giraf', name: 'meta-database', version: '3.2.4')
     compile(group: 'dk.aau.cs.giraf', name: 'ShowcaseView', version: '1.0.0')
     compile files('libs/libGoogleAnalyticsServices.jar')
 
