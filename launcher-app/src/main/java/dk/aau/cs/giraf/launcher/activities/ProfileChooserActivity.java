@@ -31,7 +31,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
  */
 public class ProfileChooserActivity extends Activity {
     private static final Uri userURI = Uri.parse("content://dk.aau.cs.giraf.provider.Users/users");
-    private static final String ACCOUNT = "dummyaccount";
+    private static final String ACCOUNT = "sync";
     private static final String ACCOUNT_TYPE = "web.giraf.cs.aau.dk";
     private static final String AUTHORITY = "dk.aau.cs.giraf.provider.Users";
 
@@ -84,12 +84,11 @@ public class ProfileChooserActivity extends Activity {
         Account newAccount = new Account(
                 ACCOUNT, ACCOUNT_TYPE);
         AccountManager accountmanager =
-                (AccountManager) context.getSystemService(
-                        ACCOUNT_SERVICE);
+                (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
         if (accountmanager.addAccountExplicitly(newAccount, null, null)){
 
         } else {
-            Log.d(null, "Some error occured with the account");
+            Log.d(null, "Some error occurred with the account");
         }
         return newAccount;
     }
