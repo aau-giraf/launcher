@@ -13,8 +13,10 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 
+import java.io.IOException;
 import java.net.URI;
 import java.nio.BufferUnderflowException;
+import java.util.EmptyStackException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -61,15 +63,14 @@ public class ProfileChooserActivity extends Activity {
         setContentView(R.layout.profile_chooser);
 
         accountManager = AccountManager.get(this);
-
         mAccount = CreateSyncAccount(this);
         //ContentResolver.requestSync();
 
         Bundle settingsBundle = new Bundle();
         settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED,true);
-        ContentResolver.requestSync(mAccount,AUTHORITY, settingsBundle);
-        
+        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        ContentResolver.requestSync(mAccount, AUTHORITY, settingsBundle);
+
         Cursor c = getContentResolver().query(userURI, null, null, null, null);
         List<User> users = new LinkedList<User>();
         while(c.moveToNext()){
@@ -84,9 +85,10 @@ public class ProfileChooserActivity extends Activity {
         Account newAccount = new Account(
                 ACCOUNT, ACCOUNT_TYPE);
         AccountManager accountmanager =
-                (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
+                (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
         if (accountmanager.addAccountExplicitly(newAccount, null, null)){
-
+            ContentResolver.setIsSyncable(newAccount, AUTHORITY, 1);
+            ContentResolver.setSyncAutomatically(newAccount, AUTHORITY, true);
         } else {
             Log.d(null, "Some error occurred with the account");
         }
