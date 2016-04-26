@@ -3,7 +3,9 @@ package dk.aau.cs.giraf.launcher.helper;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -123,9 +125,15 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
             if (offlineMode){
                 for(AppInfo a: appInfoList){
                     if (Constants.OFFLINE_INCAPABLE_APPS.contains(a.getPackage())) {
-                        Drawable iconImage = a.getIconImage().mutate();
-                        iconImage.setAlpha(context.getResources().getInteger(R.integer.giraf_disabled_app_alpha));
-                        a.setIconImage(iconImage);
+                        Drawable [] layers = new Drawable[2];
+                        layers[0] = a.getIconImage().mutate();
+                        layers[0].setAlpha(context.getResources().getInteger(R.integer.giraf_disabled_app_alpha));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            layers[1] = context.getDrawable(R.drawable.icon_redcross);
+                        }else {
+                            layers[1] = context.getResources().getDrawable(R.drawable.icon_redcross);
+                        }
+                        a.setIconImage(new LayerDrawable(layers));
                         //Hack which makes the application unlaunchable -- queue evil 4chan laugh
                         a.setPackage("");
                     }

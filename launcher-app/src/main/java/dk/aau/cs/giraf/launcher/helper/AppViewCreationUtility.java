@@ -142,7 +142,9 @@ public class AppViewCreationUtility {
                     appInfo = ((AppImageView) v).appInfo;
 
                     if (appInfo.getPackage().isEmpty()){
-                        Constants.offlineNotify.show(((FragmentActivity) context).getSupportFragmentManager(), "DIALOG_TAG");
+                        if (currentUser.getRole() != Profile.Roles.CHILD){
+                            Constants.offlineNotify.show(((FragmentActivity) context).getSupportFragmentManager(), "DIALOG_TAG");
+                        }
                     } else if (appInfo.getPackage().equals(Constants.ADD_APP_ICON_FAKE_PACKAGE_NAME)) {
                         Intent intent = new Intent(context, SettingsActivity.class);
                         intent.putExtra(Constants.ENTER_ADD_APP_MANAGER_BOOL, true);
