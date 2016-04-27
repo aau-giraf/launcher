@@ -46,7 +46,6 @@ public class SwipeAdapter extends PagerAdapter {
             mImages.add(i,R.drawable.sample_3);
             mUsers.add(i,"Jeff");
         }
-        android.os.Debug.waitForDebugger();
     }
 
     public void changeCursor(Cursor cursor) {
@@ -64,7 +63,6 @@ public class SwipeAdapter extends PagerAdapter {
         if (cursor == null)
             return 0;
 
-        android.os.Debug.waitForDebugger();
         int count = cursor.getCount();
         int ceil = (int) Math.ceil((double)count / NUM_OF_PROFILES_PR_PAGE);
         return ceil;
@@ -75,7 +73,6 @@ public class SwipeAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
 
-        android.os.Debug.waitForDebugger();
         View itemView = layoutInflater.inflate(R.layout.swipe_layout, container, false);
         int nextProfile = position * NUM_OF_PROFILES_PR_PAGE;
 
