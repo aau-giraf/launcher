@@ -238,6 +238,10 @@ public class SettingsActivity extends GirafActivity
 
         mFragManager.executePendingTransactions();
         mSupportFragManager.executePendingTransactions();
+        if(getIntent().getExtras().getBoolean(Constants.ENTER_ADD_APP_MANAGER_BOOL)) {
+            mAdapter.setSelected(getString(R.string.settings_tablist_applications));
+            setActiveFragment(new AppManagementFragment());
+        }
     }
 
     /**
@@ -631,8 +635,7 @@ public class SettingsActivity extends GirafActivity
             @Override
             public void configShowCaseView(final ShowcaseView showcaseView) {
 
-                mSettingsListView.smoothScrollToPositionFromTop(1, 0, 120);
-
+                mSettingsListView.smoothScrollToPositionFromTop(0, 0, 120);
                 // TODO: Last minute fix (Find a better way to call this once the scroll is complete) (i.e. dont use postDelayed)
                 mSettingsListView.postDelayed(new Runnable() {
                     @Override
@@ -671,7 +674,8 @@ public class SettingsActivity extends GirafActivity
                     @Override
                     public void run() {
 
-                        final View androidSettingsTab = settingsList.getChildAt(2);
+                        //child is 1 because we have scrolled!
+                        final View androidSettingsTab = settingsList.getChildAt(1);
 
                         final ViewTarget androidSettingsTarget = new ViewTarget(androidSettingsTab, 1.2f);
 

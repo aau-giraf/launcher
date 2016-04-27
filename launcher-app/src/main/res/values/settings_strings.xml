@@ -21,7 +21,7 @@
     <string name="setting_launcher_grid_title">Antal</string>
     <string name="setting_launcher_grid_example_text">Eksempel:</string>
     <string name="settings_tablist_general">Generelt</string>
-    <string name="settings_tablist_applications">Aktive applikationer</string>
+    <string name="settings_tablist_applications">Viste Apps</string>
     <string name="settings_tablist_tablet">Tablet Indstillinger</string>
     <string name="settings_tablist_about">Omkring Giraf</string>
 

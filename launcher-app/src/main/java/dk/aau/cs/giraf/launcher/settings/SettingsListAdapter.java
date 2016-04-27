@@ -92,6 +92,25 @@ public class SettingsListAdapter extends BaseAdapter {
     }
 
     /**
+     * Used to set the last selected item in the adapter.
+     * Can be used when switching fragment in the ListView and the last selected item
+     * should be marked with seperate backgroundcolor and shadow.
+     * @param settingTitle Title of the setting, use title from R.strings
+     */
+    public void setSelected(String settingTitle) {
+        int i = 0;
+        for (SettingsListItem item : mApplicationList){
+            if (item.title.equals(settingTitle)){
+                mLastSelectedItem = i;
+                break;
+            }
+            i++;
+        }
+        // Notify adapter that a new item is selected to redraw views
+        notifyDataSetChanged();
+    }
+
+    /**
      * Method that must be implemented by extending the BaseAdapter class.
      * Returns a view to be used as a row in a ListView.
      * @param position Position in the ListView of the current item.

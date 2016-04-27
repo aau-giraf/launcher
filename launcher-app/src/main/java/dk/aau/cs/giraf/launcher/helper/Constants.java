@@ -37,8 +37,13 @@ public final class Constants {
 	// Error logging
 	public static final String ERROR_TAG = "launcher";
 
-    public static final List<String> OFFLINE_CAPABLE_APPS = Arrays.asList("dk.aau.cs.giraf.ugeplan", "dk.aau.cs.giraf.sequence", "dk.aau.cs.giraf.timer");
-    public static final int METHOD_ID_OFFLINE_NOTIFY = 69;
+    public static final List<String> OFFLINE_INCAPABLE_APPS = Arrays.asList("dk.aau.cs.giraf.administration", "dk.aau.cs.giraf.pictoreader");
+
+    // Used for add apps icon on homescreen
+	public static final String ADD_APP_ICON_FAKE_PACKAGE_NAME = "dk.aau.cs.giraf.ADD_APPS_FAKE_PACKAGE_NAME";
+	public static final String ENTER_ADD_APP_MANAGER_BOOL = "APP_MANAGER_BOOL";
+
+	public static final int METHOD_ID_OFFLINE_NOTIFY = 69;
     public static GirafNotifyDialog offlineNotify;
 
     /**

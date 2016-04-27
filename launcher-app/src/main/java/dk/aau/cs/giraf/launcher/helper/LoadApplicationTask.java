@@ -18,6 +18,7 @@ import java.util.Collections;
 import dk.aau.cs.giraf.dblib.models.Application;
 import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
@@ -40,6 +41,7 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
     protected final ViewPager appsViewPager;
     protected final View.OnClickListener onClickListener;
     protected boolean offlineMode = false;
+    protected boolean includeAddAppIcon = false;
 
     protected ProgressBar progressbar;
 
@@ -60,18 +62,27 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
         this.onClickListener = onClickListener;
     }
     /**
-     * the contructor for the class but including a boolean for offlinemode
+     * the contructor for the class but including a boolean for offlinemode and includeAddAppIcon
+     * The "addAppIcon" shows an icon which leads to the settings tab for adding apps
      *
-     * @param context         The context for the current activity
-     * @param currentUser     The user of the current activity. If set to null, the user will be found based on the context
-     * @param guardian        The guardian of the current user.
-     * @param appsViewPager   The layout that the AppImageViews should be put into
-     * @param onClickListener The onClickListener attached to each AppImageView. These vary depending on the purpose of the layout they are loaded into.
-     * @param offlineMode     Indicate if the launcher is in offline mode
+     * @param context           The context for the current activity
+     * @param currentUser       The user of the current activity. If set to null, the user will be found based on the context
+     * @param guardian          The guardian of the current user.
+     * @param appsViewPager     The layout that the AppImageViews should be put into
+     * @param onClickListener   The onClickListener attached to each AppImageView. These vary depending on the purpose of the layout they are loaded into.
+     * @param offlineMode       Indicate if the launcher is in offline mode
+     * @param includeAddAppIcon Indicate if the addAppIcon should be shown with the apps
      */
-    public LoadApplicationTask(final Context context, final Profile currentUser, final Profile guardian, final ViewPager appsViewPager, final View.OnClickListener onClickListener, final boolean offlineMode) {
+    public LoadApplicationTask(final Context context,
+                               final Profile currentUser,
+                               final Profile guardian,
+                               final ViewPager appsViewPager,
+                               final View.OnClickListener onClickListener,
+                               final boolean offlineMode,
+                               final boolean includeAddAppIcon) {
         this(context, currentUser, guardian, appsViewPager, onClickListener);
         this.offlineMode = offlineMode;
+        this.includeAddAppIcon = includeAddAppIcon;
     }
 
     /**
@@ -99,19 +110,19 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
      */
     @Override
     protected ArrayList<AppInfo> doInBackground(Application... applications) {
+        ArrayList<AppInfo> appInfoList = new ArrayList<>();
         // Only creates AppImageViews if there actually are applications to generate
         if (applications != null && applications.length != 0) {
             // If the current user is null, find the user based on the context
             if (currentUser == null) {
                 currentUser = LauncherUtility.getCurrentUser(context);
             }
-
             // update the HashMap with information of the apps being generated and sort it
-            ArrayList<AppInfo> appInfoList = AppViewCreationUtility.updateAppInfoList(context, applications);
+            appInfoList = AppViewCreationUtility.updateAppInfoList(context, applications);
             //If the launcher is in offline mode, some application should not be available
             if (offlineMode){
                 for(AppInfo a: appInfoList){
-                    if (!Constants.OFFLINE_CAPABLE_APPS.contains(a.getPackage())) {
+                    if (Constants.OFFLINE_INCAPABLE_APPS.contains(a.getPackage())) {
                         Drawable iconImage = a.getIconImage().mutate();
                         iconImage.setAlpha(context.getResources().getInteger(R.integer.giraf_disabled_app_alpha));
                         a.setIconImage(iconImage);
@@ -121,14 +132,19 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
                 }
             }
             Collections.sort(appInfoList, new AppComparator(context));
-
-            return appInfoList;
         } else {
             // show no apps available message
             Log.e(Constants.ERROR_TAG, "App list is null");
         }
+        if (includeAddAppIcon && currentUser.getRole() != Profile.Roles.CHILD ){
+            Application tmpApp = new Application(context.getResources().getString(R.string.add_app_text), "", Constants.ADD_APP_ICON_FAKE_PACKAGE_NAME, "", "");
+            AppInfo tmpInfo = new AppInfo(tmpApp);
+            tmpInfo.setIconImage(context.getResources().getDrawable(R.drawable.ic_apps));
 
-        return null;
+            appInfoList.add(tmpInfo);
+        }
+        return appInfoList.isEmpty() ? null : appInfoList;
+
     }
 
     /**

@@ -644,7 +644,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
          * @param offlineMode     Indicate if the launcher is in offline mode
          */
         public LoadHomeActivityApplicationTask(Context context, Profile currentUser, Profile guardian, ViewPager appsViewPager, View.OnClickListener onClickListener, boolean offlineMode) {
-            super(context, currentUser, guardian, appsViewPager, onClickListener, offlineMode);
+            super(context, currentUser, guardian, appsViewPager, onClickListener, offlineMode, true);
         }
 
         /**

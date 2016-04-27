@@ -9,6 +9,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
+import android.os.Parcel;
 import android.os.Vibrator;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
@@ -26,6 +27,8 @@ import java.util.ArrayList;
 import dk.aau.cs.giraf.gui.GirafNotifyDialog;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
+import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
+import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementFragment;
 import dk.aau.cs.giraf.launcher.widgets.AppImageView;
 import dk.aau.cs.giraf.dblib.models.Application;
 import dk.aau.cs.giraf.dblib.models.Profile;
@@ -140,6 +143,16 @@ public class AppViewCreationUtility {
 
                     if (appInfo.getPackage().isEmpty()){
                         Constants.offlineNotify.show(((FragmentActivity) context).getSupportFragmentManager(), "DIALOG_TAG");
+                    } else if (appInfo.getPackage().equals(Constants.ADD_APP_ICON_FAKE_PACKAGE_NAME)) {
+                        Intent intent = new Intent(context, SettingsActivity.class);
+                        intent.putExtra(Constants.ENTER_ADD_APP_MANAGER_BOOL, true);
+                        intent.putExtra(Constants.GUARDIAN_ID, guardian.getId());
+                        if (currentUser.getRole() == Profile.Roles.GUARDIAN)
+                            intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
+                        else
+                            intent.putExtra(Constants.CHILD_ID, currentUser.getId());
+
+                        LauncherUtility.secureStartActivity(v.getContext(), intent);
                     } else {
                         Intent intent = new Intent(Intent.ACTION_MAIN);
                         intent.addCategory(Intent.CATEGORY_LAUNCHER);
