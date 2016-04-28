@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle"
+            android:background="@drawable/shadow"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:paddingLeft="6dp"
+            android:paddingRight="5dp"
+            >
+            <stroke android:width="3dp" android:color="#000000"/>
+            <solid android:color="@color/password_box" />
+            <corners android:radius="10dp"/>
+        </shape>
+    </item>
+</selector>

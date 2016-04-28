@@ -30,7 +30,8 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_giraf"
         android:label="@string/application_name"
-        tools:replace="icon,label">
+        tools:replace="icon,label"
+        android:name="android.support.multidex.MultiDexApplication">
 
         <activity
             android:name=".activities.MainActivity"

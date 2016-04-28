@@ -32,3 +32,9 @@ proguard/
 *.ipr
 *.iws
 #gradle
+# Orig files after merge
+*.orig
+
+# Log files
+*.log
+
