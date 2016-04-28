@@ -1,6 +1,7 @@
 package dk.aau.cs.giraf.launcher.helper;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.view.PagerAdapter;
@@ -113,6 +114,9 @@ public class SwipeAdapter extends PagerAdapter {
                     .into(imageView);
 
             textView.setText(cursor.getString(columnIndex));
+
+            RelativeLayout rv = (RelativeLayout)itemView.findViewById(profileObjects[i]);
+            rv.setBackgroundResource(R.drawable.bg);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
