@@ -19,6 +19,8 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.net.URI;
@@ -79,6 +81,13 @@ public class ProfileChooserActivity extends FragmentActivity
         viewPager = (ViewPager)findViewById(R.id.viewPager);
         adapter = new SwipeAdapter(this, null);
         viewPager.setAdapter(adapter);
+        viewPager.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(),"You clicked the background",Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
         getSupportLoaderManager().initLoader(-1, null, this);
     }
