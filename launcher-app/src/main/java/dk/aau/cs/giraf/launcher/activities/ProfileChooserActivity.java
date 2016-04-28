@@ -2,39 +2,24 @@ package dk.aau.cs.giraf.launcher.activities;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.SyncRequest;
 import android.content.SyncStatusObserver;
-import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
-
-import java.io.IOException;
-import java.net.URI;
-import java.nio.BufferUnderflowException;
-import java.util.EmptyStackException;
-import java.util.LinkedList;
-import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.SwipeAdapter;
-import dk.aau.cs.giraf.librest.ContentProvider;
-import dk.aau.cs.giraf.librest.LoginProvider;
-import dk.aau.cs.giraf.librest.User;
-import dk.aau.cs.giraf.librest.UserService;
-import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
+import dk.aau.cs.giraf.librest.accounts.AuthenticatorService;
+import dk.aau.cs.giraf.librest.provider.GirafContract;
+import dk.aau.cs.giraf.librest.provider.GirafProvider;
 
 /**
  * Created by Caspar on 10-03-2016.
@@ -42,9 +27,6 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 public class ProfileChooserActivity extends FragmentActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final Uri userURI = Uri.parse("content://dk.aau.cs.giraf.provider.Users/users");
-    private static final String ACCOUNT = "sync";
-    private static final String ACCOUNT_TYPE = "web.giraf.cs.aau.dk";
-    private static final String AUTHORITY = "dk.aau.cs.giraf.provider.Users";
 
 
     ViewPager viewPager;
@@ -78,7 +60,7 @@ public class ProfileChooserActivity extends FragmentActivity
         Bundle settingsBundle = new Bundle();
         settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        ContentResolver.requestSync(mAccount, AUTHORITY, settingsBundle);
+        ContentResolver.requestSync(mAccount, GirafContract.CONTENT_AUTHORITY, settingsBundle);
 
         Cursor c = getContentResolver().query(userURI, null, null, null, null);
 
@@ -90,17 +72,16 @@ public class ProfileChooserActivity extends FragmentActivity
     }
 
     public static Account CreateSyncAccount(Context context) {
-        Account newAccount = new Account(
-                ACCOUNT, ACCOUNT_TYPE);
+        Account account = AuthenticatorService.GetAccount();
         AccountManager accountmanager =
                 (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
-        if (accountmanager.addAccountExplicitly(newAccount, null, null)){
-            ContentResolver.setIsSyncable(newAccount, AUTHORITY, 1);
-            ContentResolver.setSyncAutomatically(newAccount, AUTHORITY, true);
+        if (accountmanager.addAccountExplicitly(account, null, null)){
+            ContentResolver.setIsSyncable(account, GirafContract.CONTENT_AUTHORITY, 1);
+            ContentResolver.setSyncAutomatically(account, GirafContract.CONTENT_AUTHORITY, true);
         } else {
             Log.d(null, "Some error occurred with the account");
         }
-        return newAccount;
+        return account;
     }
 
     @Override
@@ -126,13 +107,13 @@ public class ProfileChooserActivity extends FragmentActivity
 
     // TODO: Refactor
     final String[] PROJECTION = new String[] {
-            LoginProvider._ID,
-            LoginProvider.USERNAME
+            GirafProvider._ID,
+            GirafProvider.USERNAME
     };
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(this, LoginProvider.CONTENT_URI, PROJECTION, null, null, null);
+        return new CursorLoader(this, GirafContract.CONTENT_URI, PROJECTION, null, null, null);
     }
 
     @Override

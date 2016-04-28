@@ -2,24 +2,19 @@ package dk.aau.cs.giraf.launcher.helper;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CursorAdapter;
-import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.librest.LoginProvider;
+import dk.aau.cs.giraf.librest.provider.GirafProvider;
 
 /**
  * Created by Caspar on 10-03-2016.
@@ -86,7 +81,7 @@ public class SwipeAdapter extends PagerAdapter {
             TextView  textView = (TextView)itemView.findViewById(textFields[i]);
 
             imageView.setImageResource(mImages.get(nextProfile));
-            int columnIndex = cursor.getColumnIndex(LoginProvider.USERNAME);
+            int columnIndex = cursor.getColumnIndex(GirafProvider.USERNAME);
             textView.setText(cursor.getString(columnIndex));
 
             System.out.println("Next Profile number: " + nextProfile);
