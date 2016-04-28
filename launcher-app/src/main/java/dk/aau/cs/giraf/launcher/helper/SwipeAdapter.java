@@ -116,7 +116,8 @@ public class SwipeAdapter extends PagerAdapter {
             textView.setText(cursor.getString(columnIndex));
 
             RelativeLayout rv = (RelativeLayout)itemView.findViewById(profileObjects[i]);
-            rv.setBackgroundResource(R.drawable.bg);
+            rv.setBackgroundResource(R.drawable.profilebackground);
+            rv.setClickable(false);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
