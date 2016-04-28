@@ -22,26 +22,34 @@ import java.util.LinkedList;
 import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.activities.AuthenticationActivity;
+import dk.aau.cs.giraf.launcher.activities.ProfileChooserActivity;
 import dk.aau.cs.giraf.librest.provider.GirafProvider;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
+
+import static android.support.v4.app.ActivityCompat.startActivity;
 
 /**
  * Created by Caspar on 10-03-2016.
  */
 public class SwipeAdapter extends PagerAdapter {
+    private static final String PROFILE_TAG = "Swipe adapter";
     private List<Integer> mImages;
     private List<String> mUsers;
     private LayoutInflater layoutInflater;
     private static int NUM_OF_PROFILES_PR_PAGE = 10;
     private Cursor cursor;
     private Context mContext;
-
+    /*
+    * Fields used for defining the rounding of the corners of the profileimages
+    */
     private final int radius = 5;
     private final int margin = 5;
     private Transformation transformation = new RoundedCornersTransformation(radius,margin);
 
     private int[] imageFields = {R.id.image_view1,R.id.image_view2,R.id.image_view3,R.id.image_view4,R.id.image_view5,R.id.image_view6,R.id.image_view7, R.id.image_view8,R.id.image_view9,R.id.image_view10};
-    private int[] textFields = {R.id.image_text1,R.id.image_text2,R.id.image_text3,R.id.image_text4,R.id.image_text5,R.id.image_text6,R.id.image_text7,R.id.image_text8,R.id.image_text9,R.id.image_text10};
+    private int[] textFields = {R.id.image_text1,R.id.image_text2,R.id.image_text3,R.id.image_text4,R.id.image_text5,R.id.image_text6,R.id.image_text7, R.id.image_text8,R.id.image_text9,R.id.image_text10};
+    private int[] profileObjects = {R.id.profile1, R.id.profile2, R.id.profile3, R.id.profile4, R.id.profile5, R.id.profile6, R.id.profile7, R.id.profile8, R.id.profile9, R.id.profile10};
 
     public SwipeAdapter(Context context, Cursor cursor){
         this.cursor = cursor;
@@ -78,7 +86,6 @@ public class SwipeAdapter extends PagerAdapter {
         return ceil;
     }
 
-    //TODO: Fix the infinite scrolling to the right
     //TODO: Fix that the excess imageViews are hidden.
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
@@ -93,19 +100,30 @@ public class SwipeAdapter extends PagerAdapter {
                 break;
             }
             ImageView imageView = (ImageView)itemView.findViewById(imageFields[i]);
-            TextView  textView = (TextView)itemView.findViewById(textFields[i]);
+            final TextView  textView = (TextView)itemView.findViewById(textFields[i]);
 
             imageView.setImageResource(mImages.get(nextProfile));
             int columnIndex = cursor.getColumnIndex(GirafProvider.USERNAME);
 
             Picasso.with(mContext).load(mImages.get(nextProfile))
+                    .fit()
+                    .centerCrop()
                     .transform(transformation)
                     .placeholder(R.drawable.bg)
                     .into(imageView);
 
             textView.setText(cursor.getString(columnIndex));
 
-            System.out.println("Next Profile number: " + nextProfile);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mContext, AuthenticationActivity.class);
+                    String userName = (String) textView.getText();
+                    intent.putExtra("username", userName);
+                    mContext.startActivity(intent);
+                }
+            });
+
             nextProfile++;
             cursor.moveToNext();
         }
@@ -117,7 +135,7 @@ public class SwipeAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        container.removeView((RelativeLayout)object);
+        container.removeView((RelativeLayout) object);
     }
 
     @Override

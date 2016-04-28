@@ -2,18 +2,30 @@ package dk.aau.cs.giraf.launcher.activities;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SyncRequest;
 import android.content.SyncStatusObserver;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
+
+import java.io.IOException;
+import java.net.URI;
+import java.nio.BufferUnderflowException;
+import java.util.EmptyStackException;
+import java.util.LinkedList;
+import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.SwipeAdapter;

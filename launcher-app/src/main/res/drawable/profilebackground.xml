@@ -8,7 +8,7 @@
             android:paddingLeft="6dp"
             android:paddingRight="5dp"
             >
-            <stroke android:width="3dp" android:color="#000000"/>
+            <stroke android:width="1dp" android:color="#000000"/>
             <solid android:color="@color/password_box" />
             <corners android:radius="10dp"/>
         </shape>
