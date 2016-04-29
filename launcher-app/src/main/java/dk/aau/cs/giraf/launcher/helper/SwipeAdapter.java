@@ -25,6 +25,7 @@ import java.util.List;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.AuthenticationActivity;
 import dk.aau.cs.giraf.launcher.activities.ProfileChooserActivity;
+import dk.aau.cs.giraf.librest.User;
 import dk.aau.cs.giraf.librest.provider.GirafProvider;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
@@ -34,7 +35,6 @@ import static android.support.v4.app.ActivityCompat.startActivity;
  * Created by Caspar on 10-03-2016.
  */
 public class SwipeAdapter extends PagerAdapter {
-    private static final String PROFILE_TAG = "Swipe adapter";
     private List<Integer> mImages;
     private List<String> mUsers;
     private LayoutInflater layoutInflater;
@@ -87,7 +87,6 @@ public class SwipeAdapter extends PagerAdapter {
         return ceil;
     }
 
-    //TODO: Fix that the excess imageViews are hidden.
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
 
@@ -98,13 +97,16 @@ public class SwipeAdapter extends PagerAdapter {
 
         for(int i = 0; i < 10; i++){
             if(nextProfile >= cursor.getCount()){
-                break;
+                RelativeLayout disableV= (RelativeLayout)itemView.findViewById(profileObjects[i]);
+                disableV.setClickable(false);
+                continue;
             }
             ImageView imageView = (ImageView)itemView.findViewById(imageFields[i]);
             final TextView  textView = (TextView)itemView.findViewById(textFields[i]);
 
             imageView.setImageResource(mImages.get(nextProfile));
-            int columnIndex = cursor.getColumnIndex(GirafProvider.USERNAME);
+            int nameColumnIndex = cursor.getColumnIndex(GirafProvider.USERNAME);
+            int idColumnIndex = cursor.getColumnIndex(GirafProvider._ID);
 
             Picasso.with(mContext).load(mImages.get(nextProfile))
                     .fit()
@@ -113,21 +115,27 @@ public class SwipeAdapter extends PagerAdapter {
                     .placeholder(R.drawable.bg)
                     .into(imageView);
 
-            textView.setText(cursor.getString(columnIndex));
+            textView.setText(cursor.getString(nameColumnIndex));
 
-            RelativeLayout rv = (RelativeLayout)itemView.findViewById(profileObjects[i]);
-            rv.setBackgroundResource(R.drawable.profilebackground);
-            rv.setClickable(false);
+            RelativeLayout relativeLayout = (RelativeLayout)itemView.findViewById(profileObjects[i]);
+            relativeLayout.setBackgroundResource(R.drawable.profilebackground);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
+
+            //Hooking user object to the view,to be passed onto the password screen
+            User user = new User(cursor.getString(nameColumnIndex),cursor.getInt(idColumnIndex));
+
+            relativeLayout.setTag(R.id.tagKey, user);
+
+            /*itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(mContext, AuthenticationActivity.class);
                     String userName = (String) textView.getText();
                     intent.putExtra("username", userName);
+                    System.out.println("You clicked on" + userName);
                     mContext.startActivity(intent);
                 }
-            });
+            });*/
 
             nextProfile++;
             cursor.moveToNext();
@@ -144,7 +152,7 @@ public class SwipeAdapter extends PagerAdapter {
     }
 
     @Override
-    public int getItemPosition(Object object) {
-        return POSITION_NONE;
-    }
+    public int getItemPosition(Object object) {return POSITION_NONE;}
+
+
 }

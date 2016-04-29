@@ -5,6 +5,7 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SyncRequest;
 import android.content.SyncStatusObserver;
 import android.database.ContentObserver;
@@ -20,7 +21,13 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URI;
@@ -31,6 +38,7 @@ import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.SwipeAdapter;
+import dk.aau.cs.giraf.librest.User;
 import dk.aau.cs.giraf.librest.accounts.AuthenticatorService;
 import dk.aau.cs.giraf.librest.provider.GirafContract;
 import dk.aau.cs.giraf.librest.provider.GirafProvider;
@@ -81,13 +89,6 @@ public class ProfileChooserActivity extends FragmentActivity
         viewPager = (ViewPager)findViewById(R.id.viewPager);
         adapter = new SwipeAdapter(this, null);
         viewPager.setAdapter(adapter);
-        viewPager.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),"You clicked the background",Toast.LENGTH_SHORT).show();
-            }
-        });
-
 
         getSupportLoaderManager().initLoader(-1, null, this);
     }
@@ -150,5 +151,13 @@ public class ProfileChooserActivity extends FragmentActivity
         adapter.changeCursor(null);
     }
 
+    public void profileClick(View v){
+        RelativeLayout rv = (RelativeLayout) v;
+        User userObj = (User) rv.getTag(R.id.tagKey);
+        System.out.println(userObj.getUsername());
+        Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
+        intent.putExtra("userObject", new Gson().toJson(userObj));
+        this.startActivity(intent);
+    }
 
 }

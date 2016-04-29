@@ -276,7 +276,8 @@ public class AuthenticationActivity extends Activity {
      */
     @Override
     public void onBackPressed() {
-        //Do nothing, as the user should not be able to back out of this activity
+        Intent intent  = new Intent(AuthenticationActivity.this, ProfileChooserActivity.class);
+        startActivity(intent);
     }
 }
 
