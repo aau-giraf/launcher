@@ -2,46 +2,29 @@ package dk.aau.cs.giraf.launcher.activities;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SyncRequest;
 import android.content.SyncStatusObserver;
-import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
-
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.net.URI;
-import java.nio.BufferUnderflowException;
-import java.util.EmptyStackException;
-import java.util.LinkedList;
-import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.SwipeAdapter;
 import dk.aau.cs.giraf.librest.User;
 import dk.aau.cs.giraf.librest.accounts.AuthenticatorService;
 import dk.aau.cs.giraf.librest.provider.GirafContract;
-import dk.aau.cs.giraf.librest.provider.GirafProvider;
 
 /**
  * Created by Caspar on 10-03-2016.
@@ -86,6 +69,13 @@ public class ProfileChooserActivity extends FragmentActivity
 
         Cursor c = getContentResolver().query(userURI, null, null, null, null);
 
+        final long SYNCINTERVAL = 20L;
+        ContentResolver.addPeriodicSync(
+                AuthenticatorService.GetAccount(),
+                GirafContract.CONTENT_AUTHORITY,
+                Bundle.EMPTY,
+                SYNCINTERVAL);
+
         viewPager = (ViewPager)findViewById(R.id.viewPager);
         adapter = new SwipeAdapter(this, null);
         viewPager.setAdapter(adapter);
@@ -129,13 +119,13 @@ public class ProfileChooserActivity extends FragmentActivity
 
     // TODO: Refactor
     final String[] PROJECTION = new String[] {
-            GirafProvider._ID,
-            GirafProvider.USERNAME
+            GirafContract.User.COLUMN_NAME_USER_ID,
+            GirafContract.User.COLUMN_NAME_USERNAME
     };
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(this, GirafContract.CONTENT_URI, PROJECTION, null, null, null);
+        return new CursorLoader(this, GirafContract.User.CONTENT_URI, PROJECTION, null, null, null);
     }
 
     @Override
