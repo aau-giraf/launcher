@@ -3,17 +3,29 @@ package dk.aau.cs.giraf.launcher.activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -22,6 +34,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
+import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 //import com.google.zxing.Result;
 //import com.google.zxing.client.android.CaptureActivity;
 
@@ -34,8 +48,11 @@ import dk.aau.cs.giraf.launcher.BuildConfig;
 import dk.aau.cs.giraf.launcher.ProfileAdapter;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
+import dk.aau.cs.giraf.launcher.helper.ImageMasker;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.layoutcontroller.SimulateAnimationDrawable;
+import jp.wasabeef.picasso.transformations.CropTransformation;
+import jp.wasabeef.picasso.transformations.MaskTransformation;
 
 /**
  * Handles authentication of the user's QR code through a camera feed. If the the user's QR code
@@ -65,6 +82,51 @@ public class AuthenticationActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.authentication_activity);
+
+        Intent intent = getIntent();
+        dk.aau.cs.giraf.librest.User curUser = new Gson().fromJson(intent.getExtras().
+                getString("userObject"), dk.aau.cs.giraf.librest.User.class);
+
+        final ImageView mImageView = (ImageView)findViewById(R.id.giraflogo);
+        ImageMasker masker = new ImageMasker();
+        Bitmap maskedImage = masker.maskProfileImage(curUser.getImage(), this);
+
+        mImageView.setImageBitmap(maskedImage);
+        mImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        //mImageView.setBackgroundResource(R.drawable.giraf_loading);
+        mImageView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                mImageView.getViewTreeObserver().removeOnPreDrawListener(this);
+                Picasso.with(getApplicationContext()).load(R.drawable.stock_profile)
+                        .resize(mImageView.getWidth(), mImageView.getHeight())
+                        .centerCrop()
+                        .transform(new MaskTransformation(getApplicationContext(), R.drawable.giraf_loading))
+                        .into(mImageView);
+            return true;
+            }
+        });
+
+
+
+
+        EditText passbox = (EditText)findViewById(R.id.pass_box);
+        passbox.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if(event.getAction() == KeyEvent.ACTION_DOWN){
+                    switch(keyCode){
+                        case KeyEvent.KEYCODE_DPAD_CENTER:
+                        case KeyEvent.KEYCODE_ENTER:
+                            LoginBtnPressed(v);
+                            return true;
+                        default:
+                            break;
+                    }
+                }
+                return false;
+            }
+        });
 
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
@@ -271,13 +333,15 @@ public class AuthenticationActivity extends Activity {
         }
     }
 
-    /**
-     * Does nothing, to prevent the user from returning to the splash screen or native OS.
-     */
     @Override
     public void onBackPressed() {
         Intent intent  = new Intent(AuthenticationActivity.this, ProfileChooserActivity.class);
         startActivity(intent);
+    }
+
+    public void LoginBtnPressed(View view){
+        EditText text = (EditText)findViewById(R.id.pass_box);
+        Toast.makeText(this, "You have entered: " + text.getText(), Toast.LENGTH_SHORT).show();
     }
 }
 

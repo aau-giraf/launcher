@@ -143,3 +143,6 @@ play {
     pk12File = file(project.playAcc.keyPath)
     track = 'alpha'
 }
+dependencies {
+    compile 'javax.annotation:javax.annotation-api:1.2'
+}

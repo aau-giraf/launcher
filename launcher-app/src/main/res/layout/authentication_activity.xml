@@ -33,12 +33,12 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center">
 
+
                 <ImageView
-                    android:layout_width="236dp"
+                    android:layout_width="230dp"
                     android:layout_height="197dp"
                     android:id="@+id/giraflogo"
                     android:layout_gravity="center_horizontal|top"
-                    android:background="@drawable/giraf_logo"
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="20dp"
                     android:contentDescription="@string/logo_description" />
@@ -84,7 +84,8 @@
                             android:singleLine="false"
                             android:enabled="true"
                             style="@style/LoginText"
-                            android:background="@drawable/loginbutton" />
+                            android:background="@drawable/loginbutton"
+                            android:onClick="LoginBtnPressed"/>
                     </LinearLayout>
 
                 </LinearLayout>

@@ -1,14 +1,21 @@
 package dk.aau.cs.giraf.launcher.helper;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CursorAdapter;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
@@ -17,9 +24,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.activities.AuthenticationActivity;
+import dk.aau.cs.giraf.launcher.activities.ProfileChooserActivity;
 import dk.aau.cs.giraf.librest.User;
 import dk.aau.cs.giraf.librest.provider.GirafContract;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
+
+import static android.support.v4.app.ActivityCompat.startActivity;
 
 /**
  * Created by Caspar on 10-03-2016.
@@ -97,12 +108,12 @@ public class SwipeAdapter extends PagerAdapter {
             imageView.setImageResource(mImages.get(nextProfile));
             int nameColumnIndex = cursor.getColumnIndex(GirafContract.User.COLUMN_NAME_USERNAME);
             int idColumnIndex = cursor.getColumnIndex(GirafContract.User.COLUMN_NAME_USER_ID);
-
-            Picasso.with(mContext).load(mImages.get(nextProfile))
+	    //TODO: Give picasso the columnIndex from the Cursor with the image
+            Picasso.with(mContext).load(Uri.EMPTY)
                     .fit()
                     .centerCrop()
                     .transform(transformation)
-                    .placeholder(R.drawable.bg)
+                    .placeholder(R.drawable.stock_profile)
                     .into(imageView);
 
             textView.setText(cursor.getString(nameColumnIndex));
