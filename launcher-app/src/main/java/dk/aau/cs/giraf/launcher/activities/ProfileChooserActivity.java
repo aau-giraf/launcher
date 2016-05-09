@@ -31,7 +31,7 @@ import dk.aau.cs.giraf.librest.provider.GirafContract;
  */
 public class ProfileChooserActivity extends FragmentActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
-    private static final Uri userURI = Uri.parse("content://dk.aau.cs.giraf.provider.Users/users");
+    private static final Uri userURI = Uri.parse("content://dk.aau.cs.giraf.provider.Giraf/users");
 
 
     ViewPager viewPager;
