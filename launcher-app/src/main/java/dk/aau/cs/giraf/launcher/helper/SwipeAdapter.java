@@ -43,7 +43,7 @@ public class SwipeAdapter extends PagerAdapter {
     private Cursor cursor;
     private Context mContext;
     /*
-    * Fields used for defining the rounding of the corners of the profileimages
+    * Fields used for defining the rounding of the corners of the images
     */
     private final int radius = 5;
     private final int margin = 5;
@@ -121,22 +121,10 @@ public class SwipeAdapter extends PagerAdapter {
             RelativeLayout relativeLayout = (RelativeLayout)itemView.findViewById(profileObjects[i]);
             relativeLayout.setBackgroundResource(R.drawable.profilebackground);
 
-
             //Hooking user object to the view,to be passed onto the password screen
             User user = new User(cursor.getString(nameColumnIndex),cursor.getInt(idColumnIndex));
 
             relativeLayout.setTag(R.id.tagKey, user);
-
-            /*itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(mContext, AuthenticationActivity.class);
-                    String userName = (String) textView.getText();
-                    intent.putExtra("username", userName);
-                    System.out.println("You clicked on" + userName);
-                    mContext.startActivity(intent);
-                }
-            });*/
 
             nextProfile++;
             cursor.moveToNext();

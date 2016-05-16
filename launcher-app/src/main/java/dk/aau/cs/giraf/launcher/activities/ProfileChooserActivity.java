@@ -26,9 +26,6 @@ import dk.aau.cs.giraf.librest.User;
 import dk.aau.cs.giraf.librest.accounts.AuthenticatorService;
 import dk.aau.cs.giraf.librest.provider.GirafContract;
 
-/**
- * Created by Caspar on 10-03-2016.
- */
 public class ProfileChooserActivity extends FragmentActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final Uri userURI = Uri.parse("content://dk.aau.cs.giraf.provider.Giraf/users");
@@ -60,7 +57,6 @@ public class ProfileChooserActivity extends FragmentActivity
 
         accountManager = AccountManager.get(this);
         mAccount = CreateSyncAccount(this);
-        //ContentResolver.requestSync();
 
         Bundle settingsBundle = new Bundle();
         settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
@@ -91,7 +87,7 @@ public class ProfileChooserActivity extends FragmentActivity
             ContentResolver.setIsSyncable(account, GirafContract.CONTENT_AUTHORITY, 1);
             ContentResolver.setSyncAutomatically(account, GirafContract.CONTENT_AUTHORITY, true);
         } else {
-            Log.d(null, "Some error occurred with the account");
+            Log.d(null, "An error occurred with the account");
         }
         return account;
     }
