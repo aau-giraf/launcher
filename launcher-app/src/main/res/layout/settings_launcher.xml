@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:giraf="http://giraf.cs.aau.dk"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+                  xmlns:giraf="http://giraf.cs.aau.dk"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent">
 
     <PreferenceCategory
-        android:title="Hjemmeskærm"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+            android:title="Hjemmeskærm"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
     <dk.aau.cs.giraf.launcher.settings.components.LeftAlignedSwitchPreference
-        android:id="@+id/start_animation_setting"
-        android:key="@string/show_animation_preference_key"
-        android:title="@string/setting_launcher_animation_title"
-        android:summary="@string/setting_launcher_animation_summary"
-        android:switchTextOff="@string/setting_launcher_animation_off"
-        android:switchTextOn="@string/setting_launcher_animation_on"
-        android:defaultValue="true"
-        android:layout_gravity="left"/>
+            android:id="@+id/start_animation_setting"
+            android:key="@string/show_animation_preference_key"
+            android:title="@string/setting_launcher_animation_title"
+            android:summary="@string/setting_launcher_animation_summary"
+            android:switchTextOff="@string/setting_launcher_animation_off"
+            android:switchTextOn="@string/setting_launcher_animation_on"
+            android:defaultValue="true"
+            android:layout_gravity="left"/>
 
     <dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer
-        android:id="@+id/icon_resizer"
-        android:key="@string/grid_size_preference_key"
-        android:title="@string/setting_launcher_grid_size_title"
-        android:summary="@string/setting_launcher_grid_size_summary"
-        android:defaultValue="4"
-        android:max="7"
-        giraf:min="2"/>
+            android:id="@+id/icon_resizer"
+            android:key="@string/grid_size_preference_key"
+            android:title="@string/setting_launcher_grid_size_title"
+            android:summary="@string/setting_launcher_grid_size_summary"
+            android:defaultValue="4"
+            android:max="7"
+            giraf:min="2"/>
 
 </PreferenceScreen>

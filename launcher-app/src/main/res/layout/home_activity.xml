@@ -1,155 +1,155 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/giraf_background">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/giraf_background">
 
     <LinearLayout
-        android:id="@+id/SidebarView"
-        android:layout_width="@dimen/sidebar_width"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:background="@drawable/launcher_sidebar_background"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
+            android:id="@+id/SidebarView"
+            android:layout_width="@dimen/sidebar_width"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/launcher_sidebar_background"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
 
         <dk.aau.cs.giraf.gui.GirafPictogramItemView
-            android:id="@+id/profile_widget"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="visible" />
-
-        <ScrollView
-            android:id="@+id/sidebar_scrollview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fadeScrollbars="false"
-            android:fillViewport="true"
-            android:overScrollMode="ifContentScrolls">
-
-            <LinearLayout
+                android:id="@+id/profile_widget"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="@dimen/sidebar_item_spacing">
+                android:visibility="visible"/>
 
-                <LinearLayout
+        <ScrollView
+                android:id="@+id/sidebar_scrollview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fadeScrollbars="false"
+                android:fillViewport="true"
+                android:overScrollMode="ifContentScrolls">
+
+            <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center_horizontal|top"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="@dimen/sidebar_item_spacing">
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal|top"
+                        android:orientation="vertical">
 
                     <dk.aau.cs.giraf.gui.GirafButton
-                        android:id="@+id/change_user_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/sidebar_item_spacing"
-                        app:icon="@drawable/icon_give_tablet" />
+                            android:id="@+id/change_user_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/sidebar_item_spacing"
+                            app:icon="@drawable/icon_give_tablet"/>
 
                     <dk.aau.cs.giraf.gui.GirafButton
-                        android:id="@+id/logout_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/sidebar_item_spacing"
-                        app:icon="@drawable/icon_logout" />
+                            android:id="@+id/logout_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/sidebar_item_spacing"
+                            app:icon="@drawable/icon_logout"/>
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center_horizontal|bottom"
-                    android:orientation="vertical">
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal|bottom"
+                        android:orientation="vertical">
 
                     <dk.aau.cs.giraf.gui.GirafButton
-                        android:id="@+id/help_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/sidebar_item_spacing"
-                        app:icon="@drawable/icon_help" />
+                            android:id="@+id/help_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/sidebar_item_spacing"
+                            app:icon="@drawable/icon_help"/>
 
                     <dk.aau.cs.giraf.gui.GirafButton
-                        android:id="@+id/settings_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/sidebar_item_spacing"
-                        app:icon="@drawable/icon_settings" />
+                            android:id="@+id/settings_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/sidebar_item_spacing"
+                            app:icon="@drawable/icon_settings"/>
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
 
     <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_toEndOf="@id/SidebarView"
-        android:layout_toRightOf="@id/SidebarView">
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_toEndOf="@id/SidebarView"
+            android:layout_toRightOf="@id/SidebarView">
 
         <TextView
-            android:id="@+id/noAppsMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:padding="20dp"
-            android:text="@string/no_apps_available"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="30sp"
-            android:visibility="gone" />
+                android:id="@+id/noAppsMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:padding="20dp"
+                android:text="@string/no_apps_available"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="30sp"
+                android:visibility="gone"/>
 
         <ProgressBar
-            android:id="@+id/ProgressBar"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_centerInParent="true"
-            android:visibility="invisible" />
+                android:id="@+id/ProgressBar"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_centerInParent="true"
+                android:visibility="invisible"/>
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/offline_mode_enabled"
-            android:id="@+id/offlineModeText"
-            android:textColor="#000000"
-            android:textSize="@dimen/giraf_dialog_description_text_size"
-            android:layout_alignBottom="@+id/pageIndicator"
-            android:layout_toRightOf="@+id/noAppsMessage"
-            android:layout_toEndOf="@+id/noAppsMessage"
-            android:layout_marginLeft="@dimen/text_padding"
-            android:background="@color/giraf_bar_gradient_start"
-            android:textAlignment="center"
-            android:textStyle="bold"
-            android:visibility="invisible"
-            android:autoText="false"
-            android:gravity="center"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/offline_mode_enabled"
+                android:id="@+id/offlineModeText"
+                android:textColor="#000000"
+                android:textSize="@dimen/giraf_dialog_description_text_size"
+                android:layout_alignBottom="@+id/pageIndicator"
+                android:layout_toRightOf="@+id/noAppsMessage"
+                android:layout_toEndOf="@+id/noAppsMessage"
+                android:layout_marginLeft="@dimen/text_padding"
+                android:background="@color/giraf_bar_gradient_start"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:visibility="invisible"
+                android:autoText="false"
+                android:gravity="center"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"/>
 
         <com.viewpagerindicator.CirclePageIndicator
-            android:id="@+id/pageIndicator"
-            android:layout_width="match_parent"
-            android:layout_height="28dp"
-            android:layout_alignParentBottom="true"
-            android:layout_margin="3dp"
-            android:padding="3dp"
-            app:fillColor="@color/giraf_page_indicator_active"
-            app:pageColor="@color/giraf_page_indicator_inactive"
-            app:radius="10dp" />
+                android:id="@+id/pageIndicator"
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="3dp"
+                android:padding="3dp"
+                app:fillColor="@color/giraf_page_indicator_active"
+                app:pageColor="@color/giraf_page_indicator_inactive"
+                app:radius="10dp"/>
 
 
         <dk.aau.cs.giraf.gui.GViewPager
-            android:id="@+id/appsViewPager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@id/pageIndicator"
-            />
+                android:id="@+id/appsViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@id/pageIndicator"
+        />
 
         <include
-            layout="@layout/debug_mode_overlay"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true" />
+                layout="@layout/debug_mode_overlay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"/>
 
     </RelativeLayout>
 

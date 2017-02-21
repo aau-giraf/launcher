@@ -14,9 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import dk.aau.cs.giraf.dblib.models.Application;
 import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.launcher.R;
@@ -25,15 +22,17 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 /**
  * This is the main class that loads applications as AppImageViews into a given targetlayout
  * When using this class, you must derive from it, and specify in the derived class exactly
  * what applications you want to generate AppImageViews for.
  * For examples:
  *
- * @see dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AndroidFragment.LoadAndroidApplicationTask
- * @see dk.aau.cs.giraf.launcher.settings.settingsappmanagement.GirafFragment.loadGirafApplicationTask
- * @see dk.aau.cs.giraf.launcher.activities.HomeActivity.LoadHomeActivityApplicationTask
+ * @see {@link dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AndroidFragment.LoadAndroidApplicationTask}
+ * @see {@link dk.aau.cs.giraf.launcher.activities.HomeActivity.LoadHomeActivityApplicationTask}
  */
 public abstract class LoadApplicationTask extends AsyncTask<Application, View, ArrayList<AppInfo>> {
 
@@ -51,27 +50,34 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
      * the contructor for the class
      *
      * @param context         The context for the current activity
-     * @param currentUser     The user of the current activity. If set to null, the user will be found based on the context
+     * @param currentUser     The user of the current activity. If set to null, the user will be
+     *                        found based on the context
      * @param guardian        The guardian of the current user.
      * @param appsViewPager   The layout that the AppImageViews should be put into
-     * @param onClickListener The onClickListener attached to each AppImageView. These vary depending on the purpose of the layout they are loaded into.
+     * @param onClickListener The onClickListener attached to each AppImageView.
+     *                        These vary depending on the purpose of the layout they are loaded into.
      */
-    public LoadApplicationTask(final Context context, final Profile currentUser, final Profile guardian, final ViewPager appsViewPager, final View.OnClickListener onClickListener) {
+    public LoadApplicationTask(final Context context, final Profile currentUser, final Profile guardian,
+                               final ViewPager appsViewPager, final View.OnClickListener onClickListener)
+    {
         this.context = context;
         this.currentUser = currentUser;
         this.guardian = guardian;
         this.appsViewPager = appsViewPager;
         this.onClickListener = onClickListener;
     }
+
     /**
      * the contructor for the class but including a boolean for offlinemode and includeAddAppIcon
      * The "addAppIcon" shows an icon which leads to the settings tab for adding apps
      *
      * @param context           The context for the current activity
-     * @param currentUser       The user of the current activity. If set to null, the user will be found based on the context
+     * @param currentUser       The user of the current activity. If set to null,
+     *                          the user will be found based on the context
      * @param guardian          The guardian of the current user.
      * @param appsViewPager     The layout that the AppImageViews should be put into
-     * @param onClickListener   The onClickListener attached to each AppImageView. These vary depending on the purpose of the layout they are loaded into.
+     * @param onClickListener   The onClickListener attached to each AppImageView.
+     *                          These vary depending on the purpose of the layout they are loaded into.
      * @param offlineMode       Indicate if the launcher is in offline mode
      * @param includeAddAppIcon Indicate if the addAppIcon should be shown with the apps
      */
@@ -81,7 +87,8 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
                                final ViewPager appsViewPager,
                                final View.OnClickListener onClickListener,
                                final boolean offlineMode,
-                               final boolean includeAddAppIcon) {
+                               final boolean includeAddAppIcon)
+    {
         this(context, currentUser, guardian, appsViewPager, onClickListener);
         this.offlineMode = offlineMode;
         this.includeAddAppIcon = includeAddAppIcon;
@@ -122,15 +129,15 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
             // update the HashMap with information of the apps being generated and sort it
             appInfoList = AppViewCreationUtility.updateAppInfoList(context, applications);
             //If the launcher is in offline mode, some application should not be available
-            if (offlineMode){
-                for(AppInfo a: appInfoList){
+            if (offlineMode) {
+                for (AppInfo a : appInfoList) {
                     if (Constants.OFFLINE_INCAPABLE_APPS.contains(a.getPackage())) {
                         Drawable [] layers = new Drawable[2];
                         layers[0] = a.getIconImage().mutate();
                         layers[0].setAlpha(context.getResources().getInteger(R.integer.giraf_disabled_app_alpha));
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             layers[1] = context.getDrawable(R.drawable.icon_redcross);
-                        }else {
+                        } else {
                             layers[1] = context.getResources().getDrawable(R.drawable.icon_redcross);
                         }
                         a.setIconImage(new LayerDrawable(layers));
@@ -144,8 +151,9 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
             // show no apps available message
             Log.e(Constants.ERROR_TAG, "App list is null");
         }
-        if (includeAddAppIcon && currentUser.getRole() != Profile.Roles.CHILD ){
-            Application tmpApp = new Application(context.getResources().getString(R.string.add_app_text), "", Constants.ADD_APP_ICON_FAKE_PACKAGE_NAME, "", "");
+        if (includeAddAppIcon && currentUser.getRole() != Profile.Roles.CHILD ) {
+            Application tmpApp = new Application(context.getResources().getString(R.string.add_app_text), "",
+                Constants.ADD_APP_ICON_FAKE_PACKAGE_NAME, "", "");
             AppInfo tmpInfo = new AppInfo(tmpApp);
             tmpInfo.setIconImage(context.getResources().getDrawable(R.drawable.ic_apps));
 
@@ -160,10 +168,10 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
      * Hides the progressbar, adds the rows in the list of rows to be added to the targetlayout.
      * Also clears the parent of the targetlayout of progressbars
      *
-     * @param appInfos
+     * @param appInfoList List of appInfor
      */
     @Override
-    protected void onPostExecute(ArrayList<AppInfo> appInfos) {
+    protected void onPostExecute(ArrayList<AppInfo> appInfoList) {
 
 
         progressbar.setVisibility(View.INVISIBLE);
@@ -171,13 +179,13 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
         final int rowsSize = ApplicationGridResizer.getGridRowSize(this.context, currentUser);
         final int columnsSize = ApplicationGridResizer.getGridColumnSize(this.context, currentUser);
 
-        if (appInfos != null && appInfos.size() > 0) {
+        if (appInfoList != null && appInfoList.size() > 0) {
             changeVisibilityOfNoAppsMessage(View.GONE);
         } else {
             changeVisibilityOfNoAppsMessage(View.VISIBLE);
         }
 
-        ((AppsFragmentAdapter) this.appsViewPager.getAdapter()).swapApps(appInfos, rowsSize, columnsSize);
+        ((AppsFragmentAdapter) this.appsViewPager.getAdapter()).swapApps(appInfoList, rowsSize, columnsSize);
 
     }
 
@@ -186,7 +194,7 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
     }
 
     /**
-     * If the task was cancelled, and the progressbar is not null, hide the progressbar
+     * If the task was cancelled, and the progressbar is not null, hide the progressbar.
      */
     @Override
     protected void onCancelled() {
@@ -196,9 +204,9 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
     }
 
     /**
-     * Gets the correct parent of the targetlayout to add the Progressbar to
+     * Gets the correct parent of the targetlayout to add the Progressbar to.
      *
-     * @return
+     * @return ViewGroup
      */
     private ViewGroup getProgressBarParent() {
 
@@ -232,10 +240,10 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
     }
 
     /**
-     * Sets the visibility of the noAppsText message shown if no apps where added to the targetlayout
+     * Sets the visibility of the noAppsText message shown if no apps where added to the targetlayout.
      * Takes into consideration if we are in SettingsActivity or HomeActivity
      *
-     * @param visibility
+     * @param visibility Int visibility
      */
     private void changeVisibilityOfNoAppsMessage(int visibility) {
 

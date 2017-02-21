@@ -31,9 +31,10 @@
 
     <!-- TODO: INDSÆT NAVN PÅ ÅBENSOVSEKODE! -->
     <string name="settings_about_message">Powered by:\n SymmetricDS \n
-Copyright (C) 2007-2013 JumpMind Inc. \n
-SymmetricDS and the SymmetricDS logos are trademarks of JumpMind Inc. \n
-All rights reserved.</string>
+        Copyright (C) 2007-2013 JumpMind Inc. \n
+        SymmetricDS and the SymmetricDS logos are trademarks of JumpMind Inc. \n
+        All rights reserved.
+    </string>
     <!-- TODO: INDSÆT NAVN PÅ ÅBENSOVSEKODE! -->
 
 </resources>

@@ -9,9 +9,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import dk.aau.cs.giraf.launcher.R;
+
+import java.util.ArrayList;
 
 /**
  * Custom adapter to ListView.
@@ -24,18 +24,18 @@ import dk.aau.cs.giraf.launcher.R;
 public class SettingsListAdapter extends BaseAdapter {
 
     /**
-     * The variables needed by the adapter
+     * The variables needed by the adapter.
      */
-    private LayoutInflater mInflater;
+    private LayoutInflater layoutInflater;
 
     // The list containing the items to add
-    private ArrayList<SettingsListItem> mApplicationList;
+    private ArrayList<SettingsListItem> applicationList;
 
     // Reference to the ListView using the adapter
-    private ListView mListView;
+    private ListView listView;
 
     // Ensures the first item in the associated ListView is selected at first startup
-    private static int mLastSelectedItem = 0;
+    private static int lastSelectedItem = 0;
 
     /**
      * The constructor for the class
@@ -44,11 +44,11 @@ public class SettingsListAdapter extends BaseAdapter {
      * @param list the list of SettingsListItems that should populate the ListView.
      */
     public SettingsListAdapter(Context context, ListView listView, ArrayList<SettingsListItem> list) {
-        mApplicationList = list;
-        mListView = listView;
+        applicationList = list;
+        this.listView = listView;
 
         // Get the layout inflater from the activity
-        mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     /**
@@ -56,7 +56,7 @@ public class SettingsListAdapter extends BaseAdapter {
      * @return The amount of applications in the list of applications
      */
     public int getCount() {
-        return mApplicationList.size();
+        return applicationList.size();
     }
 
     /**
@@ -65,7 +65,7 @@ public class SettingsListAdapter extends BaseAdapter {
      * @return The item at the given position.
      */
     public Object getItem(int position) {
-        return mApplicationList.get(position);
+        return applicationList.get(position);
     }
 
     /**
@@ -86,7 +86,7 @@ public class SettingsListAdapter extends BaseAdapter {
      */
     public void setSelected(int position) {
         // Position in the view implementing the adapter
-        mLastSelectedItem = position;
+        lastSelectedItem = position;
         // Notify adapter that a new item is selected to redraw views
         notifyDataSetChanged();
     }
@@ -98,13 +98,13 @@ public class SettingsListAdapter extends BaseAdapter {
      * @param settingTitle Title of the setting, use title from R.strings
      */
     public void setSelected(String settingTitle) {
-        int i = 0;
-        for (SettingsListItem item : mApplicationList){
-            if (item.title.equals(settingTitle)){
-                mLastSelectedItem = i;
+        int counter = 0;
+        for (SettingsListItem item : applicationList) {
+            if (item.title.equals(settingTitle)) {
+                lastSelectedItem = counter;
                 break;
             }
-            i++;
+            counter++;
         }
         // Notify adapter that a new item is selected to redraw views
         notifyDataSetChanged();
@@ -124,7 +124,7 @@ public class SettingsListAdapter extends BaseAdapter {
         ViewHolder holder;
 
         if(convertView == null) {
-            convertView = mInflater.inflate(R.layout.settings_fragment_list_row, null);
+            convertView = layoutInflater.inflate(R.layout.settings_fragment_list_row, null);
 
             // Filling the ViewHolder with views used to render a list item
             holder = new ViewHolder();
@@ -133,19 +133,18 @@ public class SettingsListAdapter extends BaseAdapter {
 
             // Tag the view with the holder object to be able to retrieve it again
             convertView.setTag(holder);
-        }
-        else {    // The view has been tagged with a ViewHolder, so we can just retrieve it
+        } else {    // The view has been tagged with a ViewHolder, so we can just retrieve it
             // to avoid finding them again
             holder = (ViewHolder) convertView.getTag();
         }
 
         // Get the item we are rendering the view for in the list
-        final SettingsListItem item = mApplicationList.get(position);
+        final SettingsListItem item = applicationList.get(position);
 
-        if (position == mLastSelectedItem) {
+        if (position == lastSelectedItem) {
             // Set the selected item in the ListView coming from the constructor
             // Minimizes the use of findViewById
-            mListView.setItemChecked(position, true);
+            listView.setItemChecked(position, true);
         }
 
         // Setting all values in ListView
@@ -156,7 +155,7 @@ public class SettingsListAdapter extends BaseAdapter {
     }
 
     /**
-     * Class used in the adapter to hold a reference to each view in a list item (row)
+     * Class used in the adapter to hold a reference to each view in a list item (row).
      */
     private class ViewHolder {
         public ImageView appIcon;

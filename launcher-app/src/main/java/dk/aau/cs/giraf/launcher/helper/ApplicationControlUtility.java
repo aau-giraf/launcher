@@ -5,14 +5,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.dblib.models.Application;
 import dk.aau.cs.giraf.dblib.models.Profile;
+import dk.aau.cs.giraf.launcher.R;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This class contains functions that are used to either:
@@ -21,10 +21,11 @@ import dk.aau.cs.giraf.dblib.models.Profile;
  */
 public class ApplicationControlUtility {
 
-    private final static String ANDROID_FILTER = "dk.aau.cs.giraf";
+    private static final String ANDROID_FILTER = "dk.aau.cs.giraf";
 
     /**
-     * Gets the GIRAF apps that are usable by the given user, relative to their settings and the system they're logged in on.
+     * Gets the GIRAF apps that are usable by the given user,
+     * relative to their settings and the system they're logged in on.
      * @param context Context of the current activity.
      * @param user    The user to find apps_container for.
      * @return List of apps that are usable by this user on this device.
@@ -41,7 +42,9 @@ public class ApplicationControlUtility {
 
         // Remove from the list, all apps that are not installed on the device and exclude the launcher itself.
         for (int i = 0; i < userApps.size(); i++) {
-            if (!doesApplicationListContainApp(deviceApps, userApps.get(i)) || userApps.get(i).getPackage().equals("dk.aau.cs.giraf.launcher")) {
+            if (!doesApplicationListContainApp(deviceApps, userApps.get(i)) ||
+                userApps.get(i).getPackage().equals("dk.aau.cs.giraf.launcher"))
+            {
                 userApps.remove(i);
                 i--;
             }
@@ -93,7 +96,9 @@ public class ApplicationControlUtility {
         }
 
         for (int i = 0; i < dbApps.size(); i++) {
-            if (!doesResolveInfoListContainApp(deviceApps, dbApps.get(i)) || dbApps.get(i).getPackage().equals(context.getString(R.string.launcher_namespace))) {
+            if (!doesResolveInfoListContainApp(deviceApps, dbApps.get(i)) ||
+                dbApps.get(i).getPackage().equals(context.getString(R.string.launcher_namespace)))
+            {
                 dbApps.remove(i);
                 i--;
             }
@@ -141,16 +146,16 @@ public class ApplicationControlUtility {
 
     /**
      * This function returns Android Applications installed on the device as a
-     * list of applications, based on a given filter
+     * list of applications, based on a given filter.
      * @param context The context of the current activity
-     * @return
+     * @return list of application
      */
-    public static List<Application> getAndroidAppsOnDeviceAsApplicationList(Context context){
+    public static List<Application> getAndroidAppsOnDeviceAsApplicationList(Context context) {
         List<ResolveInfo> allApps = getAllAppsOnDeviceAsResolveInfoList(context);
         List<Application> result = new ArrayList<Application>();
         PackageManager packageManager = context.getPackageManager();
 
-        for(ResolveInfo app : allApps){
+        for (ResolveInfo app : allApps) {
             String appActivityName = app.activityInfo.name;
             String appPackageName = app.activityInfo.packageName;
 
@@ -227,19 +232,19 @@ public class ApplicationControlUtility {
      * This function convert a list of Package names to a list of Applications.
      * @param context The context of the current activity
      * @param packageNames The list of Package names to be converted into Applications
-     * @return
+     * @return List of applications
      */
-    public static List<Application> convertPackageNamesToApplications(Context context, Set<String> packageNames){
+    public static List<Application> convertPackageNamesToApplications(Context context, Set<String> packageNames) {
         List<ResolveInfo> allApps = getAllAppsOnDeviceAsResolveInfoList(context);
         List<Application> selectedApps = new ArrayList<Application>();
         PackageManager packageManager = context.getPackageManager();
 
         outerloop:
-        for(ResolveInfo app : allApps){
-            for(String activityName : packageNames){
+        for (ResolveInfo app : allApps) {
+            for (String activityName : packageNames) {
                 String appActivityName = app.activityInfo.name;
                 String appPackageName = app.activityInfo.packageName;
-                if (appActivityName.equals(activityName)){
+                if (appActivityName.equals(activityName)) {
                     Application application = new Application();
                     application.setPackage(appPackageName);
                     application.setActivity(appActivityName);

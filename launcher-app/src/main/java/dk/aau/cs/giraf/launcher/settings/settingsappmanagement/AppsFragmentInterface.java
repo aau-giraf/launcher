@@ -8,5 +8,6 @@ import dk.aau.cs.giraf.dblib.models.Profile;
  */
 public interface AppsFragmentInterface {
     public Profile getCurrentUser();
+
     public Profile getLoggedInGuardian();
 }

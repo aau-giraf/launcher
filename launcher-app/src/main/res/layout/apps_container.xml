@@ -1,28 +1,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/app_bg"
-    android:layout_width="200dp"
-    android:layout_height="200dp"
-    android:background="@drawable/appborder"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:padding="10dp">
+              android:id="@+id/app_bg"
+              android:layout_width="200dp"
+              android:layout_height="200dp"
+              android:background="@drawable/appborder"
+              android:gravity="center_horizontal"
+              android:orientation="vertical"
+              android:padding="10dp">
 
     <ImageView
-        android:id="@+id/example_grid_layout"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_gravity="center" />
+            android:id="@+id/example_grid_layout"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"/>
 
     <TextView
-        android:id="@+id/app_text"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_marginLeft="7dp"
-        android:layout_marginRight="7dp"
-        android:ellipsize="none"
-        android:gravity="center_horizontal"
-        android:scrollHorizontally="false"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#000000" />
+            android:id="@+id/app_text"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="7dp"
+            android:ellipsize="none"
+            android:gravity="center_horizontal"
+            android:scrollHorizontally="false"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#000000"/>
 
 </LinearLayout>

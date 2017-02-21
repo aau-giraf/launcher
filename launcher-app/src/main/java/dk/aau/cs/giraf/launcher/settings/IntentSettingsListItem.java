@@ -7,7 +7,7 @@ public class IntentSettingsListItem extends SettingsListItem {
     protected final Intent intent;
 
     /**
-     * Constructor for any item in the settings list
+     * Constructor for any item in the settings list.
      *
      * @param title     The title of the setting item
      * @param icon      Icon to display for the setting item

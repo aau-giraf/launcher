@@ -21,8 +21,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
 import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.dblib.controllers.ProfileController;
@@ -43,37 +41,40 @@ import dk.aau.cs.giraf.showcaseview.ShowcaseView;
 import dk.aau.cs.giraf.showcaseview.targets.Target;
 import dk.aau.cs.giraf.showcaseview.targets.ViewTarget;
 
+import java.util.ArrayList;
+
 /**
  * Activity responsible for handling Launcher settings_activity and starting
  * other setting-related activities.
  */
 public class SettingsActivity extends GirafActivity
-        implements SettingsListFragment.SettingsListFragmentListener,
-        GirafProfileSelectorDialog.OnSingleProfileSelectedListener,
-        AppsFragmentInterface, ShowcaseManager.ShowcaseCapable {
+    implements SettingsListFragment.SettingsListFragmentListener,
+    GirafProfileSelectorDialog.OnSingleProfileSelectedListener,
+    AppsFragmentInterface, ShowcaseManager.ShowcaseCapable
+{
 
     private static final String IS_FIRST_RUN_KEY = "IS_FIRST_RUN_KEY_SETTINGS_ACTIVITY";
 
     private static final int CHANGE_USER_SELECTOR_DIALOG = 100;
 
     /**
-     * The variables mostly used inside the class
+     * The variables mostly used inside the class.
      */
-    private FragmentManager mFragManager;
-    private android.support.v4.app.FragmentManager mSupportFragManager;
+    private FragmentManager fragmentManager;
+    private android.support.v4.app.FragmentManager supportFragmentManager;
 
-    private Profile mCurrentUser = null;
-    private Profile mLoggedInGuardian;
+    private Profile currentUser = null;
+    private Profile loggedInGuardian;
 
-    private ListView mSettingsListView;
-    private SettingsListAdapter mAdapter;
+    private ListView settingsListView;
+    private SettingsListAdapter settingsListAdapter;
 
     // Used to implement help functionality (ShowcaseView)
     private ShowcaseManager showcaseManager;
     private boolean isFirstRun;
 
     /**
-     * Used in onResume and onPause for handling showcaseview for first run
+     * Used in onResume and onPause for handling showcaseview for first run.
      */
     private ViewTreeObserver.OnGlobalLayoutListener globalLayoutListener;
 
@@ -83,7 +84,7 @@ public class SettingsActivity extends GirafActivity
      * later filtered to remove applications that are
      * unavailable on the device.
      */
-    private ArrayList<SettingsListItem> mAppList;
+    private ArrayList<SettingsListItem> appList;
 
     /**
      * String constant used to identify the name of the intent
@@ -105,9 +106,9 @@ public class SettingsActivity extends GirafActivity
 
         setContentView(R.layout.settings_activity);
 
-        mSettingsListView = (ListView) findViewById(R.id.settingsListView);
+        settingsListView = (ListView) findViewById(R.id.settingsListView);
 
-        mSettingsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        settingsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 SettingsListItem item = (SettingsListItem) parent.getAdapter().getItem(position);
@@ -125,79 +126,82 @@ public class SettingsActivity extends GirafActivity
                     }
 
                     // Update the adapter to reflect the selection
-                    mAdapter.setSelected(position);
-                }
-                // Otherwise it must be an intent
-                else if (item instanceof IntentSettingsListItem) {
+                    settingsListAdapter.setSelected(position);
+                } else if (item instanceof IntentSettingsListItem) {
+                    // Otherwise it must be an intent
                     try {
                         // Start a new activity with the intent
                         startActivity(((IntentSettingsListItem) item).intent);
-                    }
-                    // Handle exception if the intended activity can not be started.
-                    catch (ActivityNotFoundException e) {
-                        Toast.makeText(parent.getContext(), R.string.settings_activity_not_found_msg, Toast.LENGTH_SHORT).show();
+                    } catch (ActivityNotFoundException e) {
+                        // Handle exception if the intended activity can not be started.
+                        Toast.makeText(parent.getContext(),
+                            R.string.settings_activity_not_found_msg, Toast.LENGTH_SHORT).show();
                     } finally {
                         // Notify adapter to redraw views since we want to reset the visual style
                         // of the selected since its state should not be preserved (= reset selected item
                         // to the item selected when starting the Intent.
-                        mAdapter.notifyDataSetChanged();
+                        settingsListAdapter.notifyDataSetChanged();
                     }
                 }
             }
         });
 
-        final GirafPictogramItemView mProfileButton = (GirafPictogramItemView) findViewById(R.id.profile_widget_settings);
+        final GirafPictogramItemView mProfileButton =
+            (GirafPictogramItemView) findViewById(R.id.profile_widget_settings);
 
-        ProfileController pc = new ProfileController(this);
+        ProfileController profileController = new ProfileController(this);
 
-        final long childID = this.getIntent().getLongExtra(Constants.CHILD_ID, -1);
+        final long childId = this.getIntent().getLongExtra(Constants.CHILD_ID, -1);
 
-        Profile mCurrentUser;
+        Profile currentUser;
 
-        // The childID is -1 meaning that no childs are available
-        if (childID == -1) {
-            mCurrentUser = pc.getById(this.getIntent().getLongExtra(Constants.GUARDIAN_ID, -1));
+        // The childIdNew is -1 meaning that no childs are available
+        if (childId == -1) {
+            currentUser = profileController.getById(this.getIntent().getLongExtra(Constants.GUARDIAN_ID, -1));
         } else { // A child is found - set it as active and add its profile selector
-            mCurrentUser = pc.getById(childID);
+            currentUser = profileController.getById(childId);
         }
         // Notify about the current user
-        setCurrentUser(mCurrentUser);
+        setCurrentUser(currentUser);
 
         // Instantiates a new adapter to render the items in the ListView with a list of installed (available) apps
-        mAdapter = new SettingsListAdapter(this, mSettingsListView, this.getInstalledSettingsApps());
+        settingsListAdapter = new SettingsListAdapter(this, settingsListView, this.getInstalledSettingsApps());
         // Set the new adapter in the ListView
-        mSettingsListView.setAdapter(mAdapter);
+        settingsListView.setAdapter(settingsListAdapter);
 
-        mAdapter.setSelected(0);
+        settingsListAdapter.setSelected(0);
 
         //Load the correct profile picture for the choosen profile
-        mProfileButton.setImageModel(mCurrentUser, this.getResources().getDrawable(R.drawable.no_profile_pic));
-        mProfileButton.setTitle(mCurrentUser.getName());
+        mProfileButton.setImageModel(currentUser, this.getResources().getDrawable(R.drawable.no_profile_pic));
+        mProfileButton.setTitle(currentUser.getName());
 
-        final Helper mHelper = LauncherUtility.getOasisHelper(this);
+        final Helper helper = LauncherUtility.getOasisHelper(this);
 
-        final long childId = getIntent().getExtras().getLong(Constants.CHILD_ID);
+        final long childIdNew = getIntent().getExtras().getLong(Constants.CHILD_ID);
         final long guardianId = getIntent().getExtras().getLong(Constants.GUARDIAN_ID);
 
-        mLoggedInGuardian = mHelper.profilesHelper.getById(guardianId);
+        loggedInGuardian = helper.profilesHelper.getById(guardianId);
 
-        if (childId != Constants.NO_CHILD_SELECTED_ID) {
-            mCurrentUser = mHelper.profilesHelper.getById(childId);
+        if (childIdNew != Constants.NO_CHILD_SELECTED_ID) {
+            currentUser = helper.profilesHelper.getById(childIdNew);
         } else {
-            mCurrentUser = mHelper.profilesHelper.getById(guardianId);
+            currentUser = helper.profilesHelper.getById(guardianId);
         }
 
         // Change the title of the action bar to include the name of the current user
-        if (mCurrentUser != null) {
-            this.setActionBarTitle(getString(R.string.settingsFor) + mCurrentUser.getName());
+        if (currentUser != null) {
+            this.setActionBarTitle(getString(R.string.settingsFor) + currentUser.getName());
         }
 
-        final GirafButton changeUserButton = new GirafButton(this, this.getResources().getDrawable(R.drawable.icon_change_user));
+        final GirafButton changeUserButton = new GirafButton(this, this.getResources()
+            .getDrawable(R.drawable.icon_change_user));
         changeUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
 
-                GirafProfileSelectorDialog changeUser = GirafProfileSelectorDialog.newInstance(SettingsActivity.this, mLoggedInGuardian.getId(), false, false, "Vælg den borger du vil skifte til.", CHANGE_USER_SELECTOR_DIALOG);
+                GirafProfileSelectorDialog changeUser = GirafProfileSelectorDialog.newInstance(SettingsActivity.this,
+                    loggedInGuardian.getId(), false, false, "Vælg den borger du vil skifte til.",
+                    CHANGE_USER_SELECTOR_DIALOG);
                 changeUser.show(getSupportFragmentManager(), "" + CHANGE_USER_SELECTOR_DIALOG);
             }
         });
@@ -208,7 +212,7 @@ public class SettingsActivity extends GirafActivity
         helpGirafButton.setId(R.id.help_button);
         helpGirafButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 toggleShowcase();
             }
         });
@@ -216,9 +220,9 @@ public class SettingsActivity extends GirafActivity
         addGirafButtonToActionBar(helpGirafButton, GirafActivity.RIGHT);
 
         // Used to handle fragment changes within the containing View
-        mFragManager = this.getFragmentManager();
-        mSupportFragManager = this.getSupportFragmentManager();
-        Fragment settingsFragment = mFragManager.findFragmentById(R.id.settingsContainer);
+        fragmentManager = this.getFragmentManager();
+        supportFragmentManager = this.getSupportFragmentManager();
+        Fragment settingsFragment = fragmentManager.findFragmentById(R.id.settingsContainer);
 
         // Check if the fragment already exists
         if (settingsFragment == null) {
@@ -229,24 +233,25 @@ public class SettingsActivity extends GirafActivity
             // Update active fragment with the first entry
             if (item.fragment != null) {
                 // Load the fragment just selected into view
-                mFragManager.beginTransaction().add(R.id.settingsContainer, item.fragment).commit();
+                fragmentManager.beginTransaction().add(R.id.settingsContainer, item.fragment).commit();
             } else {
                 // Load the fragment just selected into view
-                mSupportFragManager.beginTransaction().add(R.id.settingsContainer, item.supportFragment).commit();
+                supportFragmentManager.beginTransaction().add(R.id.settingsContainer, item.supportFragment).commit();
             }
         }
 
-        mFragManager.executePendingTransactions();
-        mSupportFragManager.executePendingTransactions();
-        if(getIntent().getExtras().getBoolean(Constants.ENTER_ADD_APP_MANAGER_BOOL)) {
-            mAdapter.setSelected(getString(R.string.settings_tablist_applications));
+        fragmentManager.executePendingTransactions();
+        supportFragmentManager.executePendingTransactions();
+        if (getIntent().getExtras().getBoolean(Constants.ENTER_ADD_APP_MANAGER_BOOL)) {
+            settingsListAdapter.setSelected(getString(R.string.settings_tablist_applications));
             setActiveFragment(new AppManagementFragment());
         }
     }
 
     /**
      * This function gets the elements that should be added to the list of items in the left side
-     * Firstly, it gets the settings for Launcher itself, along with the "Apps" menu, where users select or deselect apps.
+     * Firstly, it gets the settings for Launcher itself, along with the "Apps" menu,
+     * where users select or deselect apps.
      * Finally, gets the currently installed apps that have settings to be shown in SettingsActivity.
      * Currently, these apps are only "Cars" (Stemmespillet) and "Zebra" (Sekvens).
      *
@@ -254,17 +259,17 @@ public class SettingsActivity extends GirafActivity
      */
     @Override
     public ArrayList<SettingsListItem> getInstalledSettingsApps() {
-        mAppList = new ArrayList<SettingsListItem>();
+        appList = new ArrayList<SettingsListItem>();
 
         // Launcher
         addApplicationByPackageName("dk.aau.cs.giraf.launcher",
-                SettingsLauncher.newInstance(LauncherUtility.getSharedPreferenceUser(mCurrentUser)),
-                getString(R.string.settings_tablist_general));
+            SettingsLauncher.newInstance(LauncherUtility.getSharedPreferenceUser(currentUser)),
+            getString(R.string.settings_tablist_general));
 
         // Application management
         addApplicationByTitle(getString(R.string.settings_tablist_applications),
-                new AppManagementFragment(),
-                getResources().getDrawable(R.drawable.icon_applications));
+            new AppManagementFragment(),
+            getResources().getDrawable(R.drawable.icon_applications));
 
 
         // Get intent for Native Android Settings
@@ -274,15 +279,15 @@ public class SettingsActivity extends GirafActivity
         androidSettingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         addApplicationByTitle(getResources().getString(R.string.settings_tablist_tablet),
-                androidSettingsIntent, getResources().getDrawable(R.drawable.icon_android));
+            androidSettingsIntent, getResources().getDrawable(R.drawable.icon_android));
 
         // Launcher
         addApplicationByPackageName("dk.aau.cs.giraf.launcher",
-                AboutFragment.newInstance(),
-                getString(R.string.about_giraf_tab_title));
+            AboutFragment.newInstance(),
+            getString(R.string.about_giraf_tab_title));
 
         // Return all applications
-        return mAppList;
+        return appList;
     }
 
     /**
@@ -322,14 +327,16 @@ public class SettingsActivity extends GirafActivity
             }
 
             // Extract icon of application
-            // TODO: This a quick fix to show the correct icon in the list. This is however alright since the sidebar is not used for any other apps
-            final Drawable appIcon = this.getResources().getDrawable(R.drawable.icon_giraf_no_background); //pm.getApplicationIcon(appInfo);
+            // TODO: This a quick fix to show the correct icon in the list.
+            // TODO: This is however alright since the sidebar is not used for any other apps
+            final Drawable appIcon = this.getResources()
+                .getDrawable(R.drawable.icon_giraf_no_background); //pm.getApplicationIcon(appInfo);
 
             // Create the item
             final FragmentSettingsListItem item = new FragmentSettingsListItem(title, appIcon, fragment);
 
             // Add item to the list of applications
-            mAppList.add(item);
+            appList.add(item);
         }
     }
 
@@ -340,13 +347,14 @@ public class SettingsActivity extends GirafActivity
      * @param fragment Fragment with settings that should be started.
      * @param icon     Custom icon to add to list entry.
      */
-    private void addApplicationByTitle(final String title, final android.support.v4.app.Fragment fragment, final Drawable icon) {
-
+    private void addApplicationByTitle(final String title,
+                                       final android.support.v4.app.Fragment fragment, final Drawable icon)
+    {
         // Create the new item
         final FragmentSettingsListItem item = new FragmentSettingsListItem(title, icon, fragment);
 
         // Add item to the list of applications
-        mAppList.add(item);
+        appList.add(item);
     }
 
     /**
@@ -361,7 +369,7 @@ public class SettingsActivity extends GirafActivity
         final IntentSettingsListItem item = new IntentSettingsListItem(title, icon, intent);
 
         // Add item to the list of applications
-        mAppList.add(item);
+        appList.add(item);
     }
 
     /**
@@ -372,20 +380,21 @@ public class SettingsActivity extends GirafActivity
     @Override
     public void setActiveFragment(final Fragment fragment) {
 
-        final Fragment mActiveFragment = mFragManager.findFragmentById(R.id.settingsContainer);
+        final Fragment mActiveFragment = fragmentManager.findFragmentById(R.id.settingsContainer);
 
         // Only add new transaction if the user clicked a non-active fragment
         if (mActiveFragment == null || !mActiveFragment.equals(fragment)) {
 
-            final android.support.v4.app.Fragment mActiveSupportFragment = mSupportFragManager.findFragmentById(R.id.settingsContainer);
+            final android.support.v4.app.Fragment mActiveSupportFragment =
+                supportFragmentManager.findFragmentById(R.id.settingsContainer);
 
             if (mActiveSupportFragment != null) {
-                android.support.v4.app.FragmentTransaction ft = mSupportFragManager.beginTransaction();
+                android.support.v4.app.FragmentTransaction ft = supportFragmentManager.beginTransaction();
                 ft.remove(mActiveSupportFragment);
                 ft.commit();
             }
 
-            final FragmentTransaction ft = mFragManager.beginTransaction();
+            final FragmentTransaction ft = fragmentManager.beginTransaction();
 
             // Replace the fragment in settingsContainer
             ft.replace(R.id.settingsContainer, fragment);
@@ -401,19 +410,20 @@ public class SettingsActivity extends GirafActivity
     @Override
     public void setActiveFragment(final android.support.v4.app.Fragment fragment) {
 
-        final android.support.v4.app.Fragment mActiveSupportFragment = mSupportFragManager.findFragmentById(R.id.settingsContainer);
+        final android.support.v4.app.Fragment mActiveSupportFragment =
+            supportFragmentManager.findFragmentById(R.id.settingsContainer);
 
         // Only add new transaction if the user clicked a non-active fragment
         if (mActiveSupportFragment == null || !mActiveSupportFragment.equals(fragment)) {
-            final Fragment mActiveFragment = mFragManager.findFragmentById(R.id.settingsContainer);
+            final Fragment mActiveFragment = fragmentManager.findFragmentById(R.id.settingsContainer);
 
             if (mActiveFragment != null) {
-                FragmentTransaction ft = mFragManager.beginTransaction();
+                FragmentTransaction ft = fragmentManager.beginTransaction();
                 ft.remove(mActiveFragment);
                 ft.commit();
             }
 
-            android.support.v4.app.FragmentTransaction ft = mSupportFragManager.beginTransaction();
+            android.support.v4.app.FragmentTransaction ft = supportFragmentManager.beginTransaction();
 
             // Replace the fragment in settingsContainer
             ft.replace(R.id.settingsContainer, fragment);
@@ -431,11 +441,11 @@ public class SettingsActivity extends GirafActivity
         // Get the intent of SettingsActivity
         final Intent intent = SettingsActivity.this.getIntent();
 
-        if (mCurrentUser.getRole() == Profile.Roles.CHILD) // A child profile has been selected, pass id
-            intent.putExtra(Constants.CHILD_ID, mCurrentUser.getId());
-        else // We are a guardian, do not add a child
+        if (currentUser.getRole() == Profile.Roles.CHILD) { // A child profile has been selected, pass id
+            intent.putExtra(Constants.CHILD_ID, currentUser.getId());
+        } else { // We are a guardian, do not add a child
             intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
-
+        }
         // Stop activity before restarting
         SettingsActivity.this.finish();
 
@@ -450,31 +460,31 @@ public class SettingsActivity extends GirafActivity
      */
     @Override
     public void setCurrentUser(Profile profile) {
-        mCurrentUser = profile;
+        currentUser = profile;
     }
 
     /**
-     * gets the current user
+     * gets the current user.
      *
-     * @return
+     * @return profile of the current user
      */
     public Profile getCurrentUser() {
-        return mCurrentUser;
+        return currentUser;
     }
 
     /**
-     * Get the current logged in guardian
+     * Get the current logged in guardian.
      *
-     * @return
+     * @return profile of the logged in guardian
      */
     @Override
     public Profile getLoggedInGuardian() {
-        return mLoggedInGuardian;
+        return loggedInGuardian;
     }
 
     @Override
-    public void onProfileSelected(final int i, final Profile profile) {
-        if (i == CHANGE_USER_SELECTOR_DIALOG) {
+    public void onProfileSelected(final int input, final Profile profile) {
+        if (input == CHANGE_USER_SELECTOR_DIALOG) {
 
             // Notify that a profile selection has been made
             setCurrentUser(profile);
@@ -501,27 +511,30 @@ public class SettingsActivity extends GirafActivity
 
         // If it is the first run display ShowcaseView
         if (isFirstRun) {
-            mSettingsListView.getViewTreeObserver().addOnGlobalLayoutListener(globalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
+            settingsListView.getViewTreeObserver().addOnGlobalLayoutListener(globalLayoutListener =
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
 
-                    showShowcase();
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putBoolean(IS_FIRST_RUN_KEY, false);
-                    editor.commit();
+                        showShowcase();
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putBoolean(IS_FIRST_RUN_KEY, false);
+                        editor.commit();
 
-                    synchronized (SettingsActivity.this) {
+                        synchronized (SettingsActivity.this) {
 
-                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                            mSettingsListView.getViewTreeObserver().removeGlobalOnLayoutListener(globalLayoutListener);
-                        } else {
-                            mSettingsListView.getViewTreeObserver().removeOnGlobalLayoutListener(globalLayoutListener);
+                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                                settingsListView.getViewTreeObserver()
+                                    .removeGlobalOnLayoutListener(globalLayoutListener);
+                            } else {
+                                settingsListView.getViewTreeObserver()
+                                    .removeOnGlobalLayoutListener(globalLayoutListener);
+                            }
+
+                            globalLayoutListener = null;
                         }
-
-                        globalLayoutListener = null;
                     }
-                }
-            });
+                });
         }
 
     }
@@ -533,9 +546,9 @@ public class SettingsActivity extends GirafActivity
         // Remove global layout listener
         synchronized (SettingsActivity.this) {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                mSettingsListView.getViewTreeObserver().removeGlobalOnLayoutListener(globalLayoutListener);
+                settingsListView.getViewTreeObserver().removeGlobalOnLayoutListener(globalLayoutListener);
             } else {
-                mSettingsListView.getViewTreeObserver().removeOnGlobalLayoutListener(globalLayoutListener);
+                settingsListView.getViewTreeObserver().removeOnGlobalLayoutListener(globalLayoutListener);
             }
             globalLayoutListener = null;
         }
@@ -553,7 +566,8 @@ public class SettingsActivity extends GirafActivity
         //TODO: Move string constants to xml files
 
         // Create a relative location for the next button
-        final RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        final RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         final int margin = ((Number) (getResources().getDisplayMetrics().density * 24)).intValue();
@@ -561,14 +575,15 @@ public class SettingsActivity extends GirafActivity
 
         showcaseManager = new ShowcaseManager();
 
-        final ListView settingsList = mSettingsListView;
+        final ListView settingsList = settingsListView;
 
-        final int originalPos = mSettingsListView.getSelectedItemPosition();
+        final int originalPos = settingsListView.getSelectedItemPosition();
 
         showcaseManager.addShowCase(new ShowcaseManager.Showcase() {
             @Override
             public void configShowCaseView(final ShowcaseView showcaseView) {
-                // TODO: Last minute fix (Find a better way to call this once the scroll is complete) (i.e. dont use postDelayed)
+                // TODO: Last minute fix (Find a better way to call this once the scroll is complete)
+                // TODO: (i.e. dont use postDelayed)
                 showcaseView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -598,10 +613,11 @@ public class SettingsActivity extends GirafActivity
             @Override
             public void configShowCaseView(final ShowcaseView showcaseView) {
 
-                //mSettingsListView.setSelection(0);
-                mSettingsListView.smoothScrollToPositionFromTop(0, 0, 120);
+                //settingsListView.setSelection(0);
+                settingsListView.smoothScrollToPositionFromTop(0, 0, 120);
 
-                // TODO: Last minute fix (Find a better way to call this once the scroll is complete) (i.e. dont use postDelayed)
+                // TODO: Last minute fix (Find a better way to call this once the scroll is complete)
+                // TODO: (i.e. dont use postDelayed)
                 showcaseView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -635,9 +651,10 @@ public class SettingsActivity extends GirafActivity
             @Override
             public void configShowCaseView(final ShowcaseView showcaseView) {
 
-                mSettingsListView.smoothScrollToPositionFromTop(0, 0, 120);
-                // TODO: Last minute fix (Find a better way to call this once the scroll is complete) (i.e. dont use postDelayed)
-                mSettingsListView.postDelayed(new Runnable() {
+                settingsListView.smoothScrollToPositionFromTop(0, 0, 120);
+                // TODO: Last minute fix (Find a better way to call this once the scroll is complete)
+                // TODO: (i.e. dont use postDelayed)
+                settingsListView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         final View applicationManagementTab = settingsList.getChildAt(1);
@@ -667,10 +684,11 @@ public class SettingsActivity extends GirafActivity
             @Override
             public void configShowCaseView(final ShowcaseView showcaseView) {
 
-                mSettingsListView.smoothScrollToPositionFromTop(2, 0, 120);
+                settingsListView.smoothScrollToPositionFromTop(2, 0, 120);
 
-                // TODO: Last minute fix (Find a better way to call this once the scroll is complete) (i.e. dont use postDelayed)
-                mSettingsListView.postDelayed(new Runnable() {
+                // TODO: Last minute fix (Find a better way to call this once the scroll is complete)
+                // TODO: (i.e. dont use postDelayed)
+                settingsListView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
 
@@ -698,7 +716,8 @@ public class SettingsActivity extends GirafActivity
             }
         });
 
-        final android.support.v4.app.Fragment currentSupportSettingsContent = mSupportFragManager.findFragmentById(R.id.settingsContainer);
+        final android.support.v4.app.Fragment currentSupportSettingsContent =
+            supportFragmentManager.findFragmentById(R.id.settingsContainer);
 
         if (currentSupportSettingsContent != null && currentSupportSettingsContent instanceof AppContainerFragment) {
 
@@ -707,10 +726,13 @@ public class SettingsActivity extends GirafActivity
                 public void configShowCaseView(final ShowcaseView showcaseView) {
 
                     // Find the currently active content fragment
-                    final Fragment currentNormalSettingsContent = mFragManager.findFragmentById(R.id.settingsContainer);
+                    final Fragment currentNormalSettingsContent =
+                        fragmentManager.findFragmentById(R.id.settingsContainer);
 
-                    final View noAppsMessageView = currentSupportSettingsContent.getView().findViewById(R.id.noAppsMessage);
-                    final View appsViewPager = currentSupportSettingsContent.getView().findViewById(R.id.appsViewPager);
+                    final View noAppsMessageView = currentSupportSettingsContent.getView()
+                        .findViewById(R.id.noAppsMessage);
+                    final View appsViewPager = currentSupportSettingsContent.getView()
+                        .findViewById(R.id.appsViewPager);
 
                     final Target noAppsMessageTarget = new ViewTarget(noAppsMessageView, 1.1f);
                     final Target appsViewPagerTarget = new ViewTarget(appsViewPager, 1.4f);
@@ -728,7 +750,8 @@ public class SettingsActivity extends GirafActivity
 
                         if (noAppsMessageView.getVisibility() == View.VISIBLE) {
                             showcaseView.setShowcase(noAppsMessageTarget, true);
-                            showcaseView.setContentText("Her vil Giraf applikationer kunne vælges til og fra når de bliver installeret");
+                            showcaseView.setContentText("Her vil Giraf applikationer kunne vælges til " +
+                                "og fra når de bliver installeret");
                             showcaseView.setTextPostion(noAppsMessageViewTextX, noAppsMessageViewTextY);
                         } else {
                             showcaseView.setShowcase(appsViewPagerTarget, true);
@@ -742,7 +765,8 @@ public class SettingsActivity extends GirafActivity
 
                         if (noAppsMessageView.getVisibility() == View.VISIBLE) {
                             showcaseView.setShowcase(noAppsMessageTarget, true);
-                            showcaseView.setContentText("Her vil Android applikationer kunne vælges til og fra når de bliver installeret");
+                            showcaseView.setContentText("Her vil Android applikationer kunne vælges til " +
+                                "og fra når de bliver installeret");
                             showcaseView.setTextPostion(noAppsMessageViewTextX, noAppsMessageViewTextY);
                         } else {
                             showcaseView.setShowcase(appsViewPagerTarget, true);
@@ -765,7 +789,7 @@ public class SettingsActivity extends GirafActivity
                 isFirstRun = false;
 
                 // Scroll back to the original position
-                mSettingsListView.smoothScrollToPositionFromTop(originalPos, 0, 120);
+                settingsListView.smoothScrollToPositionFromTop(originalPos, 0, 120);
             }
         });
 

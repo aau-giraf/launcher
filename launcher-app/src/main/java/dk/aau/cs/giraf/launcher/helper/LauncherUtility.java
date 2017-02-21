@@ -15,12 +15,12 @@ import android.widget.Toast;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.google.analytics.tracking.android.StandardExceptionParser;
-
-import java.util.Date;
 import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.AuthenticationActivity;
+
+import java.util.Date;
 
 /**
  * <Code>LauncherUtility</Code> contains static methods related to running the Launcher,
@@ -62,7 +62,8 @@ public abstract class LauncherUtility {
      * @param loginAsChild If {@code true} Launcher will automatically log in with a child profile. If
      *                     {@code false} launcher will log in as a guardian.
      * @param activity     An activity in which to display a message indicating that debugging is enabled,
-     *                     if this is the case. (See {@link dk.aau.cs.giraf.launcher.helper.LauncherUtility#showDebugInformation(android.app.Activity)})
+     *                     if this is the case. (See
+     *               {@link dk.aau.cs.giraf.launcher.helper.LauncherUtility#showDebugInformation(android.app.Activity)})
      */
     public static void setDebugging(boolean debugging, boolean loginAsChild, Activity activity) {
         DEBUG_MODE = debugging;
@@ -93,7 +94,8 @@ public abstract class LauncherUtility {
             LauncherUtility.sendExceptionGoogleAnalytics(context, ex);
 
             //Display a toast, to inform the user of the problem.
-            Toast toast = Toast.makeText(context, context.getString(R.string.activity_not_found_msg), Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(context,
+                context.getString(R.string.activity_not_found_msg), Toast.LENGTH_SHORT);
             toast.show();
             Log.e(Constants.ERROR_TAG, ex.getMessage());
         }
@@ -111,8 +113,8 @@ public abstract class LauncherUtility {
             TextView textView = (TextView) activity.findViewById(R.id.debug_text_view);
 
             //Fill the view with information on the debug settings.
-            textView.setText(activity.getText(R.string.giraf_debug_mode) + " "
-                    + (DEBUG_MODE_AS_CHILD ? activity.getText(R.string.giraf_debug_as_child)
+            textView.setText(activity.getText(R.string.giraf_debug_mode) + " " +
+                (DEBUG_MODE_AS_CHILD ? activity.getText(R.string.giraf_debug_as_child)
                     : activity.getText(R.string.giraf_debug_as_guardian)));
 
             debug.setVisibility(View.VISIBLE);
@@ -131,13 +133,14 @@ public abstract class LauncherUtility {
         EasyTracker easyTracker = EasyTracker.getInstance(context);
 
         // StandardExceptionParser is provided to help get meaningful Exception descriptions.
+        // Context and optional collection of package names to be used in reporting the exception.
         easyTracker.send(MapBuilder
-                        .createException(new StandardExceptionParser(context, null)    // Context and optional collection of package names
-                                        // to be used in reporting the exception.
-                                        .getDescription(Thread.currentThread().getName(),           // The name of the thread on which the exception occurred.
-                                                ex),                                         // The exception.
-                                false)                                      // False indicates a fatal exception
-                        .build()
+            .createException(new StandardExceptionParser(context, null)
+                    // The name of the thread on which the exception occurred.
+                    .getDescription(Thread.currentThread().getName(),
+                        ex),                                         // The exception.
+                false)                                      // False indicates a fatal exception
+            .build()
         );
     }
 
@@ -172,13 +175,13 @@ public abstract class LauncherUtility {
 
         //Get the ID of the logged in user from SharedPreferences.
         final SharedPreferences sp = context.getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
-        final long currentUserID = sp.getLong(Constants.GUARDIAN_ID, -1);
+        final long currentUserId = sp.getLong(Constants.GUARDIAN_ID, -1);
 
         //Return null if no login information is found, otherwise return the the profile.
-        if (currentUserID == -1) {
+        if (currentUserId == -1) {
             return null;
         } else {
-            return helper.profilesHelper.getById(currentUserID);
+            return helper.profilesHelper.getById(currentUserId);
         }
     }
 
@@ -220,25 +223,27 @@ public abstract class LauncherUtility {
     public static boolean sessionExpired(final Context context) {
         SharedPreferences sp = context.getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
         Long lastAuthTime = sp.getLong(Constants.LOGIN_TIME, 1);
-        Date d = new Date();
+        Date date = new Date();
 
-        return d.getTime() > lastAuthTime + Constants.TIME_TO_STAY_LOGGED_IN;
+        return date.getTime() > lastAuthTime + Constants.TIME_TO_STAY_LOGGED_IN;
     }
 
     /**
-     * Converts integer to density pixels (dp)
+     * Converts integer to density pixels (dp).
      *
      * @param context Context of the current activity
-     * @param i       The integer which should be used for conversion
-     * @return i converted to density pixels (dp)
+     * @param input       The integer which should be used for conversion
+     * @return input converted to density pixels (dp)
      */
-    public static int intToDP(Context context, int i) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, i, context.getResources().getDisplayMetrics());
+    public static int intToDp(Context context, int input) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+            input, context.getResources().getDisplayMetrics());
     }
 
     /**
      * This function tries generates an OasisLib Helper, based on the current context.
-     * If it succeeds, returns the helper, otherwise sends information to Google Analytics about the error and return null
+     * If it succeeds, returns the helper, otherwise sends information to Google Analytics
+     * about the error and return null
      *
      * @param context The context of the current activity
      * @return The generated helper

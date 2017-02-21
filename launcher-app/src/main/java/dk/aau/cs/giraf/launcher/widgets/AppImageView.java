@@ -13,10 +13,11 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 public class AppImageView extends ImageView {
 
     private boolean checked = false;
+    //ToDo It wants a JavaDoc?
     public final AppInfo appInfo;
 
     /**
-     * A constructor for the class
+     * A constructor for the class.
      *
      * @param context The context of the current activity
      */
@@ -30,7 +31,7 @@ public class AppImageView extends ImageView {
      * This is used in SettingsActivity for displaying which apps a user has chosen.
      * Also calls updateColor to set the background color to the correct one.
      *
-     * @param checked
+     * @param checked the value.
      */
     public void setChecked(boolean checked) {
         this.checked = checked;

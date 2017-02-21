@@ -6,41 +6,41 @@
                 android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/noAppsMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:padding="20dp"
-        android:text="@string/no_giraf_apps_available"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@android:color/darker_gray"
-        android:textSize="22sp"
-        android:visibility="gone"/>
+            android:id="@+id/noAppsMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:padding="20dp"
+            android:text="@string/no_giraf_apps_available"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="22sp"
+            android:visibility="gone"/>
 
     <ProgressBar
-        android:id="@+id/ProgressBar"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_centerInParent="true"
-        android:visibility="invisible"
-        />
+            android:id="@+id/ProgressBar"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_centerInParent="true"
+            android:visibility="invisible"
+    />
 
     <com.viewpagerindicator.CirclePageIndicator
-        android:id="@+id/pageIndicator"
-        android:layout_margin="3dp"
-        android:padding="3dp"
-        android:layout_alignParentBottom="true"
-        android:layout_height="28dp"
-        app:fillColor="@color/giraf_page_indicator_active"
-        app:radius="10dp"
-        app:pageColor="@color/giraf_page_indicator_inactive"
-        android:layout_width="match_parent"/>
+            android:id="@+id/pageIndicator"
+            android:layout_margin="3dp"
+            android:padding="3dp"
+            android:layout_alignParentBottom="true"
+            android:layout_height="28dp"
+            app:fillColor="@color/giraf_page_indicator_active"
+            app:radius="10dp"
+            app:pageColor="@color/giraf_page_indicator_inactive"
+            android:layout_width="match_parent"/>
 
     <dk.aau.cs.giraf.gui.GViewPager
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/appsViewPager"
-        android:layout_above="@id/pageIndicator"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/appsViewPager"
+            android:layout_above="@id/pageIndicator"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
 </RelativeLayout>

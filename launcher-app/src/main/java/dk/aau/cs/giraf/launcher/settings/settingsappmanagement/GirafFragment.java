@@ -10,11 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.viewpagerindicator.CirclePageIndicator;
-
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import dk.aau.cs.giraf.dblib.controllers.ProfileApplicationController;
 import dk.aau.cs.giraf.dblib.models.Application;
 import dk.aau.cs.giraf.dblib.models.Profile;
@@ -28,6 +23,10 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 import dk.aau.cs.giraf.launcher.widgets.AppImageView;
 
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+
 /**
  * This is the Fragment used to show the available Giraf apps installed on the device.
  * The user can select or deselect each app by pressing it, handled in the OnClickListener listener
@@ -36,7 +35,7 @@ public class GirafFragment extends AppContainerFragment {
 
     private Timer appsUpdater;
     private ArrayList<AppInfo> appInfos;
-    private loadGirafApplicationTask loadApplicationTask;
+    private LoadGirafApplicationTask loadApplicationTask;
     //private View.OnClickListener listener;
 
     /**
@@ -126,7 +125,7 @@ public class GirafFragment extends AppContainerFragment {
         if (loadedApps == null || AppInfo.isAppListsDifferent(loadedApps, apps)) {
             //Remember that the apps have been added, so they are not added again by the listener
 
-            loadApplicationTask = new loadGirafApplicationTask(getActivity(), currentUser, null, appView, listener);
+            loadApplicationTask = new LoadGirafApplicationTask(getActivity(), currentUser, null, appView, listener);
             loadApplicationTask.execute();
         }
     }
@@ -140,17 +139,15 @@ public class GirafFragment extends AppContainerFragment {
     void setListeners() {
         super.listener = new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                AppImageView appImageView = (AppImageView) v;
+            public void onClick(View view) {
+                AppImageView appImageView = (AppImageView) view;
                 appImageView.toggle();
                 final ProfileApplicationController pac = new ProfileApplicationController(getActivity());
                 final AppInfo app = appImageView.appInfo;
 
                 if (userHasApplicationInView(pac, app.getApp(), currentUser)) {
                     pac.remove(currentUser.getId(), app.getApp().getId());
-                }
-                else
-                {
+                } else {
                     final ProfileApplication pa = new ProfileApplication(currentUser.getId(), app.getApp().getId());
                     pac.insert(pa);
                 }
@@ -168,9 +165,9 @@ public class GirafFragment extends AppContainerFragment {
      * @return true if the user has access to the application, false if the user does not.
      */
     private boolean userHasApplicationInView(ProfileApplicationController pac, Application app, Profile user) {
-        ProfileApplication thisPA = pac.getProfileApplicationByProfileIdAndApplicationId(app, user);
+        ProfileApplication thisProfileApplication = pac.getProfileApplicationByProfileIdAndApplicationId(app, user);
 
-        return thisPA != null;
+        return thisProfileApplication != null;
     }
 
     /**
@@ -196,7 +193,7 @@ public class GirafFragment extends AppContainerFragment {
      * However, since there are some special things that need to be handled in the case of Giraf applications,
      * we must inherit the class, override it's methods and do what we need to do in addition to the superclass
      */
-    class loadGirafApplicationTask extends LoadApplicationTask {
+    class LoadGirafApplicationTask extends LoadApplicationTask {
 
         /**
          * The contructor of the class
@@ -205,14 +202,17 @@ public class GirafFragment extends AppContainerFragment {
          * @param currentUser     The current user (if the current user is a guardian, this is set to null)
          * @param guardian        The guardian of the current user (or just the current user, if the user is a guardian)
          * @param appsViewPager   The layout to be populated with AppImageViews
-         * @param onClickListener the onClickListener that each created app should have. In this case we feed it the global variable listener
+         * @param onClickListener the onClickListener that each created app should have.
+         *                        In this case we feed it the global variable listener
          */
-        public loadGirafApplicationTask(Context context, Profile currentUser, Profile guardian, ViewPager appsViewPager, View.OnClickListener onClickListener) {
+        public LoadGirafApplicationTask(Context context, Profile currentUser,
+                                        Profile guardian, ViewPager appsViewPager, View.OnClickListener onClickListener)
+        {
             super(context, currentUser, guardian, appsViewPager, onClickListener);
         }
 
         /**
-         * We override onPreExecute to cancel the AppObserver if it is running
+         * We override onPreExecute to cancel the AppObserver if it is running.
          */
         @Override
         protected void onPreExecute() {
@@ -223,7 +223,8 @@ public class GirafFragment extends AppContainerFragment {
         }
 
         /**
-         * This method needs to be overridden since we need to inform the superclass of exactly which apps should be generated.
+         * This method needs to be overridden since we need to inform the superclass of
+         * exactly which apps should be generated.
          * In this case, it is Giraf applications only
          *
          * @param applications the applications that the task should generate AppImageViews for
@@ -250,12 +251,12 @@ public class GirafFragment extends AppContainerFragment {
 
 
         /**
-         * Once we have loaded applications, we start observing for new apps
+         * Once we have loaded applications, we start observing for new apps.
          */
         @Override
-        protected void onPostExecute(ArrayList<AppInfo> appInfos) {
-            super.onPostExecute(appInfos);
-            loadedApps = appInfos;
+        protected void onPostExecute(ArrayList<AppInfo> appInfoList) {
+            super.onPostExecute(appInfoList);
+            loadedApps = appInfoList;
             startObservingApps();
             haveAppsBeenAdded = true;
         }

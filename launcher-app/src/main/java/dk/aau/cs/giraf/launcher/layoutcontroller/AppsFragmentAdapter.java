@@ -17,7 +17,10 @@ public class AppsFragmentAdapter extends FragmentStatePagerAdapter {
     private int rowSize;
     private int coloumnSize;
 
-    public AppsFragmentAdapter(final FragmentManager fm, final List<AppInfo> appInfoList, final int rowSize, final int coloumnSize) {
+    //ToDo Write JavaDoc
+    public AppsFragmentAdapter(final FragmentManager fm, final List<AppInfo> appInfoList,
+                               final int rowSize, final int coloumnSize)
+    {
         super(fm);
 
         this.appInfoList = appInfoList;
@@ -30,12 +33,13 @@ public class AppsFragmentAdapter extends FragmentStatePagerAdapter {
         final int from = position * rowSize * coloumnSize;
         final int to = ((position + 1) * rowSize * coloumnSize);
 
-        if (to < appInfoList.size())
-        {
-            return AppsGridFragment.newInstance(new ArrayList<AppInfo>(appInfoList.subList(from, to)), rowSize, coloumnSize);
+        if (to < appInfoList.size()) {
+            return AppsGridFragment.newInstance(new ArrayList<AppInfo>(appInfoList.subList(from, to)),
+                rowSize, coloumnSize);
 
         } else {
-            return AppsGridFragment.newInstance(new ArrayList<AppInfo>(appInfoList.subList(from, appInfoList.size())), rowSize, coloumnSize);
+            return AppsGridFragment.newInstance(new ArrayList<AppInfo>(appInfoList.subList(from, appInfoList.size())),
+                rowSize, coloumnSize);
         }
     }
 
@@ -54,6 +58,7 @@ public class AppsFragmentAdapter extends FragmentStatePagerAdapter {
         return POSITION_NONE;
     }
 
+    //ToDo Write JavaDoc
     public void swapApps(final List<AppInfo> appInfoList, final int rowSize, final int coloumnSize) {
 
         this.appInfoList = appInfoList;

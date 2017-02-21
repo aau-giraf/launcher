@@ -33,7 +33,7 @@ public class GridPreviewView extends View {
     }
 
     /**
-     * Calculates gridLines size and initializes paint object
+     * Calculates gridLines size and initializes paint object.
      */
     public void init() {
 

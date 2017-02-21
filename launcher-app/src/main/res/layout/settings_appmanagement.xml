@@ -1,66 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
     <LinearLayout
-        android:id="@+id/tabLayout"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:paddingBottom="1dp"
-        android:background="@android:color/holo_orange_dark"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        style="?android:attr/buttonBarButtonStyle">
+            android:id="@+id/tabLayout"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:paddingBottom="1dp"
+            android:background="@android:color/holo_orange_dark"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            style="?android:attr/buttonBarButtonStyle">
 
         <Button
-            android:id="@+id/settings_giraf_button"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="4"
-            android:padding="10dp"
-            android:text="@string/giraf_applications_button"
-            android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/black"
-            android:background="@drawable/settings_tab_button_drawable" />
+                android:id="@+id/settings_giraf_button"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="4"
+                android:padding="10dp"
+                android:text="@string/giraf_applications_button"
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black"
+                android:background="@drawable/settings_tab_button_drawable"/>
 
         <Button
-            android:id="@+id/settings_android_button"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="4"
-            android:layout_marginLeft="1dp"
-            android:layout_marginRight="1dp"
-            android:padding="10dp"
-            android:text="@string/android_applications_button"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:gravity="center"
-            android:textColor="@android:color/black"
-            android:background="@drawable/settings_tab_button_drawable" />
+                android:id="@+id/settings_android_button"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="4"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:padding="10dp"
+                android:text="@string/android_applications_button"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:gravity="center"
+                android:textColor="@android:color/black"
+                android:background="@drawable/settings_tab_button_drawable"/>
 
         <Button
-            android:id="@+id/settings_googleplay_button"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_weight="4"
-            android:padding="10dp"
-            android:text="@string/google_play_button"
-            android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/black"
-            android:background="@drawable/settings_tab_button_drawable" />
+                android:id="@+id/settings_googleplay_button"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="4"
+                android:padding="10dp"
+                android:text="@string/google_play_button"
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black"
+                android:background="@drawable/settings_tab_button_drawable"/>
 
     </LinearLayout>
 
     <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="50dp"
-        android:layout_alignParentTop="true"
-        android:id="@+id/app_settings_fragmentlayout"
-        android:layout_alignParentLeft="true"/>
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="50dp"
+            android:layout_alignParentTop="true"
+            android:id="@+id/app_settings_fragmentlayout"
+            android:layout_alignParentLeft="true"/>
 
 </RelativeLayout>

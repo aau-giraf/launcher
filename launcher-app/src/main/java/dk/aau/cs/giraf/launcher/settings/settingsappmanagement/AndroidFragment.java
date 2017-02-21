@@ -11,13 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.viewpagerindicator.CirclePageIndicator;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
-
+import dk.aau.cs.giraf.dblib.models.Application;
+import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
@@ -27,8 +22,14 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 import dk.aau.cs.giraf.launcher.widgets.AppImageView;
-import dk.aau.cs.giraf.dblib.models.Application;
-import dk.aau.cs.giraf.dblib.models.Profile;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+
+
 
 /**
  * This is the Fragment used to show the available Android apps installed on the device.
@@ -151,10 +152,10 @@ public class AndroidFragment extends AppContainerFragment {
     void setListeners() {
         super.listener = new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
 
                 synchronized (AndroidFragment.this) {
-                    AppImageView appImageView = (AppImageView) v;
+                    AppImageView appImageView = (AppImageView) view;
                     appImageView.toggle();
 
                     if (selectedApps == null)
@@ -174,7 +175,8 @@ public class AndroidFragment extends AppContainerFragment {
                     }
 
                     final SharedPreferences.Editor editor = preferences.edit();
-                    editor.remove(getString(R.string.selected_android_apps_key)).commit(); // Remove to ensure that the new set is written to file.
+                    // Remove to ensure that the new set is written to file.
+                    editor.remove(getString(R.string.selected_android_apps_key)).commit();
                     editor.putStringSet(getString(R.string.selected_android_apps_key), selectedApps);
                     editor.apply();
                 }
@@ -215,14 +217,17 @@ public class AndroidFragment extends AppContainerFragment {
          * @param currentUser     The current user (if the current user is a guardian, this is set to null)
          * @param guardian        The guardian of the current user (or just the current user, if the user is a guardian)
          * @param appsViewPager   The layout to be populated with AppImageViews
-         * @param onClickListener the onClickListener that each created app should have. In this case we feed it the global variable listener
+         * @param onClickListener the onClickListener that each created app should have.
+         *                        In this case we feed it the global variable listener
          */
-        public LoadAndroidApplicationTask(Context context, Profile currentUser, Profile guardian, ViewPager appsViewPager, View.OnClickListener onClickListener) {
+        public LoadAndroidApplicationTask(Context context, Profile currentUser, Profile guardian,
+                                          ViewPager appsViewPager, View.OnClickListener onClickListener)
+        {
             super(context, currentUser, guardian, appsViewPager, onClickListener);
         }
 
         /**
-         * We override onPreExecute to cancel the AppObserver if it is running
+         * We override onPreExecute to cancel the AppObserver if it is running.
          */
         @Override
         protected void onPreExecute() {
@@ -242,7 +247,8 @@ public class AndroidFragment extends AppContainerFragment {
         }
 
         /**
-         * This method needs to be overridden since we need to inform the superclass of exactly which apps should be generated.
+         * This method needs to be overridden since we need to inform the
+         * superclass of exactly which apps should be generated.
          * In this case it is Android applications only.
          *
          * @param applications the applications that the task should generate AppImageViews for
@@ -250,19 +256,20 @@ public class AndroidFragment extends AppContainerFragment {
          */
         @Override
         protected ArrayList<AppInfo> doInBackground(Application... applications) {
-            applications = ApplicationControlUtility.getAndroidAppsOnDeviceAsApplicationList(context).toArray(applications);
+            applications = ApplicationControlUtility.getAndroidAppsOnDeviceAsApplicationList(context)
+                .toArray(applications);
             appInfos = super.doInBackground(applications);
 
             return appInfos;
         }
 
         /**
-         * Once we have loaded applications, we start observing for new apps
+         * Once we have loaded applications, we start observing for new apps.
          */
         @Override
-        protected void onPostExecute(ArrayList<AppInfo> appInfos) {
-            super.onPostExecute(appInfos);
-            loadedApps = appInfos;
+        protected void onPostExecute(ArrayList<AppInfo> appInfoList) {
+            super.onPostExecute(appInfoList);
+            loadedApps = appInfoList;
             startObservingApps();
             haveAppsBeenAdded = true;
         }

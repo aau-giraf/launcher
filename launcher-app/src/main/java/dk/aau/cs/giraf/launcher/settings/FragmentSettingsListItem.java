@@ -11,7 +11,7 @@ public class FragmentSettingsListItem extends SettingsListItem {
     protected final android.support.v4.app.Fragment supportFragment;
 
     /**
-     * Constructor for any item in the settings list
+     * Constructor for any item in the settings list.
      *
      * @param title    The title of the setting item
      * @param icon     Icon to display for the setting item
@@ -23,7 +23,10 @@ public class FragmentSettingsListItem extends SettingsListItem {
         this.supportFragment = null;
     }
 
-    public FragmentSettingsListItem(final String title, final Drawable icon, final android.support.v4.app.Fragment fragment) {
+    //ToDo Write JavaDoc
+    public FragmentSettingsListItem(final String title, final Drawable icon,
+                                    final android.support.v4.app.Fragment fragment)
+    {
         super(title, icon);
         this.fragment = null;
         this.supportFragment = fragment;

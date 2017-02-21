@@ -12,10 +12,10 @@ import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-
+import dk.aau.cs.giraf.dblib.controllers.ProfileApplicationController;
+import dk.aau.cs.giraf.dblib.models.Application;
+import dk.aau.cs.giraf.dblib.models.Profile;
+import dk.aau.cs.giraf.dblib.models.ProfileApplication;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.AppViewCreationUtility;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
@@ -23,10 +23,10 @@ import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppContainerFragment;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
 import dk.aau.cs.giraf.launcher.widgets.AppImageView;
-import dk.aau.cs.giraf.dblib.controllers.ProfileApplicationController;
-import dk.aau.cs.giraf.dblib.models.Application;
-import dk.aau.cs.giraf.dblib.models.Profile;
-import dk.aau.cs.giraf.dblib.models.ProfileApplication;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Marhlder on 18-02-15.
@@ -40,13 +40,15 @@ public class AppsGridFragment extends Fragment {
     private ProfileApplicationController pac;
     private Set<String> selectedApps;
 
-    public static AppsGridFragment newInstance(final ArrayList<AppInfo> appInfos, final int rowSize, final int columnSize) {
-        AppsGridFragment newFragment = new AppsGridFragment();
-
+    //ToDo Write JavaDoc
+    public static AppsGridFragment newInstance(final ArrayList<AppInfo> appInfos,
+                                               final int rowSize, final int columnSize)
+    {
         Bundle args = new Bundle();
         args.putInt(ROW_SIZE_INT_TAG, rowSize);
         args.putInt(COLUMN_SIZE_INT_TAG, columnSize);
         args.putParcelableArrayList(APPINFOS_PARCELABLE_TAG, appInfos);
+        AppsGridFragment newFragment = new AppsGridFragment();
         newFragment.setArguments(args);
 
         return newFragment;
@@ -58,7 +60,8 @@ public class AppsGridFragment extends Fragment {
         pac = new ProfileApplicationController(activity);
         final Profile currentUser = ((AppsFragmentInterface) activity).getCurrentUser();
         SharedPreferences preferences = LauncherUtility.getSharedPreferencesForCurrentUser(activity, currentUser);
-        selectedApps = preferences.getStringSet(activity.getResources().getString(R.string.selected_android_apps_key), new HashSet<String>());
+        selectedApps = preferences.getStringSet(activity.getResources().getString(R.string.selected_android_apps_key),
+            new HashSet<String>());
     }
 
     @Override
@@ -84,14 +87,19 @@ public class AppsGridFragment extends Fragment {
                 final int margin = 10;
 
                 //Create a new AppImageView and set its properties
-                AppImageView newAppView = AppViewCreationUtility.createAppImageView(getActivity(), currentUser, activity.getLoggedInGuardian(), currentAppInfo, appsGridLayout, getOnClickListener());
+                AppImageView newAppView = AppViewCreationUtility.createAppImageView(getActivity(), currentUser,
+                    activity.getLoggedInGuardian(), currentAppInfo, appsGridLayout, getOnClickListener());
                 //newAppView.setScaleType(ImageView.ScaleType.FIT_XY);
-                GridLayout.LayoutParams params = new GridLayout.LayoutParams(new ViewGroup.LayoutParams(container.getMeasuredWidth() / columnSize - margin * 2, container.getMeasuredHeight() / rowSize - margin * 2));
+                GridLayout.LayoutParams params = new GridLayout.LayoutParams(new ViewGroup.LayoutParams(
+                    container.getMeasuredWidth() / columnSize - margin * 2, container.getMeasuredHeight() /
+                    rowSize - margin * 2));
                 params.setMargins(margin, margin, margin, margin);
                 newAppView.setLayoutParams(params);
 
                 // Application icons should only have their check state set when in the SettingsActivity
-                if (activity instanceof SettingsActivity && currentAppInfo != null && (doesProfileApplicationExist(pac, currentAppInfo.getApp(), currentUser) || selectedApps.contains(currentAppInfo.getActivity()))) {
+                if (activity instanceof SettingsActivity && currentAppInfo != null && (doesProfileApplicationExist(pac,
+                    currentAppInfo.getApp(), currentUser) || selectedApps.contains(currentAppInfo.getActivity())))
+                {
                     newAppView.setChecked(true);
                 }
                 appsGridLayout.addView(newAppView, appCounter);
@@ -112,9 +120,9 @@ public class AppsGridFragment extends Fragment {
      * @return true if the ProfileApplication exists, otherwise return false
      */
     private boolean doesProfileApplicationExist(ProfileApplicationController pac, Application app, Profile user) {
-        ProfileApplication thisPA = pac.getProfileApplicationByProfileIdAndApplicationId(app, user);
+        ProfileApplication thisProfileApplication = pac.getProfileApplicationByProfileIdAndApplicationId(app, user);
 
-        return thisPA != null;
+        return thisProfileApplication != null;
     }
 
     protected View.OnClickListener getOnClickListener() {

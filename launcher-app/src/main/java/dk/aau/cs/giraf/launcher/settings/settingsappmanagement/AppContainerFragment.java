@@ -9,23 +9,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
+import dk.aau.cs.giraf.dblib.models.Application;
+import dk.aau.cs.giraf.dblib.models.Profile;
+import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
-import dk.aau.cs.giraf.dblib.models.Application;
-import dk.aau.cs.giraf.dblib.models.Profile;
-
 /**
  * This is the superclass that both AndroidFragment and GirafFragment inherits from
- * Since both fragments implement many of the same features with very smaller differences, this was deemed to be the best way.
+ * Since both fragments implement many of the same features with very smaller differences,
+ * this was deemed to be the best way.
  * This Fragment should never be implemented directly, but simply inherited from.
  * It is therefore abstract
  */
 public abstract class AppContainerFragment extends Fragment {
-
-    protected AppsFragmentInterface mCallback; // Callback to containing Activity implementing the SettingsListFragmentListener interface
+    // Callback to containing Activity implementing the SettingsListFragmentListener interface
+    protected AppsFragmentInterface callback;
     protected Profile currentUser;
     protected ArrayList<AppInfo> loadedApps;
 
@@ -46,11 +47,11 @@ public abstract class AppContainerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view;
-        if (appView == null){
+        if (appView == null) {
             view = inflater.inflate(R.layout.settings_appmanagement_appcontainer,
                     container, false);
 
-            currentUser = mCallback.getCurrentUser();
+            currentUser = callback.getCurrentUser();
         } else {
             view = appView.getRootView();
         }
@@ -82,25 +83,26 @@ public abstract class AppContainerFragment extends Fragment {
     }
 
     /**
-     * This makes sure that the container activity has implemented the callback interface. If not, it throws an exception.
+     * This makes sure that the container activity has implemented the callback interface.
+     * If not, it throws an exception.
      * The callback interface is needed to reload applications when a new user is selected.
-     * @param activity
+     * @param activity the activity
      */
     @Override
     public void onAttach(final Activity activity) {
         super.onAttach(activity);
         try {
-            mCallback = (AppsFragmentInterface) activity;
+            callback = (AppsFragmentInterface) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement AppsFragmentInterface");
+            throw new ClassCastException(activity.toString() +
+                " must implement AppsFragmentInterface");
         }
     }
 
     /**
-     * Resets loadedApps variable to loadApplications once again
+     * Resets loadedApps variable to loadApplications once again.
      */
-    protected void reloadApplications(){
+    protected void reloadApplications() {
         loadedApps = null; // Force loadApplications to redraw
     }
 
@@ -108,10 +110,8 @@ public abstract class AppContainerFragment extends Fragment {
 
     abstract void setListeners();
 
-    public View.OnClickListener getListener()
-    {
-        if(listener == null)
-        {
+    public View.OnClickListener getListener() {
+        if(listener == null) {
             setListeners();
         }
 

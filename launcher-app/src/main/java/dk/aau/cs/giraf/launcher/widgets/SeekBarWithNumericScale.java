@@ -22,10 +22,12 @@ public class SeekBarWithNumericScale extends SeekBar {
     private int firstScaleItemValue;
     private int lastScaleItemValue;
 
-    public SeekBarWithNumericScale(final Context context, final int firstScaleItemValue, final int lastScaleItemValue, final int scaleFontSize) {
+    public SeekBarWithNumericScale(final Context context,
+                                   final int firstScaleItemValue, final int lastScaleItemValue, final int scaleFontSize)
+    {
         super(context);
 
-        init(firstScaleItemValue, lastScaleItemValue, ToSp(scaleFontSize));
+        init(firstScaleItemValue, lastScaleItemValue, toSp(scaleFontSize));
     }
 
     public SeekBarWithNumericScale(final Context context, final AttributeSet attrs) {
@@ -34,7 +36,9 @@ public class SeekBarWithNumericScale extends SeekBar {
         final TypedArray a = context.getTheme().obtainStyledAttributes(
                 attrs, R.styleable.SeekBarWithNumericScale, 0, 0);
 
-        init(a.getInteger(R.styleable.SeekBarWithNumericScale_firstScaleItemValue, -1), a.getInteger(R.styleable.SeekBarWithNumericScale_lastScaleItemValue, -1), a.getDimension(R.styleable.SeekBarWithNumericScale_scaleTextSize, ToSp(14)));
+        init(a.getInteger(R.styleable.SeekBarWithNumericScale_firstScaleItemValue, -1),
+            a.getInteger(R.styleable.SeekBarWithNumericScale_lastScaleItemValue, -1),
+            a.getDimension(R.styleable.SeekBarWithNumericScale_scaleTextSize, toSp(14)));
     }
 
     public SeekBarWithNumericScale(final Context context, final AttributeSet attrs, final int defStyle) {
@@ -43,16 +47,18 @@ public class SeekBarWithNumericScale extends SeekBar {
         final TypedArray a = context.getTheme().obtainStyledAttributes(
                 attrs, R.styleable.SeekBarWithNumericScale, 0, 0);
 
-        init(a.getInteger(R.styleable.SeekBarWithNumericScale_firstScaleItemValue, -1), a.getInteger(R.styleable.SeekBarWithNumericScale_lastScaleItemValue, -1), a.getDimension(R.styleable.SeekBarWithNumericScale_scaleTextSize, ToSp(14)));
+        init(a.getInteger(R.styleable.SeekBarWithNumericScale_firstScaleItemValue, -1),
+            a.getInteger(R.styleable.SeekBarWithNumericScale_lastScaleItemValue, -1),
+            a.getDimension(R.styleable.SeekBarWithNumericScale_scaleTextSize, toSp(14)));
     }
 
     /**
-     * Converts a float value to the corresponding sp value
+     * Converts a float value to the corresponding sp value.
      *
-     * @param integer
-     * @return
+     * @param integer input
+     * @return float value
      */
-    private float ToSp(final float integer) {
+    private float toSp(final float integer) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
                 integer, getResources().getDisplayMetrics());
     }
@@ -80,10 +86,10 @@ public class SeekBarWithNumericScale extends SeekBar {
     }
 
     /**
-     * This is where the magic happens
+     * This is where the magic happens.
      * We draw scale
      *
-     * @param canvas
+     * @param canvas the canvas
      */
     @Override
     protected synchronized void onDraw(final Canvas canvas) {
@@ -110,7 +116,8 @@ public class SeekBarWithNumericScale extends SeekBar {
                 final String text = "" + rowCount * columnCount;
 
                 // Lesser hax math that makes it look pretty on the x axis
-                final float xCoordinate = paddingLeft + distanceBetweenScaleElements * scaleElementCounter - paint.measureText(text) / 2;
+                final float xCoordinate = paddingLeft + distanceBetweenScaleElements *
+                    scaleElementCounter - paint.measureText(text) / 2;
 
                 // We want the scale items to be slightly off the mid on the y axis (below the SeekBar)
                 final float yCoordinate = height / 2 + textSize * 1.5f;

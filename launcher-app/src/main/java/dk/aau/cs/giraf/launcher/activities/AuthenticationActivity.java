@@ -20,9 +20,6 @@ import android.widget.Toast;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.zxing.Result;
 import com.google.zxing.client.android.CaptureActivity;
-
-import java.util.Date;
-
 import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.dblib.models.User;
@@ -32,19 +29,21 @@ import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.layoutcontroller.SimulateAnimationDrawable;
 
+import java.util.Date;
+
 /**
  * Handles authentication of the user's QR code through a camera feed. If the the user's QR code
  * is valid, session information is saved in preferences, and {@code HomeActivity} is started.
  */
 public class AuthenticationActivity extends CaptureActivity {
 
-    private Intent mHomeIntent;
-    private TextView mLoginNameView;
-    private TextView mInfoView;
-    private Vibrator mVibrator;
+    private Intent homeIntent;
+    private TextView loginNameView;
+    private TextView infoView;
+    private Vibrator vibrator;
     private Button guardianButton;
 
-    private TextView mScanStatus;
+    private TextView scanStatus;
     private ListView listUsers;
 
     private boolean isFramingRectangleRedrawn = false;
@@ -61,10 +60,10 @@ public class AuthenticationActivity extends CaptureActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.authentication_activity);
 
-        mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        mLoginNameView = (TextView) this.findViewById(R.id.loginname);
-        mInfoView = (TextView) this.findViewById(R.id.authentication_step1);
-        mScanStatus = (TextView) this.findViewById(R.id.scanStatusTextView);
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        loginNameView = (TextView) this.findViewById(R.id.loginname);
+        infoView = (TextView) this.findViewById(R.id.authentication_step1);
+        scanStatus = (TextView) this.findViewById(R.id.scanStatusTextView);
 
         if (BuildConfig.DEBUG) {
             guardianButton = (Button) this.findViewById(R.id.loginAsGuardianButton);
@@ -86,7 +85,8 @@ public class AuthenticationActivity extends CaptureActivity {
                         @Override
                         public void run() {
 
-                            final boolean hasProfiles = !(h.profilesHelper.getListOfObjects() == null || h.profilesHelper.getListOfObjects().size() == 0);
+                            final boolean hasProfiles = !(h.profilesHelper.getListOfObjects() == null ||
+                                h.profilesHelper.getListOfObjects().size() == 0);
 
                             if (hasProfiles) {
                                 // If there were profiles, run the profilefetchertask and try to login.
@@ -96,7 +96,8 @@ public class AuthenticationActivity extends CaptureActivity {
                                 // get SW615F14 test guardian
                                 Profile tempProfile = h.profilesHelper.getById(37L);
 
-                                // If SW615F14 does not exists in current database, get the first guardian available instead
+                                // If SW615F14 does not exists in current database,
+                                // get the first guardian available instead
                                 if (tempProfile == null) {
                                     tempProfile = h.profilesHelper.getGuardians().get(0);
                                 }
@@ -107,7 +108,8 @@ public class AuthenticationActivity extends CaptureActivity {
                                     @Override
                                     public void run() {
                                         if (profile == null) {
-                                            Toast.makeText(AuthenticationActivity.this, R.string.no_guardian_profiles_available, Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(AuthenticationActivity.this,
+                                                R.string.no_guardian_profiles_available, Toast.LENGTH_SHORT).show();
                                             guardianButton.setEnabled(true);
                                         } else {
                                             guardianButton.setEnabled(true);
@@ -123,7 +125,8 @@ public class AuthenticationActivity extends CaptureActivity {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Toast.makeText(AuthenticationActivity.this, getString(R.string.db_no_profiles_msg), Toast.LENGTH_LONG).show();
+                                        Toast.makeText(AuthenticationActivity.this,
+                                            getString(R.string.db_no_profiles_msg), Toast.LENGTH_LONG).show();
                                         guardianButton.setEnabled(true);
                                     }
                                 });
@@ -144,7 +147,8 @@ public class AuthenticationActivity extends CaptureActivity {
 
         // Simulate the AnimationDrawable class
         final ImageView instructImageView = (ImageView) findViewById(R.id.animation);
-        new SimulateAnimationDrawable(instructImageView, Constants.INSTRUCTION_ANIMATION, Constants.INSTRUCTION_FRAME_DURATION);
+        new SimulateAnimationDrawable(instructImageView, Constants.INSTRUCTION_ANIMATION,
+            Constants.INSTRUCTION_FRAME_DURATION);
 
         // Start logging this activity
         EasyTracker.getInstance(this).activityStart(this);
@@ -185,7 +189,7 @@ public class AuthenticationActivity extends CaptureActivity {
         ViewGroup cameraFeedView = (ViewGroup) this.findViewById(R.id.camerafeed);
 
         RectF rectf = new RectF(10, 10, 10, 10);
-        RoundRectShape rect = new RoundRectShape(new float[]{15, 15, 15, 15, 15, 15, 15, 15}, rectf, null);
+        RoundRectShape rect = new RoundRectShape(new float[] {15, 15, 15, 15, 15, 15, 15, 15}, rectf, null);
         ShapeDrawable shapeDrawable = new ShapeDrawable(rect);
 
         shapeDrawable.getPaint().setColor(color);
@@ -219,26 +223,27 @@ public class AuthenticationActivity extends CaptureActivity {
 
             // If the certificate was not valid, profile is set to null.
             if (profile != null) {
-                mVibrator.vibrate(400);
+                vibrator.vibrate(400);
 
                 login(profile);
 
             } else {
-                mLoginNameView.setVisibility(View.INVISIBLE);
-                mInfoView.setText(R.string.authentication_step1);
+                loginNameView.setVisibility(View.INVISIBLE);
+                infoView.setText(R.string.authentication_step1);
 
                 if (!scanFailed) {
-                    changeCameraFeedBorderColor(getResources().getColor(R.color.wrong_qr_camera_border_color)); // Error color (red)
-                    mScanStatus.setText(getString(R.string.wrong_qr_code_msg));
+                    changeCameraFeedBorderColor(
+                        getResources().getColor(R.color.wrong_qr_camera_border_color)); // Error color (red)
+                    scanStatus.setText(getString(R.string.wrong_qr_code_msg));
 
                     scanFailed = true;
 
-                    Handler h = new Handler();
-                    h.postDelayed(new Runnable() {
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             changeCameraFeedBorderColor(getResources().getColor(R.color.default_camera_border_color));
-                            mScanStatus.setText(getString(R.string.scan_qr_code_msg));
+                            scanStatus.setText(getString(R.string.scan_qr_code_msg));
                             scanFailed = false;
                         }
                     }, 2000);
@@ -248,34 +253,34 @@ public class AuthenticationActivity extends CaptureActivity {
             Toast.makeText(this, getString(R.string.could_not_verify_msg), Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
-
-		/*
+        /*
          * Needed by ZXing in order to continuously scan QR codes, and not halt after first scan.
-		 */
+         */
         this.getHandler().sendEmptyMessageDelayed(R.id.restart_preview, 500);
     }
 
     private void login(final Profile profile) {
 
-        this.changeCameraFeedBorderColor(getResources().getColor(R.color.success_qr_camera_border_color)); // Success color (green)
-        mLoginNameView.setText(profile.getName());
-        mLoginNameView.setVisibility(View.VISIBLE);
+        this.changeCameraFeedBorderColor(getResources()
+            .getColor(R.color.success_qr_camera_border_color)); // Success color (green)
+        loginNameView.setText(profile.getName());
+        loginNameView.setVisibility(View.VISIBLE);
 
-        mHomeIntent = new Intent(AuthenticationActivity.this, HomeActivity.class);
-        mHomeIntent.putExtra(Constants.GUARDIAN_ID, profile.getId());
-        mHomeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        homeIntent = new Intent(AuthenticationActivity.this, HomeActivity.class);
+        homeIntent.putExtra(Constants.GUARDIAN_ID, profile.getId());
+        homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         // If authentication_activity was not launched by the launcher...
         if (!getIntent().hasCategory("dk.aau.cs.giraf.launcher.GIRAF")) {
             final Handler h = new Handler();
 
-            mScanStatus.setText(getString(R.string.logging_in_msg));
+            scanStatus.setText(getString(R.string.logging_in_msg));
 
             h.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     LauncherUtility.saveLogInData(AuthenticationActivity.this, profile.getId(), new Date().getTime());
-                    startActivity(mHomeIntent);
+                    startActivity(homeIntent);
                 }
             }, 800);
         }

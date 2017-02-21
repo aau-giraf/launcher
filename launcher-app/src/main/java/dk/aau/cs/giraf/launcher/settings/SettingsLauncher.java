@@ -13,8 +13,7 @@ public class SettingsLauncher extends PreferenceFragment {
 
     private static final String USER_IDENTIFICATION_STRING_TAG = "content";
 
-    public static SettingsLauncher newInstance(final String text)
-    {
+    public static SettingsLauncher newInstance(final String text) {
         final SettingsLauncher newFragment = new SettingsLauncher();
 
         Bundle args = new Bundle();
@@ -35,12 +34,10 @@ public class SettingsLauncher extends PreferenceFragment {
 
         final Bundle arguments = getArguments();
 
-        if (arguments != null)
-        {
+        if (arguments != null) {
             final String text = arguments.getString(USER_IDENTIFICATION_STRING_TAG);
 
-            if (text != null)
-            {
+            if (text != null) {
                 this.getPreferenceManager().setSharedPreferencesName(SettingsUtility.getLauncherSettingsTag(text));
             }
         }

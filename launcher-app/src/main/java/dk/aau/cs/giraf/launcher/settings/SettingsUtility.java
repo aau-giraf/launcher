@@ -21,7 +21,7 @@ public class SettingsUtility {
      * @param user String used to identify user.
      * @return A preference file for the user.
      */
-    public static String getLauncherSettingsTag(String user){
+    public static String getLauncherSettingsTag(String user) {
         return LAUNCHER_SETTINGS_TAG + "." + user + ".prefs";
     }
 
@@ -33,7 +33,7 @@ public class SettingsUtility {
      * @param user String used to identify user.
      * @return A preference file for the user.
      */
-    public static SharedPreferences getLauncherSettings(Context context, String user){
+    public static SharedPreferences getLauncherSettings(Context context, String user) {
         return context.getSharedPreferences(getLauncherSettingsTag(user), Context.MODE_PRIVATE);
     }
 }

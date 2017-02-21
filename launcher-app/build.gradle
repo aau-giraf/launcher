@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
         maven {
             url 'http://jenkins.giraf.cs.aau.dk:8080/artifactory/libraries'
         }
@@ -93,6 +94,7 @@ allprojects {
     repositories
             {
                 mavenCentral()
+                jcenter()
             }
 
 }

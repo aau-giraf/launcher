@@ -4,7 +4,8 @@
           android:exitFadeDuration="@android:integer/config_mediumAnimTime">
 
     <item android:drawable="@android:color/holo_orange_dark" android:state_focused="true" android:state_pressed="true"/>
-    <item android:drawable="@android:color/holo_orange_dark" android:state_focused="false" android:state_pressed="true"/>
+    <item android:drawable="@android:color/holo_orange_dark" android:state_focused="false"
+          android:state_pressed="true"/>
     <item android:drawable="@android:color/holo_orange_light" android:state_focused="true"/>
     <item android:drawable="@color/giraf_list_background" android:state_focused="false" android:state_pressed="false"/>
 

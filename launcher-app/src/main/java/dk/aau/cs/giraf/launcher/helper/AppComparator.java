@@ -5,9 +5,9 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.util.Log;
 
-import java.util.Comparator;
-
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
+
+import java.util.Comparator;
 
 /**
  * Facilitates the comparing of two apps, either of the {@link dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo}

@@ -18,10 +18,10 @@ public class DrawerLayout extends RelativeLayout {
     public boolean isSideBarHidden = true;
 
     /**
-     * A constructor of the Layout
+     * A constructor of the Layout.
      * @param context The context of the current Activity
      */
-    public DrawerLayout(Context context){
+    public DrawerLayout(Context context) {
         super(context);
     }
 
@@ -30,7 +30,7 @@ public class DrawerLayout extends RelativeLayout {
      * @param context The context of the current Activity
      * @param attrs The attributes the layout should have
      */
-    public DrawerLayout(Context context, AttributeSet attrs){
+    public DrawerLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -45,7 +45,7 @@ public class DrawerLayout extends RelativeLayout {
     }
 
     /**
-     * Describes what should happen when the translate animation of the layout begins
+     * Describes what should happen when the translate animation of the layout begins.
      * Brings the layout to the front
      */
     @Override

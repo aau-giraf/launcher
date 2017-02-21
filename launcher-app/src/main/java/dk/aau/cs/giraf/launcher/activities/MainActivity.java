@@ -1,6 +1,5 @@
 package dk.aau.cs.giraf.launcher.activities;
 
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -10,7 +9,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.SyncStateContract;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -18,21 +16,10 @@ import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.io.IOException;
-import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Date;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.dblib.controllers.ProfileController;
 import dk.aau.cs.giraf.dblib.models.Profile;
-import dk.aau.cs.giraf.gui.GirafButton;
-import dk.aau.cs.giraf.gui.GirafCustomButtonsDialog;
 import dk.aau.cs.giraf.gui.GirafNotifyDialog;
 import dk.aau.cs.giraf.launcher.BuildConfig;
 import dk.aau.cs.giraf.launcher.R;
@@ -42,21 +29,28 @@ import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 import dk.aau.cs.giraf.localdb.main;
 import dk.aau.cs.giraf.utilities.NetworkUtilities;
 
+import java.lang.ref.WeakReference;
+import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 /**
- * Displays the splash logo of Launcher, and then starts {@link dk.aau.cs.giraf.launcher.activities.AuthenticationActivity}.
+ * Displays the splash logo of Launcher, and then starts
+ * {@link dk.aau.cs.giraf.launcher.activities.AuthenticationActivity}.
  * Provides variables for enabling debug mode before compilation.
  */
 public class MainActivity extends GirafActivity implements Animation.AnimationListener, GirafNotifyDialog.Notification {
     //private Context mContext;
-    private long oldSessionGuardianID = -1;
+    private long oldSessionGuardianId = -1;
     Animation startingAnimation;
     Animation loadAnimation;
 
     //Dialog for offline mode
     private boolean offlineMode;
-    private final int OFFLINE_DIALOG_ID = 1337;
+    private final int offlineDialogId = 1337;
     private GirafNotifyDialog offlineDialog;
-    private final String OFFLINE_DIALOG_TAG = "DIALOG_TAG";
+    private final String offlineDialogTag = "DIALOG_TAG";
     private final Helper helper = new Helper(this);
     private final Handler handler = new Handler();
     /* ************* DEBUGGING MODE ************* */
@@ -65,26 +59,26 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
      * If {@code true}, the Launcher is stated in debugging mode, where the splash screen and
      * authentication_activity is skipped.
      */
-    private final boolean DEBUG_MODE = false;
+    private final boolean debugMode = false;
 
     /**
      * If {@code true}, the authentication_activity screen is shown, despite debugging mode. Has no
-     * effect if {@code DEBUG_MODE} is {@code false}.
+     * effect if {@code debugMode} is {@code false}.
      */
-    private final boolean SKIP_AUTHENTICATION = false;
+    private final boolean skipAuthentication = false;
 
     /**
      * If {@code true}, the splash screen is shown, despite debugging mode. Has no
-     * effect if {@code DEBUG_MODE} is {@code false}.
+     * effect if {@code debugMode} is {@code false}.
      */
-    private final boolean SKIP_SPLASH_SCREEN = false;
+    private final boolean skipSplashScreen = false;
 
     /**
      * If {@code true}, Launcher automatically logs in with a child profile. If {@code false},
-     * Launcher logs in with a guardian profile. Has no effect if {@code DEBUG_MODE} is {@code false},
-     * or if {@code SKIP_AUTHENTICATION} is {@code true}.
+     * Launcher logs in with a guardian profile. Has no effect if {@code debugMode} is {@code false},
+     * or if {@code skipAuthentication} is {@code true}.
      */
-    private final boolean DEBUG_AS_CHILD = false;
+    private final boolean debugAsChild = false;
     /* ****************************************** */
 
     /**
@@ -92,8 +86,8 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
      * if this is not disabled through debugging mode.
      *
      * @param savedInstanceState Information from the last launch of the activity.
-     * @see dk.aau.cs.giraf.launcher.activities.MainActivity#DEBUG_MODE
-     * @see dk.aau.cs.giraf.launcher.activities.MainActivity#SKIP_SPLASH_SCREEN
+     * @see dk.aau.cs.giraf.launcher.activities.MainActivity#debugMode
+     * @see dk.aau.cs.giraf.launcher.activities.MainActivity#skipSplashScreen
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -107,9 +101,10 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
 
         boolean showAnimation = true;
 
-        if (oldSessionGuardianID != -1) {
-            Profile oldSessionProfile = new ProfileController(this).getById(oldSessionGuardianID);
-            SharedPreferences prefs = SettingsUtility.getLauncherSettings(this, LauncherUtility.getSharedPreferenceUser(oldSessionProfile));
+        if (oldSessionGuardianId != -1) {
+            Profile oldSessionProfile = new ProfileController(this).getById(oldSessionGuardianId);
+            SharedPreferences prefs = SettingsUtility.getLauncherSettings(this,
+                LauncherUtility.getSharedPreferenceUser(oldSessionProfile));
             showAnimation = prefs.getBoolean(getString(R.string.show_animation_preference_key), true);
         }
 
@@ -119,7 +114,7 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
         }
 
         //Decide whether to skip animation, according to debug mode
-        if ((DEBUG_MODE && SKIP_SPLASH_SCREEN) || !showAnimation) {
+        if ((debugMode && skipSplashScreen) || !showAnimation) {
             startNextActivity();
         }
         //Load the splash animation
@@ -142,7 +137,7 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if(!offlineMode()){
+                    if(!offlineMode()) {
                         //If a connection to the internet is made
                         restartLauncher();
                         return;
@@ -160,7 +155,7 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
     }
 
     /**
-     * Overrides the backbutton to do nothing, as the user should not be able to back out of this activity
+     * Overrides the backbutton to do nothing, as the user should not be able to back out of this activity.
      */
     @Override
     public void onBackPressed() {
@@ -200,62 +195,65 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
      * Check if offline mode
      * @return true if offline i.e. no connection to outside world
      */
-    private boolean offlineMode(){
+    private boolean offlineMode() {
         return !NetworkUtilities.isNetworkAvailable(this);
     }
 
     /**
-     * Restart the launcher by killing myself then launching again
+     * Restart the launcher by killing myself then launching again.
      */
-    private void restartLauncher(){
-        Intent mStartActivity = new Intent(getApplicationContext(), MainActivity.class);
-        int mPendingIntentId = 123456;
-        PendingIntent mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+    private void restartLauncher() {
+        Intent startActivity = new Intent(getApplicationContext(), MainActivity.class);
+        int pendingIntentId = 123456;
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
+            pendingIntentId, startActivity, PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager mgr = (AlarmManager)getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
-        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, pendingIntent);
         System.exit(0);
     }
 
     /**
-     * Check if the local db has any profiles
+     * Check if the local db has any profiles.
      */
-    private boolean hasProfiles(){
-        return !(helper.profilesHelper.getListOfObjects() == null || helper.profilesHelper.getListOfObjects().size() == 0);
+    private boolean hasProfiles() {
+        return !(helper.profilesHelper.getListOfObjects() == null ||
+            helper.profilesHelper.getListOfObjects().size() == 0);
     }
 
     /**
-     * Starts the remote syncing service according to parameters set in the build config
+     * Starts the remote syncing service according to parameters set in the build config.
      */
-    private void startSync(){
-        new main(this).startSynch(new MessageHandler(this, loadAnimation), BuildConfig.ENABLE_SYMMETRICDS, BuildConfig.USE_TEST_SERVER, BuildConfig.USE_PRODUCTION_SERVER);
+    private void startSync() {
+        new main(this).startSynch(new MessageHandler(this, loadAnimation),
+            BuildConfig.ENABLE_SYMMETRICDS, BuildConfig.USE_TEST_SERVER, BuildConfig.USE_PRODUCTION_SERVER);
     }
 
     /**
-     * Starts offline
+     * Starts offline.
      */
-    private void startOffline(){
+    private void startOffline() {
         startNextActivity();
     }
 
     /**
-     * Creates and shows the dialog which enables the user to launch
+     * Creates and shows the dialog which enables the user to launch.
      * GIRAF in offline mode with limited functionality
      */
-    private void createAndShowOfflineDialog(){
+    private void createAndShowOfflineDialog() {
         offlineDialog = GirafNotifyDialog.newInstance(
                 getString(R.string.dialog_offline_title),
                 getString(R.string.dialog_offline_message),
-                OFFLINE_DIALOG_ID);
-        offlineDialog.show(getSupportFragmentManager(), OFFLINE_DIALOG_TAG);
+            offlineDialogId);
+        offlineDialog.show(getSupportFragmentManager(), offlineDialogTag);
     }
 
     /**
      * Launches the next relevant activity, according to the current debugging mode, and to
      * whether any valid login data is detected in {@code SharedPerferences}.
      *
-     * @see dk.aau.cs.giraf.launcher.activities.MainActivity#DEBUG_MODE
-     * @see dk.aau.cs.giraf.launcher.activities.MainActivity#SKIP_AUTHENTICATION
-     * @see dk.aau.cs.giraf.launcher.activities.MainActivity#DEBUG_AS_CHILD
+     * @see dk.aau.cs.giraf.launcher.activities.MainActivity#debugMode
+     * @see dk.aau.cs.giraf.launcher.activities.MainActivity#skipAuthentication
+     * @see dk.aau.cs.giraf.launcher.activities.MainActivity#debugAsChild
      * @see dk.aau.cs.giraf.launcher.helper.LauncherUtility#sessionExpired(android.content.Context)
      */
     public void startNextActivity() {
@@ -263,30 +261,28 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
         TextView welcomeText = (TextView) findViewById(R.id.welcome_title);
         welcomeText.setText("Klar!");
 
-        if (DEBUG_MODE && SKIP_AUTHENTICATION) {
-            intent = skipAuthentication(DEBUG_AS_CHILD);
-        }
-        //If no valid session is found, start authentication_activity
-        else if (LauncherUtility.sessionExpired(this)) {
+        if (debugMode && skipAuthentication) {
+            intent = skipAuthentication(debugAsChild);
+        } else if (LauncherUtility.sessionExpired(this)) {
+            // If no valid session is found, start authentication_activity
             intent = new Intent(this, AuthenticationActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        }
-        //If a valid session is found, pass the profile ID along with the intent.
-        else {
+        } else {
+            //If a valid session is found, pass the profile ID along with the intent.
             intent = new Intent(this, HomeActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
             SharedPreferences sharedPreferences = getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
-            final long guardianID = sharedPreferences.getLong(Constants.GUARDIAN_ID, -1L);
-            final long childID = sharedPreferences.getLong(Constants.CHILD_ID, -1L);
+            final long guardianId = sharedPreferences.getLong(Constants.GUARDIAN_ID, -1L);
+            final long childId = sharedPreferences.getLong(Constants.CHILD_ID, -1L);
 
-            intent.putExtra(Constants.GUARDIAN_ID, guardianID);
-            intent.putExtra(Constants.CHILD_ID, childID);
+            intent.putExtra(Constants.GUARDIAN_ID, guardianId);
+            intent.putExtra(Constants.CHILD_ID, childId);
         }
 
         //If in debugging mode, set global variables.
-        if (DEBUG_MODE) {
-            LauncherUtility.setDebugging(DEBUG_MODE, DEBUG_AS_CHILD, this);
+        if (debugMode) {
+            LauncherUtility.setDebugging(debugMode, debugAsChild, this);
         }
 
         startActivity(intent);
@@ -309,10 +305,16 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
 
         //Get the relevant profile info.
         if (asChild) {
-            profile = helper.profilesHelper.authenticateProfile("childqkxlnftvxquwrwcdloaumdhzkgyglezzsebpvnethrlstvmlorrolymdynjcyonkrtvcuagwigdqqkftsxxhklcnbhznthcqjxnjzzdoqvmfdlxrudcyakvrnfcbohdumawlwmfndjascmvrsoxfjgwzhdvcvqcroxoyjeazmxtrjtlkldoevgdrqvgfbklhtgm");
+            profile = helper.profilesHelper.authenticateProfile(
+                "childqkxlnftvxquwrwcdloaumdhzkgyglezzsebpvnethrlstvmlorrolymdynjcyonkrtvcuagwigdqqkftsxxhk" +
+                    "lcnbhznthcqjxnjzzdoqvmfdlxrudcyakvrnfcbohdumawlwmfndjascmvrsoxfjgwzhdvcvqcroxoyjeazmxt" +
+                    "rjtlkldoevgdrqvgfbklhtgm");
         } else {
-            //profile = helper.profilesHelper.authenticateProfile("jkkxlagqyrztlrexhzofekyzrnppajeobqxcmunkqhsbrgpxdtqgygnmbhrgnpphaxsjshlpupgakmirhpyfaivvtpynqarxsghhilhkqvpelpreevykxurtppcggkzfaepihlodgznrmbrzgqucstflhmndibuymmvwauvdlyqnnlxkurinuypmqypspmkqavuhfwsh");
-            profile = helper.profilesHelper.authenticateProfile("d74ecba82569eafc763256e45a126b4ce882f8a81327f28a380faa13eb2ec8f3");
+            //profile = helper.profilesHelper.authenticateProfile("jkkxlagqyrztlrexhzofekyzrnppajeobqxcmunkqhsbrgpxdtqgy
+            // gnmbhrgnpphaxsjshlpupgakmirhpyfaivvtpynqarxsghhilhkqvpelpreevykxurtppcggkzfaepihlodgznrmbrzgqucstflhmndibu
+            // ymmvwauvdlyqnnlxkurinuypmqypspmkqavuhfwsh");
+            profile = helper.profilesHelper.authenticateProfile(
+                "d74ecba82569eafc763256e45a126b4ce882f8a81327f28a380faa13eb2ec8f3");
         }
 
         final Intent intent = new Intent(this, HomeActivity.class);
@@ -331,28 +333,26 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
      */
     private void findOldSession() {
         if (LauncherUtility.sessionExpired(this)) {
-            oldSessionGuardianID = -1L;
+            oldSessionGuardianId = -1L;
         } else {
             final SharedPreferences sharedPreferences = getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
-            oldSessionGuardianID = sharedPreferences.getLong(Constants.GUARDIAN_ID, -1L);
+            oldSessionGuardianId = sharedPreferences.getLong(Constants.GUARDIAN_ID, -1L);
         }
     }
 
     /**
-     * Method which must be implemented for the CustomButtons dialog to work
+     * Method which must be implemented for the CustomButtons dialog to work.
      */
     @Override
-    public void noticeDialog(int i) {
-        switch (i){
-            case OFFLINE_DIALOG_ID:
-                offlineDialog.dismiss();
-                break;
+    public void noticeDialog(int id) {
+        if (id == offlineDialogId) {
+            offlineDialog.dismiss();
         }
     }
 
 
     /**
-     * Used to communicate with DownloadService
+     * Used to communicate with .
      * To determine if a download is complete
      */
     public static class MessageHandler extends Handler {
@@ -383,7 +383,8 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
             if (progress >= 100) {
                 executorService.shutdown();
                 try {
-                    while (!executorService.awaitTermination(10, TimeUnit.SECONDS)) ;
+                    while (!executorService.awaitTermination(10, TimeUnit.SECONDS)) {
+                    }
                 } catch (Exception e) { }
                 this.activity.get().startNextActivity();
             } else {
@@ -410,7 +411,8 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
                                     progressTextPercent.setText(progress + "%");
                                     progressBar.setProgress(progress);
 
-                                    welcomeTitle.setTextColor(activity.get().getResources().getColor(R.color.giraf_loading_textColor));
+                                    welcomeTitle.setTextColor(activity.get().getResources()
+                                        .getColor(R.color.giraf_loading_textColor));
                                 } else {
                                     // Cancel the animation and make is very slow (in order to stop it)
                                     loadAnimation.cancel();

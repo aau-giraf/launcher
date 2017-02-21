@@ -1,75 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@drawable/gbackground"
-    android:orientation="vertical">
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@drawable/gbackground"
+                android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:orientation="vertical"
-        android:gravity="center">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:orientation="vertical"
+            android:gravity="center">
 
         <ImageView
-            android:id="@+id/giraficon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/giraf_loading"
-            android:layout_gravity="center" />
+                android:id="@+id/giraficon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/giraf_loading"
+                android:layout_gravity="center"/>
 
         <TextView
-            android:id="@+id/welcome_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="35dp"
-            android:text="@string/main_activity_welcome_text"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/giraf_loading_textColor"
-            android:textStyle="bold"
-            android:layout_gravity="center"/>
+                android:id="@+id/welcome_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+                android:text="@string/main_activity_welcome_text"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/giraf_loading_textColor"
+                android:textStyle="bold"
+                android:layout_gravity="center"/>
 
         <TextView
-            android:id="@+id/welcome_desciption"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:text="Placeholder"
-            android:textColor="@color/giraf_loading_textColor"
-            android:textStyle="bold"
-            android:layout_gravity="center"
-            android:visibility="gone"/>
+                android:id="@+id/welcome_desciption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="Placeholder"
+                android:textColor="@color/giraf_loading_textColor"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
 
         <RelativeLayout
-            android:layout_width="250dp"
-            android:layout_marginTop="15dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center_horizontal">
+                android:layout_width="250dp"
+                android:layout_marginTop="15dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_horizontal">
 
             <ProgressBar
-                android:id="@+id/progress_bar"
-                style="?android:progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_centerInParent="true"
-                android:progressDrawable="@drawable/giraf_horizontal_progressbar_background" />
+                    android:id="@+id/progress_bar"
+                    style="?android:progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:progressDrawable="@drawable/giraf_horizontal_progressbar_background"/>
 
             <TextView
-                android:id="@+id/progress_bar_text"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textColor="#FFFFFFFF"
-                android:gravity="center"
-                android:layout_centerInParent="true"/>
+                    android:id="@+id/progress_bar_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textColor="#FFFFFFFF"
+                    android:gravity="center"
+                    android:layout_centerInParent="true"/>
         </RelativeLayout>
 
     </LinearLayout>
 
     <include
-        layout="@layout/debug_mode_overlay"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+            layout="@layout/debug_mode_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
 </RelativeLayout>

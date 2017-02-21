@@ -16,8 +16,8 @@ import dk.aau.cs.giraf.launcher.R;
  */
 public class AboutFragment extends Fragment {
 
-    public static AboutFragment newInstance()
-    {
+    //ToDo Write JavaDoc
+    public static AboutFragment newInstance() {
         final AboutFragment newFragment = new AboutFragment();
 
         Bundle args = new Bundle();
@@ -34,18 +34,12 @@ public class AboutFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        final Bundle arguments = getArguments();
-
-        if (arguments != null)
-        {
-
-        }
-
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState)
+    {
 
         final View view = inflater.inflate(R.layout.settings_about, null);
 

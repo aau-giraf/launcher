@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/debug_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        android:orientation="horizontal"
-        android:background="#aaff0000">
+              android:id="@+id/debug_view"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:visibility="gone"
+              android:orientation="horizontal"
+              android:background="#aaff0000">
 
     <TextView
             android:id="@+id/debug_text_view"

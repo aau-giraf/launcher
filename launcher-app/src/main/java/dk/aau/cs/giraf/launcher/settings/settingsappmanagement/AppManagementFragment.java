@@ -20,21 +20,21 @@ import dk.aau.cs.giraf.launcher.R;
  */
 public class AppManagementFragment extends android.support.v4.app.Fragment {
 
-    /** These strings are used for opening the Play Store, searching for the correct items*/
+    /** These strings are used for opening the Play Store, searching for the correct items.*/
     private static final String MARKET_SEARCH_APP_URI = "market://search?q=pub:";
     private static final String MARKET_SEARCH_WEB_URI = "http://play.google.com/store/search?q=pub:";
     //TODO: Remember to change our publisher name when Giraf has been published on Google Play
     private static final String PUBLISHER_NAME = "Giraf Autism Apps";
 
-    /** The FragmentManager is used to manage whcih fragments are current in the FragmentContainer*/
-    /** The girafFragment and the androidFragment are the fragments to be inflated into the container*/
-    /** The fragmentContainer that contains the inflated girafFragment or androidFragment*/
+    /** The FragmentManager is used to manage whcih fragments are current in the FragmentContainer.*/
+    /** The girafFragment and the androidFragment are the fragments to be inflated into the container.*/
+    /** The fragmentContainer that contains the inflated girafFragment or androidFragment.*/
     private android.support.v4.app.FragmentManager fragmentManager;
     //private GirafFragment girafFragment;
     //private AndroidFragment androidFragment;
     //private android.support.v4.app.Fragment fragmentContainer;
 
-    /** All the buttons that make the fragmentContainer inflate the correct fragment or open Play Store*/
+    /** All the buttons that make the fragmentContainer inflate the correct fragment or open Play Store.*/
     private Button girafAppsButton;
     private Button androidAppsButton;
     private Button googlePlayButton;
@@ -53,7 +53,7 @@ public class AppManagementFragment extends android.support.v4.app.Fragment {
 
         this.setRetainInstance(true);
 
-        /** Instantiated all the variables needed*/
+        /** Instantiated all the variables needed.*/
         //girafFragment = new GirafFragment();
         //androidFragment = new AndroidFragment();
         girafAppsButton = (Button)view.findViewById(R.id.settings_giraf_button);
@@ -79,28 +79,32 @@ public class AppManagementFragment extends android.support.v4.app.Fragment {
     }
 
     /**
-     * This function sets the correct onClickListeners for the three buttons
+     * This function sets the correct onClickListeners for the three buttons.
      */
     private void setButtonListeners() {
         /** inflate the girafFragment when the girafAppsButton is pressed*/
         girafAppsButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+            public void onClick(View view) {
                 replaceFragment(new GirafFragment());
                 focusButton(girafAppsButton);
             }
         });
 
-        /** inflate the androidFragment when the androidAppsButton is pressed*/
+        /**
+         *  inflate the androidFragment when the androidAppsButton is pressed.
+         */
         androidAppsButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+            public void onClick(View view) {
                 replaceFragment(new AndroidFragment());
                 focusButton(androidAppsButton);
             }
         });
 
-        /** Attempt to open the Play Store. If it is not installed on the device, open Play Store in the browser instead.*/
+        /**
+         * Attempt to open the Play Store. If it is not installed on the device, open Play Store in the browser instead.
+         */
         googlePlayButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+            public void onClick(View view) {
                 // Try to start the Google Play app
                 try {
                     Intent intent = new Intent();
@@ -118,9 +122,9 @@ public class AppManagementFragment extends android.support.v4.app.Fragment {
     /**
      * Replace active fragment by running the transaction in a new thread.
      * Adds responsiveness when loading list of installed apps_container.
-     * @param fragment
+     * @param fragment the fragment.
      */
-    private void replaceFragment(final android.support.v4.app.Fragment fragment){
+    private void replaceFragment(final android.support.v4.app.Fragment fragment) {
         new Runnable() {
             @Override
             public void run() {
@@ -131,8 +135,10 @@ public class AppManagementFragment extends android.support.v4.app.Fragment {
         }.run();
     }
 
-    /** Makes sure the button clicked appears visually as the button clicked.*/
-    private void focusButton(Button clickedButton){
+    /**
+     * Makes sure the button clicked appears visually as the button clicked.
+     */
+    private void focusButton(Button clickedButton) {
         girafAppsButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
         androidAppsButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
         googlePlayButton.setBackgroundResource(R.drawable.settings_tab_button_drawable);
