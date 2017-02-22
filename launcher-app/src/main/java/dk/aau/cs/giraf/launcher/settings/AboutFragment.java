@@ -16,7 +16,10 @@ import dk.aau.cs.giraf.launcher.R;
  */
 public class AboutFragment extends Fragment {
 
-    //ToDo Write JavaDoc
+    /**
+     * Creates a new instance of an AboutFragment.
+     * @return AboutFragment
+     */
     public static AboutFragment newInstance() {
         final AboutFragment newFragment = new AboutFragment();
 

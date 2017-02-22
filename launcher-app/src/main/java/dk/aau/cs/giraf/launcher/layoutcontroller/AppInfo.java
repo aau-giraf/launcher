@@ -70,8 +70,7 @@ public class AppInfo extends Application implements Parcelable {
         this.setAuthor(parentApp.getAuthor());
     }
 
-    //ToDo Write JavaDoc
-    public AppInfo(Parcel in) {
+    private AppInfo(Parcel in) {
 
         /* Data is put in, in this order:
         Int:
@@ -119,7 +118,9 @@ public class AppInfo extends Application implements Parcelable {
         dest.writeLongArray(new long[]{this.getId(), this.getBgColor(), (int) this.getAuthor()});
     }
 
-    //ToDo Write JavaDoc
+    /**
+     * The Parcelable creator.
+     */
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         public AppInfo createFromParcel(Parcel in) {
             return new AppInfo(in);
@@ -135,7 +136,7 @@ public class AppInfo extends Application implements Parcelable {
      *
      * @param color The new background color.
      */
-    public void setBgColor(int color) {
+    private void setBgColor(int color) {
         this.iconBackgroundColor = color;
     }
 

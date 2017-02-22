@@ -10,4 +10,7 @@
     <string name="dialog_offline_notify_title">Kan ikke starte app</string>
     <string name="dialog_offline_notify_message">Denne app kræver, at du har forbindelse til internettet</string>
     <string name="add_app_text">Tilføj eller fjern apps</string>
+    <string name="main_activity_download_data">Henter data...</string>
+    <string name="main_activity_no_network">Ingen internet forbindelse!</string>
+    <string name="main_activity_connect_to_download">Opret forbindelse til internettet for at hente data</string>
 </resources>
