@@ -1,2 +1,10 @@
+include 'girafComponent', 'oasisLib', 'meta-database', 'localDb', 'ShowcaseView'
+
+project(':girafComponent').projectDir = new File("submodules/giraf-component-lib")
+project(':oasisLib').projectDir = new File("submodules/db-lib")
+project(':meta-database').projectDir = new File("submodules/meta-database-lib")
+project(':localDb').projectDir = new File("submodules/local-db")
+project(':ShowcaseView').projectDir = new File("submodules/showcaseview-lib")
+
 include ':barcodescanner'
 include ':launcher-app'
