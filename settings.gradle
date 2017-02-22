@@ -1,4 +1,4 @@
-include 'girafComponent', 'oasisLib', 'meta-database', 'localDb', 'ShowcaseView'
+include ':girafComponent', ':oasisLib', ':meta-database', ':localDb', ':ShowcaseView'
 
 project(':girafComponent').projectDir = new File("submodules/giraf-component-lib")
 project(':oasisLib').projectDir = new File("submodules/db-lib")
