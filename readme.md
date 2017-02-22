@@ -4,6 +4,10 @@
 
 This is the main launcher that everything else is launched from. It allows login for both Guardian and Citizen.
 
+## Clone with dependencies
+
+git clone --recurse-submodules http://git.giraf.cs.aau.dk/Giraf17-AndroidLibs/launcher
+
 ## Dependencies
 
 The project has the following GIRAF dependencies:
