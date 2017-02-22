@@ -13,7 +13,9 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 public class AppImageView extends ImageView {
 
     private boolean checked = false;
-    //ToDo It wants a JavaDoc?
+    /**
+     * The AppInfo for the ImageView.
+     */
     public final AppInfo appInfo;
 
     /**

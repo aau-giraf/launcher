@@ -34,7 +34,7 @@ public abstract class AppContainerFragment extends Fragment {
     protected List<Application> apps;
     protected ViewPager appView;
     protected boolean haveAppsBeenAdded = false;
-    public View.OnClickListener listener;
+    protected View.OnClickListener listener;
 
     /**
      * Because we are dealing with a Fragment, OnCreateView is where most of the variables are set.
@@ -110,6 +110,10 @@ public abstract class AppContainerFragment extends Fragment {
 
     abstract void setListeners();
 
+    /**
+     * Returns the listerne for the views onClick listener.
+     * @return onClickListener
+     */
     public View.OnClickListener getListener() {
         if(listener == null) {
             setListeners();

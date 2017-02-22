@@ -41,10 +41,10 @@ import java.util.concurrent.TimeUnit;
  * Provides variables for enabling debug mode before compilation.
  */
 public class MainActivity extends GirafActivity implements Animation.AnimationListener, GirafNotifyDialog.Notification {
-    //private Context mContext;
+
     private long oldSessionGuardianId = -1;
-    Animation startingAnimation;
-    Animation loadAnimation;
+    private Animation startingAnimation;
+    private Animation loadAnimation;
 
     //Dialog for offline mode
     private boolean offlineMode;
@@ -94,7 +94,8 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.main_activity);
-
+        Animation startingAnimation;
+        Animation loadAnimation;
 
         //Load the preference determining whether the animation should be shown
         findOldSession();
@@ -259,7 +260,6 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
     public void startNextActivity() {
         Intent intent;
         TextView welcomeText = (TextView) findViewById(R.id.welcome_title);
-        welcomeText.setText("Klar!");
 
         if (debugMode && skipAuthentication) {
             intent = skipAuthentication(debugAsChild);
@@ -383,9 +383,12 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
             if (progress >= 100) {
                 executorService.shutdown();
                 try {
-                    while (!executorService.awaitTermination(10, TimeUnit.SECONDS)) {
+                    while (!executorService.awaitTermination(10, TimeUnit.SECONDS)) { //Does this code spam the log?
+                        Log.d("Launcher","EcecutorService timeout before termination");
                     }
-                } catch (Exception e) { }
+                } catch (InterruptedException e) {
+                    Log.d("Launcher", "ExecutorService was interrupted");
+                }
                 this.activity.get().startNextActivity();
             } else {
                 // Run the check on a background-thread
@@ -402,7 +405,7 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
                                     loadAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
 
                                     // Update the views accordingly to the progress
-                                    welcomeTitle.setText("Henter data...");
+                                    welcomeTitle.setText(R.string.main_activity_download_data);
 
                                     welcomeDescription.setVisibility(View.GONE);
                                     progressBar.setVisibility(View.VISIBLE);
@@ -422,8 +425,8 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
                                     progressTextPercent.setVisibility(View.GONE);
                                     welcomeDescription.setVisibility(View.VISIBLE);
 
-                                    welcomeTitle.setText("Ingen internet forbindelse!");
-                                    welcomeDescription.setText("Opret forbindelse til internettet for at hente data");
+                                    welcomeTitle.setText(R.string.main_activity_no_network);
+                                    welcomeDescription.setText(R.string.main_activity_connect_to_download);
 
                                     welcomeTitle.setTextColor(Color.parseColor("#900000"));
                                     welcomeDescription.setTextColor(Color.parseColor("#900000"));

@@ -81,18 +81,18 @@ public class GridPreviewView extends View {
         int restWidth = width % columnSize;
         int restHeight = height % rowSize;
 
-        int xOffset = 0;
-        int yOffset = 0;
+        int offsetX = 0;
+        int offsetY = 0;
 
         //Draw all vertical lines
         for (int columnCounter = 0; columnCounter <= columnSize; columnCounter++) {
 
             if (restWidth > 0 && columnCounter != 0) {
-                xOffset = columnCounter;
+                offsetX = columnCounter;
                 restWidth--;
             }
 
-            final int x = columnCounter * columnSpacing + xOffset;
+            final int x = columnCounter * columnSpacing + offsetX;
 
             canvas.drawLine(x, 0, x, height, paint);
         }
@@ -101,11 +101,11 @@ public class GridPreviewView extends View {
         for (int rowCounter = 0; rowCounter <= rowSize; rowCounter++) {
 
             if (restHeight > 0 && rowCounter != 0) {
-                yOffset = rowCounter;
+                offsetY = rowCounter;
                 restHeight--;
             }
 
-            final int y = rowCounter * rowSpacing + yOffset;
+            final int y = rowCounter * rowSpacing + offsetY;
 
             canvas.drawLine(0, y, width, y, paint);
         }
