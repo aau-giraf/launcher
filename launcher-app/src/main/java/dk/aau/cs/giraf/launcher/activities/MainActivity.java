@@ -95,7 +95,6 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
 
         setContentView(R.layout.main_activity);
         Animation startingAnimation;
-        Animation loadAnimation;
 
         //Load the preference determining whether the animation should be shown
         findOldSession();
