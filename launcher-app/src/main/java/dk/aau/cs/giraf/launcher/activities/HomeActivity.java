@@ -1,8 +1,6 @@
 package dk.aau.cs.giraf.launcher.activities;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -179,9 +177,22 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
      * Starts a timer that looks for updates in the set of available applications every 5 seconds.
      */
     private void startObservingApps() {
-        appsUpdater = new Timer();
-        AppsObserver timerTask = new AppsObserver();
-        appsUpdater.scheduleAtFixedRate(timerTask, 5000, 5000);
+        final AppsObserver appsObserver = new AppsObserver();
+        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                appsObserver.run(); //ToDo Should be change to not use a runnable update
+            }
+        };
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
+        intentFilter.addAction(Intent.ACTION_PACKAGE_INSTALL);
+        intentFilter.addAction(Intent.ACTION_PACKAGE_REMOVED);
+        registerReceiver(broadcastReceiver, intentFilter);
+        appsObserver.run();
+        //appsUpdater = new Timer();
+        //AppsObserver timerTask = new AppsObserver();
+        //appsUpdater.scheduleAtFixedRate(timerTask, 5000, 30000);
 
         Log.d(Constants.ERROR_TAG, "Applications are being observed.");
     }
