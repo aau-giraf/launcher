@@ -146,6 +146,7 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
     protected void onPostExecute(ArrayList<AppInfo> appInfoList) {
 
 
+
         progressbar.setVisibility(View.INVISIBLE);
 
         final int rowsSize = ApplicationGridResizer.getGridRowSize(this.context, currentUser);

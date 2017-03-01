@@ -295,6 +295,7 @@ public abstract class LauncherUtility {
         return fileName;
     }
 
+
     /**
      * This function retrieves the shared preferences for the given user.
      * it uses calls to other functions to generate the correct filename string and

@@ -162,6 +162,7 @@ public class ApplicationControlUtility {
             if (appPackageName.contains(ANDROID_FILTER))
                 continue;
 
+
             Application application = new Application();
             application.setPackage(appPackageName);
             application.setActivity(appActivityName);

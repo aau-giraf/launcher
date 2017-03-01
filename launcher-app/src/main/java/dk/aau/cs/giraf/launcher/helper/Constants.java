@@ -17,6 +17,7 @@ public final class Constants {
      */
     public static final String NO_APP_TAG = "-1";
 
+
     /**
     * SharedPreferences keys for log in data.
     */
