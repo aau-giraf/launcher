@@ -17,7 +17,6 @@ import android.widget.ScrollView;
 import dk.aau.cs.giraf.dblib.models.Application;
 import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
@@ -189,10 +188,6 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
 
     }
 
-    public android.support.v4.app.FragmentManager getFragmentMangerForAppsFragmentAdapter() {
-        return ((FragmentActivity) context).getSupportFragmentManager();
-    }
-
     /**
      * If the task was cancelled, and the progressbar is not null, hide the progressbar.
      */
@@ -217,26 +212,6 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
         }
 
         return parent;
-    }
-
-    /**
-     * Check for stray progressbars still running and remove them if needed.
-     */
-    private void removeStrayProgressbars() {
-        ViewGroup parent = getProgressBarParent();
-
-        ArrayList<Integer> delete = new ArrayList<Integer>();
-        for (int i = 0; i < parent.getChildCount(); i++) {
-            if (parent.getChildAt(i) instanceof ProgressBar) {
-                delete.add(i);
-            }
-        }
-
-        if (delete.size() > 0) {
-            for (int i = delete.size() - 1; i >= 0; i--) {
-                parent.removeViewAt(delete.get(i));
-            }
-        }
     }
 
     /**
