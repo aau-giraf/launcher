@@ -1,4 +1,4 @@
-package dk.aau.cs.giraf.launcher.settings;
+package dk.aau.cs.giraf.launcher.activities;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -31,6 +31,7 @@ import dk.aau.cs.giraf.gui.GirafProfileSelectorDialog;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
+import dk.aau.cs.giraf.launcher.settings.*;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AndroidFragment;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppContainerFragment;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementFragment;
@@ -119,10 +120,10 @@ public class SettingsActivity extends GirafActivity
                     FragmentSettingsListItem fragmentItem = ((FragmentSettingsListItem) item);
 
                     // Notify class implementing the callback interface that a new fragment has been selected
-                    if (fragmentItem.fragment == null) {
-                        setActiveFragment(fragmentItem.supportFragment);
+                    if (fragmentItem.getFragment() == null) {
+                        setActiveFragment(fragmentItem.getSupportFragment());
                     } else {
-                        setActiveFragment(fragmentItem.fragment);
+                        setActiveFragment(fragmentItem.getFragment());
                     }
 
                     // Update the adapter to reflect the selection
@@ -131,7 +132,7 @@ public class SettingsActivity extends GirafActivity
                     // Otherwise it must be an intent
                     try {
                         // Start a new activity with the intent
-                        startActivity(((IntentSettingsListItem) item).intent);
+                        startActivity(((IntentSettingsListItem) item).getIntent());
                     } catch (ActivityNotFoundException e) {
                         // Handle exception if the intended activity can not be started.
                         Toast.makeText(parent.getContext(),
@@ -200,7 +201,7 @@ public class SettingsActivity extends GirafActivity
             public void onClick(View view) {
 
                 GirafProfileSelectorDialog changeUser = GirafProfileSelectorDialog.newInstance(SettingsActivity.this,
-                    loggedInGuardian.getId(), false, false, "Vælg den borger du vil skifte til.",
+                    loggedInGuardian.getId(), false, false, getString(R.string.settings_choose_citizen),
                     CHANGE_USER_SELECTOR_DIALOG);
                 changeUser.show(getSupportFragmentManager(), "" + CHANGE_USER_SELECTOR_DIALOG);
             }
@@ -231,12 +232,12 @@ public class SettingsActivity extends GirafActivity
             FragmentSettingsListItem item = (FragmentSettingsListItem) getInstalledSettingsApps().get(0);
 
             // Update active fragment with the first entry
-            if (item.fragment != null) {
+            if (item.getFragment() != null) {
                 // Load the fragment just selected into view
-                fragmentManager.beginTransaction().add(R.id.settingsContainer, item.fragment).commit();
+                fragmentManager.beginTransaction().add(R.id.settingsContainer, item.getFragment()).commit();
             } else {
                 // Load the fragment just selected into view
-                supportFragmentManager.beginTransaction().add(R.id.settingsContainer, item.supportFragment).commit();
+                supportFragmentManager.beginTransaction().add(R.id.settingsContainer, item.getSupportFragment()).commit();
             }
         }
 
@@ -563,8 +564,6 @@ public class SettingsActivity extends GirafActivity
 
         // TODO: This code gets runtime error on smaller screens (eg. phones)
 
-        //TODO: Move string constants to xml files
-
         // Create a relative location for the next button
         final RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -599,8 +598,8 @@ public class SettingsActivity extends GirafActivity
                         final int textY = coords[1];
 
                         showcaseView.setShowcase(profileTarget, true);
-                        showcaseView.setContentTitle("Nuværende profil");
-                        showcaseView.setContentText("Den profil der laves indstillinger for");
+                        showcaseView.setContentTitle(getString(R.string.settings_current_profile));
+                        showcaseView.setContentText(getString(R.string.settings_the_settings_for_profile));
                         showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
                         showcaseView.setButtonPosition(lps);
                         showcaseView.setTextPostion(textX, textY);
@@ -635,8 +634,8 @@ public class SettingsActivity extends GirafActivity
                         final int textY = coords[1];
 
                         showcaseView.setShowcase(generalTabTarget, true);
-                        showcaseView.setContentTitle("Generelt");
-                        showcaseView.setContentText("Generelle indstillinger for Giraf Launcheren");
+                        showcaseView.setContentTitle(getString(R.string.settings_tablist_general));
+                        showcaseView.setContentText(getString(R.string.settings_tablist_general_for_launcher));
                         showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
                         showcaseView.setButtonPosition(lps);
                         showcaseView.setTextPostion(textX, textY);
@@ -670,8 +669,8 @@ public class SettingsActivity extends GirafActivity
                         final int textY = coords[1];
 
                         showcaseView.setShowcase(applicationManagementTarget, true);
-                        showcaseView.setContentTitle("Applikations håndtering");
-                        showcaseView.setContentText("Indstil hvilke applikationer der skal vises");
+                        showcaseView.setContentTitle(getString(R.string.settings_app_management));
+                        showcaseView.setContentText(getString(R.string.settings_set_which_apps_to_show));
                         showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
                         showcaseView.setButtonPosition(lps);
                         showcaseView.setTextPostion(textX, textY);
@@ -706,8 +705,8 @@ public class SettingsActivity extends GirafActivity
                         final int textY = coords[1];
 
                         showcaseView.setShowcase(androidSettingsTarget, true);
-                        showcaseView.setContentTitle("Tablet indstillinger");
-                        showcaseView.setContentText("Generelle indstillinger for din tablet");
+                        showcaseView.setContentTitle(getString(R.string.settings_tablet));
+                        showcaseView.setContentText(getString(R.string.settings_tablet_general));
                         showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
                         showcaseView.setButtonPosition(lps);
                         showcaseView.setTextPostion(textX, textY);
@@ -746,31 +745,29 @@ public class SettingsActivity extends GirafActivity
 
                     if (currentSupportSettingsContent instanceof GirafFragment) {
 
-                        showcaseView.setContentTitle("Giraf Applikationer");
+                        showcaseView.setContentTitle(getString(R.string.settings_giraf_apps));
 
                         if (noAppsMessageView.getVisibility() == View.VISIBLE) {
                             showcaseView.setShowcase(noAppsMessageTarget, true);
-                            showcaseView.setContentText("Her vil Giraf applikationer kunne vælges til " +
-                                "og fra når de bliver installeret");
+                            showcaseView.setContentText(getString(R.string.settings_giraf_here_long));
                             showcaseView.setTextPostion(noAppsMessageViewTextX, noAppsMessageViewTextY);
                         } else {
                             showcaseView.setShowcase(appsViewPagerTarget, true);
-                            showcaseView.setContentText("Her kan Giraf applikationer vælges til og fra");
+                            showcaseView.setContentText(getString(R.string.settings_giraf_here_short));
                             showcaseView.setTextPostion(appsViewPagerTextX, appsViewPagerTextY);
                         }
 
                     } else if (currentSupportSettingsContent instanceof AndroidFragment) {
 
-                        showcaseView.setContentTitle("Android Applikationer");
+                        showcaseView.setContentTitle(getString(R.string.settings_android_apps));
 
                         if (noAppsMessageView.getVisibility() == View.VISIBLE) {
                             showcaseView.setShowcase(noAppsMessageTarget, true);
-                            showcaseView.setContentText("Her vil Android applikationer kunne vælges til " +
-                                "og fra når de bliver installeret");
+                            showcaseView.setContentText(getString(R.string.settings_android_here_long));
                             showcaseView.setTextPostion(noAppsMessageViewTextX, noAppsMessageViewTextY);
                         } else {
                             showcaseView.setShowcase(appsViewPagerTarget, true);
-                            showcaseView.setContentText("Her kan Android applikationer vælges til og fra");
+                            showcaseView.setContentText(getString(R.string.settings_android_here_short));
                             showcaseView.setTextPostion(appsViewPagerTextX, appsViewPagerTextY);
                         }
                     }

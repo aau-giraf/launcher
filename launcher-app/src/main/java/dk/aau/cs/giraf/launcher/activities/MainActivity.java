@@ -94,8 +94,6 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.main_activity);
-        Animation startingAnimation;
-        Animation loadAnimation;
 
         //Load the preference determining whether the animation should be shown
         findOldSession();
@@ -157,6 +155,7 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
 
     /**
      * Overrides the backbutton to do nothing, as the user should not be able to back out of this activity.
+     *
      */
     @Override
     public void onBackPressed() {

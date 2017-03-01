@@ -28,6 +28,20 @@
     <!-- About Strings -->
     <string name="settings_about_title">Omkring Giraf</string>
 
+    <string name="settings_choose_citizen">Vælg den borger du vil skifte til.</string>
+    <string name="settings_current_profile">Nuværende profil</string>
+    <string name="settings_the_settings_for_profile">Den profil der laves indstillinger for</string>
+    <string name="settings_tablist_general_for_launcher">Generelle indstillinger for Giraf Launcheren</string>
+    <string name="settings_app_management">Applikations håndtering</string>
+    <string name="settings_set_which_apps_to_show">Indstil hvilke applikationer der skal vises</string>
+    <string name="settings_tablet">Tablet indstillinger</string>
+    <string name="settings_tablet_general">Generelle indstillinger for din tablet</string>
+    <string name="settings_giraf_apps">Giraf Applikationer</string>
+    <string name="settings_android_apps">Android Applikationer</string>
+    <string name="settings_giraf_here_long">Her vil Giraf applikationer kunne vælges til og fra når de bliver installeret</string>
+    <string name="settings_giraf_here_short">Her vil Giraf applikationer kunne vælges til og fra</string>
+    <string name="settings_android_here_long">Her vil Android applikationer kunne vælges til og fra når de bliver installeret</string>
+    <string name="settings_android_here_short">Her vil Android applikationer kunne vælges til og fra</string>
 
     <!-- TODO: INDSÆT NAVN PÅ ÅBENSOVSEKODE! -->
     <string name="settings_about_message">Powered by:\n SymmetricDS \n
