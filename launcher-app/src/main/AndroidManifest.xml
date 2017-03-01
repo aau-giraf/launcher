@@ -73,7 +73,7 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".settings.SettingsActivity"
+                android:name=".activities.SettingsActivity"
                 android:label="@string/settings_tablist_tablet"
                 android:launchMode="singleInstance"
                 android:screenOrientation="landscape"

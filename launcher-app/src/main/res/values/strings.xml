@@ -13,4 +13,16 @@
     <string name="main_activity_download_data">Henter data...</string>
     <string name="main_activity_no_network">Ingen internet forbindelse!</string>
     <string name="main_activity_connect_to_download">Opret forbindelse til internettet for at hente data</string>
+    <string name="home_activity_current_user_title">Nuværende bruger</string>
+    <string name="home_activity_current_user_text">Her kan du se den nuværende bruger af enheden"</string>
+    <string name="home_activity_change_to_citizen_msg">Vælg den borger du vil skifte til</string>
+    <string name="cancel_msg">Fortryd</string>
+    <string name="home_activity_logout">Vil du logge ud?</string>
+    <string name="logout_msg">Log ud</string>
+    <string name="home_activity_logged_out">Logget ud</string>
+    <string name="home_activity_change_to_citizen">Skift til borger</string>
+    <string name="home_activity_click_here_before">Tryk her før du giver enheden videre til en borger</string>
+    <string name="home_activity_here_you_can_logout">Her kan du logge ud</string>
+    <string name="settings">Indstillinger</string>
+    <string name="home_activity_here_you_can_setup">Her kan du indstille hvor mange og hvilke apps der skal vises mm.</string>
 </resources>

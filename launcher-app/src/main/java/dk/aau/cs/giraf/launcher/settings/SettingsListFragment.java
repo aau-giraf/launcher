@@ -15,6 +15,7 @@ import dk.aau.cs.giraf.dblib.controllers.ProfileController;
 import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.gui.GirafPictogramItemView;
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.activities.SettingsActivity;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 
 import java.util.ArrayList;

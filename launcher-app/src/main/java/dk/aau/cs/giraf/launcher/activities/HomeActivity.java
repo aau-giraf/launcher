@@ -1,7 +1,6 @@
 package dk.aau.cs.giraf.launcher.activities;
 
 import android.content.*;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -34,7 +33,6 @@ import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
-import dk.aau.cs.giraf.launcher.settings.SettingsActivity;
 import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
 import dk.aau.cs.giraf.showcaseview.ShowcaseManager;
@@ -46,8 +44,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * The primary activity of Launcher. Allows the user to start other GIRAF apps and access the settings
@@ -63,7 +59,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     private Profile loggedInGuardian;
 
     private LoadHomeActivityApplicationTask loadHomeActivityApplicationTask;
-
+    private boolean appObserverReceiverRegistered = false;
     private ArrayList<AppInfo> currentLoadedApps;
 
     private GWidgetUpdater widgetUpdater;
@@ -82,8 +78,6 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
 
     private ViewPager appViewPager;
     private ScrollView sidebarScrollView;
-
-    private Timer appsUpdater;
 
     private final int methodIdLogout = 1;
 
@@ -116,7 +110,6 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
             Constants.METHOD_ID_OFFLINE_NOTIFY);
 
         Helper helper = LauncherUtility.getOasisHelper(this);
-
         currentUser = helper.profilesHelper.getById(getIntent().getExtras().getLong(Constants.CHILD_ID, -1));
         loggedInGuardian = helper.profilesHelper.getById(getIntent().getExtras().getLong(Constants.GUARDIAN_ID));
 
@@ -174,27 +167,50 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     }
 
     /**
-     * Starts a timer that looks for updates in the set of available applications every 5 seconds.
+     * Registers a broadcastReceiver that are notified when an app is installed or removed.
      */
     private void startObservingApps() {
-        final AppsObserver appsObserver = new AppsObserver();
-        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                appsObserver.run(); //ToDo Should be change to not use a runnable update
-            }
-        };
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
-        intentFilter.addAction(Intent.ACTION_PACKAGE_INSTALL);
-        intentFilter.addAction(Intent.ACTION_PACKAGE_REMOVED);
-        registerReceiver(broadcastReceiver, intentFilter);
-        appsObserver.run();
-        //appsUpdater = new Timer();
-        //AppsObserver timerTask = new AppsObserver();
-        //appsUpdater.scheduleAtFixedRate(timerTask, 5000, 30000);
+        //Makes sure this Receiver is only registered once
+        if(!appObserverReceiverRegistered) {
+            BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    appsChangedScan();
+                }
+            };
+            //Sets up the filter to only trigger when these actions are received
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
+            intentFilter.addAction(Intent.ACTION_PACKAGE_REMOVED);
+            registerReceiver(broadcastReceiver, intentFilter);
+            appObserverReceiverRegistered = true;
+            Log.d(Constants.ERROR_TAG, "Applications are being observed.");
+        }
+    }
 
-        Log.d(Constants.ERROR_TAG, "Applications are being observed.");
+    /**
+     * Finds out if the current loaded apps and the app list is different and updates the UI.
+     */
+    private void appsChangedScan() {
+        final List<Application> girafAppsList = ApplicationControlUtility.getAvailableGirafAppsForUser(
+            HomeActivity.this, currentUser); // For home_activity activity
+        final SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(
+            HomeActivity.this, currentUser);
+        final Set<String> androidAppsPackagenames = prefs.getStringSet(
+            getString(R.string.selected_android_apps_key), new HashSet<String>());
+        final List<Application> androidAppsList = ApplicationControlUtility.convertPackageNamesToApplications(
+            HomeActivity.this, androidAppsPackagenames);
+        girafAppsList.addAll(androidAppsList);
+        if (AppInfo.isAppListsDifferent(currentLoadedApps, girafAppsList)) {
+            // run this on UI thread since UI might need to get updated
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    loadApplications();
+                }
+            });
+        }
+        Log.d(Constants.ERROR_TAG, "Applications checked");
     }
 
     /**
@@ -209,12 +225,12 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     }
 
     /**
-     * This method is called whenever the launcher home screen is returned to
-     * for example when returning from an app or the setitng page.
+     * This method is called whenever the launcher home screen is returned to.
+     * For example when returning from an app or the settings page.
      */
     @Override
     protected void onResume() {
-        offlineMode = !NetworkUtilities.isNetworkAvailable(this);
+        offlineMode = offlineMode();
         offlineModeFeedback();
         super.onResume();
 
@@ -241,13 +257,8 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                         editor.commit();
 
                         synchronized (HomeActivity.this) {
-                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                                HomeActivity.this.findViewById(android.R.id.content)
-                                    .getViewTreeObserver().removeGlobalOnLayoutListener(globalLayoutListener);
-                            } else {
-                                HomeActivity.this.findViewById(android.R.id.content)
-                                    .getViewTreeObserver().removeOnGlobalLayoutListener(globalLayoutListener);
-                            }
+                            HomeActivity.this.findViewById(android.R.id.content)
+                                .getViewTreeObserver().removeGlobalOnLayoutListener(globalLayoutListener);
 
                             globalLayoutListener = null;
                         }
@@ -258,17 +269,12 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
 
     /**
      * Stops the timer looking for updates in the set of available apps.
-     *
+     * ToDo Find out if this code is still needed
      * @see HomeActivity#startObservingApps()
      */
     @Override
     protected void onPause() {
         super.onPause();
-
-        if (appsUpdater != null) {
-            appsUpdater.cancel();
-            Log.d(Constants.ERROR_TAG, "Applications are no longer observed.");
-        }
 
         if (widgetUpdater != null) {
             widgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_STOP);
@@ -280,13 +286,8 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         }
 
         synchronized (HomeActivity.this) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                HomeActivity.this.findViewById(android.R.id.content)
-                    .getViewTreeObserver().removeGlobalOnLayoutListener(globalLayoutListener);
-            } else {
-                HomeActivity.this.findViewById(android.R.id.content)
-                    .getViewTreeObserver().removeOnGlobalLayoutListener(globalLayoutListener);
-            }
+            HomeActivity.this.findViewById(android.R.id.content)
+                .getViewTreeObserver().removeGlobalOnLayoutListener(globalLayoutListener);
             globalLayoutListener = null;
         }
 
@@ -354,7 +355,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                 @Override
                 public void onClick(View view) {
                     GirafProfileSelectorDialog changeUser = GirafProfileSelectorDialog.newInstance(HomeActivity.this,
-                        currentUser.getId(), false, false, "Vælg den borger du vil skifte til.",
+                        currentUser.getId(), false, false, getString(R.string.home_activity_change_to_citizen_msg),
                         CHANGE_USER_SELECTOR_DIALOG);
                     changeUser.show(getSupportFragmentManager(), "" + CHANGE_USER_SELECTOR_DIALOG);
                 }
@@ -374,8 +375,9 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                GirafConfirmDialog girafConfirmDialog = GirafConfirmDialog.newInstance("Log ud", "Vil du logge ud?",
-                    methodIdLogout, "Log ud", R.drawable.icon_logout, "Fortryd", R.drawable.icon_cancel);
+                GirafConfirmDialog girafConfirmDialog = GirafConfirmDialog.newInstance(getString(R.string.logout_msg),
+                    getString(R.string.home_activity_logout), methodIdLogout, getString(R.string.logout_msg),
+                    R.drawable.icon_logout, getString(R.string.cancel_msg), R.drawable.icon_cancel);
                 girafConfirmDialog.show(getSupportFragmentManager(), "logout_dialog");
             }
         });
@@ -412,7 +414,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     public void confirmDialog(int methodId) {
         if(methodId == methodIdLogout) {
             startActivity(LauncherUtility.logOutIntent(HomeActivity.this));
-            Toast.makeText(this, "Logget ud", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.home_activity_logged_out), Toast.LENGTH_LONG).show();
             finish();
         }
     }
@@ -433,7 +435,6 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     public void onProfileSelected(final int input, final Profile profile) {
 
         if (input == CHANGE_USER_SELECTOR_DIALOG) {
-
             // Update the profile
             currentUser = profile;
 
@@ -443,12 +444,10 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
             // Reload the application container, as a new user has been selected.
             reloadApplications();
         }
-
     }
 
     @Override
     public void showShowcase() {
-
         // Create a relative location for the next button
         final RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -486,8 +485,8 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                         final int textY = coords[1] + profilePictureView.getMeasuredHeight() / 2;
 
                         showcaseView.setShowcase(settingsButtonTarget, true);
-                        showcaseView.setContentTitle("Nuværende bruger");
-                        showcaseView.setContentText("Her kan du se den nuværende bruger af enheden");
+                        showcaseView.setContentTitle(getString(R.string.home_activity_current_user_title));
+                        showcaseView.setContentText(getString(R.string.home_activity_current_user_text));
                         showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
                         showcaseView.setButtonPosition(lps);
                         showcaseView.setTextPostion(textX, textY);
@@ -515,8 +514,8 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                     final int textY = coords[1];
 
                     showcaseView.setShowcase(changeUserButtonTarget, true);
-                    showcaseView.setContentTitle("Skift til borger");
-                    showcaseView.setContentText("Tryk her før du giver enheden videre til en borger");
+                    showcaseView.setContentTitle(getString(R.string.home_activity_change_to_citizen));
+                    showcaseView.setContentText(getString(R.string.home_activity_click_here_before));
                     showcaseView.setStyle(R.style.GirafCustomShowcaseTheme);
                     showcaseView.setButtonPosition(lps);
                     showcaseView.setTextPostion(textX, textY);
@@ -543,8 +542,8 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                 final int textY = coords[1];
 
                 showcaseView.setShowcase(logoutButtonTarget, true);
-                showcaseView.setContentTitle("Log ud");
-                showcaseView.setContentText("Her kan du logge ud");
+                showcaseView.setContentTitle(getString(R.string.home_activity_logout));
+                showcaseView.setContentText(getString(R.string.home_activity_here_you_can_logout));
 
                 if (changeUserButton.getVisibility() != View.VISIBLE) {
                     showcaseView.setStyle(R.style.GirafLastCustomShowcaseTheme);
@@ -575,8 +574,8 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                     final int textY = coords[1];
 
                     showcaseView.setShowcase(settingsButtonTarget, true);
-                    showcaseView.setContentTitle("Indstillinger");
-                    showcaseView.setContentText("Her kan du indstille hvor mange og hvilke apps der skal vises mm.");
+                    showcaseView.setContentTitle(getString(R.string.settings));
+                    showcaseView.setContentText(getString(R.string.home_activity_here_you_can_setup));
                     showcaseView.setStyle(R.style.GirafLastCustomShowcaseTheme);
                     showcaseView.setButtonPosition(lps);
                     showcaseView.setTextPostion(textX, textY);
@@ -615,45 +614,6 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     }
 
     /**
-     * Task for observing if the set of available apps has changed.
-     * Is only instantiated after apps have been loaded the first time.
-     *
-     * @see HomeActivity#loadApplications()
-     */
-    private class AppsObserver extends TimerTask {
-
-        /**
-         * The main method of the apps observer.
-         * Retrieves the apps that should be displayed and compares them
-         * with the ones that are currently being displayed.
-         * Runs loadApplications() if there are differences.
-         */
-        @Override
-        public void run() {
-            final List<Application> girafAppsList = ApplicationControlUtility.getAvailableGirafAppsForUser(
-                HomeActivity.this, currentUser); // For home_activity activity
-            final SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(
-                HomeActivity.this, currentUser);
-            final Set<String> androidAppsPackagenames = prefs.getStringSet(
-                getString(R.string.selected_android_apps_key), new HashSet<String>());
-            final List<Application> androidAppsList = ApplicationControlUtility.convertPackageNamesToApplications(
-                HomeActivity.this, androidAppsPackagenames);
-            girafAppsList.addAll(androidAppsList);
-            if (AppInfo.isAppListsDifferent(currentLoadedApps, girafAppsList)) {
-                // run this on UI thread since UI might need to get updated
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadApplications();
-                    }
-                });
-            }
-            Log.d(Constants.ERROR_TAG, "Applications checked");
-        }
-
-    }
-
-    /**
      * This class carries out all the work of populating the appView with clickable applications.
      * It inherits from LoadApplicationTask, which does most of the work.
      * However, since there are some special things that need to be handled in the case of all applications,
@@ -676,17 +636,6 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
             appsViewPager, View.OnClickListener onClickListener, boolean offlineMode)
         {
             super(context, currentUser, guardian, appsViewPager, onClickListener, offlineMode, true);
-        }
-
-        /**
-         * We override onPreExecute to cancel the AppObserver if it is running.
-         */
-        @Override
-        protected void onPreExecute() {
-            if (appsUpdater != null)
-                appsUpdater.cancel();
-
-            super.onPreExecute();
         }
 
         /**
@@ -715,7 +664,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         }
 
         /**
-         * Once we have loaded applications, we start observing for new apps.
+         * Once we have loaded applications, we wait for new app changes.
          */
         @Override
         protected void onPostExecute(final ArrayList<AppInfo> appInfoList) {

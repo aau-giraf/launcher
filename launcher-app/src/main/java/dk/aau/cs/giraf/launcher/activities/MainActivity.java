@@ -155,6 +155,7 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
 
     /**
      * Overrides the backbutton to do nothing, as the user should not be able to back out of this activity.
+     *
      */
     @Override
     public void onBackPressed() {
