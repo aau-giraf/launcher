@@ -114,7 +114,7 @@ public abstract class LauncherUtility {
 
             //Fill the view with information on the debug settings.
             textView.setText(activity.getText(R.string.giraf_debug_mode) + " " +
-                (DEBUG_MODE_AS_CHILD ? activity.getText(R.string.giraf_debug_as_child)
+                (isDebuggingAsChild() ? activity.getText(R.string.giraf_debug_as_child)
                     : activity.getText(R.string.giraf_debug_as_guardian)));
 
             debug.setVisibility(View.VISIBLE);
@@ -127,7 +127,7 @@ public abstract class LauncherUtility {
      * @param context Context of the current activity.
      * @param ex      The caught exception.
      */
-    public static void sendExceptionGoogleAnalytics(Context context, Exception ex) {
+    private static void sendExceptionGoogleAnalytics(Context context, Exception ex) {
         // May return null if EasyTracker has not yet been initialized with a
         // property ID.
         EasyTracker easyTracker = EasyTracker.getInstance(context);
@@ -202,7 +202,7 @@ public abstract class LauncherUtility {
      *
      * @param context Context of the current activity.
      */
-    public static void clearAuthData(final Context context) {
+    private static void clearAuthData(final Context context) {
 
         final SharedPreferences sp = context.getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
         final SharedPreferences.Editor editor = sp.edit();
@@ -296,21 +296,7 @@ public abstract class LauncherUtility {
     }
 
     /**
-     * This function returns substring of the correct preference string based on the user profile.
-     * This user profile is extracted from the context given.
-     * Checks for the role and appends the correct role prefix to the profiles ID.
-     * This is used to find out which settings file to read.
-     *
-     * @param context The context of the current activity
-     * @return The substring generated.
-     */
-    public static String getSharedPreferenceUserFromContext(Context context) {
-        Profile currentUser = getCurrentUser(context);
-        return getSharedPreferenceUser(currentUser);
-    }
-
-    /**
-     * This function retrives the shared preferences for the given user.
+     * This function retrieves the shared preferences for the given user.
      * it uses calls to other functions to generate the correct filename string and
      * subsequently retrieves the preferences from the context given
      *
@@ -322,19 +308,5 @@ public abstract class LauncherUtility {
         String fileName = Constants.TAG + ".";
         fileName += getSharedPreferenceUser(profile);
         return context.getSharedPreferences(fileName, Context.MODE_PRIVATE);
-    }
-
-    /**
-     * This function retrives the shared preferences for the given user.
-     * Finds the user based on the given context.
-     * it uses calls to other functions to generate the correct filename string and
-     * subsequently retrieves the preferences from the context given
-     *
-     * @param context The context of the current activity
-     * @return The settings for the user in the given context.
-     */
-    public static SharedPreferences getSharedPreferencesForCurrentUser(Context context) {
-        Profile currentUser = getCurrentUser(context);
-        return getSharedPreferencesForCurrentUser(context, currentUser);
     }
 }

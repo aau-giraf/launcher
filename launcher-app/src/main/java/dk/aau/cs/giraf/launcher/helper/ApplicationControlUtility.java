@@ -113,7 +113,7 @@ public class ApplicationControlUtility {
      * @param context Context of the current activity.
      * @return List of GIRAF apps.
      */
-    public static List<ResolveInfo> getGirafAppsOnDeviceAsResolveInfoList(Context context) {
+    private static List<ResolveInfo> getGirafAppsOnDeviceAsResolveInfoList(Context context) {
         List<ResolveInfo> systemApps = getAllAppsOnDeviceAsResolveInfoList(context);
 
         if (systemApps.isEmpty()) {
@@ -179,20 +179,11 @@ public class ApplicationControlUtility {
      * @param app        The app to check for.
      * @return True if the app is contained in the list; otherwise false.
      */
-    public static boolean doesResolveInfoListContainApp(List<ResolveInfo> systemApps, Application app) {
-        return doesResolveInfoListContainApp(systemApps, app.getPackage());
-    }
+    private static boolean doesResolveInfoListContainApp(List<ResolveInfo> systemApps, Application app) {
+        String packageName = app.getPackage();
 
-    /**
-     * Checks whether a list of GIRAF apps installed on the system contains a specified app.
-     *
-     * @param systemApps  List of apps (as ResolveInfos) to check.
-     * @param packageName Package name of the app to check for.
-     * @return True if the app is contained in the list; otherwise false.
-     */
-    public static boolean doesResolveInfoListContainApp(List<ResolveInfo> systemApps, String packageName) {
-        for (ResolveInfo app : systemApps) {
-            if (app.activityInfo.packageName.equals(packageName)) {
+        for (ResolveInfo sysApp : systemApps) {
+            if (sysApp.activityInfo.packageName.equals(packageName)) {
                 return true;
             }
         }
@@ -207,20 +198,11 @@ public class ApplicationControlUtility {
      * @param app        The app to check for.
      * @return True if the app is contained in the list; otherwise false.
      */
-    public static boolean doesApplicationListContainApp(List<Application> systemApps, Application app) {
-        return doesApplicationListContainApp(systemApps, app.getPackage());
-    }
+    private static boolean doesApplicationListContainApp(List<Application> systemApps, Application app) {
+        String packageName = app.getPackage();
 
-    /**
-     * Checks whether a list of apps installed on the system contains a specified app.
-     *
-     * @param systemApps  List of apps (as Apps) to check.
-     * @param packageName Package name of the app to check for.
-     * @return True if the app is contained in the list; otherwise false.
-     */
-    public static boolean doesApplicationListContainApp(List<Application> systemApps, String packageName) {
-        for (Application app : systemApps) {
-            if (app.getPackage().equals(packageName)) {
+        for (Application sysApp : systemApps) {
+            if (sysApp.getPackage().equals(packageName)) {
                 return true;
             }
         }

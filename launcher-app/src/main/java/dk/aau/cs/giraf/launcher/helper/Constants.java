@@ -8,9 +8,13 @@ import java.util.Arrays;
 import java.util.List;
 
 public final class Constants {
-    // Launcher TAG
+    /**
+     * Launcher TAG.
+     */
     public static final String TAG = HomeActivity.class.getName();
-    //ToDo Write JavaDoc
+    /**
+     * No application tag..
+     */
     public static final String NO_APP_TAG = "-1";
 
     /**
@@ -27,14 +31,21 @@ public final class Constants {
     public static final String APP_ACTIVITY_NAME = "appActivityName";
     public static final String APP_COLOR = "appBackgroundColor";
 
-    // Main activity
+
+    /**
+     * Main activity, duration in milliseconds.
+     */
+
     public static final int LOGO_ANIMATION_DURATION = 2000;
 
-    // Authentication activity
-    // Eight hours.
+    /**
+     * Authentication activity, 8 hours in milliseconds.
+     */
     public static final long TIME_TO_STAY_LOGGED_IN = 28800000;
 
-    // Home activity values.
+    /**
+     * Home activity values.
+     */
     public static final int APP_ICON_DIMENSION_DEF = 200;
 
     // Error logging

@@ -215,7 +215,7 @@ public class AppViewCreationUtility {
      * @param heightInDp The height of the bitmap in density pixels.
      * @return the final bitmap of the application to be inserted into the AppImageView.
      */
-    public static Bitmap createBitmapFromLayoutWithText(Context context, View view, int widthInDp, int heightInDp) {
+    private static Bitmap createBitmapFromLayoutWithText(Context context, View view, int widthInDp, int heightInDp) {
         int width = LauncherUtility.intToDp(context, widthInDp);
         int height = LauncherUtility.intToDp(context, heightInDp);
 
