@@ -1,7 +1,6 @@
 package dk.aau.cs.giraf.launcher.helper;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -63,7 +62,7 @@ public abstract class LauncherUtility {
      *                     {@code false} launcher will log in as a guardian.
      * @param activity     An activity in which to display a message indicating that debugging is enabled,
      *                     if this is the case. (See
-     *               {@link dk.aau.cs.giraf.launcher.helper.LauncherUtility#showDebugInformation(android.app.Activity)})
+     *                     {@link dk.aau.cs.giraf.launcher.helper.LauncherUtility#showDebugInformation(android.app.Activity)})
      */
     public static void setDebugging(boolean debugging, boolean loginAsChild, Activity activity) {
         DEBUG_MODE = debugging;
@@ -82,22 +81,16 @@ public abstract class LauncherUtility {
      * @param intent  The intent describing the requested activity.
      */
     public static void secureStartActivity(Context context, Intent intent) {
-        try {
-            //If the activity exists, start it. Otherwise throw an exception.
-            if (intent.resolveActivity(context.getPackageManager()) != null) {
-                context.startActivity(intent);
-            } else {
-                throw new ActivityNotFoundException();
-            }
-        } catch (ActivityNotFoundException ex) {
-            // Sending the caught exception to Google Analytics
-            LauncherUtility.sendExceptionGoogleAnalytics(context, ex);
+        //If the activity exists, start it. Otherwise throw an exception.
+        if (intent.resolveActivity(context.getPackageManager())!=null) {
+            context.startActivity(intent);
+        } else {
 
             //Display a toast, to inform the user of the problem.
             Toast toast = Toast.makeText(context,
                 context.getString(R.string.activity_not_found_msg), Toast.LENGTH_SHORT);
             toast.show();
-            Log.e(Constants.ERROR_TAG, ex.getMessage());
+            Log.e(Constants.ERROR_TAG, "App could not be started");
         }
     }
 
@@ -232,7 +225,7 @@ public abstract class LauncherUtility {
      * Converts integer to density pixels (dp).
      *
      * @param context Context of the current activity
-     * @param input       The integer which should be used for conversion
+     * @param input   The integer which should be used for conversion
      * @return input converted to density pixels (dp)
      */
     public static int intToDp(Context context, int input) {
@@ -252,7 +245,7 @@ public abstract class LauncherUtility {
         Helper helper = null;
         try {
             helper = new Helper(context);
-        } catch (Exception e) {
+        } catch (Exception e) { //ToDo Find out which type of exception
             sendExceptionGoogleAnalytics(context, e);
             Log.e(Constants.ERROR_TAG, e.getMessage());
         }

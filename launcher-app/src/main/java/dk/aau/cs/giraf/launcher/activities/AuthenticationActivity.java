@@ -208,7 +208,7 @@ public class AuthenticationActivity extends CaptureActivity {
     public void handleDecode(Result rawResult, final Bitmap barcode) {
         try {
             Helper helper = new Helper(this);
-            Profile profile = null;
+            Profile profile;
 
             // SymDS synchronization uses Users for authentication
             if (BuildConfig.ENABLE_SYMMETRICDS) {
@@ -249,7 +249,7 @@ public class AuthenticationActivity extends CaptureActivity {
                     }, 2000);
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception e) { //ToDo find which type of exception it is
             Toast.makeText(this, getString(R.string.could_not_verify_msg), Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
