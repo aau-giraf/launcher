@@ -16,9 +16,9 @@ import dk.aau.cs.giraf.dblib.models.Application;
 import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.dblib.models.ProfileApplication;
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.activities.SettingsActivity;
 import dk.aau.cs.giraf.launcher.helper.AppViewCreationUtility;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
-import dk.aau.cs.giraf.launcher.activities.SettingsActivity;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppContainerFragment;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
 import dk.aau.cs.giraf.launcher.widgets.AppImageView;
@@ -30,6 +30,8 @@ import java.util.Set;
 /**
  * Created by Marhlder on 18-02-15.
  */
+//TODO fix possible nullpointer exception
+
 public class AppsGridFragment extends Fragment {
 
     private static final String ROW_SIZE_INT_TAG = "ROW_SIZE_INT_TAG";
@@ -40,6 +42,15 @@ public class AppsGridFragment extends Fragment {
     private Set<String> selectedApps;
 
     //ToDo Write JavaDoc
+
+    /**
+     * Constructs an AppsGridFragment using a bundle.
+     *
+     * @param appInfos A list of AppInfo
+     * @param rowSize The amount of rows available
+     * @param columnSize The amount of columns available
+     * @return A newly created AppsGridFragment
+     */
     public static AppsGridFragment newInstance(final ArrayList<AppInfo> appInfos,
                                                final int rowSize, final int columnSize)
     {
