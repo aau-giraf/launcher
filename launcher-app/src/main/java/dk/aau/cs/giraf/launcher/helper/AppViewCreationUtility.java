@@ -48,7 +48,7 @@ public class AppViewCreationUtility {
      * @param context  The context of the current activity
      * @param appsList The array of accessible apps
      */
-    public static synchronized  ArrayList<AppInfo> updateAppInfoList(final Context context,
+    public static synchronized ArrayList<AppInfo> updateAppInfoList(final Context context,
                                                                     final Application[] appsList)
     {
         final ArrayList<AppInfo> appInfoList = new ArrayList<AppInfo>();
@@ -97,12 +97,12 @@ public class AppViewCreationUtility {
      * @return AppImageView
      */
     public static AppImageView createAppImageView(
-            final Context context,
-            final Profile currentUser,
-            final Profile guardian,
-            final AppInfo appInfo,
-            GridLayout targetLayout,
-            View.OnClickListener listener)
+        final Context context,
+        final Profile currentUser,
+        final Profile guardian,
+        final AppInfo appInfo,
+        GridLayout targetLayout,
+        View.OnClickListener listener)
     {
 
         final AppImageView appImageView = new AppImageView(context, appInfo);
@@ -121,12 +121,12 @@ public class AppViewCreationUtility {
                 public void onClick(View view) {
                     Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
                     vibrator.vibrate(100);
-                    try {
+                    if (view.getContext() != null) {
                         Animation animation = AnimationUtils.loadAnimation(view.getContext(),
                             R.anim.app_pressed_animation);
-                        view.startAnimation(animation);
-                    } catch (NullPointerException e) {
-                        // could not get context, no animation.
+                        if (animation != null) {
+                            view.startAnimation(animation);
+                        }
                     }
 
                     AppInfo appInfo;
@@ -197,7 +197,7 @@ public class AppViewCreationUtility {
     private static void setAppBackground(View wrapperView, int backgroundColor) {
         LinearLayout appViewLayout = (LinearLayout) wrapperView.findViewById(R.id.app_bg);
 
-        RoundRectShape roundRect = new RoundRectShape(new float[]{15, 15, 15, 15, 15, 15, 15, 15}, new RectF(), null);
+        RoundRectShape roundRect = new RoundRectShape(new float[] {15, 15, 15, 15, 15, 15, 15, 15}, new RectF(), null);
         ShapeDrawable shapeDrawable = new ShapeDrawable(roundRect);
 
         shapeDrawable.getPaint().setColor(backgroundColor);
@@ -226,15 +226,15 @@ public class AppViewCreationUtility {
 
         //Pre-measure the view so that height and width don't remain null.
         view.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
-                View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
+            View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
 
         //Assign a size and position to the view and all of its descendants
         view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
 
         //Create the bitmap
         Bitmap bitmap = Bitmap.createBitmap(view.getMeasuredWidth(),
-                view.getMeasuredHeight(),
-                Bitmap.Config.ARGB_8888);
+            view.getMeasuredHeight(),
+            Bitmap.Config.ARGB_8888);
         //Create a canvas with the specified bitmap to draw into
         Canvas canvas = new Canvas(bitmap);
 

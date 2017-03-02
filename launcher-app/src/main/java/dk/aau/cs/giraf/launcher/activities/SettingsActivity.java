@@ -308,7 +308,7 @@ public class SettingsActivity extends GirafActivity
         try {
             // Check if the package name exists on the device
             appInfo = pm.getApplicationInfo(packageName, 0);
-        } catch (final PackageManager.NameNotFoundException e) {
+        } catch (PackageManager.NameNotFoundException e) {
             // Don't throw exception, just print stack trace
             e.printStackTrace();
 

@@ -48,12 +48,18 @@ public class AppComparator implements Comparator<Object> {
                 res = ((AppInfo) lhs).getName().compareToIgnoreCase(((AppInfo) rhs).getName());
             }
         } else if (lhs instanceof ResolveInfo && rhs instanceof ResolveInfo) {
-            try {
-                PackageManager packageManager = context.getPackageManager();
+            PackageManager packageManager = context.getPackageManager();
+            if(packageManager != null) {
                 String lhsName = ((ResolveInfo) lhs).activityInfo.loadLabel(packageManager).toString();
                 String rhsName = ((ResolveInfo) rhs).activityInfo.loadLabel(packageManager).toString();
-                res = lhsName.compareToIgnoreCase(rhsName);
-            } catch (NullPointerException e) {
+                if(lhsName != null && rhsName != null) {
+                    res = lhsName.compareToIgnoreCase(rhsName);
+                }
+                else{
+                    res = 0;
+                }
+            }
+            else {
                 res = 0;
             }
         } else {
