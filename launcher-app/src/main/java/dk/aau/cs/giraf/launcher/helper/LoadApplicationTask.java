@@ -188,6 +188,10 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
 
     }
 
+    public android.support.v4.app.FragmentManager getFragmentMangerForAppsFragmentAdapter() {
+        return ((FragmentActivity) context).getSupportFragmentManager();
+    }
+
     /**
      * If the task was cancelled, and the progressbar is not null, hide the progressbar.
      */
