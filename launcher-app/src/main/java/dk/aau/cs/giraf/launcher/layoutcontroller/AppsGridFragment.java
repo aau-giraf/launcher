@@ -28,7 +28,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by Marhlder on 18-02-15.
+ * This class handles how the apps are displayed in the launcher.
  */
 public class AppsGridFragment extends Fragment {
 
@@ -59,8 +59,7 @@ public class AppsGridFragment extends Fragment {
         pac = new ProfileApplicationController(activity);
         final Profile currentUser = ((AppsFragmentInterface) activity).getCurrentUser();
         SharedPreferences preferences = LauncherUtility.getSharedPreferencesForCurrentUser(activity, currentUser);
-        selectedApps = preferences.getStringSet(activity.getResources().getString(R.string.selected_android_apps_key),
-            new HashSet<String>());
+        selectedApps = preferences.getStringSet(activity.getResources().getString(R.string.selected_android_apps_key), new HashSet<String>());
     }
 
     @Override
@@ -124,7 +123,7 @@ public class AppsGridFragment extends Fragment {
         return thisProfileApplication != null;
     }
 
-    protected View.OnClickListener getOnClickListener() {
+    private View.OnClickListener getOnClickListener() {
 
         Fragment parentFragment;
 
