@@ -13,10 +13,10 @@ public class SimulateAnimationDrawable {
      * The ImageView then animation plays in, the index of the frames,
      * the duration between each frame and the index of the last frame.
      */
-    private ImageView imageView;
-    private int[] frames;
-    private int duration;
-    private int lastFrameNo;
+    private final ImageView imageView;
+    private final int[] frames;
+    private final int duration;
+    private final int lastFrameNo;
 
     /**
      * The constructor for the class
