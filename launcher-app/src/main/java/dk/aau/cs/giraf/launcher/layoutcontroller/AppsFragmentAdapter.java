@@ -15,31 +15,39 @@ public class AppsFragmentAdapter extends FragmentStatePagerAdapter {
 
     private List<AppInfo> appInfoList;
     private int rowSize;
-    private int coloumnSize;
+    private int columnSize;
 
-    //ToDo Write JavaDoc
+    /**
+     * Creates an AppsFragmentAdapter.
+     * Based on a FragmentManager and how many apps the user can see.
+     *
+     * @param fm A FragmentManager
+     * @param appInfoList A list of AppInfo
+     * @param rowSize The amount of rows which the user can see
+     * @param columnSize The amount of columns which the user can see
+     */
     public AppsFragmentAdapter(final FragmentManager fm, final List<AppInfo> appInfoList,
-                               final int rowSize, final int coloumnSize)
+                               final int rowSize, final int columnSize)
     {
         super(fm);
 
         this.appInfoList = appInfoList;
         this.rowSize = rowSize;
-        this.coloumnSize = coloumnSize;
+        this.columnSize = columnSize;
     }
 
     @Override
     public Fragment getItem(final int position) {
-        final int from = position * rowSize * coloumnSize;
-        final int to = ((position + 1) * rowSize * coloumnSize);
+        final int from = position * rowSize * columnSize;
+        final int to = ((position + 1) * rowSize * columnSize);
 
         if (to < appInfoList.size()) {
             return AppsGridFragment.newInstance(new ArrayList<AppInfo>(appInfoList.subList(from, to)),
-                rowSize, coloumnSize);
+                rowSize, columnSize);
 
         } else {
             return AppsGridFragment.newInstance(new ArrayList<AppInfo>(appInfoList.subList(from, appInfoList.size())),
-                rowSize, coloumnSize);
+                rowSize, columnSize);
         }
     }
 
@@ -47,7 +55,7 @@ public class AppsFragmentAdapter extends FragmentStatePagerAdapter {
     public int getCount() {
 
         if (appInfoList != null) {
-            return (int) Math.ceil(((double) appInfoList.size()) / (rowSize * coloumnSize));
+            return (int) Math.ceil(((double) appInfoList.size()) / (rowSize * columnSize));
         }
 
         return 0;
@@ -58,12 +66,18 @@ public class AppsFragmentAdapter extends FragmentStatePagerAdapter {
         return POSITION_NONE;
     }
 
-    //ToDo Write JavaDoc
-    public void swapApps(final List<AppInfo> appInfoList, final int rowSize, final int coloumnSize) {
+    /**
+     * Updates the AppFragmentAdapter with a list of new AppInfo, rows and columns.
+     *
+     * @param appInfoList A list of AppInfo
+     * @param rowSize The amount of rows which the user can see
+     * @param columnSize The amount of columns which the user can see
+     */
+    public void swapApps(final List<AppInfo> appInfoList, final int rowSize, final int columnSize) {
 
         this.appInfoList = appInfoList;
         this.rowSize = rowSize;
-        this.coloumnSize = coloumnSize;
+        this.columnSize = columnSize;
 
         this.notifyDataSetChanged();
 

@@ -20,7 +20,9 @@ import dk.aau.cs.giraf.launcher.R;
  */
 public class AppManagementFragment extends android.support.v4.app.Fragment {
 
-    /** These strings are used for opening the Play Store, searching for the correct items.*/
+    /**
+     * These strings are used for opening the Play Store, searching for the correct items.
+     */
     private static final String MARKET_SEARCH_APP_URI = "market://search?q=pub:";
     private static final String MARKET_SEARCH_WEB_URI = "http://play.google.com/store/search?q=pub:";
     //TODO: Remember to change our publisher name when Giraf has been published on Google Play
@@ -28,37 +30,42 @@ public class AppManagementFragment extends android.support.v4.app.Fragment {
 
     /** The FragmentManager is used to manage whcih fragments are current in the FragmentContainer.*/
     /** The girafFragment and the androidFragment are the fragments to be inflated into the container.*/
-    /** The fragmentContainer that contains the inflated girafFragment or androidFragment.*/
+    /**
+     * The fragmentContainer that contains the inflated girafFragment or androidFragment.
+     */
     private android.support.v4.app.FragmentManager fragmentManager;
     //private GirafFragment girafFragment;
     //private AndroidFragment androidFragment;
     //private android.support.v4.app.Fragment fragmentContainer;
 
-    /** All the buttons that make the fragmentContainer inflate the correct fragment or open Play Store.*/
+    /**
+     * All the buttons that make the fragmentContainer inflate the correct fragment or open Play Store.
+     */
     private Button girafAppsButton;
     private Button androidAppsButton;
     private Button googlePlayButton;
 
     /**
      * Because we are dealing with a Fragment, OnCreateView is where most of the variables are set.
-     * @param inflater The inflater (Android takes care of this)
-     * @param container The container, the ViewGroup, that the fragment should be inflate in.
+     *
+     * @param inflater           The inflater (Android takes care of this)
+     * @param container          The container, the ViewGroup, that the fragment should be inflate in.
      * @param savedInstanceState The previously saved instancestate
      * @return the inflated view.
      */
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.settings_appmanagement,
-                container, false);
+            container, false);
 
         this.setRetainInstance(true);
 
         /** Instantiated all the variables needed.*/
         //girafFragment = new GirafFragment();
         //androidFragment = new AndroidFragment();
-        girafAppsButton = (Button)view.findViewById(R.id.settings_giraf_button);
-        androidAppsButton = (Button)view.findViewById(R.id.settings_android_button);
-        googlePlayButton = (Button)view.findViewById(R.id.settings_googleplay_button);
+        girafAppsButton = (Button) view.findViewById(R.id.settings_giraf_button);
+        androidAppsButton = (Button) view.findViewById(R.id.settings_android_button);
+        googlePlayButton = (Button) view.findViewById(R.id.settings_googleplay_button);
         this.setButtonListeners();
 
         /*
@@ -106,13 +113,12 @@ public class AppManagementFragment extends android.support.v4.app.Fragment {
         googlePlayButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 // Try to start the Google Play app
-                try {
-                    Intent intent = new Intent();
-                    intent.setData(Uri.parse(MARKET_SEARCH_APP_URI + PUBLISHER_NAME));
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                Intent intent = new Intent();
+                intent.setData(Uri.parse(MARKET_SEARCH_APP_URI + PUBLISHER_NAME));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                if (intent.resolveActivity(getContext().getPackageManager()) != null) {
                     startActivity(intent);
-                // If Google Play is not found, parse the url for Google Play website
-                } catch (android.content.ActivityNotFoundException e) {
+                } else {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MARKET_SEARCH_WEB_URI + PUBLISHER_NAME)));
                 }
             }
@@ -122,6 +128,7 @@ public class AppManagementFragment extends android.support.v4.app.Fragment {
     /**
      * Replace active fragment by running the transaction in a new thread.
      * Adds responsiveness when loading list of installed apps_container.
+     *
      * @param fragment the fragment.
      */
     private void replaceFragment(final android.support.v4.app.Fragment fragment) {

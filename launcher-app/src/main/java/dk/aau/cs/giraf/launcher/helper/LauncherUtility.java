@@ -85,7 +85,6 @@ public abstract class LauncherUtility {
         if (intent.resolveActivity(context.getPackageManager())!=null) {
             context.startActivity(intent);
         } else {
-
             //Display a toast, to inform the user of the problem.
             Toast toast = Toast.makeText(context,
                 context.getString(R.string.activity_not_found_msg), Toast.LENGTH_SHORT);
