@@ -28,7 +28,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * This class handles how the apps are displayed in the launcher.
+ * This class handles how the apps are displayed in the launcher.'
  */
 //TODO fix possible nullpointer exception
 
