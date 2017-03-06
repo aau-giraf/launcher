@@ -22,21 +22,40 @@ public final class Constants {
     * SharedPreferences keys for log in data.
     */
     public static final String LOGIN_SESSION_INFO = "TIMING";
+    /**
+     * Time of login.
+     */
     public static final String LOGIN_TIME = "DATE";
 
-    // Keys for inserting and retrieving data in Intents
+    /**
+     * Key for inserting and retrieving current guardian in Intents.
+     */
     public static final String GUARDIAN_ID = "currentGuardianID";
+    /**
+     * Key for inserting and retrieving current child in Intents.
+     */
     public static final String CHILD_ID = "currentChildID";
+    /**
+     * If no child is selected -1.
+     */
     public static final long NO_CHILD_SELECTED_ID = -1;
+    /**
+     * Application package name.
+     */
     public static final String APP_PACKAGE_NAME = "appPackageName";
+    /**
+     * Application activity name.
+     */
     public static final String APP_ACTIVITY_NAME = "appActivityName";
+    /**
+     * Background color.
+     */
     public static final String APP_COLOR = "appBackgroundColor";
 
 
     /**
      * Main activity, duration in milliseconds.
      */
-
     public static final int LOGO_ANIMATION_DURATION = 2000;
 
     /**
@@ -49,17 +68,29 @@ public final class Constants {
      */
     public static final int APP_ICON_DIMENSION_DEF = 200;
 
-    // Error logging
+    /**
+     * Error logging.
+     */
     public static final String ERROR_TAG = "launcher";
-
+    /**
+     * List of apps, which needs internet.
+     */
     public static final List<String> OFFLINE_INCAPABLE_APPS =
         Arrays.asList("dk.aau.cs.giraf.administration", "dk.aau.cs.giraf.pictoreader");
 
-    // Used for add apps icon on homescreen
+    /**
+     * Used for add apps icon on homescreen.
+     */
     public static final String ADD_APP_ICON_FAKE_PACKAGE_NAME = "dk.aau.cs.giraf.ADD_APPS_FAKE_PACKAGE_NAME";
+    /**
+     * Enter add app manager.
+     */
     public static final String ENTER_ADD_APP_MANAGER_BOOL = "APP_MANAGER_BOOL";
-
+    /**
+     * Method id offline notification.
+     */
     public static final int METHOD_ID_OFFLINE_NOTIFY = 69;
+
     public static GirafNotifyDialog offlineNotify;
 
     /**
