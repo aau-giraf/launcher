@@ -237,7 +237,8 @@ public class SettingsActivity extends GirafActivity
                 fragmentManager.beginTransaction().add(R.id.settingsContainer, item.getFragment()).commit();
             } else {
                 // Load the fragment just selected into view
-                supportFragmentManager.beginTransaction().add(R.id.settingsContainer, item.getSupportFragment()).commit();
+                supportFragmentManager.beginTransaction().add(R.id.settingsContainer,
+                    item.getSupportFragment()).commit();
             }
         }
 

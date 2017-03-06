@@ -18,5 +18,7 @@ public class IntentSettingsListItem extends SettingsListItem {
         this.intent = intent;
     }
 
-    public Intent getIntent() { return intent ; }
+    public Intent getIntent() {
+        return intent ;
+    }
 }

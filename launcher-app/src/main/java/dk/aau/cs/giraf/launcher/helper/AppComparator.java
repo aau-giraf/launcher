@@ -54,12 +54,10 @@ public class AppComparator implements Comparator<Object> {
                 String rhsName = ((ResolveInfo) rhs).activityInfo.loadLabel(packageManager).toString();
                 if(lhsName != null && rhsName != null) {
                     res = lhsName.compareToIgnoreCase(rhsName);
-                }
-                else{
+                } else {
                     res = 0;
                 }
-            }
-            else {
+            } else {
                 res = 0;
             }
         } else {

@@ -32,6 +32,11 @@ public class FragmentSettingsListItem extends SettingsListItem {
         this.supportFragment = fragment;
     }
 
-    public Fragment getFragment() { return fragment; }
-    public android.support.v4.app.Fragment getSupportFragment() { return supportFragment; }
+    public Fragment getFragment() {
+        return fragment;
+    }
+
+    public android.support.v4.app.Fragment getSupportFragment() {
+        return supportFragment;
+    }
 }

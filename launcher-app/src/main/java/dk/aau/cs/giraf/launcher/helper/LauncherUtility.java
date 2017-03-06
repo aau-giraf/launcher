@@ -62,7 +62,8 @@ public abstract class LauncherUtility {
      *                     {@code false} launcher will log in as a guardian.
      * @param activity     An activity in which to display a message indicating that debugging is enabled,
      *                     if this is the case. (See
-     *                     {@link dk.aau.cs.giraf.launcher.helper.LauncherUtility#showDebugInformation(android.app.Activity)})
+     *                     {@link dk.aau.cs.giraf.launcher.helper.LauncherUtility#
+     *                     showDebugInformation(android.app.Activity)})
      */
     public static void setDebugging(boolean debugging, boolean loginAsChild, Activity activity) {
         DEBUG_MODE = debugging;
@@ -82,7 +83,7 @@ public abstract class LauncherUtility {
      */
     public static void secureStartActivity(Context context, Intent intent) {
         //If the activity exists, start it. Otherwise throw an exception.
-        if (intent.resolveActivity(context.getPackageManager())!=null) {
+        if (intent.resolveActivity(context.getPackageManager()) != null) {
             context.startActivity(intent);
         } else {
             //Display a toast, to inform the user of the problem.
@@ -241,14 +242,7 @@ public abstract class LauncherUtility {
      * @return The generated helper
      */
     public static Helper getOasisHelper(Context context) {
-        Helper helper = null;
-        try {
-            helper = new Helper(context);
-        } catch (Exception e) { //ToDo Find out which type of exception
-            sendExceptionGoogleAnalytics(context, e);
-            Log.e(Constants.ERROR_TAG, e.getMessage());
-        }
-        return helper;
+        return new Helper(context);
     }
 
     /**

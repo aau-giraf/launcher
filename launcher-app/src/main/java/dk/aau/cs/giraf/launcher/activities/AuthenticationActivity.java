@@ -249,7 +249,7 @@ public class AuthenticationActivity extends CaptureActivity {
                     }, 2000);
                 }
             }
-        } catch (Exception e) { //ToDo find which type of exception it is
+        } catch (Exception e) {
             Toast.makeText(this, getString(R.string.could_not_verify_msg), Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
