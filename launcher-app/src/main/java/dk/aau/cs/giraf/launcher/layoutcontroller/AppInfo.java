@@ -70,6 +70,11 @@ public class AppInfo extends Application implements Parcelable {
         this.setAuthor(parentApp.getAuthor());
     }
 
+    /**
+     * Creates a new AppInfo from Parcel information.
+     *
+     * @param in Parcel with information
+     */
     private AppInfo(Parcel in) {
 
         /* Data is put in, in this order:
@@ -150,20 +155,6 @@ public class AppInfo extends Application implements Parcelable {
     }
 
     /**
-     * Getter for the title of the app.
-     * Cuts the name off, to make sure it's not too long to show in the launcher.
-     *
-     * @return shortened name for the app
-     */
-    public String getShortenedName() {
-        if (this.getName().length() > 8) {
-            return this.getName().subSequence(0, 5) + "...";
-        } else {
-            return this.getName();
-        }
-    }
-
-    /**
      * Finds the icon of the app.
      *
      * @param context Context of the current activity.
@@ -181,12 +172,19 @@ public class AppInfo extends Application implements Parcelable {
         }
     }
 
-    //ToDo Write JavaDoc
+
+    /**
+     * Checks if a given AppInfo list contains different apps from an Application list.
+     *
+     * @param appInfos A list of appInfo
+     * @param applications a list of Applications
+     * @return Returns true if the lists contain different apps
+     */
     public static boolean isAppListsDifferent(final List<AppInfo> appInfos, final List<Application> applications) {
         if ((appInfos == null || appInfos.isEmpty()) && (applications == null || applications.isEmpty())) {
             return false;
         }
-        if (appInfos != null && applications == null || appInfos == null && applications != null) {
+        if ((appInfos != null && applications == null) || appInfos == null) {
             return true;
         }
         if (appInfos.size() != applications.size()) {

@@ -28,8 +28,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by Marhlder on 18-02-15.
+ * This class handles how the apps are displayed in the launcher.
  */
+//TODO fix possible nullpointer exception
+
 public class AppsGridFragment extends Fragment {
 
     private static final String ROW_SIZE_INT_TAG = "ROW_SIZE_INT_TAG";
@@ -40,6 +42,15 @@ public class AppsGridFragment extends Fragment {
     private Set<String> selectedApps;
 
     //ToDo Write JavaDoc
+
+    /**
+     * Constructs an AppsGridFragment using a bundle.
+     *
+     * @param appInfos A list of AppInfo
+     * @param rowSize The amount of rows available
+     * @param columnSize The amount of columns available
+     * @return A newly created AppsGridFragment
+     */
     public static AppsGridFragment newInstance(final ArrayList<AppInfo> appInfos,
                                                final int rowSize, final int columnSize)
     {
@@ -59,8 +70,7 @@ public class AppsGridFragment extends Fragment {
         pac = new ProfileApplicationController(activity);
         final Profile currentUser = ((AppsFragmentInterface) activity).getCurrentUser();
         SharedPreferences preferences = LauncherUtility.getSharedPreferencesForCurrentUser(activity, currentUser);
-        selectedApps = preferences.getStringSet(activity.getResources().getString(R.string.selected_android_apps_key),
-            new HashSet<String>());
+        selectedApps = preferences.getStringSet(activity.getResources().getString(R.string.selected_android_apps_key), new HashSet<String>());
     }
 
     @Override
@@ -124,7 +134,7 @@ public class AppsGridFragment extends Fragment {
         return thisProfileApplication != null;
     }
 
-    protected View.OnClickListener getOnClickListener() {
+    private View.OnClickListener getOnClickListener() {
 
         Fragment parentFragment;
 
