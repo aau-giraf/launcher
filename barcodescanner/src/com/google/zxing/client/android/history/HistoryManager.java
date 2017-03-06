@@ -131,13 +131,13 @@ public final class HistoryManager {
       close(cursor, db);
     }
   }
-  
+
   public void deleteHistoryItem(int number) {
     SQLiteOpenHelper helper = new DBHelper(activity);
     SQLiteDatabase db = null;
     Cursor cursor = null;
     try {
-      db = helper.getWritableDatabase();      
+      db = helper.getWritableDatabase();
       cursor = db.query(DBHelper.TABLE_NAME,
                         ID_COL_PROJECTION,
                         null, null, null, null,
@@ -171,7 +171,7 @@ public final class HistoryManager {
     SQLiteOpenHelper helper = new DBHelper(activity);
     SQLiteDatabase db = null;
     try {
-      db = helper.getWritableDatabase();      
+      db = helper.getWritableDatabase();
       // Insert the new entry into the DB.
       db.insert(DBHelper.TABLE_NAME, DBHelper.TIMESTAMP_COL, values);
     } finally {
@@ -183,7 +183,7 @@ public final class HistoryManager {
     // As we're going to do an update only we don't need need to worry
     // about the preferences; if the item wasn't saved it won't be udpated
     SQLiteOpenHelper helper = new DBHelper(activity);
-    SQLiteDatabase db = null;    
+    SQLiteDatabase db = null;
     Cursor cursor = null;
     try {
       db = helper.getWritableDatabase();
@@ -217,7 +217,7 @@ public final class HistoryManager {
     SQLiteOpenHelper helper = new DBHelper(activity);
     SQLiteDatabase db = null;
     try {
-      db = helper.getWritableDatabase();      
+      db = helper.getWritableDatabase();
       db.delete(DBHelper.TABLE_NAME, DBHelper.TEXT_COL + "=?", new String[] { text });
     } finally {
       close(null, db);
@@ -229,7 +229,7 @@ public final class HistoryManager {
     SQLiteDatabase db = null;
     Cursor cursor = null;
     try {
-      db = helper.getWritableDatabase();      
+      db = helper.getWritableDatabase();
       cursor = db.query(DBHelper.TABLE_NAME,
                         ID_COL_PROJECTION,
                         null, null, null, null,
@@ -296,12 +296,12 @@ public final class HistoryManager {
       close(cursor, db);
     }
   }
-  
+
   void clearHistory() {
     SQLiteOpenHelper helper = new DBHelper(activity);
     SQLiteDatabase db = null;
     try {
-      db = helper.getWritableDatabase();      
+      db = helper.getWritableDatabase();
       db.delete(DBHelper.TABLE_NAME, null, null);
     } finally {
       close(null, db);
@@ -338,7 +338,7 @@ public final class HistoryManager {
   private static String massageHistoryField(String value) {
     return value == null ? "" : value.replace("\"","\"\"");
   }
-  
+
   private static void close(Cursor cursor, SQLiteDatabase database) {
     if (cursor != null) {
       cursor.close();

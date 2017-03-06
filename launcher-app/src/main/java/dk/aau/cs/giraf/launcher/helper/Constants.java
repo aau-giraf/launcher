@@ -90,7 +90,9 @@ public final class Constants {
      * Method id offline notification.
      */
     public static final int METHOD_ID_OFFLINE_NOTIFY = 69;
-
+    /**
+     * Offline notification.
+     */
     public static GirafNotifyDialog offlineNotify;
 
     /**
