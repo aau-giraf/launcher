@@ -70,7 +70,8 @@ public class AppsGridFragment extends Fragment {
         pac = new ProfileApplicationController(activity);
         final Profile currentUser = ((AppsFragmentInterface) activity).getCurrentUser();
         SharedPreferences preferences = LauncherUtility.getSharedPreferencesForCurrentUser(activity, currentUser);
-        selectedApps = preferences.getStringSet(activity.getResources().getString(R.string.selected_android_apps_key), new HashSet<String>());
+        selectedApps = preferences.getStringSet(activity.getResources()
+            .getString(R.string.selected_android_apps_key), new HashSet<String>());
     }
 
     @Override

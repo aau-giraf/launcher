@@ -367,6 +367,11 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
 
         final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
+        /**
+         * The constructer for the messageHandler.
+         * @param activity the activity.
+         * @param loadAnimation the loadanimation.
+         */
         public MessageHandler(final MainActivity activity, final Animation loadAnimation) {
             this.activity = new WeakReference<MainActivity>(activity);
             this.loadAnimation = loadAnimation;

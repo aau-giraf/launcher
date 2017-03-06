@@ -22,6 +22,13 @@ public class SeekBarWithNumericScale extends SeekBar {
     private int firstScaleItemValue;
     private int lastScaleItemValue;
 
+    /**
+     * One of the constructers.
+     * @param context the context
+     * @param firstScaleItemValue the first scale value
+     * @param lastScaleItemValue the last scale value
+     * @param scaleFontSize the font scale size
+     */
     public SeekBarWithNumericScale(final Context context,
                                    final int firstScaleItemValue, final int lastScaleItemValue, final int scaleFontSize)
     {
@@ -30,6 +37,11 @@ public class SeekBarWithNumericScale extends SeekBar {
         init(firstScaleItemValue, lastScaleItemValue, toSp(scaleFontSize));
     }
 
+    /**
+     * One of the constructers.
+     * @param context the context
+     * @param attrs some attributes
+     */
     public SeekBarWithNumericScale(final Context context, final AttributeSet attrs) {
         super(context, attrs);
 
@@ -41,6 +53,12 @@ public class SeekBarWithNumericScale extends SeekBar {
             a.getDimension(R.styleable.SeekBarWithNumericScale_scaleTextSize, toSp(14)));
     }
 
+    /**
+     * On of the constructers.
+     * @param context the context
+     * @param attrs some attributes
+     * @param defStyle the def style
+     */
     public SeekBarWithNumericScale(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
 
@@ -63,6 +81,12 @@ public class SeekBarWithNumericScale extends SeekBar {
                 integer, getResources().getDisplayMetrics());
     }
 
+    /**
+     * Initialize the seekbar.
+     * @param firstScaleItemValue the first scale value
+     * @param lastScaleItemValue the last scale value
+     * @param fontSize the font size
+     */
     public void init(final int firstScaleItemValue, final int lastScaleItemValue, final float fontSize) {
 
         this.firstScaleItemValue = firstScaleItemValue;

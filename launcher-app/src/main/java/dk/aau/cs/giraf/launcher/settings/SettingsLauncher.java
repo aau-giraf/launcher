@@ -13,6 +13,11 @@ public class SettingsLauncher extends PreferenceFragment {
 
     private static final String USER_IDENTIFICATION_STRING_TAG = "content";
 
+    /**
+     * Returns a new instance of the settings launcher.
+     * @param text The identification string tag.
+     * @return the new instance.
+     */
     public static SettingsLauncher newInstance(final String text) {
         final SettingsLauncher newFragment = new SettingsLauncher();
 
