@@ -51,7 +51,14 @@ public final class Constants {
      * Background color.
      */
     public static final String APP_COLOR = "appBackgroundColor";
-
+    /**
+     *
+     */
+    public static final String LAUNCHER_TAG ="GirafLauncher";
+    /**
+     * Started by tag.
+     */
+    public static final String STARTED_BY = "StartedBy";
 
     /**
      * Main activity, duration in milliseconds.

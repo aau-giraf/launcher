@@ -174,7 +174,7 @@ public class AppViewCreationUtility {
                         intent.putExtra(Constants.APP_COLOR, appInfo.getBgColor());
                         intent.putExtra(Constants.APP_PACKAGE_NAME, appInfo.getPackage());
                         intent.putExtra(Constants.APP_ACTIVITY_NAME, appInfo.getActivity());
-
+                        intent.putExtra(Constants.STARTED_BY, Constants.LAUNCHER_TAG);
                         // Verify the intent will resolve to at least one activity
                         LauncherUtility.secureStartActivity(view.getContext(), intent);
                     }
