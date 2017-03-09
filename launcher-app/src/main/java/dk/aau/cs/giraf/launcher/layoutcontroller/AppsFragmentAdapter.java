@@ -3,6 +3,7 @@ package dk.aau.cs.giraf.launcher.layoutcontroller;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +80,13 @@ public class AppsFragmentAdapter extends FragmentStatePagerAdapter {
         this.rowSize = rowSize;
         this.columnSize = columnSize;
 
-        this.notifyDataSetChanged();
+        //ToDo We only got this exception once, so we could not test it, as such we use try / catch
+        try {
+            this.notifyDataSetChanged();
+        } catch (IllegalStateException e) {
+            //ToDo Find out if the app can run if this happens
+            Log.e("Launcher","Fragment is not in FragmentManager");
+        }
 
     }
 }
