@@ -152,8 +152,7 @@ public abstract class LauncherUtility {
 
         editor.putLong(Constants.LOGIN_TIME, loginTime);
         editor.putLong(Constants.GUARDIAN_ID, id);
-
-        editor.apply();
+        editor.commit();
     }
 
     /**
@@ -204,7 +203,7 @@ public abstract class LauncherUtility {
         editor.putLong(Constants.GUARDIAN_ID, -1);
         editor.putLong(Constants.CHILD_ID, -1);
 
-        editor.apply();
+        editor.commit();
     }
 
     /**
