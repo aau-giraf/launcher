@@ -332,6 +332,7 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
      */
     private void findOldSession() {
         if (LauncherUtility.sessionExpired(this)) {
+            LauncherUtility.logOutIntent(this);
             oldSessionGuardianId = -1L;
         } else {
             final SharedPreferences sharedPreferences = getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
