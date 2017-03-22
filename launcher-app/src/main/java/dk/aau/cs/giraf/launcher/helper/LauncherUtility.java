@@ -228,6 +228,7 @@ public abstract class LauncherUtility {
         Long lastAuthTime = sp.getLong(Constants.LOGIN_TIME, 1);
         Date date = new Date();
 
+        //Get time returns the time in millisecs since Jan 1. 1970. 00.00.00 GMT
         return date.getTime() > lastAuthTime + Constants.TIME_TO_STAY_LOGGED_IN;
     }
 
