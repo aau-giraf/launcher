@@ -157,7 +157,10 @@ public abstract class LauncherUtility {
 
         editor.putLong(Constants.LOGIN_TIME, loginTime);
         editor.putLong(Constants.GUARDIAN_ID, id);
-        editor.commit();
+        Boolean succes = editor.commit();
+        if(!succes){
+            Log.e("Launcher","Writing to Shared Preferneces failed");
+        }
     }
 
     /**
@@ -208,7 +211,10 @@ public abstract class LauncherUtility {
         editor.putLong(Constants.GUARDIAN_ID, -1);
         editor.putLong(Constants.CHILD_ID, -1);
 
-        editor.commit();
+        Boolean succes = editor.commit();
+        if(!succes){
+            Log.e("Launcher","Writing to Shared Preferneces failed");
+        }
     }
 
     /**
