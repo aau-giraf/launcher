@@ -84,7 +84,12 @@ public abstract class LauncherUtility {
     public static void secureStartActivity(Context context, Intent intent) {
         //If the activity exists, start it. Otherwise throw an exception.
         if (intent.resolveActivity(context.getPackageManager()) != null) {
-            context.startActivity(intent);
+            /* We catch a general exception as we do not know the why the launched application crashes. */
+            try {
+                context.startActivity(intent);
+            } catch (Exception e) {
+                return;
+            }
         } else {
             //Display a toast, to inform the user of the problem.
             Toast toast = Toast.makeText(context,

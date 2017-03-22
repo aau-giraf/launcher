@@ -52,9 +52,9 @@ public final class Constants {
      */
     public static final String APP_COLOR = "appBackgroundColor";
     /**
-     *
+     * Launcher tag.
      */
-    public static final String LAUNCHER_TAG ="GirafLauncher";
+    public static final String LAUNCHER_TAG = "GirafLauncher";
     /**
      * Started by tag.
      */
