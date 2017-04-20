@@ -12,7 +12,7 @@
     <string name="logging_in_msg">Logger ind</string>
     <string name="authentication_headline">Sådan logger du ind:</string>
     <string name="authentication_step1">Scan dit GIRAF-kort, ved at holde det ca. 25cm foran kameraet.</string>
-    <string name="username">Bruger Navn</string>
-    <string name="password">Password</string>
+    <string name="username">Brugernavn</string>
+    <string name="password">Kodeord</string>
     <string name="login">Log Ind</string>
 </resources>

@@ -26,7 +26,6 @@ import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
-import dk.aau.cs.giraf.localdb.main;
 import dk.aau.cs.giraf.utilities.NetworkUtilities;
 
 import java.lang.ref.WeakReference;
@@ -126,6 +125,12 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
         findViewById(R.id.giraficon).startAnimation(startingAnimation);
         startingAnimation.setAnimationListener(this);
 
+        //Todo plz remember to remove this again
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        finish();
+        /*
         //Check network status
         if (offlineMode()  && !hasProfiles()) {
             //Show offline mode dialog because the local db has no profiles
@@ -150,7 +155,7 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
             } else {
                 startSync();
             }
-        }
+        }*/
     }
 
     /**
@@ -224,8 +229,8 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
      * Starts the remote syncing service according to parameters set in the build config.
      */
     private void startSync() {
-        new main(this).startSynch(new MessageHandler(this, loadAnimation),
-            BuildConfig.ENABLE_SYMMETRICDS, BuildConfig.USE_TEST_SERVER, BuildConfig.USE_PRODUCTION_SERVER);
+        //new main(this).startSynch(new MessageHandler(this, loadAnimation),
+           //BuildConfig.ENABLE_SYMMETRICDS, BuildConfig.USE_TEST_SERVER, BuildConfig.USE_PRODUCTION_SERVER);
     }
 
     /**
@@ -264,7 +269,7 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
             intent = skipAuthentication(debugAsChild);
         } else if (LauncherUtility.sessionExpired(this)) {
             // If no valid session is found, start authentication_activity
-            intent = new Intent(this, AuthenticationActivity.class);
+            intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         } else {
             //If a valid session is found, pass the profile ID along with the intent.
