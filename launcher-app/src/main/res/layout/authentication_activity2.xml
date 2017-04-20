@@ -11,19 +11,18 @@
         android:weightSum="5">
 
     <ImageView
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="50dp"
             android:src="@drawable/giraf_loading"
             android:layout_width="match_parent"
-            android:layout_height="102dp" android:id="@+id/imageView"/>
+            android:layout_height="150dp" android:id="@+id/imageView"/>
     <TextView
+            android:layout_marginTop="25dp"
             android:layout_width="500dp"
             android:layout_height="wrap_content"
             android:text="@string/username"
             android:id="@+id/username_label"
             android:textSize="30sp"
-            android:textColor="#aaaaaa"
-            android:shadowColor="#000"
-            android:shadowRadius="3"
+            android:textColor="#000000"
             android:layout_gravity="center"/>
 
     <LinearLayout
@@ -49,9 +48,7 @@
             android:text="@string/password"
             android:id="@+id/pass_label"
             android:textSize="30sp"
-            android:textColor="#aaaaaa"
-            android:shadowColor="#000"
-            android:shadowRadius="3"
+            android:textColor="#000000"
             android:layout_gravity="center"/>
     <LinearLayout
             android:orientation="horizontal"
@@ -75,8 +72,8 @@
             android:layout_height="match_parent"
             android:layout_gravity="center">
         <Button
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
                 android:layout_marginTop="10dp"
                 android:layout_gravity="end"
                 android:text="@string/login"
