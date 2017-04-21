@@ -16,6 +16,7 @@ import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -41,6 +42,7 @@ import dk.aau.cs.giraf.showcaseview.ShowcaseManager;
 import dk.aau.cs.giraf.showcaseview.ShowcaseView;
 import dk.aau.cs.giraf.showcaseview.targets.Target;
 import dk.aau.cs.giraf.showcaseview.targets.ViewTarget;
+import dk.aau.cs.giraf.utilities.GrayScaleHelper;
 
 import java.util.ArrayList;
 
@@ -94,6 +96,7 @@ public class SettingsActivity extends GirafActivity
      */
     private static final String SETTINGS_INTENT = ".SETTINGSACTIVITY";
 
+
     /**
      * The onCreate method must be overridden as usual, and initialized most of the variables needed by the Activity.
      * In particular, because te SettingsActivity mostly handles Fragments, it initializes the FragmentManager and
@@ -144,6 +147,7 @@ public class SettingsActivity extends GirafActivity
                         settingsListAdapter.notifyDataSetChanged();
                     }
                 }
+                setGrayScale();
             }
         });
 
@@ -290,6 +294,24 @@ public class SettingsActivity extends GirafActivity
 
         // Return all applications
         return appList;
+    }
+
+    @Override
+    public void onUserInteraction()
+    {
+        setGrayScale();
+    }
+
+    private void setGrayScale() {
+        SharedPreferences prefs = SettingsUtility.getLauncherSettings(this,
+            LauncherUtility.getSharedPreferenceUser(currentUser));
+        Window window = getWindow();
+        View test = window.getDecorView();
+        int id = getResources().getIdentifier("action_bar_container", "id", "android");
+        View bar = test.findViewById(id);
+        View view = findViewById(android.R.id.content);
+        GrayScaleHelper.setGray(view, prefs.getBoolean(getString(R.string.toggle_gray_scale_preference_key), true));
+        GrayScaleHelper.setGray(bar, prefs.getBoolean(getString(R.string.toggle_gray_scale_preference_key), true));
     }
 
     /**
@@ -538,7 +560,7 @@ public class SettingsActivity extends GirafActivity
                     }
                 });
         }
-
+        setGrayScale();
     }
 
     @Override

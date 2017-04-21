@@ -33,11 +33,13 @@ import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
+import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
 import dk.aau.cs.giraf.showcaseview.ShowcaseManager;
 import dk.aau.cs.giraf.showcaseview.ShowcaseView;
 import dk.aau.cs.giraf.showcaseview.targets.ViewTarget;
+import dk.aau.cs.giraf.utilities.GrayScaleHelper;
 import dk.aau.cs.giraf.utilities.NetworkUtilities;
 
 import java.util.ArrayList;
@@ -164,6 +166,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
 
         // Start logging this activity
         EasyTracker.getInstance(this).activityStart(this);
+        setGrayscale();
     }
 
     /**
@@ -224,6 +227,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         EasyTracker.getInstance(this).activityStop(this);
     }
 
+
     /**
      * This method is called whenever the launcher home screen is returned to.
      * For example when returning from an app or the settings page.
@@ -264,6 +268,20 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                         }
                     }
                 });
+        }
+        setGrayscale();
+    }
+
+    boolean grayScaleToggled = false;
+
+    private void setGrayscale(){
+        SharedPreferences prefs = SettingsUtility.getLauncherSettings(this,
+            LauncherUtility.getSharedPreferenceUser(currentUser));
+        boolean tempGrayScale = prefs.getBoolean(getString(R.string.toggle_gray_scale_preference_key), true);
+        View view = findViewById(android.R.id.content);
+        if (tempGrayScale != grayScaleToggled) {
+            grayScaleToggled = tempGrayScale;
+            GrayScaleHelper.setGray(view, grayScaleToggled);
         }
     }
 

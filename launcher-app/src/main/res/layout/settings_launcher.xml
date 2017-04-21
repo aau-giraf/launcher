@@ -20,6 +20,16 @@
             android:defaultValue="true"
             android:layout_gravity="left"/>
 
+    <dk.aau.cs.giraf.launcher.settings.components.LeftAlignedSwitchPreference
+            android:id="@+id/toggle_gray_scale"
+            android:key="@string/toggle_gray_scale_preference_key"
+            android:title="Gråskala"
+            android:summary="Vis applikationer i gråskala"
+            android:switchTextOff="@string/setting_launcher_animation_off"
+            android:switchTextOn="@string/setting_launcher_animation_on"
+            android:defaultValue="false"
+            android:layout_gravity="left"/>
+
     <dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer
             android:id="@+id/icon_resizer"
             android:key="@string/grid_size_preference_key"
