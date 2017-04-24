@@ -64,7 +64,8 @@
                 android:noHistory="true"
                 android:launchMode="singleInstance"
                 android:screenOrientation="landscape"
-                android:theme="@style/GirafTheme.NoTitleBar">
+                android:theme="@style/GirafTheme.NoTitleBar"
+                android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
                 <action android:name="dk.aau.cs.giraf.launcher.AUTHENTICATE"/>
                 <category android:name="dk.aau.cs.giraf.launcher.GIRAF"/>
