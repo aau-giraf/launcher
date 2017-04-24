@@ -277,12 +277,9 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     private void setGrayscale(){
         SharedPreferences prefs = SettingsUtility.getLauncherSettings(this,
             LauncherUtility.getSharedPreferenceUser(currentUser));
-        boolean tempGrayScale = prefs.getBoolean(getString(R.string.toggle_gray_scale_preference_key), true);
-        View view = findViewById(android.R.id.content);
-        if (tempGrayScale != grayScaleToggled) {
-            grayScaleToggled = tempGrayScale;
-            GrayScaleHelper.setGray(view, grayScaleToggled);
-        }
+
+        GrayScaleHelper.setGrayScaleForActivity(this, prefs.getBoolean(
+            getString(R.string.toggle_gray_scale_preference_key), true));
     }
 
     /**
