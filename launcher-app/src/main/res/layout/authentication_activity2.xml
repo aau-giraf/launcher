@@ -14,7 +14,8 @@
             android:layout_marginTop="50dp"
             android:src="@drawable/giraf_loading"
             android:layout_width="match_parent"
-            android:layout_height="150dp" android:id="@+id/imageView"/>
+            android:layout_height="150dp"
+            android:id="@+id/girafHeaderIcon"/>
     <TextView
             android:layout_marginTop="25dp"
             android:layout_width="500dp"

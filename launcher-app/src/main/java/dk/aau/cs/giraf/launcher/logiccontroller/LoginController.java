@@ -18,7 +18,7 @@ public class LoginController {
         this.gui = gui;
     }
 
-    private void login(Long id) {
+    public void login(Long id) {
         Intent homeIntent = new Intent(gui, HomeActivity.class);
         homeIntent.putExtra(Constants.GUARDIAN_ID, id);
         homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
