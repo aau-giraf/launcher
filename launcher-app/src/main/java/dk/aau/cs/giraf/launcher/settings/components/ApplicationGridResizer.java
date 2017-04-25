@@ -11,11 +11,11 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 import dk.aau.cs.giraf.launcher.widgets.GridPreviewView;
+import dk.aau.cs.giraf.models.core.User;
 
 /**
  * Custom preference class for the launcher settings. This preference provides two seeking bars and an
@@ -40,7 +40,7 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
      * @param currentUser the currentUser
      * @return The column size saved in the shared preference for the current user
      */
-    public static int getGridColumnSize(final Context context, final Profile currentUser) {
+    public static int getGridColumnSize(final Context context, final User currentUser) {
 
         final SharedPreferences pref = SettingsUtility.getLauncherSettings(context,
             LauncherUtility.getSharedPreferenceUser(currentUser));
@@ -54,7 +54,7 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
      * @param currentUser the current user
      * @return The row size saved in the shared preference for the current user
      */
-    public static int getGridRowSize(final Context context, final Profile currentUser) {
+    public static int getGridRowSize(final Context context, final User currentUser) {
 
         final SharedPreferences pref = SettingsUtility.getLauncherSettings(context,
             LauncherUtility.getSharedPreferenceUser(currentUser));

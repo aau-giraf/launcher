@@ -22,9 +22,6 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import dk.aau.cs.giraf.activity.GirafActivity;
-import dk.aau.cs.giraf.dblib.Helper;
-import dk.aau.cs.giraf.dblib.controllers.ProfileController;
-import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GirafPictogramItemView;
 import dk.aau.cs.giraf.gui.GirafProfileSelectorDialog;
@@ -37,6 +34,7 @@ import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppContainerFragm
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementFragment;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.GirafFragment;
+import dk.aau.cs.giraf.models.core.User;
 import dk.aau.cs.giraf.showcaseview.ShowcaseManager;
 import dk.aau.cs.giraf.showcaseview.ShowcaseView;
 import dk.aau.cs.giraf.showcaseview.targets.Target;
@@ -64,8 +62,8 @@ public class SettingsActivity extends GirafActivity
     private FragmentManager fragmentManager;
     private android.support.v4.app.FragmentManager supportFragmentManager;
 
-    private Profile currentUser = null;
-    private Profile loggedInGuardian;
+    private User currentUser = null;
+    private User loggedInGuardian;
 
     private ListView settingsListView;
     private SettingsListAdapter settingsListAdapter;
@@ -150,11 +148,9 @@ public class SettingsActivity extends GirafActivity
         final GirafPictogramItemView mProfileButton =
             (GirafPictogramItemView) findViewById(R.id.profile_widget_settings);
 
-        ProfileController profileController = new ProfileController(this);
-
         final long childId = this.getIntent().getLongExtra(Constants.CHILD_ID, -1);
 
-        Profile currentUser;
+        User currentUser;
 
         // The childIdNew is -1 meaning that no childs are available
         if (childId == -1) {
@@ -174,9 +170,7 @@ public class SettingsActivity extends GirafActivity
 
         //Load the correct profile picture for the choosen profile
         mProfileButton.setImageModel(currentUser, this.getResources().getDrawable(R.drawable.no_profile_pic));
-        mProfileButton.setTitle(currentUser.getName());
-
-        final Helper helper = LauncherUtility.getOasisHelper(this);
+        mProfileButton.setTitle(currentUser.getUsername()); //Todo change to screen name when it exist
 
         final long childIdNew = getIntent().getExtras().getLong(Constants.CHILD_ID);
         final long guardianId = getIntent().getExtras().getLong(Constants.GUARDIAN_ID);
@@ -191,7 +185,7 @@ public class SettingsActivity extends GirafActivity
 
         // Change the title of the action bar to include the name of the current user
         if (currentUser != null) {
-            this.setActionBarTitle(getString(R.string.settingsFor) + currentUser.getName());
+            this.setActionBarTitle(getString(R.string.settingsFor) + currentUser.getUsername()); //Todo change to screen name when it exist
         }
 
         final GirafButton changeUserButton = new GirafButton(this, this.getResources()
@@ -461,7 +455,7 @@ public class SettingsActivity extends GirafActivity
      * @param profile The selected profile.
      */
     @Override
-    public void setCurrentUser(Profile profile) {
+    public void setCurrentUser(User profile) {
         currentUser = profile;
     }
 
@@ -470,7 +464,7 @@ public class SettingsActivity extends GirafActivity
      *
      * @return profile of the current user
      */
-    public Profile getCurrentUser() {
+    public User getCurrentUser() {
         return currentUser;
     }
 
@@ -480,12 +474,12 @@ public class SettingsActivity extends GirafActivity
      * @return profile of the logged in guardian
      */
     @Override
-    public Profile getLoggedInGuardian() {
+    public User getLoggedInGuardian() {
         return loggedInGuardian;
     }
 
     @Override
-    public void onProfileSelected(final int input, final Profile profile) {
+    public void onProfileSelected(final int input, final User profile) {
         if (input == CHANGE_USER_SELECTOR_DIALOG) {
 
             // Notify that a profile selection has been made
