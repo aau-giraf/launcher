@@ -11,8 +11,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import dk.aau.cs.giraf.dblib.controllers.ProfileController;
-import dk.aau.cs.giraf.dblib.models.Profile;
+//import dk.aau.cs.giraf.dblib.controllers.ProfileController;
+//import dk.aau.cs.giraf.dblib.models.Profile;
+
+import dk.aau.cs.giraf.models.core.User;
 import dk.aau.cs.giraf.gui.GirafPictogramItemView;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.SettingsActivity;
@@ -78,7 +80,7 @@ public class SettingsListFragment extends Fragment {
          *
          * @param profile The selected profile.
          */
-        public void setCurrentUser(Profile profile);
+        public void setCurrentUser(User profile);
     }
 
     /**
@@ -105,7 +107,7 @@ public class SettingsListFragment extends Fragment {
 
         final long childId = getActivity().getIntent().getLongExtra(Constants.CHILD_ID, -1);
 
-        Profile currentUser;
+        User currentUser;
 
         // The childId is -1 meaning that no childs are available
         if (childId == -1) {
@@ -127,7 +129,7 @@ public class SettingsListFragment extends Fragment {
 
         //Load the correct profile picture for the choosen profile
         mProfileButton.setImageModel(currentUser, this.getResources().getDrawable(R.drawable.no_profile_pic));
-        mProfileButton.setTitle(currentUser.getName());
+        mProfileButton.setTitle(currentUser.getUsername());
 
         return view;
     }
