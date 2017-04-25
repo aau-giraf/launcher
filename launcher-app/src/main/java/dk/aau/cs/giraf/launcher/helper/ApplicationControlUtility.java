@@ -9,6 +9,7 @@ import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.dblib.models.Application;
 import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.models.core.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ public class ApplicationControlUtility {
      * @param user    The user to find apps_container for.
      * @return List of apps that are usable by this user on this device.
      */
-    public static List<Application> getAvailableGirafAppsForUser(Context context, Profile user) {
+    public static List<Application> getAvailableGirafAppsForUser(Context context, User user) {
         Helper helper = LauncherUtility.getOasisHelper(context);
 
         List<Application> userApps = helper.applicationHelper.getApplicationsByProfile(user);

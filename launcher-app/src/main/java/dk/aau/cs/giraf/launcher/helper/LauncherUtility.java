@@ -14,10 +14,10 @@ import android.widget.Toast;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.google.analytics.tracking.android.StandardExceptionParser;
-import dk.aau.cs.giraf.dblib.Helper;
-import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.AuthenticationActivity;
+import dk.aau.cs.giraf.models.core.Department;
+import dk.aau.cs.giraf.models.core.User;
 
 import java.util.Date;
 
@@ -170,8 +170,7 @@ public abstract class LauncherUtility {
      * @param context Context in which the login information was saved.
      * @return The currently logged in user. If no login information is found, {@code null} is returned.
      */
-    public static Profile getCurrentUser(final Context context) {
-        final Helper helper = getOasisHelper(context);
+    public static User getCurrentUser(final Context context) {
 
         //Get the ID of the logged in user from SharedPreferences.
         final SharedPreferences sp = context.getSharedPreferences(Constants.LOGIN_SESSION_INFO, 0);
@@ -181,7 +180,7 @@ public abstract class LauncherUtility {
         if (currentUserId == -1) {
             return null;
         } else {
-            return helper.profilesHelper.getById(currentUserId);
+            return new User(new Department("remove"),"this","soon"); //Todo replace with call to rest when finished
         }
     }
 
@@ -245,18 +244,6 @@ public abstract class LauncherUtility {
     }
 
     /**
-     * This function tries generates an OasisLib Helper, based on the current context.
-     * If it succeeds, returns the helper, otherwise sends information to Google Analytics
-     * about the error and return null
-     *
-     * @param context The context of the current activity
-     * @return The generated helper
-     */
-    public static Helper getOasisHelper(Context context) {
-        return new Helper(context);
-    }
-
-    /**
      * This function returns substring of the correct preference string based on the user profile.
      * Checks for the role and appends the correct role prefix to the profiles ID.
      * This is used to find out which settings file to read.
@@ -264,31 +251,10 @@ public abstract class LauncherUtility {
      * @param profile The profile to generate a string for
      * @return The substring generated.
      */
-    public static String getSharedPreferenceUser(Profile profile) {
+    public static String getSharedPreferenceUser(User profile) {
         String fileName = "";
-        if (profile == null)
-            fileName += "u";
-        else {
-            switch (profile.getRole()) {
-                case GUARDIAN:
-                    fileName += "g";
-                    break;
-                case CHILD:
-                    fileName += "c";
-                    break;
-                case ADMIN:
-                    fileName += "a";
-                    break;
-                case PARENT:
-                    fileName += "p";
-                    break;
-                default: // File type is unknown
-                    fileName += "u";
-                    break;
-            }
-            fileName += String.valueOf(profile.getId());
-        }
-
+        fileName += "u";
+        fileName += String.valueOf(profile.getId());
         return fileName;
     }
 
@@ -302,7 +268,7 @@ public abstract class LauncherUtility {
      * @param profile The profile we are retrieving settings for
      * @return The settings for the given user in the given context.
      */
-    public static SharedPreferences getSharedPreferencesForCurrentUser(Context context, Profile profile) {
+    public static SharedPreferences getSharedPreferencesForCurrentUser(Context context, User profile) {
         String fileName = Constants.TAG + ".";
         fileName += getSharedPreferenceUser(profile);
         return context.getSharedPreferences(fileName, Context.MODE_PRIVATE);

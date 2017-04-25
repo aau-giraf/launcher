@@ -35,6 +35,7 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
+import dk.aau.cs.giraf.models.core.User;
 import dk.aau.cs.giraf.showcaseview.ShowcaseManager;
 import dk.aau.cs.giraf.showcaseview.ShowcaseView;
 import dk.aau.cs.giraf.showcaseview.targets.ViewTarget;
@@ -55,8 +56,8 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
 {
     private static final String IS_FIRST_RUN_KEY = "IS_FIRST_RUN_KEY_HOME_ACTIVITY";
     private static final int CHANGE_USER_SELECTOR_DIALOG = 100;
-    private Profile currentUser;
-    private Profile loggedInGuardian;
+    private User currentUser;
+    private User loggedInGuardian;
 
     private LoadHomeActivityApplicationTask loadHomeActivityApplicationTask;
     private boolean appObserverReceiverRegistered = false;
@@ -82,12 +83,12 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     private final int methodIdLogout = 1;
 
     @Override
-    public Profile getCurrentUser() {
+    public User getCurrentUser() {
         return this.currentUser;
     }
 
     @Override
-    public Profile getLoggedInGuardian() {
+    public User getLoggedInGuardian() {
         return this.loggedInGuardian;
     }
 
@@ -109,7 +110,6 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
             getString(R.string.dialog_offline_notify_message),
             Constants.METHOD_ID_OFFLINE_NOTIFY);
 
-        Helper helper = LauncherUtility.getOasisHelper(this);
         currentUser = helper.profilesHelper.getById(getIntent().getExtras().getLong(Constants.CHILD_ID, -1));
         loggedInGuardian = helper.profilesHelper.getById(getIntent().getExtras().getLong(Constants.GUARDIAN_ID));
 

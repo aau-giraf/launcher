@@ -11,15 +11,13 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import dk.aau.cs.giraf.activity.GirafActivity;
-import dk.aau.cs.giraf.dblib.Helper;
-import dk.aau.cs.giraf.dblib.controllers.ProfileController;
-import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.gui.GirafNotifyDialog;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.logiccontroller.MainController;
 import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
+import dk.aau.cs.giraf.models.core.*;
 
 /**
  * Displays the splash logo of Launcher, and then starts
@@ -38,7 +36,6 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
     private final int offlineDialogId = 1337;
     private GirafNotifyDialog offlineDialog;
     private final String offlineDialogTag = "DIALOG_TAG";
-    private final Helper helper = new Helper(this);
     private final Handler handler = new Handler();
 
 
@@ -61,7 +58,7 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
         boolean showAnimation = true;
 
         if (oldSessionGuardianId != -1) {
-            Profile oldSessionProfile = new ProfileController(this).getById(oldSessionGuardianId);
+            User oldSessionProfile = new User(new Department("Test"),"Testuser","test123"); //Todo rewrite when rest is finished
             SharedPreferences prefs = SettingsUtility.getLauncherSettings(this,
                 LauncherUtility.getSharedPreferenceUser(oldSessionProfile));
             showAnimation = prefs.getBoolean(getString(R.string.show_animation_preference_key), true);
