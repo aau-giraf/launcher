@@ -369,7 +369,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
 
         // Set the profile picture
         profilePictureView.setImageModel(currentUser, this.getResources().getDrawable(R.drawable.no_profile_pic));
-        profilePictureView.setTitle(currentUser.getName());
+        profilePictureView.setTitle(currentUser.getUsername()); //Todo change to screen name when it exist
 
         // Set the logout button to show the logout dialog
         logoutButton.setOnClickListener(new View.OnClickListener() {
@@ -432,7 +432,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     }
 
     @Override
-    public void onProfileSelected(final int input, final Profile profile) {
+    public void onProfileSelected(final int input, final User profile) {
 
         if (input == CHANGE_USER_SELECTOR_DIALOG) {
             // Update the profile
@@ -632,7 +632,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
          *                        In this case we feed it the global variable listener
          * @param offlineMode     Indicate if the launcher is in offline mode
          */
-        public LoadHomeActivityApplicationTask(Context context, Profile currentUser, Profile guardian, ViewPager
+        public LoadHomeActivityApplicationTask(Context context, User currentUser, User guardian, ViewPager
             appsViewPager, View.OnClickListener onClickListener, boolean offlineMode)
         {
             super(context, currentUser, guardian, appsViewPager, onClickListener, offlineMode, true);

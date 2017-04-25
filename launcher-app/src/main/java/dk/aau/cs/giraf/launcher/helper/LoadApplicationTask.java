@@ -20,6 +20,7 @@ import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
+import dk.aau.cs.giraf.models.core.User;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,8 +36,8 @@ import java.util.Collections;
  */
 public abstract class LoadApplicationTask extends AsyncTask<Application, View, ArrayList<AppInfo>> {
 
-    protected Profile currentUser;
-    protected final Profile guardian;
+    protected User currentUser;
+    protected final User guardian;
     protected final Context context;
     protected final ViewPager appsViewPager;
     protected final View.OnClickListener onClickListener;
@@ -56,7 +57,7 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
      * @param onClickListener The onClickListener attached to each AppImageView.
      *                        These vary depending on the purpose of the layout they are loaded into.
      */
-    public LoadApplicationTask(final Context context, final Profile currentUser, final Profile guardian,
+    public LoadApplicationTask(final Context context, final User currentUser, final User guardian,
                                final ViewPager appsViewPager, final View.OnClickListener onClickListener)
     {
         this.context = context;
@@ -81,8 +82,8 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
      * @param includeAddAppIcon Indicate if the addAppIcon should be shown with the apps
      */
     public LoadApplicationTask(final Context context,
-                               final Profile currentUser,
-                               final Profile guardian,
+                               final User currentUser,
+                               final User guardian,
                                final ViewPager appsViewPager,
                                final View.OnClickListener onClickListener,
                                final boolean offlineMode,
