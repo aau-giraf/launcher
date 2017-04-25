@@ -27,6 +27,7 @@ import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.SettingsActivity;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.widgets.AppImageView;
+import dk.aau.cs.giraf.models.core.User;
 
 import java.util.ArrayList;
 
@@ -98,8 +99,8 @@ public class AppViewCreationUtility {
      */
     public static AppImageView createAppImageView(
         final Context context,
-        final Profile currentUser,
-        final Profile guardian,
+        final User currentUser,
+        final User guardian,
         final AppInfo appInfo,
         GridLayout targetLayout,
         View.OnClickListener listener)
