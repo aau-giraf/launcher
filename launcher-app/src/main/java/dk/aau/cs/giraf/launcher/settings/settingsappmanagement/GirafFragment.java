@@ -10,10 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.viewpagerindicator.CirclePageIndicator;
-import dk.aau.cs.giraf.dblib.controllers.ProfileApplicationController;
-import dk.aau.cs.giraf.dblib.models.Application;
-import dk.aau.cs.giraf.dblib.models.Profile;
-import dk.aau.cs.giraf.dblib.models.ProfileApplication;
+//import dk.aau.cs.giraf.dblib.controllers.ProfileApplicationController;
+//import dk.aau.cs.giraf.dblib.models.Application;
+//import dk.aau.cs.giraf.dblib.models.Profile;
+//import dk.aau.cs.giraf.dblib.models.ProfileApplication;
+
+import dk.aau.cs.giraf.models.core.User;
+
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
@@ -161,11 +164,11 @@ public class GirafFragment extends AppContainerFragment {
      *
      * @param pac  The ProfileApplicationController retrived from the current context
      * @param app  The application we wish to check if the user has access to
-     * @param user The user we wish to check for an application
+     * @param Profile The user we wish to check for an application
      * @return true if the user has access to the application, false if the user does not.
      */
-    private boolean userHasApplicationInView(ProfileApplicationController pac, Application app, Profile user) {
-        ProfileApplication thisProfileApplication = pac.getProfileApplicationByProfileIdAndApplicationId(app, user);
+    private boolean userHasApplicationInView(ProfileApplicationController pac, Application app, User profile) {
+        ProfileApplication thisProfileApplication = pac.getProfileApplicationByProfileIdAndApplicationId(app, profile);
 
         return thisProfileApplication != null;
     }
@@ -205,8 +208,8 @@ public class GirafFragment extends AppContainerFragment {
          * @param onClickListener the onClickListener that each created app should have.
          *                        In this case we feed it the global variable listener
          */
-        public LoadGirafApplicationTask(Context context, Profile currentUser,
-                                        Profile guardian, ViewPager appsViewPager, View.OnClickListener onClickListener)
+        public LoadGirafApplicationTask(Context context, User currentUser,
+                                        User guardian, ViewPager appsViewPager, View.OnClickListener onClickListener)
         {
             super(context, currentUser, guardian, appsViewPager, onClickListener);
         }
