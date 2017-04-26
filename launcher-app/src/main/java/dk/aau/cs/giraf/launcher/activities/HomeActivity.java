@@ -168,7 +168,11 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
 
         // Start logging this activity
         EasyTracker.getInstance(this).activityStart(this);
-        setGrayscale();
+        SharedPreferences prefs = SettingsUtility.getLauncherSettings(this,
+            LauncherUtility.getSharedPreferenceUser(currentUser));
+
+        GrayScaleHelper.setGrayScaleForActivity(this, prefs.getBoolean(
+            getString(R.string.toggle_gray_scale_preference_key), false));
     }
 
     /**
@@ -271,18 +275,11 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                     }
                 });
         }
-        setGrayscale();
-    }
-
-    /**
-     * Reads shared pref, and changes this activity to use/not use grayscale.
-     */
-    private void setGrayscale(){
-        SharedPreferences prefs = SettingsUtility.getLauncherSettings(this,
+        SharedPreferences pref = SettingsUtility.getLauncherSettings(this,
             LauncherUtility.getSharedPreferenceUser(currentUser));
 
-        GrayScaleHelper.setGrayScaleForActivity(this, prefs.getBoolean(
-            getString(R.string.toggle_gray_scale_preference_key), true));
+        GrayScaleHelper.setGrayScaleForActivity(this, pref.getBoolean(
+            getString(R.string.toggle_gray_scale_preference_key), false));
     }
 
     /**

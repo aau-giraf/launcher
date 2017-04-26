@@ -147,7 +147,10 @@ public class SettingsActivity extends GirafActivity
                         settingsListAdapter.notifyDataSetChanged();
                     }
                 }
-                setGrayScale();
+                SharedPreferences prefs = SettingsUtility.getLauncherSettings(view.getContext(),
+                    LauncherUtility.getSharedPreferenceUser(currentUser));
+                GrayScaleHelper.setGrayScaleForActivity(SettingsActivity.this, prefs.getBoolean(
+                    getString(R.string.toggle_gray_scale_preference_key),false));
             }
         });
 
@@ -297,17 +300,13 @@ public class SettingsActivity extends GirafActivity
     }
 
     @Override
-    public void onUserInteraction()
-    {
-        setGrayScale();
-    }
-
-    private void setGrayScale() {
+    public void onUserInteraction() {
         SharedPreferences prefs = SettingsUtility.getLauncherSettings(this,
             LauncherUtility.getSharedPreferenceUser(currentUser));
         GrayScaleHelper.setGrayScaleForActivity(this, prefs.getBoolean(
-            getString(R.string.toggle_gray_scale_preference_key),true));
+            getString(R.string.toggle_gray_scale_preference_key),false));
     }
+
 
     /**
      * Add settings to be shown internally in Settings App.
@@ -555,7 +554,10 @@ public class SettingsActivity extends GirafActivity
                     }
                 });
         }
-        setGrayScale();
+        SharedPreferences pref = SettingsUtility.getLauncherSettings(this,
+            LauncherUtility.getSharedPreferenceUser(currentUser));
+        GrayScaleHelper.setGrayScaleForActivity(this, pref.getBoolean(
+            getString(R.string.toggle_gray_scale_preference_key),false));
     }
 
     @Override
