@@ -64,6 +64,8 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     private boolean appObserverReceiverRegistered = false;
     private ArrayList<AppInfo> currentLoadedApps;
 
+    private boolean grayScaleToggled = false;
+
     private GWidgetUpdater widgetUpdater;
 
     // Used to implement help functionality (ShowcaseView)
@@ -272,8 +274,9 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         setGrayscale();
     }
 
-    boolean grayScaleToggled = false;
-
+    /**
+     * Reads shared pref, and changes this activity to use/not use grayscale.
+     */
     private void setGrayscale(){
         SharedPreferences prefs = SettingsUtility.getLauncherSettings(this,
             LauncherUtility.getSharedPreferenceUser(currentUser));
