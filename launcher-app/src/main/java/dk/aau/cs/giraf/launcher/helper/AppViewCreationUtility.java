@@ -3,6 +3,7 @@ package dk.aau.cs.giraf.launcher.helper;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.RectF;
@@ -26,6 +27,7 @@ import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.SettingsActivity;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
+import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 import dk.aau.cs.giraf.launcher.widgets.AppImageView;
 
 import java.util.ArrayList;
@@ -175,6 +177,10 @@ public class AppViewCreationUtility {
                         intent.putExtra(Constants.APP_PACKAGE_NAME, appInfo.getPackage());
                         intent.putExtra(Constants.APP_ACTIVITY_NAME, appInfo.getActivity());
                         intent.putExtra(Constants.STARTED_BY, Constants.LAUNCHER_TAG);
+                        SharedPreferences prefs = SettingsUtility.getLauncherSettings(view.getContext(),
+                            LauncherUtility.getSharedPreferenceUser(currentUser));
+                        intent.putExtra(Constants.SHOULD_BE_GRAYSCALE, prefs.getBoolean(
+                            view.getContext().getString(R.string.toggle_gray_scale_preference_key), false) );
                         // Verify the intent will resolve to at least one activity
                         LauncherUtility.secureStartActivity(view.getContext(), intent);
                     }

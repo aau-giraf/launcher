@@ -98,6 +98,10 @@ public final class Constants {
      */
     public static final int METHOD_ID_OFFLINE_NOTIFY = 69;
     /**
+     *  GrayScale string
+     */
+    public static final String SHOULD_BE_GRAYSCALE = "GirafGrayScale" ;
+    /**
      * Offline notification.
      */
     public static GirafNotifyDialog offlineNotify;
