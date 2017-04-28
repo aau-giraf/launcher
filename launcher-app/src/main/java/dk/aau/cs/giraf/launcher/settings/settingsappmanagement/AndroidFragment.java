@@ -11,8 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.viewpagerindicator.CirclePageIndicator;
-import dk.aau.cs.giraf.dblib.models.Application;
-import dk.aau.cs.giraf.dblib.models.Profile;
+import dk.aau.cs.giraf.models.core.User;
+//import dk.aau.cs.giraf.dblib.models.Application;
+//import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
@@ -220,7 +221,7 @@ public class AndroidFragment extends AppContainerFragment {
          * @param onClickListener the onClickListener that each created app should have.
          *                        In this case we feed it the global variable listener
          */
-        public LoadAndroidApplicationTask(Context context, Profile currentUser, Profile guardian,
+        public LoadAndroidApplicationTask(Context context, User currentUser, User guardian,
                                           ViewPager appsViewPager, View.OnClickListener onClickListener)
         {
             super(context, currentUser, guardian, appsViewPager, onClickListener);

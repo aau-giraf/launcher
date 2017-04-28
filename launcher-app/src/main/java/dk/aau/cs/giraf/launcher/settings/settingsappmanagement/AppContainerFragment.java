@@ -13,6 +13,7 @@ import dk.aau.cs.giraf.dblib.models.Application;
 import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
+import dk.aau.cs.giraf.models.core.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ import java.util.List;
 public abstract class AppContainerFragment extends Fragment {
     // Callback to containing Activity implementing the SettingsListFragmentListener interface
     protected AppsFragmentInterface callback;
-    protected Profile currentUser;
+    protected User currentUser;
     protected ArrayList<AppInfo> loadedApps;
 
     // This needs to be initialized in the subclasses
