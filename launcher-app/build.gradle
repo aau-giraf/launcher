@@ -57,7 +57,7 @@ android {
             debuggable false
             versionNameSuffix '-unsigned'
             signingConfig signingConfigs.unsigned
-            minifyEnabled true
+            //minifyEnabled true
             buildConfigField "boolean", "USE_TEST_SERVER", "true"
             buildConfigField "boolean", "ENABLE_SYMMETRICDS", "false"
             buildConfigField "boolean", "USE_PRODUCTION_SERVER", "false"
@@ -100,7 +100,7 @@ dependencies {
     compile(group: 'dk.aau.cs.giraf', name: 'giraf-component-lib', version: 'latest.integration', changing: true, ext: 'aar')
     compile(group: 'dk.aau.cs.giraf', name: 'db-lib', version: 'latest.integration', changing: true, ext: 'aar')
     compile(group: 'dk.aau.cs.giraf', name: 'local-db', version: 'latest.integration', changing: true, ext: 'aar')
-    compile(group: 'dk.aau.cs.giraf', name: 'meta-database', version: 'latest.integration', changing: true, ext: 'jar')
+    compile(group: 'dk.aau.cs.giraf', name: 'meta-database', version: 'latest.integration', changing: true, ext: 'aar')
     compile(group: 'dk.aau.cs.giraf', name: 'showcaseview-lib', version: 'latest.integration', changing: true, ext: 'aar')
     //compile files('libs/libGoogleAnalyticsServices.jar')
 }
