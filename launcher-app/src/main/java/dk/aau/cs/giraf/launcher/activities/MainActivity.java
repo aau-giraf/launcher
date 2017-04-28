@@ -21,7 +21,7 @@ import dk.aau.cs.giraf.models.core.*;
 
 /**
  * Displays the splash logo of Launcher, and then starts
- * {@link dk.aau.cs.giraf.launcher.activities.AuthenticationActivity}.
+ * {@link dk.aau.cs.giraf.launcher.activities.LoginActivity}.
  * Provides variables for enabling debug mode before compilation.
  */
 public class MainActivity extends GirafActivity implements Animation.AnimationListener, GirafNotifyDialog.Notification {

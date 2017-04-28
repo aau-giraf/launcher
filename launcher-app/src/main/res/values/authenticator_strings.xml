@@ -15,4 +15,5 @@
     <string name="username">Brugernavn</string>
     <string name="password">Kodeord</string>
     <string name="login">Log Ind</string>
+    <string name="error_login">Fejl</string>
 </resources>

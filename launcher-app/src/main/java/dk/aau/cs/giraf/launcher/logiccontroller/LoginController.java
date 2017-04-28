@@ -2,7 +2,6 @@ package dk.aau.cs.giraf.launcher.logiccontroller;
 
 import android.app.Activity;
 import android.content.Intent;
-import dk.aau.cs.giraf.launcher.activities.AuthenticationActivity;
 import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 import dk.aau.cs.giraf.launcher.activities.LoginActivity;
 import dk.aau.cs.giraf.launcher.helper.Constants;

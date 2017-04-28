@@ -1,9 +1,13 @@
 package dk.aau.cs.giraf.launcher.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.launcher.R;
@@ -13,6 +17,9 @@ import dk.aau.cs.giraf.utilities.GrayScaleHelper;
 public class LoginActivity extends GirafActivity{
 
     private LoginController controller;
+    private TextView usernameTextBox;
+    private TextView passwordTextBox;
+    private Button loginButton;
 
 
 /*
@@ -24,6 +31,9 @@ public class LoginActivity extends GirafActivity{
         super.setTrackingId("UA-48608499-1");
         controller = new LoginController(this);
         setContentView(R.layout.authentication_activity2);
+        usernameTextBox = (TextView) findViewById(R.id.username_box);
+        passwordTextBox = (TextView) findViewById(R.id.pass_box);
+        loginButton = (Button) findViewById(R.id.login_btn);
         findViewById(android.R.id.content).setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -50,8 +60,21 @@ public class LoginActivity extends GirafActivity{
 * Gui methods
 */
     public void LoginBtnPressed(View view){
-        Toast.makeText(this,"Test",Toast.LENGTH_LONG).show();
-        controller.login(1L);
+        loginButton.setEnabled(false);
+        controller.login(usernameTextBox.getText().toString(), passwordTextBox.getText().toString());
+    }
+
+    public void ShowDialogWithMessage(String message){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this,R.style.GirafTheme);
+        dialog.setTitle(R.string.error_login);
+        dialog.setMessage(message);
+        dialog.setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int id) {
+                dialogInterface.cancel();
+            }
+        });
+        dialog.show();
     }
 
 

@@ -46,19 +46,6 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".activities.AuthenticationActivity"
-                android:label="@string/application_name"
-                android:noHistory="true"
-                android:launchMode="singleInstance"
-                android:screenOrientation="landscape"
-                android:theme="@style/GirafTheme.NoTitleBar">
-            <intent-filter>
-                <action android:name="dk.aau.cs.giraf.launcher.AUTHENTICATE"/>
-                <category android:name="dk.aau.cs.giraf.launcher.GIRAF"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
-        <activity
                 android:name=".activities.LoginActivity"
                 android:label="@string/application_name"
                 android:noHistory="true"

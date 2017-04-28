@@ -15,7 +15,7 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.google.analytics.tracking.android.StandardExceptionParser;
 import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.launcher.activities.AuthenticationActivity;
+import dk.aau.cs.giraf.launcher.activities.LoginActivity;
 import dk.aau.cs.giraf.models.core.Department;
 import dk.aau.cs.giraf.models.core.User;
 
@@ -193,7 +193,7 @@ public abstract class LauncherUtility {
     public static Intent logOutIntent(final Context context) {
         clearAuthData(context);
 
-        return new Intent(context, AuthenticationActivity.class);
+        return new Intent(context, LoginActivity.class);
     }
 
     /**
