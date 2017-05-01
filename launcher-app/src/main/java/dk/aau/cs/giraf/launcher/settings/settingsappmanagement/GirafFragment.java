@@ -10,13 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.viewpagerindicator.CirclePageIndicator;
-//import dk.aau.cs.giraf.dblib.controllers.ProfileApplicationController;
-//import dk.aau.cs.giraf.dblib.models.Application;
-//import dk.aau.cs.giraf.dblib.models.Profile;
-//import dk.aau.cs.giraf.dblib.models.ProfileApplication;
-
+import dk.aau.cs.giraf.launcher.tmp.Application;
 import dk.aau.cs.giraf.models.core.User;
-
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
@@ -164,7 +159,7 @@ public class GirafFragment extends AppContainerFragment {
      *
      * @param pac  The ProfileApplicationController retrived from the current context
      * @param app  The application we wish to check if the user has access to
-     * @param Profile The user we wish to check for an application
+     * @param User The user we wish to check for an application
      * @return true if the user has access to the application, false if the user does not.
      */
     private boolean userHasApplicationInView(ProfileApplicationController pac, Application app, User profile) {
