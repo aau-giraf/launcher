@@ -21,13 +21,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import dk.aau.cs.giraf.dblib.models.Application;
-import dk.aau.cs.giraf.dblib.models.Profile;
+import dk.aau.cs.giraf.launcher.tmp.Application;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.SettingsActivity;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.widgets.AppImageView;
 import dk.aau.cs.giraf.models.core.User;
+import dk.aau.cs.giraf.models.core.authentication.PermissionType;
 
 import java.util.ArrayList;
 
@@ -145,7 +145,7 @@ public class AppViewCreationUtility {
                     appInfo = ((AppImageView) view).appInfo;
 
                     if (appInfo.getPackage().isEmpty()) {
-                        if (currentUser.getRole() != Profile.Roles.CHILD) {
+                        if (!currentUser.hasPermission(PermissionType.User)) { //ToDo given that a child is only a user
                             Constants.offlineNotify.show(((FragmentActivity) context).getSupportFragmentManager(),
                                 "DIALOG_TAG");
                         }
@@ -153,7 +153,7 @@ public class AppViewCreationUtility {
                         Intent intent = new Intent(context, SettingsActivity.class);
                         intent.putExtra(Constants.ENTER_ADD_APP_MANAGER_BOOL, true);
                         intent.putExtra(Constants.GUARDIAN_ID, guardian.getId());
-                        if (currentUser.getRole() == Profile.Roles.GUARDIAN)
+                        if (currentUser.hasPermission(PermissionType.Guardian))
                             intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
                         else {
                             intent.putExtra(Constants.CHILD_ID, currentUser.getId());
@@ -166,7 +166,7 @@ public class AppViewCreationUtility {
                         intent.setComponent(new ComponentName(appInfo.getPackage(), appInfo.getActivity()));
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 
-                        if (currentUser.getRole() == Profile.Roles.CHILD) {
+                        if (currentUser.hasPermission(PermissionType.User)) { //ToDo given that a child is only a user
                             intent.putExtra(Constants.CHILD_ID, currentUser.getId());
                         } else {
                             intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);

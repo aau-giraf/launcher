@@ -5,12 +5,15 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.logiccontroller.LoginController;
 import dk.aau.cs.giraf.utilities.GrayScaleHelper;
 
@@ -20,7 +23,7 @@ public class LoginActivity extends GirafActivity{
     private TextView usernameTextBox;
     private TextView passwordTextBox;
     private Button loginButton;
-
+    private Animation loadAnimation;
 
 /*
 * Constructer
@@ -31,6 +34,8 @@ public class LoginActivity extends GirafActivity{
         super.setTrackingId("UA-48608499-1");
         controller = new LoginController(this);
         setContentView(R.layout.authentication_activity2);
+        loadAnimation = AnimationUtils.loadAnimation(this, R.anim.main_activity_rotatelogo_infinite);
+        loadAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
         usernameTextBox = (TextView) findViewById(R.id.username_box);
         passwordTextBox = (TextView) findViewById(R.id.pass_box);
         loginButton = (Button) findViewById(R.id.login_btn);
@@ -61,8 +66,15 @@ public class LoginActivity extends GirafActivity{
 */
     public void LoginBtnPressed(View view){
         loginButton.setEnabled(false);
-        controller.login(usernameTextBox.getText().toString(), passwordTextBox.getText().toString());
+        String username = usernameTextBox.getText().toString();
+        String password = passwordTextBox.getText().toString();
+        usernameTextBox.setEnabled(false);
+        passwordTextBox.setEnabled(false);
+        findViewById(R.id.girafHeaderIcon).startAnimation(loadAnimation);
+        controller.login(username, password);
     }
+
+
 
     public void ShowDialogWithMessage(String message){
         AlertDialog.Builder dialog = new AlertDialog.Builder(this,R.style.GirafTheme);
@@ -71,7 +83,9 @@ public class LoginActivity extends GirafActivity{
         dialog.setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int id) {
+                findViewById(R.id.girafHeaderIcon).clearAnimation();
                 dialogInterface.cancel();
+                ReEnableGuiControls();
             }
         });
         dialog.show();
@@ -81,5 +95,12 @@ public class LoginActivity extends GirafActivity{
     public void hideSoftKeyboard() {
         InputMethodManager inputMethodManager = (InputMethodManager)  this.getSystemService(this.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
+    }
+
+
+    private void ReEnableGuiControls(){
+        loginButton.setEnabled(true);
+        usernameTextBox.setEnabled(true);
+        passwordTextBox.setEnabled(true);
     }
 }

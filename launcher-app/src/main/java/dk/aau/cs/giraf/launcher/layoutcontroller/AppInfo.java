@@ -6,7 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import dk.aau.cs.giraf.dblib.models.Application;
+import dk.aau.cs.giraf.launcher.tmp.Application;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 
 import java.util.Collections;
