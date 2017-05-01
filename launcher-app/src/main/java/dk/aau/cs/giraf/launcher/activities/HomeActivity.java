@@ -34,10 +34,17 @@ import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
 import dk.aau.cs.giraf.launcher.tmp.Application;
 import dk.aau.cs.giraf.models.core.User;
+import dk.aau.cs.giraf.models.core.authentication.Permission;
+import dk.aau.cs.giraf.models.core.authentication.PermissionType;
 import dk.aau.cs.giraf.showcaseview.ShowcaseManager;
 import dk.aau.cs.giraf.showcaseview.ShowcaseView;
 import dk.aau.cs.giraf.showcaseview.targets.ViewTarget;
 import dk.aau.cs.giraf.utilities.NetworkUtilities;
+
+    /*
+     * ToDo Remove tmpapplication when it no longer used
+    */
+import dk.aau.cs.giraf.launcher.tmp.Application;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -190,6 +197,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
      * Finds out if the current loaded apps and the app list is different and updates the UI.
      */
     private void appsChangedScan() {
+        
         final List<Application> girafAppsList = ApplicationControlUtility.getAvailableGirafAppsForUser(
             HomeActivity.this, currentUser); // For home_activity activity
         final SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(
@@ -332,21 +340,18 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         //Set up widget updater, which updates the widget's view regularly, according to its status.
         widgetUpdater = new GWidgetUpdater();
 
-        // Check if the user was a guardian
-        if (currentUser.getRole().getValue() < Profile.Roles.CHILD.getValue()) {
+        // Check if the user is a guardian
+        if (currentUser.hasPermission(PermissionType.Guardian) || currentUser.hasPermission(PermissionType.SuperUser)){
             settingsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
                     intent.putExtra(Constants.GUARDIAN_ID, loggedInGuardian.getId());
-                    if (currentUser.getRole() == Profile.Roles.GUARDIAN)
-                        intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
-                    else {
-                        intent.putExtra(Constants.CHILD_ID, currentUser.getId());
-                    }
+                    intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
                     startActivity(intent);
                 }
             });
+
 
             // Set the change user button to open the change user dialog
             changeUserButton.setOnClickListener(new View.OnClickListener() {
@@ -366,6 +371,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         }
 
         // Set the profile picture
+
         profilePictureView.setImageModel(currentUser, this.getResources().getDrawable(R.drawable.no_profile_pic));
         profilePictureView.setTitle(currentUser.getUsername()); //Todo change to screen name when it exist
 
