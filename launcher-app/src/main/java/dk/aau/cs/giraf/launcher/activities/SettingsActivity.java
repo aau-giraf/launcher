@@ -35,6 +35,7 @@ import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementFrag
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.GirafFragment;
 import dk.aau.cs.giraf.models.core.User;
+import dk.aau.cs.giraf.models.core.authentication.PermissionType;
 import dk.aau.cs.giraf.showcaseview.ShowcaseManager;
 import dk.aau.cs.giraf.showcaseview.ShowcaseView;
 import dk.aau.cs.giraf.showcaseview.targets.Target;
@@ -436,7 +437,8 @@ public class SettingsActivity extends GirafActivity
     public void reloadActivity() {
         // Get the intent of SettingsActivity
         final Intent intent = SettingsActivity.this.getIntent();
-        if (currentUser.getRole() == Profile.Roles.CHILD) { // A child profile has been selected, pass id
+        if (currentUser.hasPermission(PermissionType.User)) { //ToDo given that a child is only a user
+            // A child profile has been selected, pass id
             intent.putExtra(Constants.CHILD_ID, currentUser.getId());
         } else { // We are a guardian, do not add a child
             intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
