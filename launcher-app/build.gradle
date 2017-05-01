@@ -19,7 +19,7 @@ buildscript {
 configurations.all {
     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 apply plugin: 'maven-publish'
 apply plugin: 'com.github.triplet.play'
 repositories {
@@ -101,7 +101,7 @@ dependencies {
     //compile(group: 'dk.aau.cs.giraf', name: 'db-lib', version: 'latest.integration', changing: true, ext: 'aar')
     //compile(group: 'dk.aau.cs.giraf', name: 'local-db', version: 'latest.integration', changing: true, ext: 'aar')
     //compile(group: 'dk.aau.cs.giraf', name: 'meta-database', version: 'latest.integration', changing: true, ext: 'jar')
-    //compile(group: 'dk.aau.cs.giraf', name:'rest-api-client-lib', version: '0.8.3'){transitive = true}
+    compile(group: 'dk.aau.cs.giraf', name:'rest-api-client-lib', version: '0.8.5'){transitive = true}
     compile(group: 'dk.aau.cs.giraf', name:'rest-models', version: '0.8.1')
     compile(group: 'dk.aau.cs.giraf', name: 'showcaseview-lib', version: 'latest.integration', changing: true, ext: 'aar')
     //compile files('libs/libGoogleAnalyticsServices.jar')
