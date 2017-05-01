@@ -32,31 +32,14 @@ import java.util.Date;
 public class LoginController {
 
     private LoginActivity gui;
-
     private RequestQueue queue;
 
-    Map<String, String> header = new HashMap<>();
-    private String base_url ="http://web.giraf.cs.aau.dk:5000/pictogram/";
-    private String get_url = "1";
-    private String url = base_url + get_url;
 
     public LoginController(LoginActivity gui) {
         this.gui = gui;
     }
 
-    public void login(Long id) {
-        Intent homeIntent = new Intent(gui, HomeActivity.class);
-        homeIntent.putExtra(Constants.GUARDIAN_ID, id);
-        homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        LauncherUtility.saveLogInData(gui, id, new Date().getTime());
-        gui.startActivity(homeIntent);
-    }
-
-    public void login(String username, String password){
-
-    }
-
-    public void authentication(String username, String password) {
+    public void login(String username, String password) {
         queue = RequestQueueHandler.getInstance(gui.getApplicationContext()).getRequestQueue();
 
         Department department = new Department("dep");
@@ -66,31 +49,17 @@ public class LoginController {
                 new Response.Listener<Integer>() {
                     @Override
                     public void onResponse(Integer statusCode) {
-                        //printLoginResponse(String.valueOf(statusCode));
-                        //<editor-fold desc="PictogramRequest Get Test">
-                        // Request a string response from the provided URL.
-                        PictogramRequest requestGet = new PictogramRequest(Request.Method.GET, base_url + "35", header,
-                                new Response.Listener<Pictogram>(){
-                                    @Override
-                                    public void onResponse(Pictogram response) {
-                                        //printPictogramResponse(response, "GET");
-                                    }
-                                },
-                                new Response.ErrorListener(){
-                                    @Override
-                                    public void onErrorResponse(VolleyError error) {
-                                        //printError(error, "GET");
-                                    }
-                                });
-
-                        //</editor-fold>
-                        queue.add(requestGet);
+                        Intent homeIntent = new Intent(gui, HomeActivity.class);
+                        //homeIntent.putExtra(Constants.GUARDIAN_ID, id);
+                        //homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        //LauncherUtility.saveLogInData(gui, id, new Date().getTime());
+                        gui.startActivity(homeIntent);
                     }
                 },
                 new Response.ErrorListener(){
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        //printError(error, "LOGIN");
+                        gui.ShowDialogWithMessage("temp fejl msg");
                     }
                 }
         );
