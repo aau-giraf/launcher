@@ -436,7 +436,6 @@ public class SettingsActivity extends GirafActivity
     public void reloadActivity() {
         // Get the intent of SettingsActivity
         final Intent intent = SettingsActivity.this.getIntent();
-
         if (currentUser.getRole() == Profile.Roles.CHILD) { // A child profile has been selected, pass id
             intent.putExtra(Constants.CHILD_ID, currentUser.getId());
         } else { // We are a guardian, do not add a child
