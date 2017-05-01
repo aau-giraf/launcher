@@ -11,7 +11,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.android.tools.build:gradle:2.3.1'
         classpath 'com.github.triplet.gradle:play-publisher:1.1.4'
     }
 }
@@ -36,7 +36,7 @@ repositories {
 }
 android {
     compileSdkVersion 23
-    buildToolsVersion '23.0.3'
+    buildToolsVersion '25.0.0'
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 23
@@ -100,7 +100,7 @@ dependencies {
     compile(group: 'dk.aau.cs.giraf', name: 'giraf-component-lib', version: 'latest.integration', changing: true, ext: 'aar')
     compile(group: 'dk.aau.cs.giraf', name: 'db-lib', version: 'latest.integration', changing: true, ext: 'aar')
     compile(group: 'dk.aau.cs.giraf', name: 'local-db', version: 'latest.integration', changing: true, ext: 'aar')
-    compile(group: 'dk.aau.cs.giraf', name: 'meta-database', version: 'latest.integration', changing: true, ext: 'aar')
+    compile(group: 'dk.aau.cs.giraf', name: 'meta-database', version: 'latest.integration', changing: true, ext: 'jar')
     compile(group: 'dk.aau.cs.giraf', name: 'showcaseview-lib', version: 'latest.integration', changing: true, ext: 'aar')
     //compile files('libs/libGoogleAnalyticsServices.jar')
 }
