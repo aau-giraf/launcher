@@ -5,9 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 
-import dk.aau.cs.giraf.dblib.Helper;
-import dk.aau.cs.giraf.dblib.models.Application;
-import dk.aau.cs.giraf.dblib.models.Profile;
+import dk.aau.cs.giraf.launcher.tmp.Application;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.models.core.User;
 
