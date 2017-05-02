@@ -14,15 +14,12 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 
-//import dk.aau.cs.giraf.dblib.models.Application;
-//import dk.aau.cs.giraf.dblib.models.Profile;
-import dk.aau.cs.giraf.launcher.tmp.Application;
+import dk.aau.cs.giraf.models.core.Application;
 import dk.aau.cs.giraf.models.core.User;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
-import dk.aau.cs.giraf.models.core.User;
 import dk.aau.cs.giraf.models.core.authentication.PermissionType;
 
 import java.util.ArrayList;
@@ -156,7 +153,7 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
         }
         if (includeAddAppIcon && !currentUser.hasPermission(PermissionType.User) ) { //ToDo given that a child is a user
             Application tmpApp = new Application(context.getResources().getString(R.string.add_app_text), "",
-                Constants.ADD_APP_ICON_FAKE_PACKAGE_NAME, "", "");
+                Constants.ADD_APP_ICON_FAKE_PACKAGE_NAME);
             AppInfo tmpInfo = new AppInfo(tmpApp);
             tmpInfo.setIconImage(context.getResources().getDrawable(R.drawable.ic_apps));
 

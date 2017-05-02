@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 
-import dk.aau.cs.giraf.launcher.tmp.Application;
+import dk.aau.cs.giraf.models.core.Application;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.models.core.User;
 
@@ -162,11 +162,9 @@ public class ApplicationControlUtility {
                 continue;
 
 
-            Application application = new Application();
-            application.setPackage(appPackageName);
-            application.setActivity(appActivityName);
-            application.setName(app.activityInfo.loadLabel(packageManager).toString());
-            application.setId(app.hashCode());
+            Application application = new Application(
+                app.activityInfo.loadLabel(packageManager).toString(),appPackageName,appActivityName);
+            application.setId(app.hashCode()); //Todo find out if the id is something that is handled by us or the database
             result.add(application);
         }
         return result;
@@ -227,11 +225,9 @@ public class ApplicationControlUtility {
                 String appActivityName = app.activityInfo.name;
                 String appPackageName = app.activityInfo.packageName;
                 if (appActivityName.equals(activityName)) {
-                    Application application = new Application();
-                    application.setPackage(appPackageName);
-                    application.setActivity(appActivityName);
-                    application.setName(app.activityInfo.loadLabel(packageManager).toString());
-                    application.setId(app.hashCode());
+                    Application application = new Application(
+                        app.activityInfo.loadLabel(packageManager).toString(),appPackageName,appActivityName);
+                    application.setId(app.hashCode());//Todo find out if the id is something that is handled by us or the database
                     selectedApps.add(application);
 
                     continue outerloop;

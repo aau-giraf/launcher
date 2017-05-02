@@ -6,7 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import dk.aau.cs.giraf.launcher.tmp.Application;
+import dk.aau.cs.giraf.models.core.Application;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 
 import java.util.Collections;
@@ -63,11 +63,8 @@ public class AppInfo extends Application implements Parcelable {
     public AppInfo(Application parentApp) {
         this.setId(parentApp.getId());
         this.setName(parentApp.getName());
-        this.setVersion(parentApp.getVersion());
         this.setPackage(parentApp.getPackage());
         this.setActivity(parentApp.getActivity());
-        this.setDescription(parentApp.getDescription());
-        this.setAuthor(parentApp.getAuthor());
     }
 
     /**
@@ -98,14 +95,11 @@ public class AppInfo extends Application implements Parcelable {
         // Integers
         this.setId(longdata[0]);
         this.setBgColor((int) longdata[1]);
-        this.setAuthor(longdata[2]);
 
         // Strings
         this.setName(stringdata[0]);
-        this.setVersion(stringdata[1]);
         this.setPackage(stringdata[2]);
         this.setActivity(stringdata[3]);
-        this.setDescription(stringdata[4]);
     }
 
     @Override
@@ -116,11 +110,11 @@ public class AppInfo extends Application implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         // Write strings
-        dest.writeStringArray(new String[]{this.getName(), this.getVersion(),
-            this.getPackage(), this.getActivity(), this.getDescription()});
+        dest.writeStringArray(new String[]{this.getName(),
+            this.getPackage(), this.getActivity()});
 
         // Write integers
-        dest.writeLongArray(new long[]{this.getId(), this.getBgColor(), (int) this.getAuthor()});
+        dest.writeLongArray(new long[]{this.getId(), this.getBgColor()});
     }
 
     /**

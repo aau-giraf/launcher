@@ -11,10 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
 
-import dk.aau.cs.giraf.dblib.controllers.ProfileApplicationController;
-import dk.aau.cs.giraf.dblib.models.Application;
-import dk.aau.cs.giraf.dblib.models.Profile;
-import dk.aau.cs.giraf.dblib.models.ProfileApplication;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.SettingsActivity;
 import dk.aau.cs.giraf.launcher.helper.AppViewCreationUtility;
@@ -22,6 +18,8 @@ import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppContainerFragment;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
 import dk.aau.cs.giraf.launcher.widgets.AppImageView;
+import dk.aau.cs.giraf.models.core.User;
+import dk.aau.cs.giraf.models.core.Application;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -68,7 +66,7 @@ public class AppsGridFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         pac = new ProfileApplicationController(activity);
-        final Profile currentUser = ((AppsFragmentInterface) activity).getCurrentUser();
+        final User currentUser = ((AppsFragmentInterface) activity).getCurrentUser();
         SharedPreferences preferences = LauncherUtility.getSharedPreferencesForCurrentUser(activity, currentUser);
         selectedApps = preferences.getStringSet(activity.getResources()
             .getString(R.string.selected_android_apps_key), new HashSet<String>());
@@ -93,7 +91,7 @@ public class AppsGridFragment extends Fragment {
                 final AppInfo currentAppInfo = appInfos.get(appCounter);
 
                 final AppsFragmentInterface activity = (AppsFragmentInterface) getActivity();
-                final Profile currentUser = activity.getCurrentUser();
+                final User currentUser = activity.getCurrentUser();
                 final int margin = 10;
 
                 //Create a new AppImageView and set its properties
@@ -129,7 +127,7 @@ public class AppsGridFragment extends Fragment {
      * @param user The profile to check for
      * @return true if the ProfileApplication exists, otherwise return false
      */
-    private boolean doesProfileApplicationExist(ProfileApplicationController pac, Application app, Profile user) {
+    private boolean doesProfileApplicationExist(ProfileApplicationController pac, Application app, User user) {
         ProfileApplication thisProfileApplication = pac.getProfileApplicationByProfileIdAndApplicationId(app, user);
 
         return thisProfileApplication != null;
