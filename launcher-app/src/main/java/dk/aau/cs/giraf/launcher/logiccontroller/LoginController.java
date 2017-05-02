@@ -11,7 +11,7 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.VolleyError;
 import dk.aau.cs.giraf.librest.requests.LoginRequest;
-import dk.aau.cs.giraf.librest.requests.PictogramRequest;
+import dk.aau.cs.giraf.librest.requests.GetRequest;
 import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
 import dk.aau.cs.giraf.librest.serialization.Translator;
 import dk.aau.cs.giraf.models.core.AccessLevel;
@@ -42,10 +42,8 @@ public class LoginController {
     public void login(String username, String password) {
         queue = RequestQueueHandler.getInstance(gui.getApplicationContext()).getRequestQueue();
 
-        Department department = new Department("dep");
-        User user = new User(department, username, password);
 
-        LoginRequest loginRequest = new LoginRequest(user,
+        LoginRequest loginRequest = new LoginRequest(username, password,
                 new Response.Listener<Integer>() {
                     @Override
                     public void onResponse(Integer statusCode) {
