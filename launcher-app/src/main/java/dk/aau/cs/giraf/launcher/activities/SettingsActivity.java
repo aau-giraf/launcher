@@ -171,7 +171,7 @@ public class SettingsActivity extends GirafActivity
 
         //Load the correct profile picture for the choosen profile
         mProfileButton.setImageModel(currentUser, this.getResources().getDrawable(R.drawable.no_profile_pic));
-        mProfileButton.setTitle(currentUser.getUsername()); //Todo change to screen name when it exist
+        mProfileButton.setTitle(currentUser.getScreenName());
 
         final long childIdNew = getIntent().getExtras().getLong(Constants.CHILD_ID);
         final long guardianId = getIntent().getExtras().getLong(Constants.GUARDIAN_ID);
@@ -186,7 +186,7 @@ public class SettingsActivity extends GirafActivity
 
         // Change the title of the action bar to include the name of the current user
         if (currentUser != null) {
-            this.setActionBarTitle(getString(R.string.settingsFor) + currentUser.getUsername()); //Todo change to screen name when it exist
+            this.setActionBarTitle(getString(R.string.settingsFor) + currentUser.getScreenName());
         }
 
         final GirafButton changeUserButton = new GirafButton(this, this.getResources()

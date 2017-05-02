@@ -32,19 +32,14 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
-import dk.aau.cs.giraf.launcher.tmp.Application;
 import dk.aau.cs.giraf.models.core.User;
+import dk.aau.cs.giraf.models.core.Application;
 import dk.aau.cs.giraf.models.core.authentication.Permission;
 import dk.aau.cs.giraf.models.core.authentication.PermissionType;
 import dk.aau.cs.giraf.showcaseview.ShowcaseManager;
 import dk.aau.cs.giraf.showcaseview.ShowcaseView;
 import dk.aau.cs.giraf.showcaseview.targets.ViewTarget;
 import dk.aau.cs.giraf.utilities.NetworkUtilities;
-
-    /*
-     * ToDo Remove tmpapplication when it no longer used
-    */
-import dk.aau.cs.giraf.launcher.tmp.Application;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -373,7 +368,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         // Set the profile picture
 
         profilePictureView.setImageModel(currentUser, this.getResources().getDrawable(R.drawable.no_profile_pic));
-        profilePictureView.setTitle(currentUser.getUsername()); //Todo change to screen name when it exist
+        profilePictureView.setTitle(currentUser.getScreenName());
 
         // Set the logout button to show the logout dialog
         logoutButton.setOnClickListener(new View.OnClickListener() {
