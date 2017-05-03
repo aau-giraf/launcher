@@ -66,7 +66,7 @@ public class AppsGridFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         pac = new ProfileApplicationController(activity);
-        final User currentUser = ((AppsFragmentInterface) activity).getCurrentUser();
+        final User currentUser = ((AppsFragmentInterface) activity).getCurrentUserId();
         SharedPreferences preferences = LauncherUtility.getSharedPreferencesForCurrentUser(activity, currentUser);
         selectedApps = preferences.getStringSet(activity.getResources()
             .getString(R.string.selected_android_apps_key), new HashSet<String>());
@@ -91,12 +91,12 @@ public class AppsGridFragment extends Fragment {
                 final AppInfo currentAppInfo = appInfos.get(appCounter);
 
                 final AppsFragmentInterface activity = (AppsFragmentInterface) getActivity();
-                final User currentUser = activity.getCurrentUser();
+                final User currentUser = activity.getCurrentUserId();
                 final int margin = 10;
 
                 //Create a new AppImageView and set its properties
                 AppImageView newAppView = AppViewCreationUtility.createAppImageView(getActivity(), currentUser,
-                    activity.getLoggedInGuardian(), currentAppInfo, appsGridLayout, getOnClickListener());
+                    activity.getLoggedInGuardianId(), currentAppInfo, appsGridLayout, getOnClickListener());
                 //newAppView.setScaleType(ImageView.ScaleType.FIT_XY);
                 GridLayout.LayoutParams params = new GridLayout.LayoutParams(new ViewGroup.LayoutParams(
                     container.getMeasuredWidth() / columnSize - margin * 2, container.getMeasuredHeight() /

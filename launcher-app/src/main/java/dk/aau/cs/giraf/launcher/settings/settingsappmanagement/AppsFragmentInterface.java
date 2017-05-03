@@ -7,7 +7,7 @@ import dk.aau.cs.giraf.models.core.User;
  * It is implemented by AppContainerFragment
  */
 public interface AppsFragmentInterface {
-    public User getCurrentUser();
+    public long getCurrentUserId();
 
-    public User getLoggedInGuardian();
+    public long getLoggedInGuardianId();
 }

@@ -465,7 +465,7 @@ public class SettingsActivity extends GirafActivity
      *
      * @return profile of the current user
      */
-    public User getCurrentUser() {
+    public User getCurrentUserId() {
         return currentUser;
     }
 
@@ -474,8 +474,7 @@ public class SettingsActivity extends GirafActivity
      *
      * @return profile of the logged in guardian
      */
-    @Override
-    public User getLoggedInGuardian() {
+    public User getLoggedInGuardianId() {
         return loggedInGuardian;
     }
 
