@@ -39,7 +39,7 @@ public class LoginController {
         this.gui = gui;
     }
 
-    public void login(String username, String password) {
+    public void login(final String username, String password) {
         queue = RequestQueueHandler.getInstance(gui.getApplicationContext()).getRequestQueue();
 
 
@@ -47,11 +47,24 @@ public class LoginController {
                 new Response.Listener<Integer>() {
                     @Override
                     public void onResponse(Integer statusCode) {
-                        Intent homeIntent = new Intent(gui, HomeActivity.class);
-                        //homeIntent.putExtra(Constants.GUARDIAN_ID, id);
-                        //homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        //LauncherUtility.saveLogInData(gui, id, new Date().getTime());
-                        gui.startActivity(homeIntent);
+                        GetRequest<User> userGetRequest = new GetRequest<User>(username, User.class, new Response.Listener<User>() {
+                            @Override
+                            public void onResponse(User response) {
+                                Intent homeIntent = new Intent(gui, HomeActivity.class);
+                                //ToDo Send user instead of ID
+                                homeIntent.putExtra(Constants.GUARDIAN_ID, response.getId());
+                                homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                LauncherUtility.saveLogInData(gui, response.getId(), new Date().getTime());
+                                gui.startActivity(homeIntent);
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                //ToDo Localise me later
+                                gui.ShowDialogWithMessage("try again later");
+                            }
+                        });
+                        queue.add(userGetRequest);
                     }
                 },
                 new Response.ErrorListener(){
