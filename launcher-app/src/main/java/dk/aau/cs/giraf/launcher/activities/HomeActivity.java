@@ -33,8 +33,8 @@ import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
-import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
 import dk.aau.cs.giraf.librest.requests.GetRequest;
+import dk.aau.cs.giraf.librest.requests.LoginRequest;
 import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
 import dk.aau.cs.giraf.models.core.User;
 import dk.aau.cs.giraf.models.core.Application;
@@ -53,14 +53,14 @@ import java.util.Set;
  * The primary activity of Launcher. Allows the user to start other GIRAF apps and access the settings
  * activity. It requires a user id in the parent intent.
  */
-public class HomeActivity extends GirafActivity implements AppsFragmentInterface,
+public class HomeActivity extends GirafActivity implements
     GirafNotifyDialog.Notification, GirafConfirmDialog.Confirmation,
     GirafProfileSelectorDialog.OnSingleProfileSelectedListener, ShowcaseManager.ShowcaseCapable
 {
     private static final String IS_FIRST_RUN_KEY = "IS_FIRST_RUN_KEY_HOME_ACTIVITY";
     private static final int CHANGE_USER_SELECTOR_DIALOG = 100;
-    private long currentUserId;
-    private long loggedInGuardianId;
+    private User currentUser;
+    private User loggedInGuardian;
     private RequestQueue queue;
 
     private LoadHomeActivityApplicationTask loadHomeActivityApplicationTask;
@@ -86,14 +86,6 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
 
     private final int methodIdLogout = 1;
 
-    @Override
-    public long getCurrentUserId() { return this.currentUserId; }
-
-    @Override
-    public long getLoggedInGuardianId() {
-        return this.loggedInGuardianId;
-    }
-
     /**
      * Sets up the activity. Specifically view variables are instantiated, the login button listener
      * is set, and the instruction animation is set up.
@@ -113,8 +105,8 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
             getString(R.string.dialog_offline_notify_message),
             Constants.METHOD_ID_OFFLINE_NOTIFY);
 
-        if (currentUserId == 0L) {
-            currentUserId = loggedInGuardianId;
+        if (currentUser == null) {
+            currentUser = loggedInGuardian;
         }
 
         // Fetch references to view objects
@@ -128,7 +120,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
             LauncherUtility.showDebugInformation(this);
         }
 
-        GetRequest<User> userGetRequest = new GetRequest<User>(currentUserId, User.class, new Response.Listener<User>() {
+        GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
             @Override
             public void onResponse(User response) {
                 // Get the row and column size for the grids in the AppViewPager
@@ -141,7 +133,38 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                if (error.networkResponse.statusCode == 401) {
+                    LoginRequest login = new LoginRequest(currentUser, new Response.Listener<Integer>() {
+                        @Override
+                        public void onResponse(Integer response) {
+                            GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                                @Override
+                                public void onResponse(User response) {
+                                    // Get the row and column size for the grids in the AppViewPager
+                                    final int rowsSize = response.getSettings().getAppsGridSizeRows();
+                                    final int columnsSize = response.getSettings().getAppsGridSizeColumns();
 
+                                    appViewPager.setAdapter(new AppsFragmentAdapter(getSupportFragmentManager(),
+                                        currentLoadedApps, rowsSize, columnsSize));
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    //ToDo logout
+                                }
+                            });
+                            queue.add(userGetRequest);
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            //ToDo logout
+                        }
+                    });
+                    queue.add(login);
+                } else {
+                    //ToDo logout
+                }
             }
         });
         queue.add(userGetRequest);
@@ -182,7 +205,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
      */
     private void startObservingApps() {
         //Makes sure this Receiver is only registered once
-        if(!appObserverReceiverRegistered) {
+        if (!appObserverReceiverRegistered) {
             BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
@@ -202,12 +225,11 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     /**
      * Finds out if the current loaded apps and the app list is different and updates the UI.
      */
-    private void appsChangedScan() {
-        
+    private void appsChangedScan() { //ToDO change this to use the settings and check for apps not installed
         final List<Application> girafAppsList = ApplicationControlUtility.getAvailableGirafAppsForUser(
-            HomeActivity.this, currentUserId); // For home_activity activity
+            HomeActivity.this, currentUser); // For home_activity activity
         final SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(
-            HomeActivity.this, currentUserId);
+            HomeActivity.this, currentUser);
         final Set<String> androidAppsPackagenames = prefs.getStringSet(
             getString(R.string.selected_android_apps_key), new HashSet<String>());
         final List<Application> androidAppsList = ApplicationControlUtility.convertPackageNamesToApplications(
@@ -279,9 +301,11 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         }
     }
 
+
     /**
      * Stops the timer looking for updates in the set of available apps.
      * ToDo Find out if this code is still needed
+     *
      * @see HomeActivity#startObservingApps()
      */
     @Override
@@ -321,9 +345,16 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
      * Load the user's applications into the app container.
      */
     private void loadApplications() {
-        loadHomeActivityApplicationTask = new LoadHomeActivityApplicationTask(this, currentUserId,
-            loggedInGuardianId, appViewPager, null, offlineMode);
+        loadHomeActivityApplicationTask = new LoadHomeActivityApplicationTask(this, currentUser,
+            loggedInGuardian, appViewPager, null, offlineMode);
         loadHomeActivityApplicationTask.execute();
+    }
+
+    private void updateProfilePicture(User user) {
+        final GirafUserItemView profilePictureView = (GirafUserItemView) findViewById(R.id.profile_widget);
+        // Set the profile picture
+        profilePictureView.setImageModel(user, this.getResources().getDrawable(R.drawable.no_profile_pic));
+        profilePictureView.setTitle(user.getScreenName());
     }
 
     /**
@@ -340,46 +371,171 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         final GirafButton settingsButton = (GirafButton) findViewById(R.id.settings_button);
         final GirafButton changeUserButton = (GirafButton) findViewById(R.id.change_user_button);
         final GirafButton helpButton = (GirafButton) findViewById(R.id.help_button);
-
-        final GirafPictogramItemView profilePictureView = (GirafPictogramItemView) findViewById(R.id.profile_widget);
-
         //Set up widget updater, which updates the widget's view regularly, according to its status.
         widgetUpdater = new GWidgetUpdater();
 
-        // Check if the user is a guardian
-        if (currentUserId.hasPermission(PermissionType.Guardian) || currentUserId.hasPermission(PermissionType.SuperUser)){
-            settingsButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
-                    intent.putExtra(Constants.GUARDIAN_ID, loggedInGuardianId.getId());
-                    intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
-                    startActivity(intent);
+
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                    @Override
+                    public void onResponse(User response) {
+                        Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
+                        intent.putExtra(Constants.GUARDIAN_ID, response.getId());
+                        intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
+                        startActivity(intent);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (error.networkResponse.statusCode == 401) {
+                            LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
+                                @Override
+                                public void onResponse(Integer response) {
+                                    GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                                        @Override
+                                        public void onResponse(User response) {
+                                            Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
+                                            intent.putExtra(Constants.GUARDIAN_ID, response.getId());
+                                            intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
+                                            startActivity(intent);
+                                        }
+                                    }, new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            //ToDo logout
+                                        }
+                                    });
+                                    queue.add(userGetRequest);
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    //ToDo logout
+                                }
+                            });
+                            queue.add(loginRequest);
+                        } else {
+                            //ToDo logout
+                        }
+                    }
+                });
+                queue.add(userGetRequest);
+            }
+        });
+
+
+        // Set the change user button to open the change user dialog
+        changeUserButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                    @Override
+                    public void onResponse(User response) {
+                        GirafProfileSelectorDialog changeUser = GirafProfileSelectorDialog.newInstance(HomeActivity.this,
+                            response, false, false, getString(R.string.home_activity_change_to_citizen_msg),
+                            CHANGE_USER_SELECTOR_DIALOG);
+                        changeUser.show(getSupportFragmentManager(), "" + CHANGE_USER_SELECTOR_DIALOG);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (error.networkResponse.statusCode == 401) {
+                            LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
+                                @Override
+                                public void onResponse(Integer response) {
+                                    GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                                        @Override
+                                        public void onResponse(User response) {
+                                            GirafProfileSelectorDialog changeUser = GirafProfileSelectorDialog.newInstance(HomeActivity.this,
+                                                response, false, false, getString(R.string.home_activity_change_to_citizen_msg),
+                                                CHANGE_USER_SELECTOR_DIALOG);
+                                            changeUser.show(getSupportFragmentManager(), "" + CHANGE_USER_SELECTOR_DIALOG);
+                                        }
+                                    }, new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            //ToDo logout
+                                        }
+                                    });
+                                    queue.add(userGetRequest);
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    //ToDo logout
+                                }
+                            });
+                            queue.add(loginRequest);
+                        } else {
+                            //ToDo logout
+                        }
+
+                    }
+                });
+                queue.add(userGetRequest);
+            }
+        });
+
+        GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+            @Override
+            public void onResponse(User response) {
+                // Check if the user is a guardian
+                if (response.hasPermission(PermissionType.Guardian) || response.hasPermission(PermissionType.SuperUser)) {
+                    settingsButton.setVisibility(View.VISIBLE);
+                    changeUserButton.setVisibility(View.VISIBLE);
+                } else { // The user had citizen permissions
+                    settingsButton.setVisibility(View.INVISIBLE);
+                    changeUserButton.setVisibility(View.INVISIBLE);
+
                 }
-            });
+                updateProfilePicture(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (error.networkResponse.statusCode == 401) {
+                    LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
+                        @Override
+                        public void onResponse(Integer response) {
+                            GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                                @Override
+                                public void onResponse(User response) {
+                                    // Check if the user is a guardian
+                                    if (response.hasPermission(PermissionType.Guardian) || response.hasPermission(PermissionType.SuperUser)) {
+                                        settingsButton.setVisibility(View.VISIBLE);
+                                        changeUserButton.setVisibility(View.VISIBLE);
+                                    } else { // The user had citizen permissions
+                                        settingsButton.setVisibility(View.INVISIBLE);
+                                        changeUserButton.setVisibility(View.INVISIBLE);
 
-
-            // Set the change user button to open the change user dialog
-            changeUserButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    GirafProfileSelectorDialog changeUser = GirafProfileSelectorDialog.newInstance(HomeActivity.this,
-                        currentUserId.getId(), false, false, getString(R.string.home_activity_change_to_citizen_msg),
-                        CHANGE_USER_SELECTOR_DIALOG);
-                    changeUser.show(getSupportFragmentManager(), "" + CHANGE_USER_SELECTOR_DIALOG);
+                                    }
+                                    updateProfilePicture(response);
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    //ToDo logout
+                                }
+                            });
+                            queue.add(userGetRequest);
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            //ToDo logout
+                        }
+                    });
+                    queue.add(loginRequest);
+                } else {
+                    //ToDo logout
                 }
-            });
 
-        } else { // The uer had citizen permissions
-            settingsButton.setVisibility(View.INVISIBLE);
-            changeUserButton.setVisibility(View.INVISIBLE);
-
-        }
-
-        // Set the profile picture
-
-        profilePictureView.setImageModel(currentUserId, this.getResources().getDrawable(R.drawable.no_profile_pic));
-        profilePictureView.setTitle(currentUserId.getScreenName());
+            }
+        });
+        queue.add(userGetRequest);
 
         // Set the logout button to show the logout dialog
         logoutButton.setOnClickListener(new View.OnClickListener() {
@@ -422,7 +578,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
 
     @Override
     public void confirmDialog(int methodId) {
-        if(methodId == methodIdLogout) {
+        if (methodId == methodIdLogout) {
             startActivity(LauncherUtility.logOutIntent(HomeActivity.this));
             Toast.makeText(this, getString(R.string.home_activity_logged_out), Toast.LENGTH_LONG).show();
             finish();
@@ -436,7 +592,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
      */
     @Override
     public void noticeDialog(int id) {
-        if(id == Constants.METHOD_ID_OFFLINE_NOTIFY) {
+        if (id == Constants.METHOD_ID_OFFLINE_NOTIFY) {
             Constants.offlineNotify.dismiss();
         }
     }
@@ -446,7 +602,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
 
         if (input == CHANGE_USER_SELECTOR_DIALOG) {
             // Update the profile
-            currentUserId = profile;
+            currentUser = profile;
 
             // Reload the widgets in the left side of the screen
             loadWidgets();

@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
 import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GirafPictogramItemView;
@@ -34,6 +35,7 @@ import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppContainerFragm
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementFragment;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.GirafFragment;
+import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
 import dk.aau.cs.giraf.models.core.User;
 import dk.aau.cs.giraf.models.core.authentication.PermissionType;
 import dk.aau.cs.giraf.showcaseview.ShowcaseManager;
@@ -53,6 +55,7 @@ public class SettingsActivity extends GirafActivity
     AppsFragmentInterface, ShowcaseManager.ShowcaseCapable
 {
 
+    private RequestQueue queue;
     private static final String IS_FIRST_RUN_KEY = "IS_FIRST_RUN_KEY_SETTINGS_ACTIVITY";
 
     private static final int CHANGE_USER_SELECTOR_DIALOG = 100;
@@ -63,8 +66,8 @@ public class SettingsActivity extends GirafActivity
     private FragmentManager fragmentManager;
     private android.support.v4.app.FragmentManager supportFragmentManager;
 
-    private User currentUser = null;
-    private User loggedInGuardian;
+    private long currentUser;
+    private long loggedInGuardian;
 
     private ListView settingsListView;
     private SettingsListAdapter settingsListAdapter;
@@ -105,6 +108,7 @@ public class SettingsActivity extends GirafActivity
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.settings_activity);
+        queue = RequestQueueHandler.getInstance(this.getApplicationContext()).getRequestQueue();
 
         settingsListView = (ListView) findViewById(R.id.settingsListView);
 
@@ -250,7 +254,7 @@ public class SettingsActivity extends GirafActivity
      * Firstly, it gets the settings for Launcher itself, along with the "Apps" menu,
      * where users select or deselect apps.
      * Finally, gets the currently installed apps that have settings to be shown in SettingsActivity.
-     * Currently, these apps are only "Cars" (Stemmespillet) and "Zebra" (Sekvens).
+     * Currently, these apps are only "Cars" (Stemmespillet) and "Zebra" (Sekvens). //ToDO rewrite
      *
      * @return an Array consisting of the SettingsListitems that should be put into the left scrollview.
      */
@@ -437,6 +441,7 @@ public class SettingsActivity extends GirafActivity
     public void reloadActivity() {
         // Get the intent of SettingsActivity
         final Intent intent = SettingsActivity.this.getIntent();
+
         if (currentUser.hasPermission(PermissionType.User)) { //ToDo given that a child is only a user
             // A child profile has been selected, pass id
             intent.putExtra(Constants.CHILD_ID, currentUser.getId());
@@ -465,7 +470,7 @@ public class SettingsActivity extends GirafActivity
      *
      * @return profile of the current user
      */
-    public User getCurrentUserId() {
+    public long getCurrentUserId() {
         return currentUser;
     }
 
@@ -474,7 +479,7 @@ public class SettingsActivity extends GirafActivity
      *
      * @return profile of the logged in guardian
      */
-    public User getLoggedInGuardianId() {
+    public long getLoggedInGuardianId() {
         return loggedInGuardian;
     }
 
