@@ -1,25 +1,15 @@
 package dk.aau.cs.giraf.launcher.logiccontroller;
 
-import android.app.Activity;
 import android.content.Intent;
 
 //These are taken off the testapp
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.VolleyError;
 import dk.aau.cs.giraf.librest.requests.LoginRequest;
 import dk.aau.cs.giraf.librest.requests.GetRequest;
 import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
-import dk.aau.cs.giraf.librest.serialization.Translator;
-import dk.aau.cs.giraf.models.core.AccessLevel;
-import dk.aau.cs.giraf.models.core.Department;
-import dk.aau.cs.giraf.models.core.Pictogram;
 import dk.aau.cs.giraf.models.core.User;
-import java.util.HashMap;
-import java.util.Map;
 
 import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 import dk.aau.cs.giraf.launcher.activities.LoginActivity;
@@ -61,7 +51,7 @@ public class LoginController {
                             @Override
                             public void onErrorResponse(VolleyError error) {
                                 //ToDo Localise me later
-                                gui.ShowDialogWithMessage("try again later");
+                                gui.showDialogWithMessage("try again later");
                             }
                         });
                         queue.add(userGetRequest);
@@ -70,7 +60,7 @@ public class LoginController {
                 new Response.ErrorListener(){
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        gui.ShowDialogWithMessage("temp fejl msg");
+                        gui.showDialogWithMessage("temp fejl msg");
                     }
                 }
         );

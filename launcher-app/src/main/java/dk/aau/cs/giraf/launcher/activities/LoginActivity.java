@@ -10,12 +10,11 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
+
 import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.logiccontroller.LoginController;
-import dk.aau.cs.giraf.utilities.GrayScaleHelper;
 
 public class LoginActivity extends GirafActivity{
 
@@ -64,7 +63,7 @@ public class LoginActivity extends GirafActivity{
 /*
 * Gui methods
 */
-    public void LoginBtnPressed(View view){
+    public void loginBtnPressed(View view){
         loginButton.setEnabled(false);
         String username = usernameTextBox.getText().toString();
         String password = passwordTextBox.getText().toString();
@@ -76,7 +75,7 @@ public class LoginActivity extends GirafActivity{
 
 
 
-    public void ShowDialogWithMessage(String message){
+    public void showDialogWithMessage(String message){
         AlertDialog.Builder dialog = new AlertDialog.Builder(this,R.style.GirafTheme);
         dialog.setTitle(R.string.error_login);
         dialog.setMessage(message);
@@ -85,7 +84,7 @@ public class LoginActivity extends GirafActivity{
             public void onClick(DialogInterface dialogInterface, int id) {
                 findViewById(R.id.girafHeaderIcon).clearAnimation();
                 dialogInterface.cancel();
-                ReEnableGuiControls();
+                reEnableGuiControls();
             }
         });
         dialog.show();
@@ -98,7 +97,7 @@ public class LoginActivity extends GirafActivity{
     }
 
 
-    private void ReEnableGuiControls(){
+    private void reEnableGuiControls(){
         loginButton.setEnabled(true);
         usernameTextBox.setEnabled(true);
         passwordTextBox.setEnabled(true);
