@@ -64,7 +64,7 @@ public class LoginActivity extends GirafActivity{
 /*
 * Gui methods
 */
-    public void LoginBtnPressed(View view){
+    public void loginBtnPressed(View view){
         loginButton.setEnabled(false);
         String username = usernameTextBox.getText().toString();
         String password = passwordTextBox.getText().toString();
@@ -76,7 +76,7 @@ public class LoginActivity extends GirafActivity{
 
 
 
-    public void ShowDialogWithMessage(String message){
+    public void showDialogWithMessage(String message){
         AlertDialog.Builder dialog = new AlertDialog.Builder(this,R.style.GirafTheme);
         dialog.setTitle(R.string.error_login);
         dialog.setMessage(message);
