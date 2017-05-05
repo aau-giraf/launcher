@@ -10,11 +10,12 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
-
+import android.widget.Toast;
 import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.logiccontroller.LoginController;
+import dk.aau.cs.giraf.utilities.GrayScaleHelper;
 
 public class LoginActivity extends GirafActivity{
 
@@ -84,7 +85,7 @@ public class LoginActivity extends GirafActivity{
             public void onClick(DialogInterface dialogInterface, int id) {
                 findViewById(R.id.girafHeaderIcon).clearAnimation();
                 dialogInterface.cancel();
-                reEnableGuiControls();
+                ReEnableGuiControls();
             }
         });
         dialog.show();
@@ -97,7 +98,7 @@ public class LoginActivity extends GirafActivity{
     }
 
 
-    private void reEnableGuiControls(){
+    private void ReEnableGuiControls(){
         loginButton.setEnabled(true);
         usernameTextBox.setEnabled(true);
         passwordTextBox.setEnabled(true);
