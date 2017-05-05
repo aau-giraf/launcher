@@ -15,7 +15,9 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.google.analytics.tracking.android.StandardExceptionParser;
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 import dk.aau.cs.giraf.launcher.activities.LoginActivity;
+import dk.aau.cs.giraf.launcher.activities.SettingsActivity;
 import dk.aau.cs.giraf.models.core.Department;
 import dk.aau.cs.giraf.models.core.User;
 
@@ -40,6 +42,11 @@ public abstract class LauncherUtility {
      */
     public static boolean isDebugging() {
         return DEBUG_MODE;
+    }
+
+    public static void logout(Activity launchedFrom){
+        Intent intent = new Intent(launchedFrom, SettingsActivity.class);
+        launchedFrom.startActivity(intent);
     }
 
     /**

@@ -36,8 +36,8 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.librest.requests.GetRequest;
 import dk.aau.cs.giraf.librest.requests.LoginRequest;
 import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
-import dk.aau.cs.giraf.models.core.User;
 import dk.aau.cs.giraf.models.core.Application;
+import dk.aau.cs.giraf.models.core.User;
 import dk.aau.cs.giraf.models.core.authentication.PermissionType;
 import dk.aau.cs.giraf.showcaseview.ShowcaseManager;
 import dk.aau.cs.giraf.showcaseview.ShowcaseView;
@@ -73,8 +73,6 @@ public class HomeActivity extends GirafActivity implements
     private ShowcaseManager showcaseManager;
     private boolean isFirstRun;
 
-    private Handler handler = new Handler();
-    private int delay = 5000;
     private boolean offlineMode;
     /**
      * Used in onResume and onPause for handling showcaseview for first run.
@@ -98,13 +96,6 @@ public class HomeActivity extends GirafActivity implements
         setContentView(R.layout.home_activity);
         queue = RequestQueueHandler.getInstance(this.getApplicationContext()).getRequestQueue();
 
-        //Offline mode stuff
-        offlineMode = offlineMode();
-        Constants.offlineNotify = GirafNotifyDialog.newInstance(
-            getString(R.string.dialog_offline_notify_title),
-            getString(R.string.dialog_offline_notify_message),
-            Constants.METHOD_ID_OFFLINE_NOTIFY);
-
         if (currentUser == null) {
             currentUser = loggedInGuardian;
         }
@@ -120,84 +111,209 @@ public class HomeActivity extends GirafActivity implements
             LauncherUtility.showDebugInformation(this);
         }
 
-        GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
-            @Override
-            public void onResponse(User response) {
-                // Get the row and column size for the grids in the AppViewPager
-                final int rowsSize = response.getSettings().getAppsGridSizeRows();
-                final int columnsSize = response.getSettings().getAppsGridSizeColumns();
-
-                appViewPager.setAdapter(new AppsFragmentAdapter(getSupportFragmentManager(),
-                    currentLoadedApps, rowsSize, columnsSize));
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                if (error.networkResponse.statusCode == 401) {
-                    LoginRequest login = new LoginRequest(currentUser, new Response.Listener<Integer>() {
-                        @Override
-                        public void onResponse(Integer response) {
-                            GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
-                                @Override
-                                public void onResponse(User response) {
-                                    // Get the row and column size for the grids in the AppViewPager
-                                    final int rowsSize = response.getSettings().getAppsGridSizeRows();
-                                    final int columnsSize = response.getSettings().getAppsGridSizeColumns();
-
-                                    appViewPager.setAdapter(new AppsFragmentAdapter(getSupportFragmentManager(),
-                                        currentLoadedApps, rowsSize, columnsSize));
-                                }
-                            }, new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    //ToDo logout
-                                }
-                            });
-                            queue.add(userGetRequest);
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            //ToDo logout
-                        }
-                    });
-                    queue.add(login);
-                } else {
-                    //ToDo logout
+        GetRequest<User> userGetRequest =
+            new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                @Override
+                public void onResponse(User response) {
+                    setAppGridSizeValues(response);
                 }
-            }
-        });
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    if (error.networkResponse.statusCode == 401) {
+                        LoginRequest login = new LoginRequest(currentUser, new Response.Listener<Integer>() {
+                            @Override
+                            public void onResponse(Integer response) {
+                                GetRequest<User> userGetRequest =
+                                    new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                                        @Override
+                                        public void onResponse(User response) {
+                                            setAppGridSizeValues(response);
+                                        }
+                                    }, new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            LauncherUtility.logout(HomeActivity.this);
+                                        }
+                                    });
+                                queue.add(userGetRequest);
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                LauncherUtility.logout(HomeActivity.this);
+                            }
+                        });
+                        queue.add(login);
+                    } else {
+                        LauncherUtility.logout(HomeActivity.this);
+                    }
+                }
+            });
         queue.add(userGetRequest);
-
-        final GirafButton helpGirafButton = new GirafButton(this,
-            getResources().getDrawable(R.drawable.icon_help));
-        helpGirafButton.setId(R.id.help_button);
-        helpGirafButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggleShowcase();
-            }
-        });
-
-        offlineModeFeedback();
-
-        //Setup a reoccuring check of network status aka. offline mode
-        // this also acts when changing from or to offline mode
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                boolean offlineModeNow = offlineMode();
-                if (offlineMode != offlineModeNow) {
-                    offlineMode = offlineModeNow;
-                    reloadApplications();
-                    offlineModeFeedback();
-                }
-                handler.postDelayed(this, delay);
-            }
-        }, delay);
 
         // Start logging this activity
         EasyTracker.getInstance(this).activityStart(this);
+    }
+
+
+    /**
+     * Called from home_activity.xml using the onClick event of the help button.
+     *
+     * @param view the view.
+     */
+    public void onHelpButtonClick(View view) {
+        toggleShowcase();
+    }
+
+    /**
+     * Called from home_activity.xml using the onClick event of the settings button.
+     *
+     * @param view the view.
+     */
+    public void onSettingsButtonClick(View view) {
+        GetRequest<User> userGetRequest =
+            new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                @Override
+                public void onResponse(User response) {
+                    startSettingsActivity(response);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    if (error.networkResponse.statusCode == 401) {
+                        LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
+                            @Override
+                            public void onResponse(Integer response) {
+                                GetRequest<User> userGetRequest =
+                                    new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                                        @Override
+                                        public void onResponse(User response) {
+                                            startSettingsActivity(response);
+                                        }
+                                    }, new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            LauncherUtility.logout(HomeActivity.this);
+                                        }
+                                    });
+                                queue.add(userGetRequest);
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                LauncherUtility.logout(HomeActivity.this);
+                            }
+                        });
+                        queue.add(loginRequest);
+                    } else {
+                        LauncherUtility.logout(HomeActivity.this);
+                    }
+                }
+            });
+        queue.add(userGetRequest);
+    }
+
+    /**
+     * Called from home_activity.xml using the onClick event of the logout button.
+     *
+     * @param view the view.
+     */
+    public void onLogoutButtonClick(View view) {
+        GirafConfirmDialog girafConfirmDialog = GirafConfirmDialog.newInstance(getString(R.string.logout_msg),
+            getString(R.string.home_activity_logout), methodIdLogout, getString(R.string.logout_msg),
+            R.drawable.icon_logout, getString(R.string.cancel_msg), R.drawable.icon_cancel);
+        girafConfirmDialog.show(getSupportFragmentManager(), "logout_dialog");
+    }
+
+    /**
+     * Called from home_activity.xml using the onClick event of the change user button.
+     *
+     * @param view the view.
+     */
+    public void onChangeUserButtonClick(View view) {
+        GetRequest<User> userGetRequest =
+            new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                @Override
+                public void onResponse(User response) {
+                    showChangeUserDialog(response);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    if (error.networkResponse.statusCode == 401) {
+                        LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
+                            @Override
+                            public void onResponse(Integer response) {
+                                GetRequest<User> userGetRequest =
+                                    new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                                        @Override
+                                        public void onResponse(User response) {
+                                            showChangeUserDialog(response);
+                                        }
+                                    }, new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            LauncherUtility.logout(HomeActivity.this);
+                                        }
+                                    });
+                                queue.add(userGetRequest);
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                LauncherUtility.logout(HomeActivity.this);
+                            }
+                        });
+                        queue.add(loginRequest);
+                    } else {
+                        LauncherUtility.logout(HomeActivity.this);
+                    }
+                }
+            });
+        queue.add(userGetRequest);
+    }
+
+    /**
+     * Method used to start the settings activity.
+     * Called from a GetUserRequest in the onResponse from settings_button's onClick.
+     *
+     * @param user the user from the request.
+     */
+    private void startSettingsActivity(User user) {
+        Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
+        intent.putExtra(Constants.GUARDIAN_ID, user.getId());
+        intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
+        startActivity(intent);
+    }
+
+    /**
+     * Method used to set the app grid column and row sizes.
+     * Called from a GetUserRequest in the onResponse.
+     *
+     * @param user the user from the request.
+     */
+    private void setAppGridSizeValues(User user) {
+        // Get the row and column size for the grids in the AppViewPager
+        final int rowsSize = user.getSettings().getAppsGridSizeRows();
+        final int columnsSize = user.getSettings().getAppsGridSizeColumns();
+
+        appViewPager.setAdapter(new AppsFragmentAdapter(getSupportFragmentManager(),
+            currentLoadedApps, rowsSize, columnsSize));
+    }
+
+    /**
+     * Method used to show the change user selector dialog.
+     * Called from a GetUserRequest in the onResponse of the onChangeUserButtonClick.
+     *
+     * @param user the user from the request.
+     */
+    private void showChangeUserDialog(User user) {
+        GirafProfileSelectorDialog changeUser = GirafProfileSelectorDialog.newInstance(HomeActivity.this,
+            user, false, false, getString(R.string.home_activity_change_to_citizen_msg),
+            CHANGE_USER_SELECTOR_DIALOG);
+        changeUser.show(getSupportFragmentManager(), "" + CHANGE_USER_SELECTOR_DIALOG);
+
     }
 
     /**
@@ -350,11 +466,36 @@ public class HomeActivity extends GirafActivity implements
         loadHomeActivityApplicationTask.execute();
     }
 
+    /**
+     * Method used to update the profile picture of a user.
+     * Called from a GetUserRequest in the onResponse of the loadWidgets
+     *
+     * @param user the user from the request.
+     */
     private void updateProfilePicture(User user) {
         final GirafUserItemView profilePictureView = (GirafUserItemView) findViewById(R.id.profile_widget);
         // Set the profile picture
         profilePictureView.setImageModel(user, this.getResources().getDrawable(R.drawable.no_profile_pic));
         profilePictureView.setTitle(user.getScreenName());
+    }
+
+    /**
+     * Method used to change the visibility of buttons based on the users permissions.
+     * Called from a GetUserRequest in the onResponse of the loadWidgets
+     *
+     * @param user the user from the request.
+     */
+    private void changeVisibilityOfButtons(User user) {
+        final GirafButton settingsButton = (GirafButton) findViewById(R.id.settings_button);
+        final GirafButton changeUserButton = (GirafButton) findViewById(R.id.change_user_button);
+        // Check if the user is a guardian
+        if (user.hasPermission(PermissionType.Guardian) || user.hasPermission(PermissionType.SuperUser)) {
+            settingsButton.setVisibility(View.VISIBLE);
+            changeUserButton.setVisibility(View.VISIBLE);
+        } else { // The user had citizen permissions
+            settingsButton.setVisibility(View.INVISIBLE);
+            changeUserButton.setVisibility(View.INVISIBLE);
+        }
     }
 
     /**
@@ -365,195 +506,52 @@ public class HomeActivity extends GirafActivity implements
      * @see dk.aau.cs.giraf.gui.GirafButton
      */
     private void loadWidgets() {
-
-        // Fetch references to buttons
-        final GirafButton logoutButton = (GirafButton) findViewById(R.id.logout_button);
-        final GirafButton settingsButton = (GirafButton) findViewById(R.id.settings_button);
-        final GirafButton changeUserButton = (GirafButton) findViewById(R.id.change_user_button);
-        final GirafButton helpButton = (GirafButton) findViewById(R.id.help_button);
         //Set up widget updater, which updates the widget's view regularly, according to its status.
         widgetUpdater = new GWidgetUpdater();
 
-
-        settingsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
-                    @Override
-                    public void onResponse(User response) {
-                        Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
-                        intent.putExtra(Constants.GUARDIAN_ID, response.getId());
-                        intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
-                        startActivity(intent);
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (error.networkResponse.statusCode == 401) {
-                            LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
-                                @Override
-                                public void onResponse(Integer response) {
-                                    GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+        GetRequest<User> userGetRequest =
+            new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                @Override
+                public void onResponse(User response) {
+                    changeVisibilityOfButtons(response);
+                    updateProfilePicture(response);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    if (error.networkResponse.statusCode == 401) {
+                        LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
+                            @Override
+                            public void onResponse(Integer response) {
+                                GetRequest<User> userGetRequest =
+                                    new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
                                         @Override
                                         public void onResponse(User response) {
-                                            Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
-                                            intent.putExtra(Constants.GUARDIAN_ID, response.getId());
-                                            intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
-                                            startActivity(intent);
+                                            changeVisibilityOfButtons(response);
+                                            updateProfilePicture(response);
                                         }
                                     }, new Response.ErrorListener() {
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
-                                            //ToDo logout
+                                            LauncherUtility.logout(HomeActivity.this);
                                         }
                                     });
-                                    queue.add(userGetRequest);
-                                }
-                            }, new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    //ToDo logout
-                                }
-                            });
-                            queue.add(loginRequest);
-                        } else {
-                            //ToDo logout
-                        }
+                                queue.add(userGetRequest);
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                LauncherUtility.logout(HomeActivity.this);
+                            }
+                        });
+                        queue.add(loginRequest);
+                    } else {
+                        LauncherUtility.logout(HomeActivity.this);
                     }
-                });
-                queue.add(userGetRequest);
-            }
-        });
-
-
-        // Set the change user button to open the change user dialog
-        changeUserButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
-                    @Override
-                    public void onResponse(User response) {
-                        GirafProfileSelectorDialog changeUser = GirafProfileSelectorDialog.newInstance(HomeActivity.this,
-                            response, false, false, getString(R.string.home_activity_change_to_citizen_msg),
-                            CHANGE_USER_SELECTOR_DIALOG);
-                        changeUser.show(getSupportFragmentManager(), "" + CHANGE_USER_SELECTOR_DIALOG);
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (error.networkResponse.statusCode == 401) {
-                            LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
-                                @Override
-                                public void onResponse(Integer response) {
-                                    GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
-                                        @Override
-                                        public void onResponse(User response) {
-                                            GirafProfileSelectorDialog changeUser = GirafProfileSelectorDialog.newInstance(HomeActivity.this,
-                                                response, false, false, getString(R.string.home_activity_change_to_citizen_msg),
-                                                CHANGE_USER_SELECTOR_DIALOG);
-                                            changeUser.show(getSupportFragmentManager(), "" + CHANGE_USER_SELECTOR_DIALOG);
-                                        }
-                                    }, new Response.ErrorListener() {
-                                        @Override
-                                        public void onErrorResponse(VolleyError error) {
-                                            //ToDo logout
-                                        }
-                                    });
-                                    queue.add(userGetRequest);
-                                }
-                            }, new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    //ToDo logout
-                                }
-                            });
-                            queue.add(loginRequest);
-                        } else {
-                            //ToDo logout
-                        }
-
-                    }
-                });
-                queue.add(userGetRequest);
-            }
-        });
-
-        GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
-            @Override
-            public void onResponse(User response) {
-                // Check if the user is a guardian
-                if (response.hasPermission(PermissionType.Guardian) || response.hasPermission(PermissionType.SuperUser)) {
-                    settingsButton.setVisibility(View.VISIBLE);
-                    changeUserButton.setVisibility(View.VISIBLE);
-                } else { // The user had citizen permissions
-                    settingsButton.setVisibility(View.INVISIBLE);
-                    changeUserButton.setVisibility(View.INVISIBLE);
 
                 }
-                updateProfilePicture(response);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                if (error.networkResponse.statusCode == 401) {
-                    LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
-                        @Override
-                        public void onResponse(Integer response) {
-                            GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
-                                @Override
-                                public void onResponse(User response) {
-                                    // Check if the user is a guardian
-                                    if (response.hasPermission(PermissionType.Guardian) || response.hasPermission(PermissionType.SuperUser)) {
-                                        settingsButton.setVisibility(View.VISIBLE);
-                                        changeUserButton.setVisibility(View.VISIBLE);
-                                    } else { // The user had citizen permissions
-                                        settingsButton.setVisibility(View.INVISIBLE);
-                                        changeUserButton.setVisibility(View.INVISIBLE);
-
-                                    }
-                                    updateProfilePicture(response);
-                                }
-                            }, new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    //ToDo logout
-                                }
-                            });
-                            queue.add(userGetRequest);
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            //ToDo logout
-                        }
-                    });
-                    queue.add(loginRequest);
-                } else {
-                    //ToDo logout
-                }
-
-            }
-        });
+            });
         queue.add(userGetRequest);
-
-        // Set the logout button to show the logout dialog
-        logoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                GirafConfirmDialog girafConfirmDialog = GirafConfirmDialog.newInstance(getString(R.string.logout_msg),
-                    getString(R.string.home_activity_logout), methodIdLogout, getString(R.string.logout_msg),
-                    R.drawable.icon_logout, getString(R.string.cancel_msg), R.drawable.icon_cancel);
-                girafConfirmDialog.show(getSupportFragmentManager(), "logout_dialog");
-            }
-        });
-
-        helpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showShowcase();
-            }
-        });
     }
 
     /**
