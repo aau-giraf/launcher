@@ -38,7 +38,7 @@
                 android:layout_height="fill_parent"
                 android:inputType="text"
                 android:ems="10"
-                android:id="@+id/username_box"
+                android:id="@+id/username_textbox"
                 android:clickable="false"
                 android:background="@drawable/text_box" />
     </LinearLayout>
@@ -62,7 +62,7 @@
                 android:layout_height="fill_parent"
                 android:inputType="textPassword"
                 android:ems="10"
-                android:id="@+id/pass_box"
+                android:id="@+id/password_textbox"
                 android:clickable="false"
                 android:background="@drawable/text_box" />
 
@@ -78,10 +78,10 @@
                 android:layout_marginTop="10dp"
                 android:layout_gravity="end"
                 android:text="@string/login"
-                android:id="@+id/login_btn"
+                android:id="@+id/login_button"
                 android:enabled="true"
                 android:background="@drawable/login_button"
-                android:onClick="LoginBtnPressed"/>
+                android:onClick="onLoginButtonClick"/>
     </LinearLayout>
 </LinearLayout>
 </merge>
