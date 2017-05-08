@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
                 android:gravity="center"
-                android:text="Giraf er en række Apps designet specielt til autister med lidt eller intet verbalt sprog.\nAlle vores Apps er gratis og open source."
+                android:text="@string/settings_for_who"
                 android:textColor="@color/giraf_text"/>
 
     </LinearLayout>

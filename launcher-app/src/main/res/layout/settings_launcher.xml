@@ -10,7 +10,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-    <dk.aau.cs.giraf.launcher.settings.components.LeftAlignedSwitchPreference
+    <Switch
             android:id="@+id/start_animation_setting"
             android:key="@string/show_animation_preference_key"
             android:title="@string/setting_launcher_animation_title"
@@ -19,6 +19,16 @@
             android:switchTextOn="@string/setting_launcher_animation_on"
             android:defaultValue="true"
             android:layout_gravity="left"/>
+
+    <dk.aau.cs.giraf.launcher.settings.components.LeftAlignedSwitchPreference
+        android:id="@+id/toggle_gray_scale"
+        android:key="@string/show_grayscale_preference_key"
+        android:title="@string/setting_grayscale_title"
+        android:summary="@string/setting_grayscale_summary"
+        android:switchTextOff="@string/setting_launcher_animation_off"
+        android:switchTextOn="@string/setting_launcher_animation_on"
+        android:defaultValue="false"
+        android:layout_gravity="left"/>
 
     <dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer
             android:id="@+id/icon_resizer"

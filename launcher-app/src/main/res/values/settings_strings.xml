@@ -8,8 +8,10 @@
 
     <!-- Launcher preference keys -->
     <string name="show_animation_preference_key">show_animation_preference</string>
+    <string name="show_grayscale_preference_key">show_grayscale_preference</string>
     <string name="grid_size_preference_key">grid_size_preference_key</string>
     <string name="selected_android_apps_key">selected_android_apps</string>
+
 
     <!-- Launcher preference UI -->
     <string name="setting_launcher_animation_title">Opstartsanimation</string>
@@ -24,7 +26,10 @@
     <string name="settings_tablist_applications">Viste Apps</string>
     <string name="settings_tablist_tablet">Tablet Indstillinger</string>
     <string name="settings_tablist_about">Omkring Giraf</string>
-
+    
+    <string name="setting_grayscale_title">Gråskala</string>
+    <string name="setting_grayscale_summary">Vis applikationer i gråskala.</string>
+    
     <!-- About Strings -->
     <string name="settings_about_title">Omkring Giraf</string>
 
@@ -51,4 +56,7 @@
     </string>
     <!-- TODO: INDSÆT NAVN PÅ ÅBENSOVSEKODE! -->
 
+    <string name="settings_for_who"> Giraf er en række Apps designet specielt til autister med lidt eller intet verbalt sprog.\n
+        Alle vores Apps er gratis og open source.
+    </string>
 </resources>
