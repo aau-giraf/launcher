@@ -22,7 +22,9 @@ import dk.aau.cs.giraf.models.core.User;
 import dk.aau.cs.giraf.models.core.Application;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -36,7 +38,7 @@ public class AppsGridFragment extends Fragment {
     private static final String COLUMN_SIZE_INT_TAG = "COLUMN_SIZE_INT_TAG";
     private static final String APPINFOS_PARCELABLE_TAG = "APPINFOS_PARCELABLE_TAG";
 
-    private Set<String> selectedApps;
+    private Collection<Application> selectedApps;
 
     //ToDo Write JavaDoc
 
@@ -64,10 +66,12 @@ public class AppsGridFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        final User currentUser = ((AppsFragmentInterface) activity).getUser();
+        /*final User currentUser = ((AppsFragmentInterface) activity).getUser();
         SharedPreferences preferences = LauncherUtility.getSharedPreferencesForCurrentUser(activity, currentUser);
         selectedApps = preferences.getStringSet(activity.getResources()
-            .getString(R.string.selected_android_apps_key), new HashSet<String>());
+            .getString(R.string.selected_android_apps_key), new HashSet<String>());*/
+
+        selectedApps = ((AppsFragmentInterface) activity).getUser().getSettings().getAppsUserCanAccess();
     }
 
     @Override
