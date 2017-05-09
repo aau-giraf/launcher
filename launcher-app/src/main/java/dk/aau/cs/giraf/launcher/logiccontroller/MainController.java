@@ -22,10 +22,7 @@ public class MainController {
     }
 
     /**
-     * Launches the next relevant activity, according to the current debugging mode, and to
-     * whether any valid login data is detected in {@code SharedPerferences}.
-     *
-     * @see dk.aau.cs.giraf.launcher.helper.LauncherUtility#sessionExpired(android.content.Context)
+     * Launches the next relevant activity.
      */
     public void startNextActivity() {
         Intent intent = new Intent(gui, LoginActivity.class);
