@@ -11,6 +11,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 import dk.aau.cs.giraf.activity.GirafActivity;
+import dk.aau.cs.giraf.gui.GirafPopupDialog;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.logiccontroller.LoginController;
@@ -74,18 +75,16 @@ public class LoginActivity extends GirafActivity {
      * @param message the message.
      */
     public void showDialogWithMessage(String message) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this,R.style.GirafTheme);
-        dialog.setTitle(R.string.error_login);
-        dialog.setMessage(message);
-        dialog.setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+        final GirafPopupDialog errorDialog = new GirafPopupDialog(R.string.error_login,message,this);
+        errorDialog.setButton1(android.R.string.ok, R.drawable.icon_accept, new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int id) {
+            public void onClick(View v) {
                 findViewById(R.id.girafHeaderIcon).clearAnimation();
-                dialogInterface.cancel();
+                errorDialog.cancel();
                 reEnableGuiControls();
             }
         });
-        dialog.show();
+        errorDialog.show();
     }
 
 

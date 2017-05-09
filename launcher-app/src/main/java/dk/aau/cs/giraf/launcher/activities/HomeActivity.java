@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
@@ -20,12 +21,7 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import dk.aau.cs.giraf.activity.GirafActivity;
-import dk.aau.cs.giraf.gui.GWidgetUpdater;
-import dk.aau.cs.giraf.gui.GirafButton;
-import dk.aau.cs.giraf.gui.GirafConfirmDialog;
-import dk.aau.cs.giraf.gui.GirafNotifyDialog;
-import dk.aau.cs.giraf.gui.GirafPictogramItemView;
-import dk.aau.cs.giraf.gui.GirafProfileSelectorDialog;
+import dk.aau.cs.giraf.gui.*;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
@@ -54,7 +50,6 @@ import java.util.Set;
  * activity. It requires a user id in the parent intent.
  */
 public class HomeActivity extends GirafActivity implements
-    GirafNotifyDialog.Notification, GirafConfirmDialog.Confirmation,
     GirafProfileSelectorDialog.OnSingleProfileSelectedListener, ShowcaseManager.ShowcaseCapable
 {
     private static final String IS_FIRST_RUN_KEY = "IS_FIRST_RUN_KEY_HOME_ACTIVITY";
@@ -220,10 +215,22 @@ public class HomeActivity extends GirafActivity implements
      * @param view the view.
      */
     public void onLogoutButtonClick(View view) {
-        GirafConfirmDialog girafConfirmDialog = GirafConfirmDialog.newInstance(getString(R.string.logout_msg),
-            getString(R.string.home_activity_logout), methodIdLogout, getString(R.string.logout_msg),
-            R.drawable.icon_logout, getString(R.string.cancel_msg), R.drawable.icon_cancel);
-        girafConfirmDialog.show(getSupportFragmentManager(), "logout_dialog");
+        final GirafPopupDialog logoutDialog = new GirafPopupDialog(R.string.logout_msg, R.string.home_activity_logout,this);
+        logoutDialog.setButton1(R.string.logout_msg, R.drawable.icon_logout, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LauncherUtility.logout(HomeActivity.this);
+                Toast.makeText(HomeActivity.this, getString(R.string.home_activity_logged_out), Toast.LENGTH_LONG).show();
+                finish();
+            }
+        });
+        logoutDialog.setButton2(R.string.cancel_msg, R.drawable.icon_cancel, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logoutDialog.cancel();
+            }
+        });
+        logoutDialog.show();
     }
 
     /**
@@ -311,7 +318,7 @@ public class HomeActivity extends GirafActivity implements
     private void showChangeUserDialog(User user) {
         GirafProfileSelectorDialog changeUser = GirafProfileSelectorDialog.newInstance(HomeActivity.this,
             user, false, false, getString(R.string.home_activity_change_to_citizen_msg),
-            CHANGE_USER_SELECTOR_DIALOG);
+            CHANGE_USER_SELECTOR_DIALOG, queue);
         changeUser.show(getSupportFragmentManager(), "" + CHANGE_USER_SELECTOR_DIALOG);
 
     }
@@ -572,27 +579,6 @@ public class HomeActivity extends GirafActivity implements
      */
     protected boolean offlineMode() {
         return !NetworkUtilities.isNetworkAvailable(this);
-    }
-
-    @Override
-    public void confirmDialog(int methodId) {
-        if (methodId == methodIdLogout) {
-            startActivity(LauncherUtility.logOutIntent(HomeActivity.this));
-            Toast.makeText(this, getString(R.string.home_activity_logged_out), Toast.LENGTH_LONG).show();
-            finish();
-        }
-    }
-
-    /**
-     * Gets called by the GirafNotify Dialog with the ID of the dialog.
-     *
-     * @param id the ID.
-     */
-    @Override
-    public void noticeDialog(int id) {
-        if (id == Constants.METHOD_ID_OFFLINE_NOTIFY) {
-            Constants.offlineNotify.dismiss();
-        }
     }
 
     @Override
