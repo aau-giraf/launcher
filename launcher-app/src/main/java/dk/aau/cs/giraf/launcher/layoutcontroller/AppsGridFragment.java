@@ -11,13 +11,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 import dk.aau.cs.giraf.launcher.activities.SettingsActivity;
 import dk.aau.cs.giraf.launcher.helper.AppViewCreationUtility;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppContainerFragment;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
 import dk.aau.cs.giraf.launcher.widgets.AppImageView;
+import dk.aau.cs.giraf.librest.requests.GetRequest;
+import dk.aau.cs.giraf.librest.requests.LoginRequest;
+import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
 import dk.aau.cs.giraf.models.core.User;
 import dk.aau.cs.giraf.models.core.Application;
 
@@ -40,6 +48,8 @@ public class AppsGridFragment extends Fragment {
 
     private Collection<Application> selectedApps;
 
+    private RequestQueue queue;
+
     //ToDo Write JavaDoc
 
     /**
@@ -60,6 +70,7 @@ public class AppsGridFragment extends Fragment {
         AppsGridFragment newFragment = new AppsGridFragment();
         newFragment.setArguments(args);
 
+
         return newFragment;
     }
 
@@ -70,12 +81,54 @@ public class AppsGridFragment extends Fragment {
         SharedPreferences preferences = LauncherUtility.getSharedPreferencesForCurrentUser(activity, currentUser);
         selectedApps = preferences.getStringSet(activity.getResources()
             .getString(R.string.selected_android_apps_key), new HashSet<String>());*/
+        final User currentUser = ((AppsFragmentInterface) activity).getUser();
 
-        selectedApps = ((AppsFragmentInterface) activity).getUser().getSettings().getAppsUserCanAccess();
+        GetRequest<User> userGetRequest =
+            new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                @Override
+                public void onResponse(User response) {
+                    selectedApps = response.getSettings().getAppsUserCanAccess();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    if (error.networkResponse.statusCode == 401) {
+                        LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
+                            @Override
+                            public void onResponse(Integer response) {
+                                GetRequest<User> userGetRequest =
+                                    new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                                        @Override
+                                        public void onResponse(User response) {
+                                            selectedApps = response.getSettings().getAppsUserCanAccess();
+                                        }
+                                    }, new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+
+                                        }
+                                    });
+                                queue.add(userGetRequest);
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                            }
+                        });
+                        queue.add(loginRequest);
+                    }
+
+                }
+            });
+        queue.add(userGetRequest);
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        queue = RequestQueueHandler.getInstance(this.getContext().getApplicationContext()).getRequestQueue();
 
         final GridLayout appsGridLayout = (GridLayout) inflater.inflate(R.layout.apps_grid_fragment, null);
 
