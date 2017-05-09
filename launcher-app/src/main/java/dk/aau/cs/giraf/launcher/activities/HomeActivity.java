@@ -56,7 +56,6 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     private static final String IS_FIRST_RUN_KEY = "IS_FIRST_RUN_KEY_HOME_ACTIVITY";
     private static final int CHANGE_USER_SELECTOR_DIALOG = 100;
     private User currentUser;
-    private User loggedInGuardian;
     private RequestQueue queue;
 
     private LoadHomeActivityApplicationTask loadHomeActivityApplicationTask;
@@ -78,8 +77,6 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     private ViewPager appViewPager;
     private ScrollView sidebarScrollView;
 
-    private final int methodIdLogout = 1;
-
     /**
      * Sets up the activity. Specifically view variables are instantiated, the login button listener
      * is set, and the instruction animation is set up.
@@ -91,10 +88,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
         queue = RequestQueueHandler.getInstance(this.getApplicationContext()).getRequestQueue();
-
-        if (currentUser == null) {
-            currentUser = loggedInGuardian;
-        }
+        currentUser = (User) getIntent().getExtras().getSerializable(Constants.CURRENT_USER);
 
         // Fetch references to view objects
         sidebarScrollView = (ScrollView) this.findViewById(R.id.sidebar_scrollview);
@@ -290,8 +284,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
      */
     private void startSettingsActivity(User user) {
         Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
-        intent.putExtra(Constants.GUARDIAN_ID, user.getId());
-        intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
+        intent.putExtra(Constants.CURRENT_USER, user);
         startActivity(intent);
     }
 

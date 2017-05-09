@@ -45,8 +45,7 @@ public class LoginController {
                             @Override
                             public void onResponse(User response) {
                                 Intent homeIntent = new Intent(gui, HomeActivity.class);
-                                //ToDo Send user instead of ID
-                                homeIntent.putExtra(Constants.GUARDIAN_ID, response.getId());
+                                homeIntent.putExtra(Constants.CURRENT_USER,response);
                                 homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 LauncherUtility.saveLogInData(gui, response.getId(), new Date().getTime());
                                 gui.startActivity(homeIntent);
