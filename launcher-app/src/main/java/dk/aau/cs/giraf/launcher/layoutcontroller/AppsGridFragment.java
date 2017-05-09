@@ -36,7 +36,6 @@ public class AppsGridFragment extends Fragment {
     private static final String COLUMN_SIZE_INT_TAG = "COLUMN_SIZE_INT_TAG";
     private static final String APPINFOS_PARCELABLE_TAG = "APPINFOS_PARCELABLE_TAG";
 
-    private ProfileApplicationController pac;
     private Set<String> selectedApps;
 
     //ToDo Write JavaDoc
@@ -65,8 +64,7 @@ public class AppsGridFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        pac = new ProfileApplicationController(activity);
-        final User currentUser = ((AppsFragmentInterface) activity).getCurrentUserId();
+        final User currentUser = ((AppsFragmentInterface) activity).getUser();
         SharedPreferences preferences = LauncherUtility.getSharedPreferencesForCurrentUser(activity, currentUser);
         selectedApps = preferences.getStringSet(activity.getResources()
             .getString(R.string.selected_android_apps_key), new HashSet<String>());
@@ -91,12 +89,12 @@ public class AppsGridFragment extends Fragment {
                 final AppInfo currentAppInfo = appInfos.get(appCounter);
 
                 final AppsFragmentInterface activity = (AppsFragmentInterface) getActivity();
-                final User currentUser = activity.getCurrentUserId();
+                final User currentUser = activity.getUser();
                 final int margin = 10;
 
                 //Create a new AppImageView and set its properties
                 AppImageView newAppView = AppViewCreationUtility.createAppImageView(getActivity(), currentUser,
-                    activity.getLoggedInGuardianId(), currentAppInfo, appsGridLayout, getOnClickListener());
+                    activity.getUser(), currentAppInfo, appsGridLayout, getOnClickListener());
                 //newAppView.setScaleType(ImageView.ScaleType.FIT_XY);
                 GridLayout.LayoutParams params = new GridLayout.LayoutParams(new ViewGroup.LayoutParams(
                     container.getMeasuredWidth() / columnSize - margin * 2, container.getMeasuredHeight() /
@@ -105,7 +103,7 @@ public class AppsGridFragment extends Fragment {
                 newAppView.setLayoutParams(params);
 
                 // Application icons should only have their check state set when in the SettingsActivity
-                if (activity instanceof SettingsActivity && currentAppInfo != null && (doesProfileApplicationExist(pac,
+                if (activity instanceof SettingsActivity && currentAppInfo != null && (doesProfileApplicationExist(
                     currentAppInfo.getApp(), currentUser) || selectedApps.contains(currentAppInfo.getActivity())))
                 {
                     newAppView.setChecked(true);
@@ -122,15 +120,18 @@ public class AppsGridFragment extends Fragment {
      * This function checks if the ProfileApplication consisting of the given application and the given user exists.
      * If it does, it means the application was selected earlier by the user and should be marked as selected
      *
-     * @param pac  The ProfileApplicationController used to retrieve the ProfileApplication
+     * Note (09-05-2017): As a part of switching to rest-models, I have chosen to assume that this method checks if a
+     * given user has access to an application, and has replaced the old code to reflect this.
+     *
+     * //@param pac  The ProfileApplicationController used to retrieve the ProfileApplication
      * @param app  The application to check for
      * @param user The profile to check for
      * @return true if the ProfileApplication exists, otherwise return false
      */
-    private boolean doesProfileApplicationExist(ProfileApplicationController pac, Application app, User user) {
-        ProfileApplication thisProfileApplication = pac.getProfileApplicationByProfileIdAndApplicationId(app, user);
-
-        return thisProfileApplication != null;
+    private boolean doesProfileApplicationExist(Application app, User user) {
+        return user.getSettings().getAppsUserCanAccess().contains(app);
+        //ProfileApplication thisProfileApplication = pac.getProfileApplicationByProfileIdAndApplicationId(app, user);
+        //return thisProfileApplication != null;
     }
 
     private View.OnClickListener getOnClickListener() {
