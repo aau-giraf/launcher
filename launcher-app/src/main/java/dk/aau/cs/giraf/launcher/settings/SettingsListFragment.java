@@ -104,7 +104,7 @@ public class SettingsListFragment extends Fragment {
         final GirafUserItemView mProfileButton = (GirafUserItemView)
             view.findViewById(R.id.profile_widget_settings);
 
-        User currentUser = getActivity().getIntent().getExtras().getSerializable(Constants.CURRENT_USER);
+        User currentUser = (User) getActivity().getIntent().getExtras().getSerializable(Constants.CURRENT_USER);
 
         // Notify about the current user
         callback.setCurrentUser(currentUser);
