@@ -9,7 +9,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.viewpagerindicator.CirclePageIndicator;
+import dk.aau.cs.giraf.launcher.activities.HomeActivity;
+import dk.aau.cs.giraf.librest.requests.GetRequest;
+import dk.aau.cs.giraf.librest.requests.PutRequest;
+import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
 import dk.aau.cs.giraf.models.core.Application;
 import dk.aau.cs.giraf.models.core.User;
 import dk.aau.cs.giraf.launcher.R;
@@ -22,6 +29,7 @@ import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 import dk.aau.cs.giraf.launcher.widgets.AppImageView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -31,9 +39,9 @@ import java.util.TimerTask;
  */
 public class GirafFragment extends AppContainerFragment {
 
-    private Timer appsUpdater;
     private ArrayList<AppInfo> appInfos;
     private LoadGirafApplicationTask loadApplicationTask;
+    private RequestQueue queue;
     //private View.OnClickListener listener;
 
     /**
@@ -50,6 +58,7 @@ public class GirafFragment extends AppContainerFragment {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         appView = (ViewPager) view.findViewById(R.id.appsViewPager);
 
+        queue = RequestQueueHandler.getInstance(getActivity().getApplicationContext()).getRequestQueue();
         final int rowsSize = ApplicationGridResizer.getGridRowSize(getActivity(), currentUser);
         final int columnsSize = ApplicationGridResizer.getGridColumnSize(getActivity(), currentUser);
 
@@ -73,10 +82,6 @@ public class GirafFragment extends AppContainerFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (haveAppsBeenAdded) {
-            startObservingApps();
-        }
-
         reloadApplications();
     }
 
@@ -91,11 +96,6 @@ public class GirafFragment extends AppContainerFragment {
 
         if (loadApplicationTask != null) {
             loadApplicationTask.cancel(true);
-        }
-        if (appsUpdater != null) {
-            appsUpdater.cancel();
-
-            Log.d(Constants.ERROR_TAG, "Applications are no longer observed.");
         }
     }
 
@@ -137,52 +137,48 @@ public class GirafFragment extends AppContainerFragment {
     void setListeners() {
         super.listener = new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                AppImageView appImageView = (AppImageView) view;
-                appImageView.toggle();
-                final ProfileApplicationController pac = new ProfileApplicationController(getActivity());
-                final AppInfo app = appImageView.appInfo;
+            public void onClick(final View view) {
+                GetRequest<User> getRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                    @Override
+                    public void onResponse(User response) {
+                        User localUser = response;
+                        AppImageView appImageView = (AppImageView) view;
+                        appImageView.toggle();
+                        if(userCanAccesApp(appImageView.appInfo.getApp(),localUser)){
+                            Collection<Application> applicationCollection =localUser.getSettings().getAppsUserCanAccess();
+                            applicationCollection.remove(appImageView.appInfo.getApp());
+                            localUser.getSettings().setAppsUserCanAccess(applicationCollection);
+                        }else{
+                            Collection<Application> applicationCollection =localUser.getSettings().getAppsUserCanAccess();
+                            applicationCollection.add(appImageView.appInfo.getApp());
+                            localUser.getSettings().setAppsUserCanAccess(applicationCollection);
+                        }
+                        PutRequest<User> putRequest = new PutRequest<User>(localUser, localUser.getId(), new Response.Listener<Integer>() {
+                            @Override
+                            public void onResponse(Integer response) {
 
-                if (userHasApplicationInView(pac, app.getApp(), currentUser)) {
-                    pac.remove(currentUser.getId(), app.getApp().getId());
-                } else {
-                    final ProfileApplication pa = new ProfileApplication(currentUser.getId(), app.getApp().getId());
-                    pac.insert(pa);
-                }
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                            }
+                        });
+                        queue.add(putRequest);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Launcer","Could not get user for GirafFragment");
+                    }
+                });
+                queue.add(getRequest);
             }
         };
     }
 
-    /**
-     * This function attempts to retrive a ProfileApplication based on a user and an application
-     * to see if the user has access to the application
-     *
-     * @param pac  The ProfileApplicationController retrived from the current context
-     * @param app  The application we wish to check if the user has access to
-     * @param User The user we wish to check for an application
-     * @return true if the user has access to the application, false if the user does not.
-     */
-    private boolean userHasApplicationInView(ProfileApplicationController pac, Application app, User profile) {
-        ProfileApplication thisProfileApplication = pac.getProfileApplicationByProfileIdAndApplicationId(app, profile);
-
-        return thisProfileApplication != null;
-    }
-
-    /**
-     * Starts a timer that looks for updates in the set of available applications every 5 seconds.
-     */
-    private void startObservingApps() {
-        appsUpdater = new Timer();
-
-        AppsObserver timerTask = new AppsObserver();
-
-        try {
-            appsUpdater.scheduleAtFixedRate(timerTask, 5000, 5000);
-        } catch (IllegalStateException e) {
-            Log.e(Constants.ERROR_TAG, "Timer was already canceled:" + e.getMessage());
-        }
-
-        Log.d(Constants.ERROR_TAG, "Applications are being observed.");
+    private boolean userCanAccesApp(Application app,User user){
+        return user.getSettings().getAppsUserCanAccess().contains(app);
     }
 
     /**
@@ -206,19 +202,9 @@ public class GirafFragment extends AppContainerFragment {
         public LoadGirafApplicationTask(Context context, User currentUser,
                                         User guardian, ViewPager appsViewPager, View.OnClickListener onClickListener)
         {
-            super(context, currentUser, guardian, appsViewPager, onClickListener);
+            super(context, currentUser, appsViewPager, onClickListener);
         }
 
-        /**
-         * We override onPreExecute to cancel the AppObserver if it is running.
-         */
-        @Override
-        protected void onPreExecute() {
-            if (appsUpdater != null)
-                appsUpdater.cancel();
-
-            super.onPreExecute();
-        }
 
         /**
          * This method needs to be overridden since we need to inform the superclass of
@@ -230,7 +216,7 @@ public class GirafFragment extends AppContainerFragment {
          */
         @Override
         protected ArrayList<AppInfo> doInBackground(Application... applications) {
-            apps = ApplicationControlUtility.getGirafAppsOnDeviceButLauncherAsApplicationList(context);
+            apps = ApplicationControlUtility.getGirafAppsButLauncherOnDevice(context);
             applications = apps.toArray(applications);
             appInfos = super.doInBackground(applications);
 
@@ -247,39 +233,6 @@ public class GirafFragment extends AppContainerFragment {
             }
         }
 
-
-        /**
-         * Once we have loaded applications, we start observing for new apps.
-         */
-        @Override
-        protected void onPostExecute(ArrayList<AppInfo> appInfoList) {
-            super.onPostExecute(appInfoList);
-            loadedApps = appInfoList;
-            startObservingApps();
-            haveAppsBeenAdded = true;
-        }
     }
 
-    /**
-     * Task for observing if the set of available apps has changed.
-     * Is only instantiated after apps have been loaded the first time.
-     *
-     * @see dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AndroidFragment#loadApplications()
-     */
-    private class AppsObserver extends TimerTask {
-
-        @Override
-        public void run() {
-            apps = ApplicationControlUtility.getGirafAppsOnDeviceButLauncherAsApplicationList(getActivity());
-            if (AppInfo.isAppListsDifferent(loadedApps, apps)) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadApplications();
-                    }
-                });
-            }
-            Log.d(Constants.ERROR_TAG, "Applications checked");
-        }
-    }
 }

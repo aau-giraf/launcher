@@ -216,7 +216,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
      * @param view the view.
      */
     public void onLogoutButtonClick(View view) {
-        final GirafPopupDialog logoutDialog = new GirafPopupDialog(R.string.logout_msg, R.string.home_activity_logout,this);
+        final GirafPopupDialog logoutDialog = new GirafPopupDialog(R.string.logout_msg, R.string.home_activity_logout, this);
         logoutDialog.setButton1(R.string.logout_msg, R.drawable.icon_logout, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -350,21 +350,57 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
      * Finds out if the current loaded apps and the app list is different and updates the UI.
      */
     private void appsChangedScan() { //ToDO change this to use the settings and check for apps not installed
-        final List<Application> girafAppsList = ApplicationControlUtility.getAvailableGirafAppsForUser(
-            HomeActivity.this, currentUser); // For home_activity activity
-        final SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(
-            HomeActivity.this, currentUser);
-        final Set<String> androidAppsPackagenames = prefs.getStringSet(
-            getString(R.string.selected_android_apps_key), new HashSet<String>());
-        final List<Application> androidAppsList = ApplicationControlUtility.convertPackageNamesToApplications(
-            HomeActivity.this, androidAppsPackagenames);
-        girafAppsList.addAll(androidAppsList);
-        if (AppInfo.isAppListsDifferent(currentLoadedApps, girafAppsList)) {
+        GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+            @Override
+            public void onResponse(User response) {
+                List<Application> apps = new ArrayList<Application>();
+                apps.addAll(response.getSettings().getAppsUserCanAccess());
+                startLoadApplicationTask(apps);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (error.networkResponse.statusCode == 401) {
+                    LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
+                        @Override
+                        public void onResponse(Integer response) {
+                            GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                                @Override
+                                public void onResponse(User response) {
+                                    List<Application> apps = new ArrayList<Application>();
+                                    apps.addAll(response.getSettings().getAppsUserCanAccess());
+                                    startLoadApplicationTask(apps);
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    LauncherUtility.logout(HomeActivity.this);
+                                }
+                            });
+                            queue.add(userGetRequest);
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            LauncherUtility.logout(HomeActivity.this);
+                        }
+                    });
+                    queue.add(loginRequest);
+                } else {
+                    LauncherUtility.logout(HomeActivity.this);
+                }
+            }
+        });
+        queue.add(userGetRequest);
+    }
+
+    private void startLoadApplicationTask(final List<Application> newApps) {
+        if (AppInfo.isAppListsDifferent(currentLoadedApps, newApps)) {
             // run this on UI thread since UI might need to get updated
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    loadApplications();
+                    loadApplications((Application[]) newApps.toArray());
                 }
             });
         }
@@ -462,16 +498,16 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
      */
     private void reloadApplications() {
         currentLoadedApps = null;
-        loadApplications();
+        appsChangedScan();
     }
 
     /**
      * Load the user's applications into the app container.
      */
-    private void loadApplications() {
+    private void loadApplications(Application[] applications) {
         loadHomeActivityApplicationTask = new LoadHomeActivityApplicationTask(this, currentUser,
-            loggedInGuardian, appViewPager, null, offlineMode);
-        loadHomeActivityApplicationTask.execute();
+            appViewPager, null);
+        loadHomeActivityApplicationTask.execute(applications);
     }
 
     /**
@@ -782,16 +818,14 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
          *
          * @param context         The context of the current activity
          * @param currentUser     The current user (if the current user is a guardian, this is set to null)
-         * @param guardian        The guardian of the current user (or just the current user, if the user is a guardian)
          * @param appsViewPager   The layout to be populated with AppImageViews
          * @param onClickListener the onClickListener that each created app should have.
          *                        In this case we feed it the global variable listener
-         * @param offlineMode     Indicate if the launcher is in offline mode
          */
-        public LoadHomeActivityApplicationTask(Context context, User currentUser, User guardian, ViewPager
-            appsViewPager, View.OnClickListener onClickListener, boolean offlineMode)
+        public LoadHomeActivityApplicationTask(Context context, User currentUser, ViewPager
+            appsViewPager, View.OnClickListener onClickListener)
         {
-            super(context, currentUser, guardian, appsViewPager, onClickListener, offlineMode, true);
+            super(context, currentUser, appsViewPager, onClickListener, true);
         }
 
         /**
@@ -804,17 +838,10 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
          */
         @Override
         protected ArrayList<AppInfo> doInBackground(Application... applications) {
-
-            List<Application> girafAppsList = ApplicationControlUtility
-                .getAvailableGirafAppsForUser(context, currentUser); // For home_activity
-            SharedPreferences prefs = LauncherUtility.getSharedPreferencesForCurrentUser(context, currentUser);
-            Set<String> androidAppsPackagenames = prefs.getStringSet(
-                getString(R.string.selected_android_apps_key), new HashSet<String>());
-            List<Application> androidAppsList = ApplicationControlUtility
-                .convertPackageNamesToApplications(context, androidAppsPackagenames);
-            girafAppsList.addAll(androidAppsList);
-
-            applications = girafAppsList.toArray(applications);
+            List<Application> apps = new ArrayList<Application>();
+            apps.addAll(currentUser.getSettings()
+                .getAppsUserCanAccess()); //ToDo I know it is wrong but it is the only way
+            applications = apps.toArray(applications);
 
             return super.doInBackground(applications);
         }

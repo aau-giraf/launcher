@@ -158,12 +158,19 @@ public class AppInfo extends Application implements Parcelable {
 
         List<ResolveInfo> systemApps = ApplicationControlUtility.getAllAppsOnDeviceAsResolveInfoList(context);
 
-        for (ResolveInfo app : systemApps) {
-            if (app.activityInfo.name.equals(this.getActivity())) {
-                icon = app.loadIcon(context.getPackageManager());
-                break;
+        if(ApplicationControlUtility.isAppOnDevice(this,context)){
+            for (ResolveInfo app : systemApps) {
+                if (app.activityInfo.name.equals(this.getActivity())) {
+                    icon = app.loadIcon(context.getPackageManager());
+                    break;
+                }
             }
         }
+        else{
+            icon = context.getResources().getDrawable(dk.aau.cs.giraf.gui.R.drawable.icon_synchronize);
+        }
+
+
     }
 
 
