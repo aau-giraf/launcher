@@ -7,4 +7,6 @@ import dk.aau.cs.giraf.models.core.User;
  * It is implemented by AppContainerFragment
  */
 public interface AppsFragmentInterface {
+
+    User getUser();
 }
