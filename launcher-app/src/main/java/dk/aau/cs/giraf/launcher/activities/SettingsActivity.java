@@ -21,11 +21,11 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
 import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GirafPictogramItemView;
 import dk.aau.cs.giraf.gui.GirafProfileSelectorDialog;
+import dk.aau.cs.giraf.gui.GirafUserItemView;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
@@ -35,9 +35,17 @@ import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppContainerFragm
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementFragment;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.GirafFragment;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import dk.aau.cs.giraf.librest.requests.GetRequest;
+import dk.aau.cs.giraf.librest.requests.LoginRequest;
 import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
+import dk.aau.cs.giraf.models.core.Application;
 import dk.aau.cs.giraf.models.core.User;
 import dk.aau.cs.giraf.models.core.authentication.PermissionType;
+
 import dk.aau.cs.giraf.showcaseview.ShowcaseManager;
 import dk.aau.cs.giraf.showcaseview.ShowcaseView;
 import dk.aau.cs.giraf.showcaseview.targets.Target;
@@ -150,23 +158,11 @@ public class SettingsActivity extends GirafActivity
             }
         });
 
+        final GirafUserItemView mProfileButton =
+            (GirafUserItemView) findViewById(R.id.profile_widget_settings);
 
 
-        final GirafPictogramItemView mProfileButton =
-            (GirafPictogramItemView) findViewById(R.id.profile_widget_settings);
-
-        final long childId = this.getIntent().getLongExtra(Constants.CHILD_ID, -1);
-
-
-        // The childIdNew is -1 meaning that no childs are available
-        if (childId == -1) {
-            currentUser = profileController.getById(this.getIntent().getLongExtra(Constants.GUARDIAN_ID, -1));
-
-
-
-        } else { // A child is found - set it as active and add its profile selector
-            currentUser = profileController.getById(childId);
-        }
+        final User currentUser = (User) this.getIntent().getExtras().getSerializable(Constants.CURRENT_USER);
         // Notify about the current user
         setCurrentUser(currentUser);
 
@@ -184,14 +180,6 @@ public class SettingsActivity extends GirafActivity
         final long childIdNew = getIntent().getExtras().getLong(Constants.CHILD_ID);
         final long guardianId = getIntent().getExtras().getLong(Constants.GUARDIAN_ID);
 
-        loggedInGuardian = helper.profilesHelper.getById(guardianId);
-
-        if (childIdNew != Constants.NO_CHILD_SELECTED_ID) {
-            currentUser = helper.profilesHelper.getById(childIdNew);
-        } else {
-            currentUser = helper.profilesHelper.getById(guardianId);
-        }
-
         // Change the title of the action bar to include the name of the current user
         if (currentUser != null) {
             this.setActionBarTitle(getString(R.string.settingsFor) + currentUser.getScreenName());
@@ -202,12 +190,12 @@ public class SettingsActivity extends GirafActivity
         changeUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 GirafProfileSelectorDialog changeUser = GirafProfileSelectorDialog.newInstance(SettingsActivity.this,
-                    loggedInGuardian.getId(), false, false, getString(R.string.settings_choose_citizen),
-                    CHANGE_USER_SELECTOR_DIALOG);
+                    currentUser, false, false, getString(R.string.settings_choose_citizen),
+                    CHANGE_USER_SELECTOR_DIALOG, queue);
                 changeUser.show(getSupportFragmentManager(), "" + CHANGE_USER_SELECTOR_DIALOG);
             }
+
         });
 
         addGirafButtonToActionBar(changeUserButton, LEFT);
@@ -446,17 +434,65 @@ public class SettingsActivity extends GirafActivity
         // Get the intent of SettingsActivity
         final Intent intent = SettingsActivity.this.getIntent();
 
-        if (currentUser.   (PermissionType.User)) { //ToDo given that a child is only a user
-            // A child profile has been selected, pass id
-            intent.putExtra(Constants.CHILD_ID, currentUser.getId());
-        } else { // We are a guardian, do not add a child
-            intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
-        }
-        // Stop activity before restarting
-        SettingsActivity.this.finish();
+        GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+            @Override
+            public void onResponse(User response) {
+                if (currentUser.hasPermission(PermissionType.User)) {
+                    // A child profile has been selected, pass id
+                    intent.putExtra(Constants.CHILD_ID, currentUser.getId());
+                } else { // We are a guardian, do not add a child
+                    intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
+                }
+                // Stop activity before restarting
+                SettingsActivity.this.finish();
 
-        // Start activity again to reload contents
-        startActivity(intent);
+                // Start activity again to reload contents
+                startActivity(intent);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if(error.networkResponse.statusCode == 401) {
+                    LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
+                        @Override
+                        public void onResponse(Integer response) {
+                            GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                                @Override
+                                public void onResponse(User response) {
+                                    if (currentUser.hasPermission(PermissionType.User)) {
+                                        // A child profile has been selected, pass id
+                                        intent.putExtra(Constants.CHILD_ID, currentUser.getId());
+                                    } else { // We are a guardian, do not add a child
+                                        intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
+                                    }
+                                    // Stop activity before restarting
+                                    SettingsActivity.this.finish();
+
+                                    // Start activity again to reload contents
+                                    startActivity(intent);
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    //ToDo logout
+                                }
+                            });
+                            queue.add(userGetRequest);
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            LauncherUtility.logout(SettingsActivity.this);
+                        }
+                    });
+                    queue.add(loginRequest);
+                }
+                else{
+                    LauncherUtility.logout(SettingsActivity.this);
+                }
+            }
+        });
+        queue.add(userGetRequest);
     }
 
     /**
@@ -474,7 +510,8 @@ public class SettingsActivity extends GirafActivity
      *
      * @return profile of the current user
      */
-    public long getCurrentUserId() {
+
+    public User getCurrentUser() {
         return currentUser;
     }
 
@@ -483,7 +520,7 @@ public class SettingsActivity extends GirafActivity
      *
      * @return profile of the logged in guardian
      */
-    public long getLoggedInGuardianId() {
+    public User getLoggedInGuardian() {
         return loggedInGuardian;
     }
 

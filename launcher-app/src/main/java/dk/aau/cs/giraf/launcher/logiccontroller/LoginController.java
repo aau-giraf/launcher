@@ -47,7 +47,6 @@ public class LoginController {
                                 Intent homeIntent = new Intent(gui, HomeActivity.class);
                                 homeIntent.putExtra(Constants.CURRENT_USER,response);
                                 homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                LauncherUtility.saveLogInData(gui, response.getId(), new Date().getTime());
                                 gui.startActivity(homeIntent);
                             }
                         }, new Response.ErrorListener() {
