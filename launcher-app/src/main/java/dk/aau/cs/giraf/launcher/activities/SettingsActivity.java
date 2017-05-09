@@ -66,8 +66,8 @@ public class SettingsActivity extends GirafActivity
     private FragmentManager fragmentManager;
     private android.support.v4.app.FragmentManager supportFragmentManager;
 
-    private long currentUser;
-    private long loggedInGuardian;
+    private User currentUser;
+    private User loggedInGuardian;
 
     private ListView settingsListView;
     private SettingsListAdapter settingsListAdapter;
@@ -150,16 +150,20 @@ public class SettingsActivity extends GirafActivity
             }
         });
 
+
+
         final GirafPictogramItemView mProfileButton =
             (GirafPictogramItemView) findViewById(R.id.profile_widget_settings);
 
         final long childId = this.getIntent().getLongExtra(Constants.CHILD_ID, -1);
 
-        User currentUser;
 
         // The childIdNew is -1 meaning that no childs are available
         if (childId == -1) {
             currentUser = profileController.getById(this.getIntent().getLongExtra(Constants.GUARDIAN_ID, -1));
+
+
+
         } else { // A child is found - set it as active and add its profile selector
             currentUser = profileController.getById(childId);
         }
@@ -442,7 +446,7 @@ public class SettingsActivity extends GirafActivity
         // Get the intent of SettingsActivity
         final Intent intent = SettingsActivity.this.getIntent();
 
-        if (currentUser.hasPermission(PermissionType.User)) { //ToDo given that a child is only a user
+        if (currentUser.   (PermissionType.User)) { //ToDo given that a child is only a user
             // A child profile has been selected, pass id
             intent.putExtra(Constants.CHILD_ID, currentUser.getId());
         } else { // We are a guardian, do not add a child
