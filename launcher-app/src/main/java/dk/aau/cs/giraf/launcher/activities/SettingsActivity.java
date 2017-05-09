@@ -161,14 +161,10 @@ public class SettingsActivity extends GirafActivity
         final GirafUserItemView mProfileButton =
             (GirafUserItemView) findViewById(R.id.profile_widget_settings);
 
-        //final long childId = this.getIntent().getLongExtra(Constants.CHILD_ID, -1);
 
-
-        //Todo: Use serialized user
-        final User currentUser = this.getIntent().getLongExtra(Constants.CHILD_ID, -1);;
+        final User currentUser = (User) this.getIntent().getExtras().getSerializable(Constants.CURRENT_USER);
         // Notify about the current user
         setCurrentUser(currentUser);
-
 
         // Instantiates a new adapter to render the items in the ListView with a list of installed (available) apps
         settingsListAdapter = new SettingsListAdapter(this, settingsListView, this.getInstalledSettingsApps());
@@ -184,14 +180,6 @@ public class SettingsActivity extends GirafActivity
         final long childIdNew = getIntent().getExtras().getLong(Constants.CHILD_ID);
         final long guardianId = getIntent().getExtras().getLong(Constants.GUARDIAN_ID);
 
-        loggedInGuardian = helper.profilesHelper.getById(guardianId);
-
-        if (childIdNew != Constants.NO_CHILD_SELECTED_ID) {
-            currentUser = helper.profilesHelper.getById(childIdNew);
-        } else {
-            currentUser = helper.profilesHelper.getById(guardianId);
-        }
-
         // Change the title of the action bar to include the name of the current user
         if (currentUser != null) {
             this.setActionBarTitle(getString(R.string.settingsFor) + currentUser.getScreenName());
@@ -202,12 +190,12 @@ public class SettingsActivity extends GirafActivity
         changeUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 GirafProfileSelectorDialog changeUser = GirafProfileSelectorDialog.newInstance(SettingsActivity.this,
-                    loggedInGuardian.getId(), false, false, getString(R.string.settings_choose_citizen),
-                    CHANGE_USER_SELECTOR_DIALOG);
+                    currentUser, false, false, getString(R.string.settings_choose_citizen),
+                    CHANGE_USER_SELECTOR_DIALOG, queue);
                 changeUser.show(getSupportFragmentManager(), "" + CHANGE_USER_SELECTOR_DIALOG);
             }
+
         });
 
         addGirafButtonToActionBar(changeUserButton, LEFT);
@@ -522,47 +510,9 @@ public class SettingsActivity extends GirafActivity
      *
      * @return profile of the current user
      */
+
     public User getCurrentUser() {
-        GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
-            @Override
-            public void onResponse(User response) {
-                return response;
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                if(error.networkResponse.statusCode == 401) {
-                    LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
-                        @Override
-                        public void onResponse(Integer response) {
-                            GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
-                                @Override
-                                public void onResponse(User response) {
-
-                                }
-                            }, new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    LauncherUtility.logout(SettingsActivity.this);
-                                }
-                            });
-                            queue.add(userGetRequest);
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            LauncherUtility.logout(SettingsActivity.this);
-                        }
-                    });
-                    queue.add(loginRequest);
-                }
-                else{
-                    LauncherUtility.logout(SettingsActivity.this);
-                }
-
-            }
-        });
-        queue.add(userGetRequest);
+        return currentUser;
     }
 
     /**
@@ -570,7 +520,7 @@ public class SettingsActivity extends GirafActivity
      *
      * @return profile of the logged in guardian
      */
-    public User getLoggedInGuardianId() {
+    public User getLoggedInGuardian() {
         return loggedInGuardian;
     }
 
