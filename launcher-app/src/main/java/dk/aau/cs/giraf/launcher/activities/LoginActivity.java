@@ -71,7 +71,6 @@ public class LoginActivity extends GirafActivity {
 
     /**
      * Shows a dialog with a message.
-     * ToDo change to giraf dialog when it is finished.
      * @param message the message.
      */
     public void showDialogWithMessage(String message) {
