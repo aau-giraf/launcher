@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -102,6 +103,9 @@ public abstract class LauncherUtility {
             Toast toast = Toast.makeText(context,
                 context.getString(R.string.activity_not_found_msg), Toast.LENGTH_SHORT);
             toast.show();
+            Intent storeIntent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("market://details?id="+intent.getPackage()));
+            context.startActivity(intent);
             Log.e(Constants.ERROR_TAG, "App could not be started");
         }
     }

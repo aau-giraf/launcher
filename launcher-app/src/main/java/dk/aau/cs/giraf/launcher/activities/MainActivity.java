@@ -27,7 +27,6 @@ import dk.aau.cs.giraf.models.core.*;
 public class MainActivity extends GirafActivity implements Animation.AnimationListener, GirafNotifyDialog.Notification {
 
     private MainController controller;
-    private long oldSessionGuardianId = -1;
     private Animation startingAnimation;
     private Animation loadAnimation;
 
@@ -52,17 +51,7 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
         setContentView(R.layout.main_activity);
         controller = new MainController(this);
 
-        //Load the preference determining whether the animation should be shown
-        oldSessionGuardianId = controller.getOldSessionId();
-
         boolean showAnimation = true;
-
-        if (oldSessionGuardianId != -1) {
-            User oldSessionProfile = new User(new Department("Test"),"Testuser","test123"); //Todo rewrite when rest is finished
-            SharedPreferences prefs = SettingsUtility.getLauncherSettings(this,
-                LauncherUtility.getSharedPreferenceUser(oldSessionProfile));
-            showAnimation = prefs.getBoolean(getString(R.string.show_animation_preference_key), true);
-        }
 
         // Skip loading screen if monkey test
         if (ActivityManager.isUserAMonkey()) {
@@ -83,10 +72,6 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
         findViewById(R.id.giraficon).startAnimation(startingAnimation);
         startingAnimation.setAnimationListener(this);
 
-        //Todo plz remember to remove this again
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivity(intent);
         finish();
     }
 

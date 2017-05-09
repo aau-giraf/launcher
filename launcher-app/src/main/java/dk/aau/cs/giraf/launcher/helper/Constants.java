@@ -35,6 +35,11 @@ public final class Constants {
      * Key for inserting and retrieving current child in Intents.
      */
     public static final String CHILD_ID = "currentChildID";
+
+    /**
+     * Key for getting the User
+     */
+     public static final String CURRENT_USER ="currentGirafUser";
     /**
      * If no child is selected -1.
      */
