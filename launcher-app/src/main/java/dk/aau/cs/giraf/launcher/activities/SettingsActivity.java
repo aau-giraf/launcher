@@ -254,7 +254,7 @@ public class SettingsActivity extends GirafActivity
 
         // Launcher
         addApplicationByPackageName("dk.aau.cs.giraf.launcher",
-            SettingsLauncher.newInstance(currentUser.getUsername()),
+            SettingsLauncher.newInstance(currentUser),
             getString(R.string.settings_tablist_general));
 
         // Application management

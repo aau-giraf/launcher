@@ -78,7 +78,11 @@ public class GirafFragment extends AppContainerFragment {
                             }, new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
-                                    LauncherUtility.showErrorDialog(view.getContext(), "Forbindelse til server midste"); //ToDo locallize
+                                    if (error.networkResponse.statusCode == 401) {
+                                        LauncherUtility.showErrorDialog(view.getContext(),"Do har ikke tillades til dette"); //ToDo localize
+                                    } else {
+                                        LauncherUtility.showErrorDialog(view.getContext(), "Forbindelse til server midste"); //ToDo locallize
+                                    }
                                 }
                             });
                             queue.add(userGetRequest);

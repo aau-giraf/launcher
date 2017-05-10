@@ -40,7 +40,6 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
 
     /**
      *  Gets the grid column size. Use it in a get request only.
-     * @param context the context
      * @param currentUser the currentUser
      * @return The column size.
      */
