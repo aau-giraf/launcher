@@ -10,7 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.viewpagerindicator.CirclePageIndicator;
+import dk.aau.cs.giraf.librest.requests.GetRequest;
+import dk.aau.cs.giraf.librest.requests.LoginRequest;
+import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
 import dk.aau.cs.giraf.models.core.User;
 import dk.aau.cs.giraf.models.core.Application;
 import dk.aau.cs.giraf.launcher.R;
@@ -41,6 +47,7 @@ public class AndroidFragment extends AppContainerFragment {
     private Set<String> selectedApps;
     private ArrayList<AppInfo> appInfos;
     private LoadAndroidApplicationTask loadApplicationsTask;
+    private RequestQueue queue;
 
     /**
      * Because we are dealing with a Fragment, OnCreateView is where most of the variables are set.
@@ -53,16 +60,57 @@ public class AndroidFragment extends AppContainerFragment {
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        final View view = super.onCreateView(inflater, container, savedInstanceState);
+        queue = RequestQueueHandler.getInstance(getActivity().getApplicationContext()).getRequestQueue();
 
-        View view = super.onCreateView(inflater, container, savedInstanceState);
+        GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+            @Override
+            public void onResponse(User response) {
+                onCreateViewResponce(view);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (error.networkResponse.statusCode == 401) {
+                    LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
+                        @Override
+                        public void onResponse(Integer response) {
+                            GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                                @Override
+                                public void onResponse(User response) {
+                                    onCreateViewResponce(view);
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    LauncherUtility.showErrorDialog(view.getContext(), "Forbindelse til server midste"); //ToDo locallize
+                                }
+                            });
+                            queue.add(userGetRequest);
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            LauncherUtility.showErrorDialog(view.getContext(), "Forbindelse til server midste"); //ToDo locallize
+                        }
+                    });
+                    queue.add(loginRequest);
+                } else {
+                    LauncherUtility.showErrorDialog(view.getContext(), "Forbindelse til server midste"); //ToDo locallize
+                }
 
+            }
+        });
+        queue.add(userGetRequest);
+
+
+        return view;
+    }
+
+    private void onCreateViewResponce(View view) {
         appView = (ViewPager) view.findViewById(R.id.appsViewPager);
-
-        preferences = LauncherUtility.getSharedPreferencesForCurrentUser(getActivity(), currentUser);
-        selectedApps = preferences.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
-
-        final int rowsSize = ApplicationGridResizer.getGridRowSize(getActivity(), currentUser);
-        final int columnsSize = ApplicationGridResizer.getGridColumnSize(getActivity(), currentUser);
+        final int rowsSize = ApplicationGridResizer.getGridRowSize(currentUser);
+        final int columnsSize = ApplicationGridResizer.getGridColumnSize(currentUser);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
 
@@ -74,8 +122,6 @@ public class AndroidFragment extends AppContainerFragment {
 
         CirclePageIndicator titleIndicator = (CirclePageIndicator) view.findViewById(R.id.pageIndicator);
         titleIndicator.setViewPager(appView);
-
-        return view;
     }
 
     /**
@@ -223,7 +269,7 @@ public class AndroidFragment extends AppContainerFragment {
         public LoadAndroidApplicationTask(Context context, User currentUser, User guardian,
                                           ViewPager appsViewPager, View.OnClickListener onClickListener)
         {
-            super(context, currentUser, guardian, appsViewPager, onClickListener);
+            super(context, currentUser, appsViewPager, onClickListener);
         }
 
         /**

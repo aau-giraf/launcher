@@ -52,7 +52,7 @@ public abstract class AppContainerFragment extends Fragment {
                     container, false);
 
 
-            currentUser = callback.getCurrentUserId();
+            currentUser = callback.getUser();
         } else {
             view = appView.getRootView();
         }

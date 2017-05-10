@@ -14,10 +14,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.viewpagerindicator.CirclePageIndicator;
 import dk.aau.cs.giraf.launcher.activities.HomeActivity;
-import dk.aau.cs.giraf.librest.requests.GetRequest;
-import dk.aau.cs.giraf.librest.requests.PutRequest;
-import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
+import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
+import dk.aau.cs.giraf.librest.requests.*;
 import dk.aau.cs.giraf.models.core.Application;
+import dk.aau.cs.giraf.models.core.Pictogram;
 import dk.aau.cs.giraf.models.core.User;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
@@ -55,12 +55,56 @@ public class GirafFragment extends AppContainerFragment {
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
-        appView = (ViewPager) view.findViewById(R.id.appsViewPager);
-
+        final View view = super.onCreateView(inflater, container, savedInstanceState);
         queue = RequestQueueHandler.getInstance(getActivity().getApplicationContext()).getRequestQueue();
-        final int rowsSize = ApplicationGridResizer.getGridRowSize(getActivity(), currentUser);
-        final int columnsSize = ApplicationGridResizer.getGridColumnSize(getActivity(), currentUser);
+
+        GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+            @Override
+            public void onResponse(User response) {
+                onCreateViewResponce(view);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (error.networkResponse.statusCode == 401) {
+                    LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
+                        @Override
+                        public void onResponse(Integer response) {
+                            GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                                @Override
+                                public void onResponse(User response) {
+                                    onCreateViewResponce(view);
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    LauncherUtility.showErrorDialog(view.getContext(), "Forbindelse til server midste"); //ToDo locallize
+                                }
+                            });
+                            queue.add(userGetRequest);
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            LauncherUtility.showErrorDialog(view.getContext(), "Forbindelse til server midste"); //ToDo locallize
+                        }
+                    });
+                    queue.add(loginRequest);
+                } else {
+                    LauncherUtility.showErrorDialog(view.getContext(), "Forbindelse til server midste"); //ToDo locallize
+                }
+
+            }
+        });
+        queue.add(userGetRequest);
+
+        return view;
+    }
+
+    private void onCreateViewResponce(View view) {
+        appView = (ViewPager) view.findViewById(R.id.appsViewPager);
+        final int rowsSize = ApplicationGridResizer.getGridRowSize(currentUser);
+        final int columnsSize = ApplicationGridResizer.getGridColumnSize(currentUser);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
 
@@ -72,8 +116,6 @@ public class GirafFragment extends AppContainerFragment {
 
         CirclePageIndicator titleIndicator = (CirclePageIndicator) view.findViewById(R.id.pageIndicator);
         titleIndicator.setViewPager(appView);
-
-        return view;
     }
 
     /**
@@ -144,12 +186,12 @@ public class GirafFragment extends AppContainerFragment {
                         User localUser = response;
                         AppImageView appImageView = (AppImageView) view;
                         appImageView.toggle();
-                        if(userCanAccesApp(appImageView.appInfo.getApp(),localUser)){
-                            Collection<Application> applicationCollection =localUser.getSettings().getAppsUserCanAccess();
+                        if (userCanAccesApp(appImageView.appInfo.getApp(), localUser)) {
+                            Collection<Application> applicationCollection = localUser.getSettings().getAppsUserCanAccess();
                             applicationCollection.remove(appImageView.appInfo.getApp());
                             localUser.getSettings().setAppsUserCanAccess(applicationCollection);
-                        }else{
-                            Collection<Application> applicationCollection =localUser.getSettings().getAppsUserCanAccess();
+                        } else {
+                            Collection<Application> applicationCollection = localUser.getSettings().getAppsUserCanAccess();
                             applicationCollection.add(appImageView.appInfo.getApp());
                             localUser.getSettings().setAppsUserCanAccess(applicationCollection);
                         }
@@ -169,7 +211,7 @@ public class GirafFragment extends AppContainerFragment {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("Launcer","Could not get user for GirafFragment");
+                        Log.e("Launcer", "Could not get user for GirafFragment");
                     }
                 });
                 queue.add(getRequest);
@@ -177,7 +219,7 @@ public class GirafFragment extends AppContainerFragment {
         };
     }
 
-    private boolean userCanAccesApp(Application app,User user){
+    private boolean userCanAccesApp(Application app, User user) {
         return user.getSettings().getAppsUserCanAccess().contains(app);
     }
 

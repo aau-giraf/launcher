@@ -14,6 +14,11 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import dk.aau.cs.giraf.librest.requests.GetRequest;
+import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
 import dk.aau.cs.giraf.models.core.Application;
 import dk.aau.cs.giraf.models.core.User;
 import dk.aau.cs.giraf.launcher.R;
@@ -41,6 +46,7 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
     protected final ViewPager appsViewPager;
     protected final View.OnClickListener onClickListener;
     protected boolean includeAddAppIcon = false;
+    private RequestQueue queue;
 
     protected ProgressBar progressbar;
 
@@ -61,6 +67,7 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
         this.currentUser = currentUser;
         this.appsViewPager = appsViewPager;
         this.onClickListener = onClickListener;
+        this.queue = RequestQueueHandler.getInstance(context.getApplicationContext()).getRequestQueue();
     }
 
     /**
@@ -140,22 +147,29 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
      * @param appInfoList List of appInfor
      */
     @Override
-    protected void onPostExecute(ArrayList<AppInfo> appInfoList) {
-
-
+    protected void onPostExecute(final ArrayList<AppInfo> appInfoList) {
         progressbar.setVisibility(View.INVISIBLE);
-
-        final int rowsSize = ApplicationGridResizer.getGridRowSize(this.context, currentUser);
-        final int columnsSize = ApplicationGridResizer.getGridColumnSize(this.context, currentUser);
-
         if (appInfoList != null && appInfoList.size() > 0) {
             changeVisibilityOfNoAppsMessage(View.GONE);
         } else {
             changeVisibilityOfNoAppsMessage(View.VISIBLE);
         }
+        final AppsFragmentAdapter adapter = (AppsFragmentAdapter)this.appsViewPager.getAdapter();
+        GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+            @Override
+            public void onResponse(User response) {
+                final int rowsSize = ApplicationGridResizer.getGridRowSize(currentUser);
+                final int columnsSize = ApplicationGridResizer.getGridColumnSize(currentUser);
 
-        ((AppsFragmentAdapter) this.appsViewPager.getAdapter()).swapApps(appInfoList, rowsSize, columnsSize);
-
+                adapter.swapApps(appInfoList, rowsSize, columnsSize);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Launcher","Could not get user for LoadApplicationTask");
+            }
+        });
+        queue.add(userGetRequest);
     }
 
     public android.support.v4.app.FragmentManager getFragmentMangerForAppsFragmentAdapter() {

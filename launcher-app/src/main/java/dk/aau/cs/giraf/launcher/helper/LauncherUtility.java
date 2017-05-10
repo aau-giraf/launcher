@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.google.analytics.tracking.android.StandardExceptionParser;
+import dk.aau.cs.giraf.gui.GirafPopupDialog;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 import dk.aau.cs.giraf.launcher.activities.LoginActivity;
@@ -80,6 +81,17 @@ public abstract class LauncherUtility {
         if (DEBUG_MODE) {
             showDebugInformation(activity);
         }
+    }
+
+    public static void showErrorDialog(Context context, String message) {
+        final GirafPopupDialog errorDialog = new GirafPopupDialog(R.string.error_login,message,context);
+        errorDialog.setButton1(R.string.ok, R.drawable.icon_accept, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                errorDialog.dismiss();
+            }
+        });
+        errorDialog.show();
     }
 
     /**
