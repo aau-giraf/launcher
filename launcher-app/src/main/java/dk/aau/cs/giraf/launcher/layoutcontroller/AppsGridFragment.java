@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -105,7 +106,7 @@ public class AppsGridFragment extends Fragment {
                                     }, new Response.ErrorListener() {
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
-
+                                            Log.e("Launcher","User has not enough permissions for AppsGridFragment");
                                         }
                                     });
                                 queue.add(userGetRequest);
@@ -113,12 +114,14 @@ public class AppsGridFragment extends Fragment {
                         }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-
+                                Log.e("Launcher","Could not get user for AppsGridFragment");
                             }
                         });
                         queue.add(loginRequest);
                     }
-
+                    else{
+                        Log.e("Launcher","Could not get user for AppsGridFragment");
+                    }
                 }
             });
         queue.add(userGetRequest);

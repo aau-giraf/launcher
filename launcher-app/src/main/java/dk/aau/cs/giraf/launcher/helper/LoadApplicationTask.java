@@ -18,6 +18,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import dk.aau.cs.giraf.librest.requests.GetRequest;
+import dk.aau.cs.giraf.librest.requests.LoginRequest;
 import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
 import dk.aau.cs.giraf.models.core.Application;
 import dk.aau.cs.giraf.models.core.User;
@@ -127,7 +128,7 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
             // show no apps available message
             Log.e(Constants.ERROR_TAG, "App list is null");
         }
-        if (includeAddAppIcon && !currentUser.hasPermission(PermissionType.User) ) {
+        if (includeAddAppIcon && !currentUser.hasPermission(PermissionType.User)) {
             Application tmpApp = new Application(context.getResources().getString(R.string.add_app_text), "",
                 Constants.ADD_APP_ICON_FAKE_PACKAGE_NAME);
             AppInfo tmpInfo = new AppInfo(tmpApp);
@@ -154,7 +155,8 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
         } else {
             changeVisibilityOfNoAppsMessage(View.VISIBLE);
         }
-        final AppsFragmentAdapter adapter = (AppsFragmentAdapter)this.appsViewPager.getAdapter();
+        final AppsFragmentAdapter adapter = (AppsFragmentAdapter) this.appsViewPager.getAdapter();
+
         GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
             @Override
             public void onResponse(User response) {
@@ -162,11 +164,44 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
                 final int columnsSize = ApplicationGridResizer.getGridColumnSize(currentUser);
 
                 adapter.swapApps(appInfoList, rowsSize, columnsSize);
+
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("Launcher","Could not get user for LoadApplicationTask");
+                if (error.networkResponse.statusCode == 401) {
+                    LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
+                        @Override
+                        public void onResponse(Integer response) {
+                            GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                                @Override
+                                public void onResponse(User response) {
+                                    final int rowsSize = ApplicationGridResizer.getGridRowSize(currentUser);
+                                    final int columnsSize = ApplicationGridResizer.getGridColumnSize(currentUser);
+
+                                    adapter.swapApps(appInfoList, rowsSize, columnsSize);
+
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    if (error.networkResponse.statusCode == 401) {
+                                        Log.e("Launcher", "User did not have permission to do LoadApplicationTask");
+                                    }
+                                }
+                            });
+                            queue.add(userGetRequest);
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.e("Launcher", "Could not get user for LoadApplicationTask");
+                        }
+                    });
+                    queue.add(loginRequest);
+                } else {
+                    Log.e("Launcher", "Could not get user for LoadApplicationTask");
+                }
             }
         });
         queue.add(userGetRequest);

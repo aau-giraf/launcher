@@ -2,14 +2,12 @@ package dk.aau.cs.giraf.launcher.activities;
 
 import android.content.*;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
@@ -23,7 +21,6 @@ import com.viewpagerindicator.CirclePageIndicator;
 import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.gui.*;
 import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
@@ -42,9 +39,7 @@ import dk.aau.cs.giraf.showcaseview.targets.ViewTarget;
 import dk.aau.cs.giraf.utilities.NetworkUtilities;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * The primary activity of Launcher. Allows the user to start other GIRAF apps and access the settings
@@ -123,7 +118,11 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                                     }, new Response.ErrorListener() {
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
-                                            LauncherUtility.logout(HomeActivity.this);
+                                            if(error.networkResponse.statusCode == 401) {
+                                                LauncherUtility.showErrorDialog(HomeActivity.this,"Du har en adgang til dette"); //ToDo localize
+                                            } else{
+                                                LauncherUtility.logoutWithDialog(HomeActivity.this);
+                                            }
                                         }
                                     });
                                 queue.add(userGetRequest);
@@ -131,12 +130,12 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                         }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                LauncherUtility.logout(HomeActivity.this);
+                                LauncherUtility.logoutWithDialog(HomeActivity.this);
                             }
                         });
                         queue.add(login);
                     } else {
-                        LauncherUtility.logout(HomeActivity.this);
+                        LauncherUtility.logoutWithDialog(HomeActivity.this);
                     }
                 }
             });
@@ -184,7 +183,11 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                                     }, new Response.ErrorListener() {
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
-                                            LauncherUtility.logout(HomeActivity.this);
+                                            if(error.networkResponse.statusCode == 401) {
+                                                LauncherUtility.showErrorDialog(HomeActivity.this,"Du har en adgang til dette"); //ToDo localize
+                                            } else{
+                                                LauncherUtility.logoutWithDialog(HomeActivity.this);
+                                            }
                                         }
                                     });
                                 queue.add(userGetRequest);
@@ -192,12 +195,12 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                         }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                LauncherUtility.logout(HomeActivity.this);
+                                LauncherUtility.logoutWithDialog(HomeActivity.this);
                             }
                         });
                         queue.add(loginRequest);
                     } else {
-                        LauncherUtility.logout(HomeActivity.this);
+                        LauncherUtility.logoutWithDialog(HomeActivity.this);
                     }
                 }
             });
@@ -205,7 +208,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     }
 
     /**
-     * Called from home_activity.xml using the onClick event of the logout button.
+     * Called from home_activity.xml using the onClick event of the logoutWithDialog button.
      *
      * @param view the view.
      */
@@ -256,7 +259,11 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                                     }, new Response.ErrorListener() {
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
-                                            LauncherUtility.logout(HomeActivity.this);
+                                            if(error.networkResponse.statusCode == 401) {
+                                                LauncherUtility.showErrorDialog(HomeActivity.this,"Du har en adgang til dette"); //ToDo localize
+                                            } else{
+                                                LauncherUtility.logoutWithDialog(HomeActivity.this);
+                                            }
                                         }
                                     });
                                 queue.add(userGetRequest);
@@ -264,12 +271,12 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                         }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                LauncherUtility.logout(HomeActivity.this);
+                                LauncherUtility.logoutWithDialog(HomeActivity.this);
                             }
                         });
                         queue.add(loginRequest);
                     } else {
-                        LauncherUtility.logout(HomeActivity.this);
+                        LauncherUtility.logoutWithDialog(HomeActivity.this);
                     }
                 }
             });
@@ -342,7 +349,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     /**
      * Finds out if the current loaded apps and the app list is different and updates the UI.
      */
-    private void appsChangedScan() { //ToDO change this to use the settings and check for apps not installed
+    private void appsChangedScan() {
         GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
             @Override
             public void onResponse(User response) {
@@ -367,7 +374,11 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                             }, new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
-                                    LauncherUtility.logout(HomeActivity.this);
+                                    if(error.networkResponse.statusCode == 401) {
+                                        LauncherUtility.showErrorDialog(HomeActivity.this,"Du har en adgang til dette"); //ToDo localize
+                                    } else{
+                                        LauncherUtility.logoutWithDialog(HomeActivity.this);
+                                    }
                                 }
                             });
                             queue.add(userGetRequest);
@@ -375,12 +386,12 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            LauncherUtility.logout(HomeActivity.this);
+                            LauncherUtility.logoutWithDialog(HomeActivity.this);
                         }
                     });
                     queue.add(loginRequest);
                 } else {
-                    LauncherUtility.logout(HomeActivity.this);
+                    LauncherUtility.logoutWithDialog(HomeActivity.this);
                 }
             }
         });
@@ -570,7 +581,11 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                                     }, new Response.ErrorListener() {
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
-                                            LauncherUtility.logout(HomeActivity.this);
+                                            if(error.networkResponse.statusCode == 401) {
+                                                LauncherUtility.showErrorDialog(HomeActivity.this,"Du har en adgang til dette"); //ToDo localize
+                                            } else{
+                                                LauncherUtility.logoutWithDialog(HomeActivity.this);
+                                            }
                                         }
                                     });
                                 queue.add(userGetRequest);
@@ -578,12 +593,12 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                         }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                LauncherUtility.logout(HomeActivity.this);
+                                LauncherUtility.logoutWithDialog(HomeActivity.this);
                             }
                         });
                         queue.add(loginRequest);
                     } else {
-                        LauncherUtility.logout(HomeActivity.this);
+                        LauncherUtility.logoutWithDialog(HomeActivity.this);
                     }
 
                 }

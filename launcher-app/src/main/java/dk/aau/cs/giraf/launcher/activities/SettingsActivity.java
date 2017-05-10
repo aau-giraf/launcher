@@ -23,7 +23,6 @@ import android.widget.Toast;
 
 import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.gui.GirafButton;
-import dk.aau.cs.giraf.gui.GirafPictogramItemView;
 import dk.aau.cs.giraf.gui.GirafProfileSelectorDialog;
 import dk.aau.cs.giraf.gui.GirafUserItemView;
 import dk.aau.cs.giraf.launcher.R;
@@ -42,7 +41,6 @@ import com.android.volley.VolleyError;
 import dk.aau.cs.giraf.librest.requests.GetRequest;
 import dk.aau.cs.giraf.librest.requests.LoginRequest;
 import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
-import dk.aau.cs.giraf.models.core.Application;
 import dk.aau.cs.giraf.models.core.User;
 import dk.aau.cs.giraf.models.core.authentication.PermissionType;
 
@@ -474,7 +472,7 @@ public class SettingsActivity extends GirafActivity
                             }, new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
-                                    //ToDo logout
+                                    //ToDo logoutWithDialog
                                 }
                             });
                             queue.add(userGetRequest);
@@ -482,13 +480,13 @@ public class SettingsActivity extends GirafActivity
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            LauncherUtility.logout(SettingsActivity.this);
+                            LauncherUtility.logoutWithDialog(SettingsActivity.this);
                         }
                     });
                     queue.add(loginRequest);
                 }
                 else{
-                    LauncherUtility.logout(SettingsActivity.this);
+                    LauncherUtility.logoutWithDialog(SettingsActivity.this);
                 }
             }
         });

@@ -46,9 +46,22 @@ public abstract class LauncherUtility {
         return DEBUG_MODE;
     }
 
+    public static void logoutWithDialog(final Activity launchedFrom){
+        final GirafPopupDialog noticeDialog = new GirafPopupDialog(R.string.error_login, "Forbindelse midste, du bliver logget ud",launchedFrom);
+        noticeDialog.setButton1(R.string.ok, R.drawable.icon_accept, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logout(launchedFrom);
+                noticeDialog.dismiss();
+            }
+        });
+
+    }
+
     public static void logout(Activity launchedFrom){
         Intent intent = new Intent(launchedFrom, SettingsActivity.class);
         launchedFrom.startActivity(intent);
+        launchedFrom.finish();
     }
 
     /**
