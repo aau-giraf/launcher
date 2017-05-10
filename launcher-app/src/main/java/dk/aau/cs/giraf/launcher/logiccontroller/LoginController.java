@@ -3,6 +3,7 @@ package dk.aau.cs.giraf.launcher.logiccontroller;
 import android.content.Intent;
 import com.android.volley.*;
 
+import dk.aau.cs.giraf.gui.GirafProfileSelectorDialog;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 import dk.aau.cs.giraf.launcher.activities.LoginActivity;
@@ -44,7 +45,29 @@ public class LoginController {
                             //Passes the userinfo to homeIntent
                             @Override
                             public void onResponse(User response) {
+
                                 Intent homeIntent = new Intent(gui, HomeActivity.class);
+
+                                //If the logged in user is a department, we open a profileSelector to choose guardian
+                                //ToDo Change to actually check if we are a department.
+                                //Also, lets finish this once we actually can compile and have the server backend
+                                if(false){
+                                    /*GirafProfileSelectorDialog chooseGuardian = GirafProfileSelectorDialog.newInstance(
+                                        LoginController.this, response, false, false, getString(R.string.home_activity_change_to_citizen_msg),
+                                        CHANGE_USER_SELECTOR_DIALOG, queue);
+                                    changeUser.show(getSupportFragmentManager(), "" + CHANGE_USER_SELECTOR_DIALOG);*/
+                                }
+
+
+
+
+
+
+
+
+
+
+
                                 homeIntent.putExtra(Constants.CURRENT_USER,response);
                                 homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 gui.startActivity(homeIntent);
