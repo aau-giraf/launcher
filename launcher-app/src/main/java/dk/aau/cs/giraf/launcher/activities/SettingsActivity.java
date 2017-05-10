@@ -256,7 +256,7 @@ public class SettingsActivity extends GirafActivity
 
         // Launcher
         addApplicationByPackageName("dk.aau.cs.giraf.launcher",
-            SettingsLauncher.newInstance(LauncherUtility.getSharedPreferenceUser(currentUser)),
+            SettingsLauncher.newInstance(currentUser.getUsername()),
             getString(R.string.settings_tablist_general));
 
         // Application management
@@ -543,13 +543,6 @@ public class SettingsActivity extends GirafActivity
         // Check if this is the first run of the app
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         this.isFirstRun = prefs.getBoolean(IS_FIRST_RUN_KEY, true);
-
-        /*if (isFirstRun) {
-            showShowcase();
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean(IS_FIRST_RUN_KEY, false);
-            editor.commit();
-        }*/
 
         // If it is the first run display ShowcaseView
         if (isFirstRun) {
@@ -851,5 +844,11 @@ public class SettingsActivity extends GirafActivity
         } else {
             showShowcase();
         }
+    }
+
+    //ToDo: make me
+    @Override
+    public User getUser() {
+        return null;
     }
 }
