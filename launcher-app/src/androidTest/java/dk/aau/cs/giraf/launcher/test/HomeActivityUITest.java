@@ -2,21 +2,12 @@ package dk.aau.cs.giraf.launcher.test;
 
 import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.assertion.ViewAssertions;
 import android.test.ActivityInstrumentationTestCase2;
-
-import org.junit.After;
-import org.junit.Before;
-
-import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.dblib.Helper;
 import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 import dk.aau.cs.giraf.launcher.helper.Constants;
-import dk.aau.cs.giraf.dblib.Helper;
-
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.*;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import org.junit.After;
+import org.junit.Before;
 
 public class HomeActivityUITest
         extends ActivityInstrumentationTestCase2<HomeActivity> {

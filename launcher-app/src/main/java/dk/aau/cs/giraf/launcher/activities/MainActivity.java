@@ -4,20 +4,15 @@ import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-
 import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.gui.GirafNotifyDialog;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
-import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.logiccontroller.MainController;
-import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
-import dk.aau.cs.giraf.models.core.*;
 
 /**
  * Displays the splash logo of Launcher, and then starts

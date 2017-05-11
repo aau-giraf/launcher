@@ -8,7 +8,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import dk.aau.cs.giraf.launcher.R;
 
 import java.util.ArrayList;

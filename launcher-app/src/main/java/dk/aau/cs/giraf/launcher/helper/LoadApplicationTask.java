@@ -2,10 +2,7 @@ package dk.aau.cs.giraf.launcher.helper;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -13,19 +10,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
-
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
+import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
+import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 import dk.aau.cs.giraf.librest.requests.GetRequest;
 import dk.aau.cs.giraf.librest.requests.LoginRequest;
 import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
 import dk.aau.cs.giraf.models.core.Application;
 import dk.aau.cs.giraf.models.core.User;
-import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
-import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
-import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 import dk.aau.cs.giraf.models.core.authentication.PermissionType;
 
 import java.util.ArrayList;

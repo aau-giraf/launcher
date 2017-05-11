@@ -1,7 +1,6 @@
 package dk.aau.cs.giraf.launcher.layoutcontroller;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,30 +10,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
-
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-
 import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 import dk.aau.cs.giraf.launcher.activities.SettingsActivity;
 import dk.aau.cs.giraf.launcher.helper.AppViewCreationUtility;
-import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppContainerFragment;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
 import dk.aau.cs.giraf.launcher.widgets.AppImageView;
 import dk.aau.cs.giraf.librest.requests.GetRequest;
 import dk.aau.cs.giraf.librest.requests.LoginRequest;
 import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
-import dk.aau.cs.giraf.models.core.User;
 import dk.aau.cs.giraf.models.core.Application;
+import dk.aau.cs.giraf.models.core.User;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * This class handles how the apps are displayed in the launcher.'

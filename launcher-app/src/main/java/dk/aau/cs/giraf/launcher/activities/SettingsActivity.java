@@ -20,7 +20,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.gui.GirafButton;
 import dk.aau.cs.giraf.gui.GirafProfileSelectorDialog;
@@ -29,21 +31,12 @@ import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.*;
-import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AndroidFragment;
-import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppContainerFragment;
-import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementFragment;
-import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
-import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.GirafFragment;
-
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
+import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.*;
 import dk.aau.cs.giraf.librest.requests.GetRequest;
 import dk.aau.cs.giraf.librest.requests.LoginRequest;
 import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
 import dk.aau.cs.giraf.models.core.User;
 import dk.aau.cs.giraf.models.core.authentication.PermissionType;
-
 import dk.aau.cs.giraf.showcaseview.ShowcaseManager;
 import dk.aau.cs.giraf.showcaseview.ShowcaseView;
 import dk.aau.cs.giraf.showcaseview.targets.Target;

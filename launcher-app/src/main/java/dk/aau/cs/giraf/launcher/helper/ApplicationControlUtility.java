@@ -4,10 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-
-import dk.aau.cs.giraf.models.core.Application;
 import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.models.core.User;
+import dk.aau.cs.giraf.models.core.Application;
 
 import java.util.ArrayList;
 import java.util.List;

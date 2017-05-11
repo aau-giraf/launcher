@@ -20,7 +20,6 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.SettingsActivity;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;

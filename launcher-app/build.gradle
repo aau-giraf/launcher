@@ -35,7 +35,7 @@ repositories {
     }
 }
 android {
-    compileSdkVersion 23
+    compileSdkVersion 25
     buildToolsVersion '25.0.3'
     defaultConfig {
         minSdkVersion 15
@@ -95,7 +95,10 @@ dependencies {
     compile('fr.avianey.com.viewpagerindicator:library:2.4.1') {
         exclude module: 'support-v4'
     }
+    compile 'com.jakewharton:disklrucache:2.0.2'
+    compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.volley:volley:1.0.0'
+    compile 'com.google.code.gson:gson:2.8.0'
     compile group: 'dk.aau.cs.giraf', name: 'giraf-component-lib', version: '1.0.6'
     compile group: 'dk.aau.cs.giraf', name: 'rest-api-client-lib-release', version: 'latest.release'
     compile group: 'dk.aau.cs.giraf', name: 'rest-models', version: '1.1.14'

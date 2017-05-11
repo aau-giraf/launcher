@@ -3,7 +3,6 @@ package dk.aau.cs.giraf.launcher.helper;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Log;
 import android.util.TypedValue;
@@ -11,19 +10,12 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.google.analytics.tracking.android.StandardExceptionParser;
 import dk.aau.cs.giraf.gui.GirafPopupDialog;
 import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.launcher.activities.HomeActivity;
-import dk.aau.cs.giraf.launcher.activities.LoginActivity;
 import dk.aau.cs.giraf.launcher.activities.SettingsActivity;
-import dk.aau.cs.giraf.models.core.Department;
-import dk.aau.cs.giraf.models.core.User;
-
-import java.util.Date;
 
 /**
  * <Code>LauncherUtility</Code> contains static methods related to running the Launcher,

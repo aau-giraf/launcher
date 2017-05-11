@@ -9,16 +9,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.viewpagerindicator.CirclePageIndicator;
-import dk.aau.cs.giraf.librest.requests.GetRequest;
-import dk.aau.cs.giraf.librest.requests.LoginRequest;
-import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
-import dk.aau.cs.giraf.models.core.User;
-import dk.aau.cs.giraf.models.core.Application;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
@@ -28,12 +22,13 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 import dk.aau.cs.giraf.launcher.widgets.AppImageView;
+import dk.aau.cs.giraf.librest.requests.GetRequest;
+import dk.aau.cs.giraf.librest.requests.LoginRequest;
+import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
+import dk.aau.cs.giraf.models.core.Application;
+import dk.aau.cs.giraf.models.core.User;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 
 

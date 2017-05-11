@@ -2,7 +2,6 @@ package dk.aau.cs.giraf.launcher.settings;
 
 import android.app.Fragment;
 import android.os.Bundle;
-
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;

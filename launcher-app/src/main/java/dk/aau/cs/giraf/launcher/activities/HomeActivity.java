@@ -11,13 +11,11 @@ import android.view.ViewTreeObserver;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
-
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.viewpagerindicator.CirclePageIndicator;
-
 import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.gui.*;
 import dk.aau.cs.giraf.launcher.R;

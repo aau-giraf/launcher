@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.util.Log;
-
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 
 import java.util.Comparator;

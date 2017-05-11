@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.SeekBar;
-
 import dk.aau.cs.giraf.launcher.R;
 
 /**

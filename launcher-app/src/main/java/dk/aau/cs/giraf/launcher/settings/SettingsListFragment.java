@@ -10,18 +10,16 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
-
-//import dk.aau.cs.giraf.dblib.controllers.ProfileController;
-//import dk.aau.cs.giraf.dblib.models.Profile;
-
 import dk.aau.cs.giraf.gui.GirafUserItemView;
-import dk.aau.cs.giraf.models.core.User;
-import dk.aau.cs.giraf.gui.GirafPictogramItemView;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.SettingsActivity;
 import dk.aau.cs.giraf.launcher.helper.Constants;
+import dk.aau.cs.giraf.models.core.User;
 
 import java.util.ArrayList;
+
+//import dk.aau.cs.giraf.dblib.controllers.ProfileController;
+//import dk.aau.cs.giraf.dblib.models.Profile;
 
 /**
  * This fragment contains all of the elements on the left side of SettingsActivity.

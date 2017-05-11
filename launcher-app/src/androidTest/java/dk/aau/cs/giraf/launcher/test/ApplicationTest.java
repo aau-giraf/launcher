@@ -2,7 +2,6 @@ package dk.aau.cs.giraf.launcher.test;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
-
 import junit.framework.Assert;
 
 /*

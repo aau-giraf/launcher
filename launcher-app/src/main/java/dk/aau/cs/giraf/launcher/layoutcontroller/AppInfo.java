@@ -5,9 +5,8 @@ import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import dk.aau.cs.giraf.models.core.Application;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
+import dk.aau.cs.giraf.models.core.Application;
 
 import java.util.Collections;
 import java.util.List;

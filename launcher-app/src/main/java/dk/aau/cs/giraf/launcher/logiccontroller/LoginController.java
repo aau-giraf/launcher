@@ -1,20 +1,17 @@
 package dk.aau.cs.giraf.launcher.logiccontroller;
 
 import android.content.Intent;
-import com.android.volley.*;
-
-import dk.aau.cs.giraf.gui.GirafProfileSelectorDialog;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 import dk.aau.cs.giraf.launcher.activities.LoginActivity;
 import dk.aau.cs.giraf.launcher.helper.Constants;
-import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.librest.requests.GetRequest;
 import dk.aau.cs.giraf.librest.requests.LoginRequest;
 import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
 import dk.aau.cs.giraf.models.core.User;
-
-import java.util.Date;
 
 public class LoginController {
 

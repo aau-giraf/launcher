@@ -5,20 +5,13 @@ import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.preference.Preference;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
-import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 import dk.aau.cs.giraf.launcher.widgets.GridPreviewView;
-import dk.aau.cs.giraf.librest.requests.GetRequest;
 import dk.aau.cs.giraf.models.core.User;
 
 /**

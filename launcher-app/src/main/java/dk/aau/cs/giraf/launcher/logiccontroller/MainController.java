@@ -1,17 +1,8 @@
 package dk.aau.cs.giraf.launcher.logiccontroller;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.widget.TextView;
-import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.launcher.activities.HomeActivity;
 import dk.aau.cs.giraf.launcher.activities.LoginActivity;
 import dk.aau.cs.giraf.launcher.activities.MainActivity;
-import dk.aau.cs.giraf.launcher.helper.Constants;
-import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
-import dk.aau.cs.giraf.models.core.User;
-
-import java.util.Date;
 
 public class MainController {
 
