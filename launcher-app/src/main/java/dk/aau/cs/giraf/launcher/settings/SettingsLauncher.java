@@ -112,7 +112,7 @@ public class SettingsLauncher extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 currentUser.getSettings().setUseGrayScale(isChecked);
-                final PutRequest<User> userPutRequest = new PutRequest<User>(currentUser, currentUser.getId(), new Response.Listener<Integer>() {
+                final PutRequest<User> userPutRequest = new PutRequest<User>(currentUser, currentUser.getUsername(), new Response.Listener<Integer>() {
                     @Override
                     public void onResponse(Integer response) {
                         Log.i("Launcher", "Put user request success for SettingsLauncher");

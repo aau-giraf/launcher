@@ -66,7 +66,7 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
 
         findViewById(R.id.giraficon).startAnimation(startingAnimation);
         startingAnimation.setAnimationListener(this);
-
+        controller.startNextActivity();
         finish();
     }
 

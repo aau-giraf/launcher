@@ -41,6 +41,7 @@ import dk.aau.cs.giraf.showcaseview.ShowcaseManager;
 import dk.aau.cs.giraf.showcaseview.ShowcaseView;
 import dk.aau.cs.giraf.showcaseview.targets.Target;
 import dk.aau.cs.giraf.showcaseview.targets.ViewTarget;
+import dk.aau.cs.giraf.utilities.GrayScaleHelper;
 
 import java.util.ArrayList;
 
@@ -66,7 +67,7 @@ public class SettingsActivity extends GirafActivity
     private android.support.v4.app.FragmentManager supportFragmentManager;
 
     private User currentUser;
-    private User loggedInGuardian;
+
 
     private ListView settingsListView;
     private SettingsListAdapter settingsListAdapter;
@@ -108,7 +109,8 @@ public class SettingsActivity extends GirafActivity
 
         setContentView(R.layout.settings_activity);
         queue = RequestQueueHandler.getInstance(this.getApplicationContext()).getRequestQueue();
-
+        currentUser = (User) getIntent().getExtras().getSerializable(Constants.CURRENT_USER);
+        GrayScaleHelper.setGrayScaleForActivityByUser(this,currentUser);
         settingsListView = (ListView) findViewById(R.id.settingsListView);
 
         settingsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -152,8 +154,6 @@ public class SettingsActivity extends GirafActivity
         final GirafUserItemView mProfileButton =
             (GirafUserItemView) findViewById(R.id.profile_widget_settings);
 
-
-        final User currentUser = (User) this.getIntent().getExtras().getSerializable(Constants.CURRENT_USER);
         // Notify about the current user
         setCurrentUser(currentUser);
 
@@ -425,15 +425,10 @@ public class SettingsActivity extends GirafActivity
         // Get the intent of SettingsActivity
         final Intent intent = SettingsActivity.this.getIntent();
 
-        GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+        GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
             @Override
             public void onResponse(User response) {
-                if (currentUser.hasPermission(PermissionType.User)) {
-                    // A child profile has been selected, pass id
-                    intent.putExtra(Constants.CHILD_ID, currentUser.getId());
-                } else { // We are a guardian, do not add a child
-                    intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
-                }
+                intent.putExtra(Constants.CURRENT_USER, currentUser);
                 // Stop activity before restarting
                 SettingsActivity.this.finish();
 
@@ -447,12 +442,12 @@ public class SettingsActivity extends GirafActivity
                     LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
                         @Override
                         public void onResponse(Integer response) {
-                            GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                            GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
                                 @Override
                                 public void onResponse(User response) {
                                     if (currentUser.hasPermission(PermissionType.User)) {
                                         // A child profile has been selected, pass id
-                                        intent.putExtra(Constants.CHILD_ID, currentUser.getId());
+                                        intent.putExtra(Constants.CHILD_ID, currentUser.getUsername());
                                     } else { // We are a guardian, do not add a child
                                         intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
                                     }
@@ -506,14 +501,6 @@ public class SettingsActivity extends GirafActivity
         return currentUser;
     }
 
-    /**
-     * Get the current logged in guardian.
-     *
-     * @return profile of the logged in guardian
-     */
-    public User getLoggedInGuardian() {
-        return loggedInGuardian;
-    }
 
     @Override
     public void onProfileSelected(final int input, final User profile) {
@@ -531,6 +518,8 @@ public class SettingsActivity extends GirafActivity
     protected void onResume() {
         super.onResume();
 
+        currentUser = (User) getIntent().getExtras().getSerializable(Constants.CURRENT_USER);
+        GrayScaleHelper.setGrayScaleForActivityByUser(this,currentUser);
         // Check if this is the first run of the app
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         this.isFirstRun = prefs.getBoolean(IS_FIRST_RUN_KEY, true);

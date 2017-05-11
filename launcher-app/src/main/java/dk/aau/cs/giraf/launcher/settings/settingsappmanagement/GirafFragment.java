@@ -55,7 +55,7 @@ public class GirafFragment extends AppContainerFragment {
         final View view = super.onCreateView(inflater, container, savedInstanceState);
         queue = RequestQueueHandler.getInstance(getActivity().getApplicationContext()).getRequestQueue();
 
-        GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+        GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
             @Override
             public void onResponse(User response) {
                 onCreateViewResponce(view);
@@ -67,7 +67,7 @@ public class GirafFragment extends AppContainerFragment {
                     LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
                         @Override
                         public void onResponse(Integer response) {
-                            GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                            GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
                                 @Override
                                 public void onResponse(User response) {
                                     onCreateViewResponce(view);
@@ -181,7 +181,7 @@ public class GirafFragment extends AppContainerFragment {
         super.listener = new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                GetRequest<User> getRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                GetRequest<User> getRequest = new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
                     @Override
                     public void onResponse(User response) {
                         User localUser = response;
@@ -196,7 +196,7 @@ public class GirafFragment extends AppContainerFragment {
                             applicationCollection.add(appImageView.appInfo.getApp());
                             localUser.getSettings().setAppsUserCanAccess(applicationCollection);
                         }
-                        PutRequest<User> putRequest = new PutRequest<User>(localUser, localUser.getId(), new Response.Listener<Integer>() {
+                        PutRequest<User> putRequest = new PutRequest<User>(localUser, localUser.getUsername(), new Response.Listener<Integer>() {
                             @Override
                             public void onResponse(Integer response) {
 

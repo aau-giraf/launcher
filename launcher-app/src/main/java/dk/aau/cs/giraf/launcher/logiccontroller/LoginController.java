@@ -1,6 +1,7 @@
 package dk.aau.cs.giraf.launcher.logiccontroller;
 
 import android.content.Intent;
+import android.util.Log;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -72,8 +73,12 @@ public class LoginController {
                         }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                //The user is for some reason unavailable
-                                gui.showDialogWithMessage(gui.getString(R.string.error_try_agian));
+                                if(error!=null && error.networkResponse !=null) {
+                                    //The user is for some reason unavailable
+                                    gui.showDialogWithMessage(gui.getString(R.string.error_try_agian) + "" + error.networkResponse.statusCode);
+                                } else if(error!=null){
+                                    Log.e("error",error.getMessage());
+                                }
                             }
                         });
                     queue.add(userGetRequest);

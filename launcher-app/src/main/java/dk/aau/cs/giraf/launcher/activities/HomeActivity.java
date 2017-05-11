@@ -4,6 +4,7 @@ import android.content.*;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,7 @@ import dk.aau.cs.giraf.models.core.authentication.PermissionType;
 import dk.aau.cs.giraf.showcaseview.ShowcaseManager;
 import dk.aau.cs.giraf.showcaseview.ShowcaseView;
 import dk.aau.cs.giraf.showcaseview.targets.ViewTarget;
+import dk.aau.cs.giraf.utilities.GrayScaleHelper;
 import dk.aau.cs.giraf.utilities.NetworkUtilities;
 
 import java.util.ArrayList;
@@ -82,7 +84,6 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         setContentView(R.layout.home_activity);
         queue = RequestQueueHandler.getInstance(this.getApplicationContext()).getRequestQueue();
         currentUser = (User) getIntent().getExtras().getSerializable(Constants.CURRENT_USER);
-
         // Fetch references to view objects
         sidebarScrollView = (ScrollView) this.findViewById(R.id.sidebar_scrollview);
         appViewPager = (ViewPager) this.findViewById(R.id.appsViewPager);
@@ -95,7 +96,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         }
 
         GetRequest<User> userGetRequest =
-            new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+            new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
                 @Override
                 public void onResponse(User response) {
                     setAppGridSizeValues(response);
@@ -108,7 +109,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                             @Override
                             public void onResponse(Integer response) {
                                 GetRequest<User> userGetRequest =
-                                    new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                                    new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
                                         @Override
                                         public void onResponse(User response) {
                                             setAppGridSizeValues(response);
@@ -143,7 +144,6 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         EasyTracker.getInstance(this).activityStart(this);
     }
 
-
     /**
      * Called from home_activity.xml using the onClick event of the help button.
      *
@@ -160,7 +160,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
      */
     public void onSettingsButtonClick(View view) {
         GetRequest<User> userGetRequest =
-            new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+            new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
                 @Override
                 public void onResponse(User response) {
                     startSettingsActivity(response);
@@ -173,7 +173,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                             @Override
                             public void onResponse(Integer response) {
                                 GetRequest<User> userGetRequest =
-                                    new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                                    new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
                                         @Override
                                         public void onResponse(User response) {
                                             startSettingsActivity(response);
@@ -236,7 +236,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
      */
     public void onChangeUserButtonClick(View view) {
         GetRequest<User> userGetRequest =
-            new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+            new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
                 @Override
                 public void onResponse(User response) {
                     showChangeUserDialog(response);
@@ -249,7 +249,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                             @Override
                             public void onResponse(Integer response) {
                                 GetRequest<User> userGetRequest =
-                                    new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                                    new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
                                         @Override
                                         public void onResponse(User response) {
                                             showChangeUserDialog(response);
@@ -348,7 +348,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
      * Finds out if the current loaded apps and the app list is different and updates the UI.
      */
     private void appsChangedScan() {
-        GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+        GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
             @Override
             public void onResponse(User response) {
                 List<Application> apps = new ArrayList<Application>();
@@ -362,7 +362,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                     LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
                         @Override
                         public void onResponse(Integer response) {
-                            GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                            GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
                                 @Override
                                 public void onResponse(User response) {
                                     List<Application> apps = new ArrayList<Application>();
@@ -429,7 +429,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         offlineMode = offlineMode();
         offlineModeFeedback();
         super.onResume();
-
+        GrayScaleHelper.setGrayScaleForActivityByUser(this,currentUser);
         // Reload applications (Some applications might have been (un)installed)
         reloadApplications();
 
@@ -556,7 +556,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         widgetUpdater = new GWidgetUpdater();
 
         GetRequest<User> userGetRequest =
-            new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+            new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
                 @Override
                 public void onResponse(User response) {
                     changeVisibilityOfButtons(response);
@@ -570,7 +570,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                             @Override
                             public void onResponse(Integer response) {
                                 GetRequest<User> userGetRequest =
-                                    new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                                    new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
                                         @Override
                                         public void onResponse(User response) {
                                             changeVisibilityOfButtons(response);

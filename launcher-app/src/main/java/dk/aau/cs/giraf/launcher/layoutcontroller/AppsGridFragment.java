@@ -77,7 +77,7 @@ public class AppsGridFragment extends Fragment {
         final User currentUser = ((AppsFragmentInterface) activity).getUser();
 
         GetRequest<User> userGetRequest =
-            new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+            new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
                 @Override
                 public void onResponse(User response) {
                     selectedApps = response.getSettings().getAppsUserCanAccess();
@@ -90,7 +90,7 @@ public class AppsGridFragment extends Fragment {
                             @Override
                             public void onResponse(Integer response) {
                                 GetRequest<User> userGetRequest =
-                                    new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                                    new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
                                         @Override
                                         public void onResponse(User response) {
                                             selectedApps = response.getSettings().getAppsUserCanAccess();
@@ -145,8 +145,7 @@ public class AppsGridFragment extends Fragment {
                 final int margin = 10;
 
                 //Create a new AppImageView and set its properties
-                AppImageView newAppView = AppViewCreationUtility.createAppImageView(getActivity(), currentUser,
-                    activity.getUser(), currentAppInfo, appsGridLayout, getOnClickListener());
+                AppImageView newAppView = AppViewCreationUtility.createAppImageView(getActivity(), currentUser, currentAppInfo, appsGridLayout, getOnClickListener());
                 //newAppView.setScaleType(ImageView.ScaleType.FIT_XY);
                 GridLayout.LayoutParams params = new GridLayout.LayoutParams(new ViewGroup.LayoutParams(
                     container.getMeasuredWidth() / columnSize - margin * 2, container.getMeasuredHeight() /

@@ -1,6 +1,8 @@
 package dk.aau.cs.giraf.launcher.activities;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -32,6 +34,18 @@ public class LoginActivity extends GirafActivity {
         loadAnimation.setDuration(Constants.LOGO_ANIMATION_DURATION);
         usernameTextBox = (TextView) findViewById(R.id.username_textbox);
         passwordTextBox = (TextView) findViewById(R.id.password_textbox);
+        passwordTextBox.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
+                if(keyEvent.getAction() == KeyEvent.ACTION_DOWN){
+                    if(keyCode == KeyEvent.KEYCODE_ENTER){
+                        onLoginButtonClick(view);
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
         loginButton = (Button) findViewById(R.id.login_button);
         findViewById(android.R.id.content).setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -81,7 +95,9 @@ public class LoginActivity extends GirafActivity {
                 reEnableGuiControls();
             }
         });
+        Log.i("Test","Før");
         errorDialog.show();
+        Log.i("Test","Efter");
     }
 
 
