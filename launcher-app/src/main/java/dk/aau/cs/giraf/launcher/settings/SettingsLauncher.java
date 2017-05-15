@@ -123,7 +123,7 @@ public class SettingsLauncher extends Fragment {
                         LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
                             @Override
                             public void onResponse(Integer response) {
-                                PutRequest<User> userPutRequest1 = new PutRequest<User>(currentUser, currentUser.getId(), new Response.Listener<Integer>() {
+                                PutRequest<User> userPutRequest1 = new PutRequest<User>(currentUser, currentUser.getUsername(), new Response.Listener<Integer>() {
                                     @Override
                                     public void onResponse(Integer response) {
                                         Log.i("Launcher", "Put user request success for SettingsLauncher");

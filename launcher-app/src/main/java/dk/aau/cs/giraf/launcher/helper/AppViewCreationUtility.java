@@ -27,6 +27,7 @@ import dk.aau.cs.giraf.launcher.widgets.AppImageView;
 import dk.aau.cs.giraf.models.core.Application;
 import dk.aau.cs.giraf.models.core.User;
 import dk.aau.cs.giraf.models.core.authentication.PermissionType;
+import dk.aau.cs.giraf.utilities.IntentConstants;
 
 import java.util.ArrayList;
 
@@ -150,7 +151,7 @@ public class AppViewCreationUtility {
                     } else if (appInfo.getPackage().equals(Constants.ADD_APP_ICON_FAKE_PACKAGE_NAME)) {
                         Intent intent = new Intent(context, SettingsActivity.class);
                         intent.putExtra(Constants.ENTER_ADD_APP_MANAGER_BOOL, true);
-                        intent.putExtra(Constants.CURRENT_USER, currentUser);
+                        intent.putExtra(IntentConstants.CURRENT_USER, currentUser);
                         LauncherUtility.secureStartActivity(view.getContext(), intent);
                     } else {
                         Intent intent = new Intent(Intent.ACTION_MAIN);
@@ -159,7 +160,7 @@ public class AppViewCreationUtility {
                         intent.setComponent(new ComponentName(appInfo.getPackage(), appInfo.getActivity()));
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 
-                        intent.putExtra(Constants.CURRENT_USER, currentUser);
+                        intent.putExtra(IntentConstants.CURRENT_USER, currentUser);
                         intent.putExtra(Constants.APP_COLOR, appInfo.getBgColor());
                         intent.putExtra(Constants.APP_PACKAGE_NAME, appInfo.getPackage());
                         intent.putExtra(Constants.APP_ACTIVITY_NAME, appInfo.getActivity());

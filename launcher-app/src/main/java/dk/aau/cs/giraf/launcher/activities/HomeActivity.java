@@ -4,7 +4,6 @@ import android.content.*;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,12 +29,14 @@ import dk.aau.cs.giraf.librest.requests.GetRequest;
 import dk.aau.cs.giraf.librest.requests.LoginRequest;
 import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
 import dk.aau.cs.giraf.models.core.Application;
+import dk.aau.cs.giraf.models.core.Settings;
 import dk.aau.cs.giraf.models.core.User;
 import dk.aau.cs.giraf.models.core.authentication.PermissionType;
 import dk.aau.cs.giraf.showcaseview.ShowcaseManager;
 import dk.aau.cs.giraf.showcaseview.ShowcaseView;
 import dk.aau.cs.giraf.showcaseview.targets.ViewTarget;
 import dk.aau.cs.giraf.utilities.GrayScaleHelper;
+import dk.aau.cs.giraf.utilities.IntentConstants;
 import dk.aau.cs.giraf.utilities.NetworkUtilities;
 
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     private static final int CHANGE_USER_SELECTOR_DIALOG = 100;
     private User currentUser;
     private RequestQueue queue;
+    private RequestQueueHandler handler;
 
     private LoadHomeActivityApplicationTask loadHomeActivityApplicationTask;
     private boolean appObserverReceiverRegistered = false;
@@ -82,11 +84,14 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
-        queue = RequestQueueHandler.getInstance(this.getApplicationContext()).getRequestQueue();
-        currentUser = (User) getIntent().getExtras().getSerializable(Constants.CURRENT_USER);
+        handler = RequestQueueHandler.getInstance(this.getApplicationContext());
+        queue = handler.getRequestQueue();
+        currentUser = (User) getIntent().getExtras().getSerializable(IntentConstants.CURRENT_USER);
         // Fetch references to view objects
         sidebarScrollView = (ScrollView) this.findViewById(R.id.sidebar_scrollview);
         appViewPager = (ViewPager) this.findViewById(R.id.appsViewPager);
+
+        checkSettingsAndUseThem(currentUser);
 
         loadWidgets();
 
@@ -95,53 +100,62 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
             LauncherUtility.showDebugInformation(this);
         }
 
-        GetRequest<User> userGetRequest =
-            new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
-                @Override
-                public void onResponse(User response) {
-                    setAppGridSizeValues(response);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    if (error.networkResponse.statusCode == 401) {
-                        LoginRequest login = new LoginRequest(currentUser, new Response.Listener<Integer>() {
-                            @Override
-                            public void onResponse(Integer response) {
-                                GetRequest<User> userGetRequest =
-                                    new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
+
+        // Start logging this activity
+        EasyTracker.getInstance(this).activityStart(this);
+    }
+
+    private void checkSettingsAndUseThem(final User user) {
+        if (user != null) {
+            if (user.getSettings() != null) {
+                GrayScaleHelper.setGrayScaleForActivityByUser(this, user);
+                setAppGridSizeValues(user);
+            } else {
+                user.setSettings(new Settings(false, 4, 5, new ArrayList<Application>()));
+                handler.put(user, user.getId(), new Response.Listener<Integer>() {
+                    @Override
+                    public void onResponse(Integer response) {
+                        GrayScaleHelper.setGrayScaleForActivityByUser(HomeActivity.this, user);
+                        setAppGridSizeValues(user);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (error.networkResponse.statusCode == 401) {
+                            handler.login(user, new Response.Listener<Integer>() {
+                                @Override
+                                public void onResponse(Integer response) {
+                                    handler.put(user, user.getId(), new Response.Listener<Integer>() {
+
                                         @Override
-                                        public void onResponse(User response) {
-                                            setAppGridSizeValues(response);
+                                        public void onResponse(Integer response) {
+                                            GrayScaleHelper.setGrayScaleForActivityByUser(HomeActivity.this, user);
+                                            setAppGridSizeValues(user);
                                         }
                                     }, new Response.ErrorListener() {
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
-                                            if(error.networkResponse.statusCode == 401) {
-                                                LauncherUtility.showErrorDialog(HomeActivity.this,"Du har en adgang til dette"); //ToDo localize
-                                            } else{
+                                            if (error.networkResponse.statusCode == 401) {
+                                                LauncherUtility.showErrorDialog(HomeActivity.this, "Du har en adgang til dette"); //ToDo localize
+                                            } else {
                                                 LauncherUtility.logoutWithDialog(HomeActivity.this);
                                             }
                                         }
                                     });
-                                queue.add(userGetRequest);
-                            }
-                        }, new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                LauncherUtility.logoutWithDialog(HomeActivity.this);
-                            }
-                        });
-                        queue.add(login);
-                    } else {
-                        LauncherUtility.logoutWithDialog(HomeActivity.this);
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    LauncherUtility.logoutWithDialog(HomeActivity.this);
+                                }
+                            });
+                        } else {
+                            LauncherUtility.logoutWithDialog(HomeActivity.this);
+                        }
                     }
-                }
-            });
-        queue.add(userGetRequest);
-
-        // Start logging this activity
-        EasyTracker.getInstance(this).activityStart(this);
+                });
+            }
+        }
     }
 
     /**
@@ -181,9 +195,9 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                                     }, new Response.ErrorListener() {
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
-                                            if(error.networkResponse.statusCode == 401) {
-                                                LauncherUtility.showErrorDialog(HomeActivity.this,"Du har en adgang til dette"); //ToDo localize
-                                            } else{
+                                            if (error.networkResponse.statusCode == 401) {
+                                                LauncherUtility.showErrorDialog(HomeActivity.this, "Du har en adgang til dette"); //ToDo localize
+                                            } else {
                                                 LauncherUtility.logoutWithDialog(HomeActivity.this);
                                             }
                                         }
@@ -257,9 +271,9 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                                     }, new Response.ErrorListener() {
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
-                                            if(error.networkResponse.statusCode == 401) {
-                                                LauncherUtility.showErrorDialog(HomeActivity.this,"Du har en adgang til dette"); //ToDo localize
-                                            } else{
+                                            if (error.networkResponse.statusCode == 401) {
+                                                LauncherUtility.showErrorDialog(HomeActivity.this, "Du har en adgang til dette"); //ToDo localize
+                                            } else {
                                                 LauncherUtility.logoutWithDialog(HomeActivity.this);
                                             }
                                         }
@@ -289,7 +303,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
      */
     private void startSettingsActivity(User user) {
         Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
-        intent.putExtra(Constants.CURRENT_USER, user);
+        intent.putExtra(IntentConstants.CURRENT_USER, user);
         startActivity(intent);
     }
 
@@ -299,13 +313,42 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
      *
      * @param user the user from the request.
      */
-    private void setAppGridSizeValues(User user) {
+    private void setAppGridSizeValues(final User user) {
         // Get the row and column size for the grids in the AppViewPager
-        final int rowsSize = user.getSettings().getAppsGridSizeRows();
-        final int columnsSize = user.getSettings().getAppsGridSizeColumns();
+        handler.get(user.getUsername(), User.class, new Response.Listener<User>() {
+            @Override
+            public void onResponse(User response) {
+                final int rowsSize = response.getSettings().getAppsGridSizeRows();
+                final int columnsSize = response.getSettings().getAppsGridSizeColumns();
 
-        appViewPager.setAdapter(new AppsFragmentAdapter(getSupportFragmentManager(),
-            currentLoadedApps, rowsSize, columnsSize));
+                appViewPager.setAdapter(new AppsFragmentAdapter(getSupportFragmentManager(),
+                    currentLoadedApps, rowsSize, columnsSize));
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                handler.login(user, new Response.Listener<Integer>() {
+                    @Override
+                    public void onResponse(Integer response) {
+                        handler.get(user.getUsername(), User.class, new Response.Listener<User>() {
+                            @Override
+                            public void onResponse(User response) {
+                                final int rowsSize = response.getSettings().getAppsGridSizeRows();
+                                final int columnsSize = response.getSettings().getAppsGridSizeColumns();
+
+                                appViewPager.setAdapter(new AppsFragmentAdapter(getSupportFragmentManager(),
+                                    currentLoadedApps, rowsSize, columnsSize));
+                            }
+                        }, null);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+            }
+        });
     }
 
     /**
@@ -352,7 +395,9 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
             @Override
             public void onResponse(User response) {
                 List<Application> apps = new ArrayList<Application>();
-                apps.addAll(response.getSettings().getAppsUserCanAccess());
+                if(response.getSettings()!= null) {
+                    apps.addAll(response.getSettings().getAppsUserCanAccess());
+                }
                 startLoadApplicationTask(apps);
             }
         }, new Response.ErrorListener() {
@@ -366,15 +411,17 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                                 @Override
                                 public void onResponse(User response) {
                                     List<Application> apps = new ArrayList<Application>();
-                                    apps.addAll(response.getSettings().getAppsUserCanAccess());
+                                    if(response.getSettings()!= null) {
+                                        apps.addAll(response.getSettings().getAppsUserCanAccess());
+                                    }
                                     startLoadApplicationTask(apps);
                                 }
                             }, new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
-                                    if(error.networkResponse.statusCode == 401) {
-                                        LauncherUtility.showErrorDialog(HomeActivity.this,"Du har en adgang til dette"); //ToDo localize
-                                    } else{
+                                    if (error.networkResponse.statusCode == 401) {
+                                        LauncherUtility.showErrorDialog(HomeActivity.this, "Du har en adgang til dette"); //ToDo localize
+                                    } else {
                                         LauncherUtility.logoutWithDialog(HomeActivity.this);
                                     }
                                 }
@@ -429,7 +476,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         offlineMode = offlineMode();
         offlineModeFeedback();
         super.onResume();
-        GrayScaleHelper.setGrayScaleForActivityByUser(this,currentUser);
+        checkSettingsAndUseThem(currentUser);
         // Reload applications (Some applications might have been (un)installed)
         reloadApplications();
 
@@ -579,9 +626,9 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                                     }, new Response.ErrorListener() {
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
-                                            if(error.networkResponse.statusCode == 401) {
-                                                LauncherUtility.showErrorDialog(HomeActivity.this,"Du har en adgang til dette"); //ToDo localize
-                                            } else{
+                                            if (error.networkResponse.statusCode == 401) {
+                                                LauncherUtility.showErrorDialog(HomeActivity.this, "Du har en adgang til dette"); //ToDo localize
+                                            } else {
                                                 LauncherUtility.logoutWithDialog(HomeActivity.this);
                                             }
                                         }

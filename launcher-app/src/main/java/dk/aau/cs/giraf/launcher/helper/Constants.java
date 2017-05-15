@@ -37,10 +37,6 @@ public final class Constants {
     public static final String CHILD_ID = "currentChildID";
 
     /**
-     * Key for getting the User
-     */
-     public static final String CURRENT_USER ="currentGirafUser";
-    /**
      * If no child is selected -1.
      */
     public static final long NO_CHILD_SELECTED_ID = -1;

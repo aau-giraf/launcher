@@ -42,6 +42,7 @@ import dk.aau.cs.giraf.showcaseview.ShowcaseView;
 import dk.aau.cs.giraf.showcaseview.targets.Target;
 import dk.aau.cs.giraf.showcaseview.targets.ViewTarget;
 import dk.aau.cs.giraf.utilities.GrayScaleHelper;
+import dk.aau.cs.giraf.utilities.IntentConstants;
 
 import java.util.ArrayList;
 
@@ -109,7 +110,7 @@ public class SettingsActivity extends GirafActivity
 
         setContentView(R.layout.settings_activity);
         queue = RequestQueueHandler.getInstance(this.getApplicationContext()).getRequestQueue();
-        currentUser = (User) getIntent().getExtras().getSerializable(Constants.CURRENT_USER);
+        currentUser = (User) getIntent().getExtras().getSerializable(IntentConstants.CURRENT_USER);
         GrayScaleHelper.setGrayScaleForActivityByUser(this,currentUser);
         settingsListView = (ListView) findViewById(R.id.settingsListView);
 
@@ -428,7 +429,7 @@ public class SettingsActivity extends GirafActivity
         GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
             @Override
             public void onResponse(User response) {
-                intent.putExtra(Constants.CURRENT_USER, currentUser);
+                intent.putExtra(IntentConstants.CURRENT_USER, currentUser);
                 // Stop activity before restarting
                 SettingsActivity.this.finish();
 
@@ -518,7 +519,7 @@ public class SettingsActivity extends GirafActivity
     protected void onResume() {
         super.onResume();
 
-        currentUser = (User) getIntent().getExtras().getSerializable(Constants.CURRENT_USER);
+        currentUser = (User) getIntent().getExtras().getSerializable(IntentConstants.CURRENT_USER);
         GrayScaleHelper.setGrayScaleForActivityByUser(this,currentUser);
         // Check if this is the first run of the app
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);

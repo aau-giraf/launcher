@@ -13,6 +13,7 @@ import dk.aau.cs.giraf.librest.requests.GetRequest;
 import dk.aau.cs.giraf.librest.requests.LoginRequest;
 import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
 import dk.aau.cs.giraf.models.core.User;
+import dk.aau.cs.giraf.utilities.IntentConstants;
 
 public class LoginController {
 
@@ -66,7 +67,7 @@ public class LoginController {
 
 
 
-                                homeIntent.putExtra(Constants.CURRENT_USER,response);
+                                homeIntent.putExtra(IntentConstants.CURRENT_USER,response);
                                 homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 gui.startActivity(homeIntent);
                             }
@@ -76,8 +77,6 @@ public class LoginController {
                                 if(error!=null && error.networkResponse !=null) {
                                     //The user is for some reason unavailable
                                     gui.showDialogWithMessage(gui.getString(R.string.error_try_agian) + "" + error.networkResponse.statusCode);
-                                } else if(error!=null){
-                                    Log.e("error",error.getMessage());
                                 }
                             }
                         });
@@ -87,12 +86,17 @@ public class LoginController {
             new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    int errorCode = error.networkResponse.statusCode;
-                    if (errorCode == 401) {
-                        //The username and/or password are incorrect
-                        gui.showDialogWithMessage(gui.getString(R.string.error_username_password));
-                    } else {
-                        //The server is for some reason unavailable
+                    if(error!=null && error.networkResponse !=null) {
+                        int errorCode = error.networkResponse.statusCode;
+                        if (errorCode == 401) {
+                            //The username and/or password are incorrect
+                            gui.showDialogWithMessage(gui.getString(R.string.error_username_password));
+                        } else {
+                            //The server is for some reason unavailable
+                            gui.showDialogWithMessage(gui.getString(R.string.error_try_agian));
+                        }
+                    }
+                    else{
                         gui.showDialogWithMessage(gui.getString(R.string.error_try_agian));
                     }
                 }
