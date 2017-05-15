@@ -196,9 +196,9 @@ public class GirafFragment extends AppContainerFragment {
                             applicationCollection.add(appImageView.appInfo.getApp());
                             localUser.getSettings().setAppsUserCanAccess(applicationCollection);
                         }
-                        PutRequest<User> putRequest = new PutRequest<User>(localUser, localUser.getId(), new Response.Listener<Integer>() {
+                        PutRequest<User> putRequest = new PutRequest<User>(localUser, new Response.Listener<User>() {
                             @Override
-                            public void onResponse(Integer response) {
+                            public void onResponse(User response) {
 
                             }
                         }, new Response.ErrorListener() {

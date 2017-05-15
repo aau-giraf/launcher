@@ -112,11 +112,15 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                 setAppGridSizeValues(user);
             } else {
                 user.setSettings(new Settings(false, 4, 5, new ArrayList<Application>()));
-                handler.put(user, user.getId(), new Response.Listener<Integer>() {
+                handler.put(user, new Response.Listener<User>() {
                     @Override
-                    public void onResponse(Integer response) {
-                        GrayScaleHelper.setGrayScaleForActivityByUser(HomeActivity.this, user);
-                        setAppGridSizeValues(user);
+                    public void onResponse(User response) {
+                        if(response.getSettings() !=null) {
+                            GrayScaleHelper.setGrayScaleForActivityByUser(HomeActivity.this, user);
+                            setAppGridSizeValues(user);
+                        }else{
+                            Log.e("Launcher","settings is null");
+                        }
                     }
                 }, new Response.ErrorListener() {
                     @Override
@@ -125,10 +129,9 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                             handler.login(user, new Response.Listener<Integer>() {
                                 @Override
                                 public void onResponse(Integer response) {
-                                    handler.put(user, user.getId(), new Response.Listener<Integer>() {
-
+                                    handler.put(user, new Response.Listener<User>() {
                                         @Override
-                                        public void onResponse(Integer response) {
+                                        public void onResponse(User response) {
                                             GrayScaleHelper.setGrayScaleForActivityByUser(HomeActivity.this, user);
                                             setAppGridSizeValues(user);
                                         }
@@ -318,8 +321,16 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         handler.get(user.getUsername(), User.class, new Response.Listener<User>() {
             @Override
             public void onResponse(User response) {
-                final int rowsSize = response.getSettings().getAppsGridSizeRows();
-                final int columnsSize = response.getSettings().getAppsGridSizeColumns();
+                final int rowsSize;
+                final int columnsSize;
+                if(response.getSettings() != null) {
+                    rowsSize = response.getSettings().getAppsGridSizeRows();
+                    columnsSize = response.getSettings().getAppsGridSizeColumns();
+                }else{
+                    Log.e("Launcher","Settings nullpointer in setAppGridSize" + " " + user.getUsername());
+                    rowsSize = 4;
+                    columnsSize = 5;
+                }
 
                 appViewPager.setAdapter(new AppsFragmentAdapter(getSupportFragmentManager(),
                     currentLoadedApps, rowsSize, columnsSize));
@@ -333,8 +344,16 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                         handler.get(user.getUsername(), User.class, new Response.Listener<User>() {
                             @Override
                             public void onResponse(User response) {
-                                final int rowsSize = response.getSettings().getAppsGridSizeRows();
-                                final int columnsSize = response.getSettings().getAppsGridSizeColumns();
+                                final int rowsSize;
+                                final int columnsSize;
+                                if(response.getSettings() != null) {
+                                    rowsSize = response.getSettings().getAppsGridSizeRows();
+                                    columnsSize = response.getSettings().getAppsGridSizeColumns();
+                                }else{
+                                    Log.e("Launcher","Settings nullpointer in setAppGridSize");
+                                    rowsSize = 4;
+                                    columnsSize = 5;
+                                }
 
                                 appViewPager.setAdapter(new AppsFragmentAdapter(getSupportFragmentManager(),
                                     currentLoadedApps, rowsSize, columnsSize));
