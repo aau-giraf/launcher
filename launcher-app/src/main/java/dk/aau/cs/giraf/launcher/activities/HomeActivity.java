@@ -4,6 +4,7 @@ import android.content.*;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,8 +92,6 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         sidebarScrollView = (ScrollView) this.findViewById(R.id.sidebar_scrollview);
         appViewPager = (ViewPager) this.findViewById(R.id.appsViewPager);
 
-        checkSettingsAndUseThem(currentUser);
-
         loadWidgets();
 
         // Show warning if DEBUG_MODE is true
@@ -115,11 +114,11 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                 handler.put(user, new Response.Listener<User>() {
                     @Override
                     public void onResponse(User response) {
-                        if(response.getSettings() !=null) {
+                        if (response.getSettings() != null) {
                             GrayScaleHelper.setGrayScaleForActivityByUser(HomeActivity.this, user);
                             setAppGridSizeValues(user);
-                        }else{
-                            Log.e("Launcher","settings is null");
+                        } else {
+                            Log.e("Launcher", "settings is null");
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -323,11 +322,11 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
             public void onResponse(User response) {
                 final int rowsSize;
                 final int columnsSize;
-                if(response.getSettings() != null) {
+                if (response.getSettings() != null) {
                     rowsSize = response.getSettings().getAppsGridSizeRows();
                     columnsSize = response.getSettings().getAppsGridSizeColumns();
-                }else{
-                    Log.e("Launcher","Settings nullpointer in setAppGridSize" + " " + user.getUsername());
+                } else {
+                    Log.e("Launcher", "Settings nullpointer in setAppGridSize" + " " + user.getUsername());
                     rowsSize = 4;
                     columnsSize = 5;
                 }
@@ -346,11 +345,11 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                             public void onResponse(User response) {
                                 final int rowsSize;
                                 final int columnsSize;
-                                if(response.getSettings() != null) {
+                                if (response.getSettings() != null) {
                                     rowsSize = response.getSettings().getAppsGridSizeRows();
                                     columnsSize = response.getSettings().getAppsGridSizeColumns();
-                                }else{
-                                    Log.e("Launcher","Settings nullpointer in setAppGridSize");
+                                } else {
+                                    Log.e("Launcher", "Settings nullpointer in setAppGridSize");
                                     rowsSize = 4;
                                     columnsSize = 5;
                                 }
@@ -414,7 +413,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
             @Override
             public void onResponse(User response) {
                 List<Application> apps = new ArrayList<Application>();
-                if(response.getSettings()!= null) {
+                if (response.getSettings() != null) {
                     apps.addAll(response.getSettings().getAppsUserCanAccess());
                 }
                 startLoadApplicationTask(apps);
@@ -430,7 +429,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                                 @Override
                                 public void onResponse(User response) {
                                     List<Application> apps = new ArrayList<Application>();
-                                    if(response.getSettings()!= null) {
+                                    if (response.getSettings() != null) {
                                         apps.addAll(response.getSettings().getAppsUserCanAccess());
                                     }
                                     startLoadApplicationTask(apps);
@@ -496,6 +495,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         offlineModeFeedback();
         super.onResume();
         checkSettingsAndUseThem(currentUser);
+
         // Reload applications (Some applications might have been (un)installed)
         reloadApplications();
 
@@ -730,7 +730,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                     @Override
                     public void run() {
 
-                        final GirafPictogramItemView profilePictureView = (GirafPictogramItemView)
+                        final GirafUserItemView profilePictureView = (GirafUserItemView)
                             findViewById(R.id.profile_widget);
 
                         final ViewTarget settingsButtonTarget = new ViewTarget(profilePictureView, 1.1f);

@@ -10,11 +10,17 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.gui.GirafPopupDialog;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
+import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.logiccontroller.LoginController;
+import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
+import dk.aau.cs.giraf.models.core.User;
+import dk.aau.cs.giraf.utilities.IntentConstants;
 
 public class LoginActivity extends GirafActivity {
 
@@ -54,6 +60,26 @@ public class LoginActivity extends GirafActivity {
                 return false;
             }
         });
+        String startedBy = this.getIntent().getExtras().getString(IntentConstants.STARTED_BY);
+        if(startedBy != null && startedBy.equals(IntentConstants.RESTART)){
+            loginButton.setEnabled(false);
+            usernameTextBox.setEnabled(false);
+            passwordTextBox.setEnabled(false);
+            findViewById(R.id.girafHeaderIcon).startAnimation(loadAnimation);
+            RequestQueueHandler handler = RequestQueueHandler.getInstance(this);
+            handler.get(User.class, new Response.Listener<User>() {
+                @Override
+                public void onResponse(User response) {
+                    controller.startLauncherHomeActivity(response);
+                }
+
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    LoginActivity.this.showDialogWithMessage("Du er nød til at logge ind igen"); //ToDo localize
+                }
+            });
+        }
     }
 
 
@@ -95,9 +121,7 @@ public class LoginActivity extends GirafActivity {
                 reEnableGuiControls();
             }
         });
-        Log.i("Test","Før");
         errorDialog.show();
-        Log.i("Test","Efter");
     }
 
 

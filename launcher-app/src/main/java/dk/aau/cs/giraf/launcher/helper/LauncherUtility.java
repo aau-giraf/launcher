@@ -10,12 +10,16 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.google.analytics.tracking.android.StandardExceptionParser;
 import dk.aau.cs.giraf.gui.GirafPopupDialog;
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.activities.LoginActivity;
 import dk.aau.cs.giraf.launcher.activities.SettingsActivity;
+import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
 
 /**
  * <Code>LauncherUtility</Code> contains static methods related to running the Launcher,
@@ -38,8 +42,9 @@ public abstract class LauncherUtility {
         return DEBUG_MODE;
     }
 
-    public static void logoutWithDialog(final Activity launchedFrom){
-        final GirafPopupDialog noticeDialog = new GirafPopupDialog(R.string.error_login, "Forbindelse midste, du bliver logget ud",launchedFrom);
+
+    public static void logoutWithDialog(final Activity launchedFrom, String message){
+        final GirafPopupDialog noticeDialog = new GirafPopupDialog(R.string.error_login, message,launchedFrom);
         noticeDialog.setButton1(R.string.ok, R.drawable.icon_accept, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,8 +55,25 @@ public abstract class LauncherUtility {
 
     }
 
+
+    public static void logoutWithDialog(final Activity launchedFrom){
+        logoutWithDialog(launchedFrom, "Forbindelse midste, du bliver logget ud" ); //ToDo locallize
+    }
+
     public static void logout(Activity launchedFrom){
-        Intent intent = new Intent(launchedFrom, SettingsActivity.class);
+        RequestQueueHandler  handler = RequestQueueHandler.getInstance(launchedFrom);
+        handler.login(new Response.Listener<Integer>() {
+            @Override
+            public void onResponse(Integer response) {
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        Intent intent = new Intent(launchedFrom, LoginActivity.class);
         launchedFrom.startActivity(intent);
         launchedFrom.finish();
     }

@@ -44,32 +44,7 @@ public class LoginController {
                             //Passes the userinfo to homeIntent
                             @Override
                             public void onResponse(User response) {
-
-                                Intent homeIntent = new Intent(gui, HomeActivity.class);
-
-                                //If the logged in user is a department, we open a profileSelector to choose guardian
-                                //ToDo Change to actually check if we are a department.
-                                //Also, lets finish this once we actually can compile and have the server backend
-                                if(false){
-                                    /*GirafProfileSelectorDialog chooseGuardian = GirafProfileSelectorDialog.newInstance(
-                                        LoginController.this, response, false, false, getString(R.string.home_activity_change_to_citizen_msg),
-                                        CHANGE_USER_SELECTOR_DIALOG, queue);
-                                    changeUser.show(getSupportFragmentManager(), "" + CHANGE_USER_SELECTOR_DIALOG);*/
-                                }
-
-
-
-
-
-
-
-
-
-
-
-                                homeIntent.putExtra(IntentConstants.CURRENT_USER,response);
-                                homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                gui.startActivity(homeIntent);
+                                startLauncherHomeActivity(response);
                             }
                         }, new Response.ErrorListener() {
                             @Override
@@ -104,5 +79,34 @@ public class LoginController {
         );
         //The login request is added to the queue
         queue.add(loginRequest);
+    }
+
+    public void startLauncherHomeActivity(User currentUser){
+
+        Intent homeIntent = new Intent(gui, HomeActivity.class);
+
+        //If the logged in user is a department, we open a profileSelector to choose guardian
+        //ToDo Change to actually check if we are a department.
+        //Also, lets finish this once we actually can compile and have the server backend
+        if(false){
+                                    /*GirafProfileSelectorDialog chooseGuardian = GirafProfileSelectorDialog.newInstance(
+                                        LoginController.this, response, false, false, getString(R.string.home_activity_change_to_citizen_msg),
+                                        CHANGE_USER_SELECTOR_DIALOG, queue);
+                                    changeUser.show(getSupportFragmentManager(), "" + CHANGE_USER_SELECTOR_DIALOG);*/
+        }
+
+
+
+
+
+
+
+
+
+
+
+        homeIntent.putExtra(IntentConstants.CURRENT_USER,currentUser);
+        homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        gui.startActivity(homeIntent);
     }
 }
