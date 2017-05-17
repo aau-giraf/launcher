@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.SeekBar;
 import android.widget.Switch;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -115,6 +116,62 @@ public class SettingsLauncher extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 currentUser.getSettings().setUseGrayScale(isChecked);
+                final PutRequest<User> userPutRequest = new PutRequest<User>(currentUser, new Response.Listener<User>() {
+                    @Override
+                    public void onResponse(User response) {
+                        Log.i("Launcher", "Put user request success for SettingsLauncher");
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
+                            @Override
+                            public void onResponse(Integer response) {
+                                PutRequest<User> userPutRequest1 = new PutRequest<User>(currentUser, new Response.Listener<User>() {
+                                    @Override
+                                    public void onResponse(User response) {
+                                        Log.i("Launcher", "Put user request success for SettingsLauncher");
+                                    }
+                                }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        Log.e("Launcher", "Put user request failed for SettingsLauncher");
+                                    }
+                                });
+                                queue.add(userPutRequest1);
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.e("Launcher", "Put user request failed for SettingsLauncher");
+                            }
+                        });
+                        queue.add(loginRequest);
+                    }
+                });
+                queue.add(userPutRequest);
+            }
+        });
+
+        //Set SeekBar Listeners
+        final SeekBar sk = (SeekBar) view.findViewById(R.id.gridResizerSeekBar);
+        sk.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
+                currentUser.getSettings().setAppsGridSizeRows(seekBar.getProgress());
+                currentUser.getSettings().setAppsGridSizeColumns(1 + seekBar.getProgress());
+
                 final PutRequest<User> userPutRequest = new PutRequest<User>(currentUser, new Response.Listener<User>() {
                     @Override
                     public void onResponse(User response) {

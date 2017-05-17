@@ -117,28 +117,6 @@ public class SettingsActivity extends GirafActivity
         GrayScaleHelper.setGrayScaleForActivityByUser(this,currentUser);
         settingsListView = (ListView) findViewById(R.id.settingsListView);
 
-
-        final SeekBar sk = (SeekBar) findViewById(R.id.gridResizerSeekBar);
-        sk.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
-                // TODO Auto-generated method stub
-
-
-            }
-        });
-
         settingsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
