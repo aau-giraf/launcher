@@ -38,7 +38,7 @@
                 android:padding="@dimen/giraf_settings_list_row_padding"
                 android:gravity="center_horizontal">
 
-            <dk.aau.cs.giraf.gui.GirafPictogramItemView
+            <dk.aau.cs.giraf.gui.GirafUserItemView
                     android:id="@+id/profile_widget_settings"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
