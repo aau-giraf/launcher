@@ -624,7 +624,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         widgetUpdater = new GWidgetUpdater();
 
         GetRequest<User> userGetRequest =
-            new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
+            new GetRequest<User>(User.class, new Response.Listener<User>() {
                 @Override
                 public void onResponse(User response) {
                     changeVisibilityOfButtons(response);
@@ -638,7 +638,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                             @Override
                             public void onResponse(Integer response) {
                                 GetRequest<User> userGetRequest =
-                                    new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
+                                    new GetRequest<User>(User.class, new Response.Listener<User>() {
                                         @Override
                                         public void onResponse(User response) {
                                             changeVisibilityOfButtons(response);
