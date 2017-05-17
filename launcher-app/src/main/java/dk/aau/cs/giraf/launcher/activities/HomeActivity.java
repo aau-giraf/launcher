@@ -176,7 +176,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
      */
     public void onSettingsButtonClick(View view) {
         GetRequest<User> userGetRequest =
-            new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
+            new GetRequest<User>(User.class, new Response.Listener<User>() {
                 @Override
                 public void onResponse(User response) {
                     startSettingsActivity(response);

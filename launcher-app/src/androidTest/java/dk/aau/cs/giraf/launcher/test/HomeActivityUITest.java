@@ -1,5 +1,5 @@
 package dk.aau.cs.giraf.launcher.test;
-
+/*
 import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.test.ActivityInstrumentationTestCase2;
@@ -44,4 +44,4 @@ public class HomeActivityUITest
         //onView(withId(R.id.settings_button)).perform(click());
         //onView(withId(R.id.settingsListFragment)).check(ViewAssertions.matches(isDisplayed()));
     }
-}
+}*/
