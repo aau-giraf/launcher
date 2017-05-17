@@ -426,7 +426,7 @@ public class SettingsActivity extends GirafActivity
         // Get the intent of SettingsActivity
         final Intent intent = SettingsActivity.this.getIntent();
 
-        GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
+        GetRequest<User> userGetRequest = new GetRequest<User>(User.class, new Response.Listener<User>() {
             @Override
             public void onResponse(User response) {
                 intent.putExtra(IntentConstants.CURRENT_USER, currentUser);
@@ -443,7 +443,7 @@ public class SettingsActivity extends GirafActivity
                     LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
                         @Override
                         public void onResponse(Integer response) {
-                            GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
+                            GetRequest<User> userGetRequest = new GetRequest<User>(User.class, new Response.Listener<User>() {
                                 @Override
                                 public void onResponse(User response) {
                                     if (currentUser.isRole(Role.User)) {
