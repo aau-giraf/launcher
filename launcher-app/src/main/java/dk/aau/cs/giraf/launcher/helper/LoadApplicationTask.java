@@ -153,7 +153,7 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
         }
         final AppsFragmentAdapter adapter = (AppsFragmentAdapter) this.appsViewPager.getAdapter();
 
-        GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
+        GetRequest<User> userGetRequest = new GetRequest<User>( User.class, new Response.Listener<User>() {
             @Override
             public void onResponse(User response) {
                 final int rowsSize = ApplicationGridResizer.getGridRowSize(currentUser);
@@ -169,7 +169,7 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
                     LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
                         @Override
                         public void onResponse(Integer response) {
-                            GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
+                            GetRequest<User> userGetRequest = new GetRequest<User>( User.class, new Response.Listener<User>() {
                                 @Override
                                 public void onResponse(User response) {
                                     final int rowsSize = ApplicationGridResizer.getGridRowSize(currentUser);

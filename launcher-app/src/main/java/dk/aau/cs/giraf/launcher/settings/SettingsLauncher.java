@@ -60,7 +60,7 @@ public class SettingsLauncher extends Fragment {
         if (arguments != null) {
             currentUser = (User) arguments.getSerializable(USER_IDENTIFICATION);
         }
-        GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+        GetRequest<User> userGetRequest = new GetRequest<User>( User.class, new Response.Listener<User>() {
             @Override
             public void onResponse(User response) {
                 currentUser = response; //ToDo i know it is wrong, but it is okay.
@@ -72,7 +72,7 @@ public class SettingsLauncher extends Fragment {
                     LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
                         @Override
                         public void onResponse(Integer response) {
-                            GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getId(), User.class, new Response.Listener<User>() {
+                            GetRequest<User> userGetRequest = new GetRequest<User>( User.class, new Response.Listener<User>() {
                                 @Override
                                 public void onResponse(User response) {
                                     currentUser = response; //ToDo i know it is wrong, but it is okay.
