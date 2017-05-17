@@ -108,7 +108,7 @@ public class SettingsLauncher extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container,
                              @Nullable Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.settings_launcher, null);
+        View view = inflater.inflate(R.layout.settings_launcher_new, null);
         grayScale = (Switch) view.findViewById(R.id.toggle_gray_scale);
         grayScale.setChecked(currentUser.getSettings().getUseGrayScale());
         grayScale.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
