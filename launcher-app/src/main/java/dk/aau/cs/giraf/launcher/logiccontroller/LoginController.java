@@ -40,7 +40,7 @@ public class LoginController {
                 public void onResponse(Integer statusCode) {
                     //Creates a GetRequest for the user, which is then added to the queue within the loginRequest
                     GetRequest<User> userGetRequest =
-                        new GetRequest<User>(username, User.class, new Response.Listener<User>() {
+                        new GetRequest<User>(User.class, new Response.Listener<User>() {
                             //Passes the userinfo to homeIntent
                             @Override
                             public void onResponse(User response) {
@@ -52,6 +52,18 @@ public class LoginController {
                                 if(error!=null && error.networkResponse !=null) {
                                     //The user is for some reason unavailable
                                     Log.e("Launcher Network", "Error code "+  error.networkResponse.statusCode +" on get user request");
+                                    RequestQueueHandler handler = RequestQueueHandler.getInstance(gui.getApplicationContext());
+                                    handler.login(new Response.Listener<Integer>() {
+                                        @Override
+                                        public void onResponse(Integer response) {
+
+                                        }
+                                    }, new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+
+                                        }
+                                    });
                                     gui.showDialogWithMessage(gui.getString(R.string.error_try_agian));
                                 }
                             }

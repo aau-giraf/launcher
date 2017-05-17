@@ -123,6 +123,7 @@ public class LoginActivity extends GirafActivity {
                 reEnableGuiControls();
             }
         });
+        errorDialog.setCanceledOnTouchOutside(false);
         errorDialog.show();
     }
 
@@ -131,6 +132,8 @@ public class LoginActivity extends GirafActivity {
         InputMethodManager inputMethodManager = (InputMethodManager)  this.getSystemService(INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
     }
+
+
 
 
     private void reEnableGuiControls() {
