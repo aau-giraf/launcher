@@ -58,8 +58,9 @@ public abstract class LauncherUtility {
 
 
     public static void logoutWithDialog(final Activity launchedFrom){
-        logoutWithDialog(launchedFrom, "Forbindelse midste, du bliver logget ud" ); //ToDo locallize
+        logoutWithDialog(launchedFrom, launchedFrom.getString(R.string.dialog_offline_forced));
     }
+
 
     public static void logout(Activity launchedFrom){
         RequestQueueHandler  handler = RequestQueueHandler.getInstance(launchedFrom);

@@ -6,6 +6,8 @@
     <string name="dialog_offline_title">Du har ingen forbindelse til internettet</string>
     <string name="dialog_offline_message">Når du starter Giraf første gang, skal du have forbindelse til internettet
     </string>
+    <string name="dialog_offline_forced">Forbindelse midste, du bliver logget ud</string>
+    <string name="dialog_offline_server">Forbindelse til server midstet</string>
     <string name="offline_mode_enabled">Du har ikke forbindelse til internettet</string>
     <string name="dialog_offline_notify_title">Kan ikke starte app</string>
     <string name="dialog_offline_notify_message">Denne app kræver, at du har forbindelse til internettet</string>

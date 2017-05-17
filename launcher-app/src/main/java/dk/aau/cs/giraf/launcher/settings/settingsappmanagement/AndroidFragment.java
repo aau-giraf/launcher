@@ -79,9 +79,9 @@ public class AndroidFragment extends AppContainerFragment {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
                                     if (error.networkResponse.statusCode == 401) {
-                                        LauncherUtility.showErrorDialog(view.getContext(),"Do har ikke tillades til dette"); //ToDo localize
+                                        LauncherUtility.showErrorDialog(view.getContext(),R.string.home_activity_you_do_not_have_access_to_this);
                                     } else {
-                                        LauncherUtility.showErrorDialog(view.getContext(), "Forbindelse til server midste"); //ToDo locallize
+                                        LauncherUtility.showErrorDialog(view.getContext(), R.string.dialog_offline_server);
                                     }
                                 }
                             });
@@ -90,12 +90,12 @@ public class AndroidFragment extends AppContainerFragment {
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            LauncherUtility.showErrorDialog(view.getContext(), "Forbindelse til server midste"); //ToDo locallize
+                            LauncherUtility.showErrorDialog(view.getContext(), R.string.dialog_offline_server);
                         }
                     });
                     queue.add(loginRequest);
                 } else {
-                    LauncherUtility.showErrorDialog(view.getContext(), "Forbindelse til server midste"); //ToDo locallize
+                    LauncherUtility.showErrorDialog(view.getContext(), R.string.dialog_offline_server);
                 }
 
             }

@@ -80,7 +80,7 @@ public class AppsFragmentAdapter extends FragmentStatePagerAdapter {
         this.rowSize = rowSize;
         this.columnSize = columnSize;
 
-        //ToDo We only got this exception once, so we could not test it, as such we use try / catch
+        //We only got this exception once, so we could not test it, as such we use try / catch
         try {
             this.notifyDataSetChanged();
         } catch (IllegalStateException e) {
