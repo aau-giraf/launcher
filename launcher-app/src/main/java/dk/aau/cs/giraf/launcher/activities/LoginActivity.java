@@ -60,25 +60,27 @@ public class LoginActivity extends GirafActivity {
                 return false;
             }
         });
-        String startedBy = this.getIntent().getExtras().getString(IntentConstants.STARTED_BY);
-        if(startedBy != null && startedBy.equals(IntentConstants.RESTART)){
-            loginButton.setEnabled(false);
-            usernameTextBox.setEnabled(false);
-            passwordTextBox.setEnabled(false);
-            findViewById(R.id.girafHeaderIcon).startAnimation(loadAnimation);
-            RequestQueueHandler handler = RequestQueueHandler.getInstance(this);
-            handler.get(User.class, new Response.Listener<User>() {
-                @Override
-                public void onResponse(User response) {
-                    controller.startLauncherHomeActivity(response);
-                }
+        if(this.getIntent() != null && this.getIntent().getExtras() != null) {
+            String startedBy = this.getIntent().getExtras().getString(IntentConstants.STARTED_BY);
+            if (startedBy != null && startedBy.equals(IntentConstants.RESTART)) {
+                loginButton.setEnabled(false);
+                usernameTextBox.setEnabled(false);
+                passwordTextBox.setEnabled(false);
+                findViewById(R.id.girafHeaderIcon).startAnimation(loadAnimation);
+                RequestQueueHandler handler = RequestQueueHandler.getInstance(this);
+                handler.get(User.class, new Response.Listener<User>() {
+                    @Override
+                    public void onResponse(User response) {
+                        controller.startLauncherHomeActivity(response);
+                    }
 
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    LoginActivity.this.showDialogWithMessage("Du er nød til at logge ind igen"); //ToDo localize
-                }
-            });
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        LoginActivity.this.showDialogWithMessage("Du er nød til at logge ind igen"); //ToDo localize
+                    }
+                });
+            }
         }
     }
 

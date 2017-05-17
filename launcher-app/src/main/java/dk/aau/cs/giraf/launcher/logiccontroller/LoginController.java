@@ -51,7 +51,8 @@ public class LoginController {
                             public void onErrorResponse(VolleyError error) {
                                 if(error!=null && error.networkResponse !=null) {
                                     //The user is for some reason unavailable
-                                    gui.showDialogWithMessage(gui.getString(R.string.error_try_agian) + "" + error.networkResponse.statusCode);
+                                    Log.e("Launcher Network", "Error code "+  error.networkResponse.statusCode +" on get user request");
+                                    gui.showDialogWithMessage(gui.getString(R.string.error_try_agian));
                                 }
                             }
                         });
@@ -65,13 +66,21 @@ public class LoginController {
                         int errorCode = error.networkResponse.statusCode;
                         if (errorCode == 401) {
                             //The username and/or password are incorrect
+                            Log.e("Launcher Network", "Error code 401 on login request");
                             gui.showDialogWithMessage(gui.getString(R.string.error_username_password));
                         } else {
                             //The server is for some reason unavailable
+                            Log.e("Launcher Network", "Error code "+  error.networkResponse.statusCode +" on login request");
                             gui.showDialogWithMessage(gui.getString(R.string.error_try_agian));
                         }
                     }
                     else{
+                        if(error != null) {
+                            Log.e("Launcher Network", error.getMessage());
+                        }
+                        else{
+                            Log.e("Launcher Network", "Error was null");
+                        }
                         gui.showDialogWithMessage(gui.getString(R.string.error_try_agian));
                     }
                 }
