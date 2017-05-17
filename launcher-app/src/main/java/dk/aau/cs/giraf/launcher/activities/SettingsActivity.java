@@ -36,7 +36,7 @@ import dk.aau.cs.giraf.librest.requests.GetRequest;
 import dk.aau.cs.giraf.librest.requests.LoginRequest;
 import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
 import dk.aau.cs.giraf.models.core.User;
-import dk.aau.cs.giraf.models.core.authentication.PermissionType;
+import dk.aau.cs.giraf.models.core.authentication.Role;
 import dk.aau.cs.giraf.showcaseview.ShowcaseManager;
 import dk.aau.cs.giraf.showcaseview.ShowcaseView;
 import dk.aau.cs.giraf.showcaseview.targets.Target;
@@ -184,7 +184,7 @@ public class SettingsActivity extends GirafActivity
             public void onClick(View view) {
                 GirafProfileSelectorDialog changeUser = GirafProfileSelectorDialog.newInstance(SettingsActivity.this,
                     currentUser, false, false, getString(R.string.settings_choose_citizen),
-                    CHANGE_USER_SELECTOR_DIALOG, queue);
+                    CHANGE_USER_SELECTOR_DIALOG);
                 changeUser.show(getSupportFragmentManager(), "" + CHANGE_USER_SELECTOR_DIALOG);
             }
 
@@ -446,7 +446,7 @@ public class SettingsActivity extends GirafActivity
                             GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
                                 @Override
                                 public void onResponse(User response) {
-                                    if (currentUser.hasPermission(PermissionType.User)) {
+                                    if (currentUser.isRole(Role.User)) {
                                         // A child profile has been selected, pass id
                                         intent.putExtra(Constants.CHILD_ID, currentUser.getUsername());
                                     } else { // We are a guardian, do not add a child

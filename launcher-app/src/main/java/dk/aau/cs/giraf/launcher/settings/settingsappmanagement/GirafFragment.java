@@ -29,6 +29,7 @@ import dk.aau.cs.giraf.models.core.User;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * This is the Fragment used to show the available Giraf apps installed on the device.
@@ -188,11 +189,11 @@ public class GirafFragment extends AppContainerFragment {
                         AppImageView appImageView = (AppImageView) view;
                         appImageView.toggle();
                         if (userCanAccesApp(appImageView.appInfo.getApp(), localUser)) {
-                            Collection<Application> applicationCollection = localUser.getSettings().getAppsUserCanAccess();
+                            List<Application> applicationCollection = localUser.getSettings().getAppsUserCanAccess();
                             applicationCollection.remove(appImageView.appInfo.getApp());
                             localUser.getSettings().setAppsUserCanAccess(applicationCollection);
                         } else {
-                            Collection<Application> applicationCollection = localUser.getSettings().getAppsUserCanAccess();
+                            List<Application> applicationCollection = localUser.getSettings().getAppsUserCanAccess();
                             applicationCollection.add(appImageView.appInfo.getApp());
                             localUser.getSettings().setAppsUserCanAccess(applicationCollection);
                         }

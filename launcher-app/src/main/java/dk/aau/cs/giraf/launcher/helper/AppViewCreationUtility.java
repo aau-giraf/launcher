@@ -26,7 +26,7 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.widgets.AppImageView;
 import dk.aau.cs.giraf.models.core.Application;
 import dk.aau.cs.giraf.models.core.User;
-import dk.aau.cs.giraf.models.core.authentication.PermissionType;
+import dk.aau.cs.giraf.models.core.authentication.Role;
 import dk.aau.cs.giraf.utilities.IntentConstants;
 
 import java.util.ArrayList;
@@ -144,7 +144,7 @@ public class AppViewCreationUtility {
                     appInfo = ((AppImageView) view).appInfo;
 
                     if (appInfo.getPackage().isEmpty()) {
-                        if (!currentUser.hasPermission(PermissionType.User)) { //ToDo given that a child is only a user
+                        if (!currentUser.isRole(Role.User)) {
                             Constants.offlineNotify.show(((FragmentActivity) context).getSupportFragmentManager(),
                                 "DIALOG_TAG");
                         }

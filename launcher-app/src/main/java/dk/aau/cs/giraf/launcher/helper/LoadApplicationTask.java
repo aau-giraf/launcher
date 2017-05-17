@@ -22,7 +22,7 @@ import dk.aau.cs.giraf.librest.requests.LoginRequest;
 import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
 import dk.aau.cs.giraf.models.core.Application;
 import dk.aau.cs.giraf.models.core.User;
-import dk.aau.cs.giraf.models.core.authentication.PermissionType;
+import dk.aau.cs.giraf.models.core.authentication.Role;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -124,7 +124,7 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
             // show no apps available message
             Log.e(Constants.ERROR_TAG, "App list is null");
         }
-        if (includeAddAppIcon && !currentUser.hasPermission(PermissionType.User)) {
+        if (includeAddAppIcon && !currentUser.isRole(Role.User)) {
             Application tmpApp = new Application(context.getResources().getString(R.string.add_app_text), "",
                 Constants.ADD_APP_ICON_FAKE_PACKAGE_NAME);
             AppInfo tmpInfo = new AppInfo(tmpApp);

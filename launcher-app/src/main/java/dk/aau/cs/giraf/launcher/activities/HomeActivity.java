@@ -32,7 +32,7 @@ import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
 import dk.aau.cs.giraf.models.core.Application;
 import dk.aau.cs.giraf.models.core.Settings;
 import dk.aau.cs.giraf.models.core.User;
-import dk.aau.cs.giraf.models.core.authentication.PermissionType;
+import dk.aau.cs.giraf.models.core.authentication.Role;
 import dk.aau.cs.giraf.showcaseview.ShowcaseManager;
 import dk.aau.cs.giraf.showcaseview.ShowcaseView;
 import dk.aau.cs.giraf.showcaseview.targets.ViewTarget;
@@ -240,6 +240,8 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
             @Override
             public void onClick(View v) {
                 logoutDialog.cancel();
+                Object n = null;
+                n.toString();
             }
         });
         logoutDialog.show();
@@ -378,7 +380,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     private void showChangeUserDialog(User user) {
         GirafProfileSelectorDialog changeUser = GirafProfileSelectorDialog.newInstance(HomeActivity.this,
             user, false, false, getString(R.string.home_activity_change_to_citizen_msg),
-            CHANGE_USER_SELECTOR_DIALOG, queue);
+            CHANGE_USER_SELECTOR_DIALOG);
         changeUser.show(getSupportFragmentManager(), "" + CHANGE_USER_SELECTOR_DIALOG);
 
     }
@@ -601,7 +603,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         final GirafButton settingsButton = (GirafButton) findViewById(R.id.settings_button);
         final GirafButton changeUserButton = (GirafButton) findViewById(R.id.change_user_button);
         // Check if the user is a guardian
-        if (user.hasPermission(PermissionType.Guardian) || user.hasPermission(PermissionType.SuperUser)) {
+        if (user.isRole(Role.Guardian) || user.isRole(Role.SuperUser)) {
             settingsButton.setVisibility(View.VISIBLE);
             changeUserButton.setVisibility(View.VISIBLE);
         } else { // The user had citizen permissions
