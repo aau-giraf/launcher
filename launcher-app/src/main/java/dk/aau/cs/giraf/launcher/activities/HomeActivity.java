@@ -138,7 +138,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
                                             if (error.networkResponse.statusCode == 401) {
-                                                LauncherUtility.showErrorDialog(HomeActivity.this, "Du har en adgang til dette"); //ToDo localize
+                                                LauncherUtility.showErrorDialog(HomeActivity.this, R.string.home_activity_you_do_not_have_access_to_this );
                                             } else {
                                                 LauncherUtility.logoutWithDialog(HomeActivity.this);
                                             }
@@ -198,7 +198,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
                                             if (error.networkResponse.statusCode == 401) {
-                                                LauncherUtility.showErrorDialog(HomeActivity.this, "Du har en adgang til dette"); //ToDo localize
+                                                LauncherUtility.showErrorDialog(HomeActivity.this, R.string.home_activity_you_do_not_have_access_to_this );
                                             } else {
                                                 LauncherUtility.logoutWithDialog(HomeActivity.this);
                                             }
@@ -276,7 +276,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
                                             if (error.networkResponse.statusCode == 401) {
-                                                LauncherUtility.showErrorDialog(HomeActivity.this, "Du har en adgang til dette"); //ToDo localize
+                                                LauncherUtility.showErrorDialog(HomeActivity.this, R.string.home_activity_you_do_not_have_access_to_this );
                                             } else {
                                                 LauncherUtility.logoutWithDialog(HomeActivity.this);
                                             }
@@ -440,7 +440,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
                                     if (error.networkResponse.statusCode == 401) {
-                                        LauncherUtility.showErrorDialog(HomeActivity.this, "Du har en adgang til dette"); //ToDo localize
+                                        LauncherUtility.showErrorDialog(HomeActivity.this, R.string.home_activity_you_do_not_have_access_to_this );
                                     } else {
                                         LauncherUtility.logoutWithDialog(HomeActivity.this);
                                     }
@@ -648,7 +648,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
                                             if (error.networkResponse.statusCode == 401) {
-                                                LauncherUtility.showErrorDialog(HomeActivity.this, "Du har en adgang til dette"); //ToDo localize
+                                                LauncherUtility.showErrorDialog(HomeActivity.this, R.string.home_activity_you_do_not_have_access_to_this );
                                             } else {
                                                 LauncherUtility.logoutWithDialog(HomeActivity.this);
                                             }
@@ -913,8 +913,8 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         @Override
         protected ArrayList<AppInfo> doInBackground(Application... applications) {
             List<Application> apps = new ArrayList<Application>();
-            apps.addAll(currentUser.getSettings()
-                .getAppsUserCanAccess()); //ToDo I know it is wrong but it is the only way
+            //apps.addAll(currentUser.getSettings()
+                //.getAppsUserCanAccess()); //ToDo find out if this is needed because it is bad
             applications = apps.toArray(applications);
 
             return super.doInBackground(applications);

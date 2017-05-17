@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.StringRes;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -57,8 +58,9 @@ public abstract class LauncherUtility {
 
 
     public static void logoutWithDialog(final Activity launchedFrom){
-        logoutWithDialog(launchedFrom, "Forbindelse midste, du bliver logget ud" ); //ToDo locallize
+        logoutWithDialog(launchedFrom, launchedFrom.getString(R.string.dialog_offline_forced));
     }
+
 
     public static void logout(Activity launchedFrom){
         RequestQueueHandler  handler = RequestQueueHandler.getInstance(launchedFrom);
@@ -108,6 +110,10 @@ public abstract class LauncherUtility {
         if (DEBUG_MODE) {
             showDebugInformation(activity);
         }
+    }
+
+    public static void showErrorDialog(Context context, @StringRes int message){
+        showErrorDialog(context, context.getString(message));
     }
 
     public static void showErrorDialog(Context context, String message) {

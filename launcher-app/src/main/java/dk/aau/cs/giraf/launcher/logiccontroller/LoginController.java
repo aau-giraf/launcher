@@ -12,6 +12,7 @@ import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.librest.requests.GetRequest;
 import dk.aau.cs.giraf.librest.requests.LoginRequest;
 import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
+import dk.aau.cs.giraf.models.core.Department;
 import dk.aau.cs.giraf.models.core.User;
 import dk.aau.cs.giraf.utilities.IntentConstants;
 

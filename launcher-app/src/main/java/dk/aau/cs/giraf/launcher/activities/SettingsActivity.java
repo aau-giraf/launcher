@@ -486,7 +486,7 @@ public class SettingsActivity extends GirafActivity
                             }, new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
-                                    //ToDo logoutWithDialog
+                                    LauncherUtility.logoutWithDialog(SettingsActivity.this);
                                 }
                             });
                             queue.add(userGetRequest);
@@ -852,10 +852,9 @@ public class SettingsActivity extends GirafActivity
         }
     }
 
-    //ToDo: make me
     @Override
     public User getUser() {
-        return null;
+        return currentUser;
     }
 
 }

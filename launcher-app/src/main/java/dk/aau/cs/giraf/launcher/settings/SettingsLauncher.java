@@ -18,6 +18,7 @@ import dk.aau.cs.giraf.librest.requests.LoginRequest;
 import dk.aau.cs.giraf.librest.requests.PutRequest;
 import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
 import dk.aau.cs.giraf.models.core.User;
+import dk.aau.cs.giraf.utilities.IntentConstants;
 
 /**
  * This fragment contains the settings for Launcher itself, meaning the iconsize and
@@ -60,6 +61,8 @@ public class SettingsLauncher extends Fragment {
         if (arguments != null) {
             currentUser = (User) arguments.getSerializable(USER_IDENTIFICATION);
         }
+
+        //Used to get an updated version of the user
         GetRequest<User> userGetRequest = new GetRequest<User>( User.class, new Response.Listener<User>() {
             @Override
             public void onResponse(User response) {
