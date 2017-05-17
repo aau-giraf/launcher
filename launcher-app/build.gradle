@@ -53,26 +53,17 @@ android {
         }
     }
     buildTypes {
-        unsignedBuild {
+        /*unsignedBuild {
             debuggable false
             versionNameSuffix '-unsigned'
             signingConfig signingConfigs.unsigned
             minifyEnabled true
-            buildConfigField "boolean", "USE_TEST_SERVER", "true"
-            buildConfigField "boolean", "ENABLE_SYMMETRICDS", "false"
-            buildConfigField "boolean", "USE_PRODUCTION_SERVER", "false"
-        }
+        }*/
         debug {
             testCoverageEnabled true
-            buildConfigField "boolean", "USE_TEST_SERVER", "true"
-            buildConfigField "boolean", "ENABLE_SYMMETRICDS", "false" //Write true here to enable syncronization.
-            buildConfigField "boolean", "USE_PRODUCTION_SERVER", "false"
         }
         release {
             minifyEnabled false
-            buildConfigField "boolean", "USE_TEST_SERVER", "true"
-            buildConfigField "boolean", "ENABLE_SYMMETRICDS", "false"
-            buildConfigField "boolean", "USE_PRODUCTION_SERVER", "false" //Production server isn't created yet.
         }
     }
     packagingOptions {
