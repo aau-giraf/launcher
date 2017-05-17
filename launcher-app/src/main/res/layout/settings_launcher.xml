@@ -20,13 +20,15 @@
         android:defaultValue="false"
         android:layout_gravity="left"/>
 
-    <dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer
-            android:id="@+id/icon_resizer"
-            android:key="@string/grid_size_preference_key"
-            android:title="@string/setting_launcher_grid_size_title"
-            android:summary="@string/setting_launcher_grid_size_summary"
-            android:defaultValue="4"
-            android:max="7"
-            giraf:min="2"/>
+    <TextView
+        android:id="@+id/grid_text_view"
+        />
 
+    <SeekBar
+        android:id="@+id/grid_seek_bar"
+        />
+
+    <dk.aau.cs.giraf.launcher.widgets.GridPreviewView
+        android:id="@+id/grid_preview_view"
+        />
 </PreferenceScreen>

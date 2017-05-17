@@ -19,6 +19,8 @@ import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -32,6 +34,7 @@ import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.*;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.*;
+import dk.aau.cs.giraf.launcher.widgets.SeekBarWithNumericScale;
 import dk.aau.cs.giraf.librest.requests.GetRequest;
 import dk.aau.cs.giraf.librest.requests.LoginRequest;
 import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
@@ -113,6 +116,28 @@ public class SettingsActivity extends GirafActivity
         currentUser = (User) getIntent().getExtras().getSerializable(IntentConstants.CURRENT_USER);
         GrayScaleHelper.setGrayScaleForActivityByUser(this,currentUser);
         settingsListView = (ListView) findViewById(R.id.settingsListView);
+
+
+        final SeekBar sk = (SeekBar) findViewById(R.id.gridResizerSeekBar);
+        sk.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
+                // TODO Auto-generated method stub
+
+
+            }
+        });
 
         settingsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -832,4 +857,5 @@ public class SettingsActivity extends GirafActivity
     public User getUser() {
         return null;
     }
+
 }

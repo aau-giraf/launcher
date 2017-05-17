@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:custom="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:baselineAligned="false"
+              android:orientation="horizontal"
+              android:paddingBottom="5dp"
+              android:paddingLeft="15dp"
+              android:paddingRight="10dp"
+              android:paddingTop="5dp"
+              android:weightSum="1">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="271dp">
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="27dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_weight="1"
+                    android:text="TextView"/>
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="31dp"
+                    android:text="TextView"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="184dp"
+                android:layout_height="wrap_content">
+
+                <Switch
+                    android:id="@+id/toggle_gray_scale"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="67dp"
+                    android:layout_marginStart="67dp"
+                    android:defaultValue="false"
+                    android:summary="@string/setting_grayscale_summary"
+                    android:switchTextOff="@string/setting_launcher_animation_off"
+                    android:switchTextOn="@string/setting_launcher_animation_on"
+                    android:text="Switch"
+                    android:title="@string/setting_grayscale_title"/>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/linearLayout"
+            android:layout_marginTop="28dp"
+            android:id="@+id/linearLayout2">
+
+            <RelativeLayout
+                android:id="@android:id/widget_frame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:paddingRight="15dp">
+
+                <LinearLayout
+                    android:id="@+id/seekBarPrefBarContainer"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:orientation="vertical"
+                    android:weightSum="1">
+
+                    <!--
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/setting_launcher_grid_column_title"/>
+
+            <dk.aau.cs.giraf.launcher.widgets.SeekBarWithNumericScale
+                android:id="@+id/iconsResizerColumnsSeekBar"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                custom:firstScaleItemValue="2"
+                custom:lastScaleItemValue="10"
+                custom:scaleTextSize="14sp"/>-->
+                </LinearLayout>
+
+                <dk.aau.cs.giraf.launcher.widgets.SeekBarWithNumericScale
+                    android:id="@+id/gridResizerSeekBar"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    custom:firstScaleItemValue="2"
+                    custom:lastScaleItemValue="7"
+                    custom:scaleTextSize="14sp"/>
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/gridResizerSeekBar"
+                    android:layout_centerHorizontal="true"
+                    android:paddingTop="15dp"
+                    android:text="@string/setting_launcher_grid_title"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="right|center_vertical"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/example_text"
+                    android:layout_width="213dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center"
+                    android:text="@string/setting_launcher_grid_example_text"
+                    android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+                <dk.aau.cs.giraf.launcher.widgets.GridPreviewView
+                    android:id="@+id/example_grid_layout"
+                    android:layout_width="213dp"
+                    android:layout_height="120dp"
+                    android:layout_alignRight="@id/example_text"
+                    android:layout_below="@id/example_text"
+                    android:layout_marginBottom="6dp"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/example_grid_layout_drawable"
+                    android:gravity="center"
+                    />
+
+                <!-- this is hidden after instantiation -->
+                <!--
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@id/example_text">
+
+            <ImageView
+                android:id="@+id/app_image"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"/>
+        </FrameLayout>
+        -->
+            </RelativeLayout>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>
