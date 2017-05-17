@@ -14,6 +14,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.launcher.widgets.GridPreviewView;
 import dk.aau.cs.giraf.librest.requests.GetRequest;
 import dk.aau.cs.giraf.librest.requests.LoginRequest;
 import dk.aau.cs.giraf.librest.requests.PutRequest;
@@ -29,6 +30,7 @@ public class SettingsLauncher extends Fragment {
 
     private static String USER_IDENTIFICATION = "currentUser";
     private Switch grayScale;
+    private GridPreviewView previewView;
     private User currentUser;
     private RequestQueue queue;
 
@@ -152,9 +154,13 @@ public class SettingsLauncher extends Fragment {
                 queue.add(userPutRequest);
             }
         });
+        previewView = (GridPreviewView) view.findViewById(R.id.example_grid_layout);
+        previewView.setColumnSize(currentUser.getSettings().getAppsGridSizeColumns());
+        previewView.setRowSize(currentUser.getSettings().getAppsGridSizeRows());
 
         //Set SeekBar Listeners
         final SeekBar sk = (SeekBar) view.findViewById(R.id.gridResizerSeekBar);
+        sk.setProgress(currentUser.getSettings().getAppsGridSizeRows());
         sk.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
@@ -171,7 +177,8 @@ public class SettingsLauncher extends Fragment {
             public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
                 currentUser.getSettings().setAppsGridSizeRows(seekBar.getProgress());
                 currentUser.getSettings().setAppsGridSizeColumns(1 + seekBar.getProgress());
-
+                previewView.setRowSize(seekBar.getProgress());
+                previewView.setColumnSize(seekBar.getProgress()+1);
                 final PutRequest<User> userPutRequest = new PutRequest<User>(currentUser, new Response.Listener<User>() {
                     @Override
                     public void onResponse(User response) {

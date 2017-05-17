@@ -122,6 +122,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
+                    android:max="7"
                     custom:firstScaleItemValue="2"
                     custom:lastScaleItemValue="7"
                     custom:scaleTextSize="14sp"/>
