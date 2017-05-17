@@ -77,7 +77,8 @@ public class LoginActivity extends GirafActivity {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        LoginActivity.this.showDialogWithMessage("Du er nød til at logge ind igen"); //ToDo localize
+                        LoginActivity.this.showDialogWithMessage(
+                            LoginActivity.this.getString(R.string.error_you_must_log_in_again));
                     }
                 });
             }

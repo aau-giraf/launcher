@@ -25,4 +25,5 @@
     <string name="home_activity_here_you_can_logout">Her kan du logge ud</string>
     <string name="settings">Indstillinger</string>
     <string name="home_activity_here_you_can_setup">Her kan du indstille hvor mange og hvilke apps der skal vises mm.</string>
+    <string name="home_activity_you_do_not_have_access_to_this">Du har ikke adgang til dette.</string>
 </resources>
