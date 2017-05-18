@@ -61,7 +61,7 @@ public class AndroidFragment extends AppContainerFragment {
         GetRequest<User> userGetRequest = new GetRequest<User>( User.class, new Response.Listener<User>() {
             @Override
             public void onResponse(User response) {
-                onCreateViewResponce(view);
+                onCreateViewResponce(view,response);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -73,7 +73,7 @@ public class AndroidFragment extends AppContainerFragment {
                             GetRequest<User> userGetRequest = new GetRequest<User>( User.class, new Response.Listener<User>() {
                                 @Override
                                 public void onResponse(User response) {
-                                    onCreateViewResponce(view);
+                                    onCreateViewResponce(view,response);
                                 }
                             }, new Response.ErrorListener() {
                                 @Override
@@ -106,17 +106,17 @@ public class AndroidFragment extends AppContainerFragment {
         return view;
     }
 
-    private void onCreateViewResponce(View view) {
+    private void onCreateViewResponce(View view, User user) {
         appView = (ViewPager) view.findViewById(R.id.appsViewPager);
         final int rowsSize = ApplicationGridResizer.getGridRowSize(currentUser);
         final int columnsSize = ApplicationGridResizer.getGridColumnSize(currentUser);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
 
-            appView.setAdapter(new AppsFragmentAdapter(currentUser, getChildFragmentManager(), appInfos, rowsSize, columnsSize));
+            appView.setAdapter(new AppsFragmentAdapter(user, getChildFragmentManager(), appInfos, rowsSize, columnsSize));
         } else {
 
-            appView.setAdapter(new AppsFragmentAdapter(currentUser ,getFragmentManager(), appInfos, rowsSize, columnsSize));
+            appView.setAdapter(new AppsFragmentAdapter(user ,getFragmentManager(), appInfos, rowsSize, columnsSize));
         }
 
         CirclePageIndicator titleIndicator = (CirclePageIndicator) view.findViewById(R.id.pageIndicator);

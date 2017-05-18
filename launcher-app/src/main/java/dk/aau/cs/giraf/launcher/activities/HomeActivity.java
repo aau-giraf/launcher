@@ -334,7 +334,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                     columnsSize = 5;
                 }
 
-                appViewPager.setAdapter(new AppsFragmentAdapter(currentUser, getSupportFragmentManager(),
+                appViewPager.setAdapter(new AppsFragmentAdapter(response, getSupportFragmentManager(),
                     currentLoadedApps, rowsSize, columnsSize));
             }
         }, new Response.ErrorListener() {
@@ -357,7 +357,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                                     columnsSize = 5;
                                 }
 
-                                appViewPager.setAdapter(new AppsFragmentAdapter(currentUser, getSupportFragmentManager(),
+                                appViewPager.setAdapter(new AppsFragmentAdapter(response, getSupportFragmentManager(),
                                     currentLoadedApps, rowsSize, columnsSize));
                             }
                         }, null);
