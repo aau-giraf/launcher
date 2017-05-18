@@ -70,6 +70,12 @@ public abstract class AppContainerFragment extends Fragment {
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        //Added because we somehow got a null value on appView
+        if(appView == null){
+            appView = (ViewPager) view.findViewById(R.id.appsViewPager);
+        }
+
         if (!haveAppsBeenAdded && appView.getViewTreeObserver() != null) {
             appView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 
