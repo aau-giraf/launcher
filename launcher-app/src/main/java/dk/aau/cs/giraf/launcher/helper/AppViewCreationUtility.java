@@ -144,7 +144,7 @@ public class AppViewCreationUtility {
                     appInfo = ((AppImageView) view).appInfo;
 
                     if (appInfo.getPackage().isEmpty()) {
-                        if (!currentUser.isRole(Role.User)) {
+                        if (!currentUser.isRole(Role.Citizen)) {
                             Constants.offlineNotify.show(((FragmentActivity) context).getSupportFragmentManager(),
                                 "DIALOG_TAG");
                         }

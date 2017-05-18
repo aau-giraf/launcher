@@ -449,12 +449,7 @@ public class SettingsActivity extends GirafActivity
                             GetRequest<User> userGetRequest = new GetRequest<User>(User.class, new Response.Listener<User>() {
                                 @Override
                                 public void onResponse(User response) {
-                                    if (currentUser.isRole(Role.User)) {
-                                        // A child profile has been selected, pass id
-                                        intent.putExtra(Constants.CHILD_ID, currentUser.getUsername());
-                                    } else { // We are a guardian, do not add a child
-                                        intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
-                                    }
+                                    intent.putExtra(IntentConstants.CURRENT_USER, response);
                                     // Stop activity before restarting
                                     SettingsActivity.this.finish();
 
