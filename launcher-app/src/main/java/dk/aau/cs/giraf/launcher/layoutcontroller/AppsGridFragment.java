@@ -42,6 +42,9 @@ public class AppsGridFragment extends Fragment {
     private Collection<Application> selectedApps;
 
     private RequestQueue queue;
+    private RequestQueueHandler rqHandler;
+
+    private static User currentUser;
 
     //ToDo Write JavaDoc
 
@@ -53,7 +56,7 @@ public class AppsGridFragment extends Fragment {
      * @param columnSize The amount of columns available
      * @return A newly created AppsGridFragment
      */
-    public static AppsGridFragment newInstance(final ArrayList<AppInfo> appInfos,
+    public static AppsGridFragment newInstance(User user, final ArrayList<AppInfo> appInfos,
                                                final int rowSize, final int columnSize)
     {
         Bundle args = new Bundle();
@@ -62,7 +65,7 @@ public class AppsGridFragment extends Fragment {
         args.putParcelableArrayList(APPINFOS_PARCELABLE_TAG, appInfos);
         AppsGridFragment newFragment = new AppsGridFragment();
         newFragment.setArguments(args);
-
+        currentUser = user;
 
         return newFragment;
     }
@@ -74,7 +77,8 @@ public class AppsGridFragment extends Fragment {
         SharedPreferences preferences = LauncherUtility.getSharedPreferencesForCurrentUser(activity, currentUser);
         selectedApps = preferences.getStringSet(activity.getResources()
             .getString(R.string.selected_android_apps_key), new HashSet<String>());*/
-        final User currentUser = ((AppsFragmentInterface) activity).getUser();
+
+        /*final User currentUser = ((AppsFragmentInterface) activity).getUser();
 
         GetRequest<User> userGetRequest =
             new GetRequest<User>( User.class, new Response.Listener<User>() {
@@ -116,18 +120,17 @@ public class AppsGridFragment extends Fragment {
                     }
                 }
             });
-        queue.add(userGetRequest);
+        queue.add(userGetRequest);*/
     }
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        queue = RequestQueueHandler.getInstance(this.getContext().getApplicationContext()).getRequestQueue();
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 
         final GridLayout appsGridLayout = (GridLayout) inflater.inflate(R.layout.apps_grid_fragment, null);
-
         final Bundle arguments = getArguments();
+        //final User currentUser = ((AppsFragmentInterface) this.getActivity()).getUser();
+
+        selectedApps = currentUser.getSettings().getAppsUserCanAccess();
 
         if (arguments != null) {
             final int rowSize = arguments.getInt(ROW_SIZE_INT_TAG);
@@ -141,7 +144,6 @@ public class AppsGridFragment extends Fragment {
                 final AppInfo currentAppInfo = appInfos.get(appCounter);
 
                 final AppsFragmentInterface activity = (AppsFragmentInterface) getActivity();
-                final User currentUser = activity.getUser();
                 final int margin = 10;
 
                 //Create a new AppImageView and set its properties
@@ -163,6 +165,8 @@ public class AppsGridFragment extends Fragment {
 
             }
         }
+
+
 
         return appsGridLayout;
     }

@@ -109,10 +109,10 @@ public class GirafFragment extends AppContainerFragment {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
 
-            appView.setAdapter(new AppsFragmentAdapter(getChildFragmentManager(), appInfos, rowsSize, columnsSize));
+            appView.setAdapter(new AppsFragmentAdapter(currentUser, getChildFragmentManager(), appInfos, rowsSize, columnsSize));
         } else {
 
-            appView.setAdapter(new AppsFragmentAdapter(getFragmentManager(), appInfos, rowsSize, columnsSize));
+            appView.setAdapter(new AppsFragmentAdapter(currentUser, getFragmentManager(), appInfos, rowsSize, columnsSize));
         }
 
         CirclePageIndicator titleIndicator = (CirclePageIndicator) view.findViewById(R.id.pageIndicator);
