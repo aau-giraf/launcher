@@ -184,13 +184,14 @@ public class SettingsActivity extends GirafActivity
             }
         }
 
+        //ToDo make button click inside request
         final GirafButton changeUserButton = new GirafButton(this, this.getResources()
             .getDrawable(R.drawable.icon_change_user));
         changeUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 GirafProfileSelectorDialog changeUser = GirafProfileSelectorDialog.newInstance(SettingsActivity.this,
-                    currentUser, false, false, getString(R.string.settings_choose_citizen),
+                    currentUser, false, getString(R.string.settings_choose_citizen),
                     CHANGE_USER_SELECTOR_DIALOG);
                 changeUser.show(getSupportFragmentManager(), "" + CHANGE_USER_SELECTOR_DIALOG);
             }

@@ -379,12 +379,9 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
      * @param user the user from the request.
      */
     private void showChangeUserDialog(User user) {
-
-        Log.e("test2", "Trying to create GirafProfileSelectorDialog");
         GirafProfileSelectorDialog changeUser = GirafProfileSelectorDialog.newInstance(HomeActivity.this,
-            user, false, false, getString(R.string.home_activity_change_to_citizen_msg),
+            user, false, getString(R.string.home_activity_change_to_citizen_msg),
             CHANGE_USER_SELECTOR_DIALOG);
-        Log.e("Test3", "Created GirafProfileSelectorDialog");
         changeUser.show(getSupportFragmentManager(), "" + CHANGE_USER_SELECTOR_DIALOG);
 
     }
@@ -696,6 +693,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         return !NetworkUtilities.isNetworkAvailable(this);
     }
 
+    //ToDo login, and get the new user.
     @Override
     public void onProfileSelected(final int input, final User profile) {
 
