@@ -240,7 +240,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
             @Override
             public void onClick(View v) {
                 logoutDialog.cancel();
-                Object n = null; //ToDoRemember to remove this null pointer
+                Object n = null;
                 n.toString();
             }
         });
@@ -334,7 +334,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                     columnsSize = 5;
                 }
 
-                appViewPager.setAdapter(new AppsFragmentAdapter(HomeActivity.this,getSupportFragmentManager(),
+                appViewPager.setAdapter(new AppsFragmentAdapter(response, getSupportFragmentManager(),
                     currentLoadedApps, rowsSize, columnsSize));
             }
         }, new Response.ErrorListener() {
@@ -357,7 +357,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                                     columnsSize = 5;
                                 }
 
-                                appViewPager.setAdapter(new AppsFragmentAdapter(HomeActivity.this,getSupportFragmentManager(),
+                                appViewPager.setAdapter(new AppsFragmentAdapter(response, getSupportFragmentManager(),
                                     currentLoadedApps, rowsSize, columnsSize));
                             }
                         }, null);
