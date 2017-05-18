@@ -76,6 +76,9 @@ public class AppsGridFragment extends Fragment {
             .getString(R.string.selected_android_apps_key), new HashSet<String>());*/
         final User currentUser = ((AppsFragmentInterface) activity).getUser();
 
+        //Added because queue was somehow null after onCreate???
+        queue = RequestQueueHandler.getInstance(this.getContext().getApplicationContext()).getRequestQueue();
+
         GetRequest<User> userGetRequest =
             new GetRequest<User>( User.class, new Response.Listener<User>() {
                 @Override
