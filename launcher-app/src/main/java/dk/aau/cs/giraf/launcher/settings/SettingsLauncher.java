@@ -69,7 +69,7 @@ public class SettingsLauncher extends Fragment {
         GetRequest<User> userGetRequest = new GetRequest<User>( User.class, new Response.Listener<User>() {
             @Override
             public void onResponse(User response) {
-                currentUser = response; //ToDo i know it is wrong, but it is okay.
+                currentUser = response;
             }
         }, new Response.ErrorListener() {
             @Override
@@ -81,7 +81,7 @@ public class SettingsLauncher extends Fragment {
                             GetRequest<User> userGetRequest = new GetRequest<User>( User.class, new Response.Listener<User>() {
                                 @Override
                                 public void onResponse(User response) {
-                                    currentUser = response; //ToDo i know it is wrong, but it is okay.
+                                    currentUser = response;
                                 }
                             }, new Response.ErrorListener() {
                                 @Override
@@ -157,6 +157,7 @@ public class SettingsLauncher extends Fragment {
         previewView = (GridPreviewView) view.findViewById(R.id.example_grid_layout);
         previewView.setColumnSize(currentUser.getSettings().getAppsGridSizeColumns());
         previewView.setRowSize(currentUser.getSettings().getAppsGridSizeRows());
+        previewView.invalidate();
 
         //Set SeekBar Listeners
         final SeekBar sk = (SeekBar) view.findViewById(R.id.gridResizerSeekBar);
@@ -179,6 +180,7 @@ public class SettingsLauncher extends Fragment {
                 currentUser.getSettings().setAppsGridSizeColumns(1 + seekBar.getProgress());
                 previewView.setRowSize(seekBar.getProgress());
                 previewView.setColumnSize(seekBar.getProgress()+1);
+                previewView.invalidate();
                 final PutRequest<User> userPutRequest = new PutRequest<User>(currentUser, new Response.Listener<User>() {
                     @Override
                     public void onResponse(User response) {
