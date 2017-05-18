@@ -258,6 +258,13 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                 @Override
                 public void onResponse(User response) {
                     Log.e("test1", "Trying to get response");
+                    Log.e("Test8", "my name is: " + response.getUsername());
+                    Log.e("Test9", "my id is: "+ response.getId());
+                    Log.e("Test4", "I am a Guardian " + response.isRole(Role.Guardian));
+                    Log.e("Test5", "I am a superuser " + response.isRole(Role.SuperUser));
+                    Log.e("Test6", "I am a citizen " + response.isRole(Role.Citizen));
+                    Log.e("Test10", "I am a department " + response.isRole(Role.Department));
+                    Log.e("Test7", "i have " + response.getGuardianOf().size());
                     showChangeUserDialog(response);
                 }
             }, new Response.ErrorListener() {
