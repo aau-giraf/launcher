@@ -113,10 +113,10 @@ public class AndroidFragment extends AppContainerFragment {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
 
-            appView.setAdapter(new AppsFragmentAdapter(getChildFragmentManager(), appInfos, rowsSize, columnsSize));
+            appView.setAdapter(new AppsFragmentAdapter(view.getContext(),getChildFragmentManager(), appInfos, rowsSize, columnsSize));
         } else {
 
-            appView.setAdapter(new AppsFragmentAdapter(getFragmentManager(), appInfos, rowsSize, columnsSize));
+            appView.setAdapter(new AppsFragmentAdapter(view.getContext(),getFragmentManager(), appInfos, rowsSize, columnsSize));
         }
 
         CirclePageIndicator titleIndicator = (CirclePageIndicator) view.findViewById(R.id.pageIndicator);

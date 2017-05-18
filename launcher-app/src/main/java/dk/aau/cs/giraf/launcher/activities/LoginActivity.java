@@ -63,6 +63,7 @@ public class LoginActivity extends GirafActivity {
         if(this.getIntent() != null && this.getIntent().getExtras() != null) {
             String startedBy = this.getIntent().getExtras().getString(IntentConstants.STARTED_BY);
             if (startedBy != null && startedBy.equals(IntentConstants.RESTART)) {
+                Log.e("Launcher","Restarting and logging in");
                 loginButton.setEnabled(false);
                 usernameTextBox.setEnabled(false);
                 passwordTextBox.setEnabled(false);

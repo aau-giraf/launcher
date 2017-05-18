@@ -1,6 +1,7 @@
 package dk.aau.cs.giraf.launcher.layoutcontroller;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -40,8 +41,13 @@ public class AppsGridFragment extends Fragment {
     private static final String APPINFOS_PARCELABLE_TAG = "APPINFOS_PARCELABLE_TAG";
 
     private Collection<Application> selectedApps;
-
+    private User currentUser;
     private RequestQueue queue;
+
+
+    public void setQueue(Context context){
+        queue = RequestQueueHandler.getInstance(context.getApplicationContext()).getRequestQueue();
+    }
 
     //ToDo Write JavaDoc
 
@@ -53,7 +59,7 @@ public class AppsGridFragment extends Fragment {
      * @param columnSize The amount of columns available
      * @return A newly created AppsGridFragment
      */
-    public static AppsGridFragment newInstance(final ArrayList<AppInfo> appInfos,
+    public static AppsGridFragment newInstance(Context context,final ArrayList<AppInfo> appInfos,
                                                final int rowSize, final int columnSize)
     {
         Bundle args = new Bundle();
@@ -61,6 +67,7 @@ public class AppsGridFragment extends Fragment {
         args.putInt(COLUMN_SIZE_INT_TAG, columnSize);
         args.putParcelableArrayList(APPINFOS_PARCELABLE_TAG, appInfos);
         AppsGridFragment newFragment = new AppsGridFragment();
+        newFragment.setQueue(context);
         newFragment.setArguments(args);
 
 
@@ -74,8 +81,8 @@ public class AppsGridFragment extends Fragment {
         SharedPreferences preferences = LauncherUtility.getSharedPreferencesForCurrentUser(activity, currentUser);
         selectedApps = preferences.getStringSet(activity.getResources()
             .getString(R.string.selected_android_apps_key), new HashSet<String>());*/
-        final User currentUser = ((AppsFragmentInterface) activity).getUser();
-
+        currentUser = ((AppsFragmentInterface) activity).getUser();
+        Log.e("Test",Boolean.toString(currentUser!=null));
         GetRequest<User> userGetRequest =
             new GetRequest<User>( User.class, new Response.Listener<User>() {
                 @Override
