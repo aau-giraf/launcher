@@ -189,7 +189,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                             @Override
                             public void onResponse(Integer response) {
                                 GetRequest<User> userGetRequest =
-                                    new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
+                                    new GetRequest<User>(User.class, new Response.Listener<User>() {
                                         @Override
                                         public void onResponse(User response) {
                                             startSettingsActivity(response);
@@ -254,9 +254,10 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
      */
     public void onChangeUserButtonClick(View view) {
         GetRequest<User> userGetRequest =
-            new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
+            new GetRequest<User>(User.class, new Response.Listener<User>() {
                 @Override
                 public void onResponse(User response) {
+                    Log.e("test1", "Trying to get response");
                     showChangeUserDialog(response);
                 }
             }, new Response.ErrorListener() {
@@ -267,7 +268,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                             @Override
                             public void onResponse(Integer response) {
                                 GetRequest<User> userGetRequest =
-                                    new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
+                                    new GetRequest<User>(User.class, new Response.Listener<User>() {
                                         @Override
                                         public void onResponse(User response) {
                                             showChangeUserDialog(response);
@@ -319,7 +320,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
      */
     private void setAppGridSizeValues(final User user) {
         // Get the row and column size for the grids in the AppViewPager
-        handler.get(user.getUsername(), User.class, new Response.Listener<User>() {
+        handler.get(User.class, new Response.Listener<User>() {
             @Override
             public void onResponse(User response) {
                 final int rowsSize;
@@ -342,7 +343,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                 handler.login(user, new Response.Listener<Integer>() {
                     @Override
                     public void onResponse(Integer response) {
-                        handler.get(user.getUsername(), User.class, new Response.Listener<User>() {
+                        handler.get(User.class, new Response.Listener<User>() {
                             @Override
                             public void onResponse(User response) {
                                 final int rowsSize;
@@ -378,9 +379,12 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
      * @param user the user from the request.
      */
     private void showChangeUserDialog(User user) {
+
+        Log.e("test2", "Trying to create GirafProfileSelectorDialog");
         GirafProfileSelectorDialog changeUser = GirafProfileSelectorDialog.newInstance(HomeActivity.this,
             user, false, false, getString(R.string.home_activity_change_to_citizen_msg),
             CHANGE_USER_SELECTOR_DIALOG);
+        Log.e("Test3", "Created GirafProfileSelectorDialog");
         changeUser.show(getSupportFragmentManager(), "" + CHANGE_USER_SELECTOR_DIALOG);
 
     }
@@ -411,7 +415,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
      * Finds out if the current loaded apps and the app list is different and updates the UI.
      */
     private void appsChangedScan() {
-        GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
+        GetRequest<User> userGetRequest = new GetRequest<User>( User.class, new Response.Listener<User>() {
             @Override
             public void onResponse(User response) {
                 List<Application> apps = new ArrayList<Application>();
@@ -427,7 +431,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                     LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
                         @Override
                         public void onResponse(Integer response) {
-                            GetRequest<User> userGetRequest = new GetRequest<User>(currentUser.getUsername(), User.class, new Response.Listener<User>() {
+                            GetRequest<User> userGetRequest = new GetRequest<User>( User.class, new Response.Listener<User>() {
                                 @Override
                                 public void onResponse(User response) {
                                     List<Application> apps = new ArrayList<Application>();
