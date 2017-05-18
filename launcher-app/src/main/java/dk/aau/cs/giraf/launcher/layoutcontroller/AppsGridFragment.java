@@ -73,54 +73,7 @@ public class AppsGridFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        /*final User currentUser = ((AppsFragmentInterface) activity).getUser();
-        SharedPreferences preferences = LauncherUtility.getSharedPreferencesForCurrentUser(activity, currentUser);
-        selectedApps = preferences.getStringSet(activity.getResources()
-            .getString(R.string.selected_android_apps_key), new HashSet<String>());*/
 
-        /*final User currentUser = ((AppsFragmentInterface) activity).getUser();
-
-        GetRequest<User> userGetRequest =
-            new GetRequest<User>( User.class, new Response.Listener<User>() {
-                @Override
-                public void onResponse(User response) {
-                    selectedApps = response.getSettings().getAppsUserCanAccess();
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    if (error.networkResponse.statusCode == 401) {
-                        LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
-                            @Override
-                            public void onResponse(Integer response) {
-                                GetRequest<User> userGetRequest =
-                                    new GetRequest<User>( User.class, new Response.Listener<User>() {
-                                        @Override
-                                        public void onResponse(User response) {
-                                            selectedApps = response.getSettings().getAppsUserCanAccess();
-                                        }
-                                    }, new Response.ErrorListener() {
-                                        @Override
-                                        public void onErrorResponse(VolleyError error) {
-                                            Log.e("Launcher","User has not enough permissions for AppsGridFragment");
-                                        }
-                                    });
-                                queue.add(userGetRequest);
-                            }
-                        }, new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Log.e("Launcher","Could not get user for AppsGridFragment");
-                            }
-                        });
-                        queue.add(loginRequest);
-                    }
-                    else{
-                        Log.e("Launcher","Could not get user for AppsGridFragment");
-                    }
-                }
-            });
-        queue.add(userGetRequest);*/
     }
 
     @Override
