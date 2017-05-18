@@ -177,7 +177,11 @@ public class SettingsActivity extends GirafActivity
 
         // Change the title of the action bar to include the name of the current user
         if (currentUser != null) {
-            this.setActionBarTitle(getString(R.string.settingsFor) + currentUser.getScreenName());
+            if(currentUser.getScreenName() != null) {
+                this.setActionBarTitle(getString(R.string.settingsFor) + currentUser.getScreenName());
+            } else {
+                this.setActionBarTitle(getString(R.string.settingsFor) + currentUser.getUsername());
+            }
         }
 
         final GirafButton changeUserButton = new GirafButton(this, this.getResources()

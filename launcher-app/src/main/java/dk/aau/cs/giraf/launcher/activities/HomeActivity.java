@@ -240,7 +240,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
             @Override
             public void onClick(View v) {
                 logoutDialog.cancel();
-                Object n = null;
+                Object n = null; //ToDoRemember to remove this null pointer
                 n.toString();
             }
         });

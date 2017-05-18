@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import dk.aau.cs.giraf.activity.GirafActivity;
@@ -45,7 +46,7 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
         super.setTrackingId("UA-48608499-1");
         setContentView(R.layout.main_activity);
         controller = new MainController(this);
-
+        Log.e("test","here");
         boolean showAnimation = true;
 
         // Skip loading screen if monkey test
