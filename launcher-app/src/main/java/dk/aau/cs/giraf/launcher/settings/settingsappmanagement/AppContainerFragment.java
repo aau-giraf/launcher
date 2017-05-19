@@ -49,9 +49,6 @@ public abstract class AppContainerFragment extends Fragment {
         if (appView == null) {
             view = inflater.inflate(R.layout.settings_appmanagement_appcontainer,
                     container, false);
-
-
-            currentUser = callback.getUser();
         } else {
             view = appView.getRootView();
         }
@@ -72,11 +69,11 @@ public abstract class AppContainerFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         //Added because we somehow got a null value on appView
-        if(appView == null){
+        /*if(appView == null){
             appView = (ViewPager) view.findViewById(R.id.appsViewPager);
-        }
+        }*/
 
-        if (!haveAppsBeenAdded && appView.getViewTreeObserver() != null) {
+        if (!haveAppsBeenAdded && appView != null && appView.getViewTreeObserver() != null) {
             appView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 
                 @Override
@@ -115,6 +112,10 @@ public abstract class AppContainerFragment extends Fragment {
     abstract void loadApplications();
 
     abstract void setListeners();
+
+    public void setCurrentUser(User user){
+        currentUser = user;
+    }
 
     /**
      * Returns the listerne for the views onClick listener.

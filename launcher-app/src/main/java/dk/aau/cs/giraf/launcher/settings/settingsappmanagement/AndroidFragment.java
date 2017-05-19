@@ -57,52 +57,7 @@ public class AndroidFragment extends AppContainerFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = super.onCreateView(inflater, container, savedInstanceState);
         queue = RequestQueueHandler.getInstance(getActivity().getApplicationContext()).getRequestQueue();
-
-        GetRequest<User> userGetRequest = new GetRequest<User>( User.class, new Response.Listener<User>() {
-            @Override
-            public void onResponse(User response) {
-                onCreateViewResponce(view,response);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                if (error.networkResponse.statusCode == 401) {
-                    LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
-                        @Override
-                        public void onResponse(Integer response) {
-                            GetRequest<User> userGetRequest = new GetRequest<User>( User.class, new Response.Listener<User>() {
-                                @Override
-                                public void onResponse(User response) {
-                                    onCreateViewResponce(view,response);
-                                }
-                            }, new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    if (error.networkResponse.statusCode == 401) {
-                                        LauncherUtility.showErrorDialog(view.getContext(),R.string.home_activity_you_do_not_have_access_to_this);
-                                    } else {
-                                        LauncherUtility.showErrorDialog(view.getContext(), R.string.dialog_offline_server);
-                                    }
-                                }
-                            });
-                            queue.add(userGetRequest);
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            LauncherUtility.showErrorDialog(view.getContext(), R.string.dialog_offline_server);
-                        }
-                    });
-                    queue.add(loginRequest);
-                } else {
-                    LauncherUtility.showErrorDialog(view.getContext(), R.string.dialog_offline_server);
-                }
-
-            }
-        });
-        queue.add(userGetRequest);
-
-
+        onCreateViewResponce(view,currentUser);
         return view;
     }
 
