@@ -256,7 +256,6 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
             new GetRequest<User>(User.class, new Response.Listener<User>() {
                 @Override
                 public void onResponse(User response) {
-                    Log.e("test1", "Trying to get response");
                     showChangeUserDialog(response);
                 }
             }, new Response.ErrorListener() {
@@ -697,14 +696,40 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     public void onProfileSelected(final int input, final User profile) {
 
         if (input == CHANGE_USER_SELECTOR_DIALOG) {
-            // Update the profile
-            currentUser = profile;
+            handler.login(profile,
+                    new Response.Listener<Integer>() {
+                        @Override
+                        public void onResponse(Integer Response) {
+                            handler.get(User.class,
+                                    new Response.Listener<User>() {
+                                        @Override
+                                        public void onResponse(User response) {
+                                            currentUser = response;
 
-            // Reload the widgets in the left side of the screen
-            loadWidgets();
-
-            // Reload the application container, as a new user has been selected.
-            reloadApplications();
+                                            // Reload the widgets in the left side of the screen
+                                            loadWidgets();
+                                            // Reload the application container, as a new user has been selected.
+                                            reloadApplications();
+                                        }
+                                    }, new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            if (error.networkResponse.statusCode == 401) {
+                                                LauncherUtility.showErrorDialog(HomeActivity.this, R.string.home_activity_you_do_not_have_access_to_this );
+                                            } else {
+                                                LauncherUtility.logoutWithDialog(HomeActivity.this);
+                                            }
+                                        }
+                                    });
+                        }
+                    }
+                    , new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            LauncherUtility.logoutWithDialog(HomeActivity.this);
+                        }
+                    }
+            );
         }
     }
 
