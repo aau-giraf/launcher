@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,6 +27,7 @@ import dk.aau.cs.giraf.librest.requests.GetRequest;
 import dk.aau.cs.giraf.librest.requests.LoginRequest;
 import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
 import dk.aau.cs.giraf.models.core.Application;
+import dk.aau.cs.giraf.models.core.Settings;
 import dk.aau.cs.giraf.models.core.User;
 
 import java.util.*;
@@ -43,6 +45,8 @@ public class AndroidFragment extends AppContainerFragment {
     private ArrayList<AppInfo> appInfos;
     private LoadAndroidApplicationTask loadApplicationsTask;
     private RequestQueue queue;
+    private Settings settings;
+    private RequestQueueHandler handler;
 
     /**
      * Because we are dealing with a Fragment, OnCreateView is where most of the variables are set.
@@ -56,7 +60,8 @@ public class AndroidFragment extends AppContainerFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = super.onCreateView(inflater, container, savedInstanceState);
-        queue = RequestQueueHandler.getInstance(getActivity().getApplicationContext()).getRequestQueue();
+        handler = RequestQueueHandler.getInstance(getActivity().getApplicationContext());
+        queue = handler.getRequestQueue();
         onCreateViewResponce(view,currentUser);
         return view;
     }
@@ -115,6 +120,57 @@ public class AndroidFragment extends AppContainerFragment {
         }
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        //ToDo make this work, because we get a stack overflow from rest, the code should work, but rest thinks not
+        /*GetRequest<User> getRequest = new GetRequest<User>( User.class, new Response.Listener<User>() {
+            @Override
+            public void onResponse(User response) {
+                User localUser = response;
+                final Settings settings = response.getSettings();
+                settings.setAppsUserCanAccess(AndroidFragment.this.settings.getAppsUserCanAccess());
+                handler.resourceRequest(settings, new Response.Listener<Settings>() {
+                    @Override
+                    public void onResponse(Settings response) {
+                        Log.i("Launcher", "Put user settings request success for GirafFragment");
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        handler.login(currentUser, new Response.Listener<Integer>() {
+                            @Override
+                            public void onResponse(Integer response) {
+                                handler.resourceRequest(settings, new Response.Listener<Settings>() {
+                                    @Override
+                                    public void onResponse(Settings response) {
+                                        Log.i("Launcher", "Put user settings request success for GirafFragment");
+                                    }
+                                }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        Log.e("Launcher", "Put user request failed for GirafFragment");
+                                    }
+                                });
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.e("Launcher", "Put user request failed for GirafFragment");
+                            }
+                        });
+                    }
+                });
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Launcer", "Could not get user for GirafFragment");
+            }
+        });
+        queue.add(getRequest);*/
+    }
+
     /**
      * This function reloads all the applications into the view.
      *
@@ -157,32 +213,26 @@ public class AndroidFragment extends AppContainerFragment {
                 synchronized (AndroidFragment.this) {
                     AppImageView appImageView = (AppImageView) view;
                     appImageView.toggle();
-
-                    if (selectedApps == null)
-                        selectedApps = new HashSet<String>();
-
-                    AppInfo app = appImageView.appInfo;
-                    String activityName = app.getActivity();
-
-                    /** If the user had previously selected the app, removed it from the list of selected apps
-                     * otherwise add it to the list of selected apps.*/
-                    if (selectedApps.contains(activityName)) {
-                        selectedApps.remove(activityName);
-                        Log.d(Constants.ERROR_TAG, "Removed '" + activityName + "' to list: " + selectedApps.size());
+                    if (userCanAccesApp(appImageView.appInfo.getApp(), currentUser)) {
+                        if (settings.getAppsUserCanAccess().contains(appImageView.appInfo.getApp())) {
+                            List<Application> applicationCollection = settings.getAppsUserCanAccess();
+                            applicationCollection.remove(appImageView.appInfo.getApp());
+                            settings.setAppsUserCanAccess(applicationCollection);
+                        }
                     } else {
-                        selectedApps.add(activityName);
-                        Log.d(Constants.ERROR_TAG, "Added '" + activityName + "' to list: " + selectedApps.size());
+                        List<Application> applicationCollection = settings.getAppsUserCanAccess();
+                        applicationCollection.add(appImageView.appInfo.getApp());
+                        settings.setAppsUserCanAccess(applicationCollection);
                     }
-
-                    final SharedPreferences.Editor editor = preferences.edit();
-                    // Remove to ensure that the new set is written to file.
-                    editor.remove(getString(R.string.selected_android_apps_key)).commit();
-                    editor.putStringSet(getString(R.string.selected_android_apps_key), selectedApps);
-                    editor.apply();
                 }
             }
         };
     }
+
+    private boolean userCanAccesApp(Application app, User user) {
+        return user.getSettings().getAppsUserCanAccess().contains(app);
+    }
+
 
     /**
      * Starts a timer that looks for updates in the set of available applications every 5 seconds.

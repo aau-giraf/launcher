@@ -87,7 +87,6 @@ public class AppsFragmentAdapter extends FragmentStatePagerAdapter {
      * @param columnSize The amount of columns which the user can see
      */
     public void swapApps(final List<AppInfo> appInfoList, final int rowSize, final int columnSize) {
-        Log.e("Test","uagvdguawobuduo");
         this.appInfoList = appInfoList;
         this.rowSize = rowSize;
         this.columnSize = columnSize;

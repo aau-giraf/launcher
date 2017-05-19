@@ -39,6 +39,7 @@ public class GirafFragment extends AppContainerFragment {
     private LoadGirafApplicationTask loadApplicationTask;
     private RequestQueueHandler handler;
     private RequestQueue queue;
+    private Settings settings;
     //private View.OnClickListener listener;
 
     /**
@@ -54,6 +55,8 @@ public class GirafFragment extends AppContainerFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = super.onCreateView(inflater, container, savedInstanceState);
         handler = RequestQueueHandler.getInstance(getActivity().getApplicationContext());
+        queue = handler.getRequestQueue();
+        settings = currentUser.getSettings();
         appView = (ViewPager) view.findViewById(R.id.appsViewPager);
         final int rowsSize = ApplicationGridResizer.getGridRowSize(currentUser);
         final int columnsSize = ApplicationGridResizer.getGridColumnSize(currentUser);
@@ -102,6 +105,57 @@ public class GirafFragment extends AppContainerFragment {
         }
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        //ToDo make this work, because we get a stack overflow from rest, the code should work, but rest thinks not
+        /*GetRequest<User> getRequest = new GetRequest<User>( User.class, new Response.Listener<User>() {
+            @Override
+            public void onResponse(User response) {
+                User localUser = response;
+                final Settings settings = response.getSettings();
+                settings.setAppsUserCanAccess(GirafFragment.this.settings.getAppsUserCanAccess());
+                handler.resourceRequest(settings, new Response.Listener<Settings>() {
+                    @Override
+                    public void onResponse(Settings response) {
+                        Log.i("Launcher", "Put user settings request success for GirafFragment");
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        handler.login(currentUser, new Response.Listener<Integer>() {
+                            @Override
+                            public void onResponse(Integer response) {
+                                handler.resourceRequest(settings, new Response.Listener<Settings>() {
+                                    @Override
+                                    public void onResponse(Settings response) {
+                                        Log.i("Launcher", "Put user settings request success for GirafFragment");
+                                    }
+                                }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        Log.e("Launcher", "Put user request failed for GirafFragment");
+                                    }
+                                });
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.e("Launcher", "Put user request failed for GirafFragment");
+                            }
+                        });
+                    }
+                });
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Launcer", "Could not get user for GirafFragment");
+            }
+        });
+        queue.add(getRequest);*/
+    }
+
     /**
      * This function reloads all the applications into the view.
      *
@@ -123,13 +177,10 @@ public class GirafFragment extends AppContainerFragment {
      */
     @Override
     public void loadApplications() {
-        Log.e("Test","loadapps f");
         if (loadedApps == null || AppInfo.isAppListsDifferent(loadedApps, apps)) {
             //Remember that the apps have been added, so they are not added again by the listener
-            Log.e("Test","loadapps e");
             loadApplicationTask = new LoadGirafApplicationTask(getActivity(), currentUser, null, appView, listener);
             loadApplicationTask.execute();
-            Log.e("Test","loadapps done");
         }
     }
 
@@ -143,62 +194,22 @@ public class GirafFragment extends AppContainerFragment {
         super.listener = new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                GetRequest<User> getRequest = new GetRequest<User>( User.class, new Response.Listener<User>() {
-                    @Override
-                    public void onResponse(User response) {
-                        User localUser = response;
-                        final Settings settings = response.getSettings();
-                        AppImageView appImageView = (AppImageView) view;
-                        appImageView.toggle();
-                        if (userCanAccesApp(appImageView.appInfo.getApp(), localUser)) {
-                            List<Application> applicationCollection = localUser.getSettings().getAppsUserCanAccess();
+                synchronized (GirafFragment.this) {
+                    AppImageView appImageView = (AppImageView) view;
+                    appImageView.toggle();
+                    if (userCanAccesApp(appImageView.appInfo.getApp(), currentUser)) {
+                        if (settings.getAppsUserCanAccess().contains(appImageView.appInfo.getApp())) {
+                            List<Application> applicationCollection = settings.getAppsUserCanAccess();
                             applicationCollection.remove(appImageView.appInfo.getApp());
                             settings.setAppsUserCanAccess(applicationCollection);
-                        } else {
-                            List<Application> applicationCollection = localUser.getSettings().getAppsUserCanAccess();
-                            applicationCollection.add(appImageView.appInfo.getApp());
-                            settings.setAppsUserCanAccess(applicationCollection);
                         }
+                    } else {
+                        List<Application> applicationCollection = settings.getAppsUserCanAccess();
+                        applicationCollection.add(appImageView.appInfo.getApp());
+                        settings.setAppsUserCanAccess(applicationCollection);
+                    }
+                }
 
-                        handler.resourceRequest(settings, new Response.Listener<Settings>() {
-                            @Override
-                            public void onResponse(Settings response) {
-                                Log.i("Launcher", "Put user settings request success for GirafFragment");
-                            }
-                        }, new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                handler.login(currentUser, new Response.Listener<Integer>() {
-                                    @Override
-                                    public void onResponse(Integer response) {
-                                        handler.resourceRequest(settings, new Response.Listener<Settings>() {
-                                            @Override
-                                            public void onResponse(Settings response) {
-                                                Log.i("Launcher", "Put user settings request success for GirafFragment");
-                                            }
-                                        }, new Response.ErrorListener() {
-                                            @Override
-                                            public void onErrorResponse(VolleyError error) {
-                                                Log.e("Launcher", "Put user request failed for GirafFragment");
-                                            }
-                                        });
-                                    }
-                                }, new Response.ErrorListener() {
-                                    @Override
-                                    public void onErrorResponse(VolleyError error) {
-                                        Log.e("Launcher", "Put user request failed for GirafFragment");
-                                    }
-                                });
-                            }
-                        });
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("Launcer", "Could not get user for GirafFragment");
-                    }
-                });
-                queue.add(getRequest);
             }
         };
     }
@@ -271,12 +282,9 @@ public class GirafFragment extends AppContainerFragment {
          */
         @Override
         protected ArrayList<AppInfo> doInBackground(Application... applications) {
-            Log.e("Test","loadapps ibg");
             apps = ApplicationControlUtility.getGirafAppsButLauncherOnDevice(context);
             applications = apps.toArray(applications);
-            Log.e("Test","loadapps ibgadawdwa");
             appInfos = super.doInBackground(applications);
-            Log.e("Test","loadapps 2wdada");
             return appInfos;
         }
 
@@ -300,7 +308,6 @@ public class GirafFragment extends AppContainerFragment {
         loadedApps = appInfos;
         startObservingApps();
         haveAppsBeenAdded = true;
-        Log.e("Test","onpost ec");
     }
 }
 

@@ -130,7 +130,6 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
 
             appInfoList.add(tmpInfo);
         }
-        Log.e("Test","loadapps ffwjfwauhudw");
         return appInfoList.isEmpty() ? null : appInfoList;
 
     }
@@ -146,10 +145,8 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
     protected void onPostExecute(final ArrayList<AppInfo> appInfoList) {
         progressbar.setVisibility(View.INVISIBLE);
         if (appInfoList != null && appInfoList.size() > 0) {
-            Log.e("Test","apps");
             changeVisibilityOfNoAppsMessage(View.GONE);
         } else {
-            Log.e("Test","no apps");
             changeVisibilityOfNoAppsMessage(View.VISIBLE);
         }
         if(appInfoList == null){
@@ -159,7 +156,6 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
         final int rowsSize = ApplicationGridResizer.getGridRowSize(currentUser);
         final int columnsSize = ApplicationGridResizer.getGridColumnSize(currentUser);
         adapter.swapApps(appInfoList, rowsSize, columnsSize);
-        Log.e("Test","post ec");
     }
 
     public android.support.v4.app.FragmentManager getFragmentMangerForAppsFragmentAdapter() {

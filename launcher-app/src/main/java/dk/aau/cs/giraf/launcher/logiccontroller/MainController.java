@@ -25,7 +25,6 @@ public class MainController {
         Intent intent = new Intent(gui, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         if(restartString != null){
-            Log.i("test","starting");
             intent.putExtra(IntentConstants.STARTED_BY,restartString);
         }
         gui.startActivity(intent);

@@ -248,8 +248,6 @@ public class SettingsActivity extends GirafActivity
      * This function gets the elements that should be added to the list of items in the left side
      * Firstly, it gets the settings for Launcher itself, along with the "Apps" menu,
      * where users select or deselect apps.
-     * Finally, gets the currently installed apps that have settings to be shown in SettingsActivity.
-     * Currently, these apps are only "Cars" (Stemmespillet) and "Zebra" (Sekvens). //ToDO rewrite
      *
      * @return an Array consisting of the SettingsListitems that should be put into the left scrollview.
      */

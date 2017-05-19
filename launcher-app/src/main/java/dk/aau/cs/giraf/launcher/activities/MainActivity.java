@@ -9,11 +9,14 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.gui.GirafNotifyDialog;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.logiccontroller.MainController;
+import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
 
 /**
  * Displays the splash logo of Launcher, and then starts
@@ -32,6 +35,7 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
     private GirafNotifyDialog offlineDialog;
     private final String offlineDialogTag = "DIALOG_TAG";
     private final Handler handler = new Handler();
+    private RequestQueueHandler requestQueueHandler;
 
 
     /**
@@ -46,7 +50,7 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
         super.setTrackingId("UA-48608499-1");
         setContentView(R.layout.main_activity);
         controller = new MainController(this);
-        Log.e("test","here");
+        requestQueueHandler = RequestQueueHandler.getInstance(this);
         boolean showAnimation = true;
 
         // Skip loading screen if monkey test
@@ -77,6 +81,23 @@ public class MainActivity extends GirafActivity implements Animation.AnimationLi
      */
     @Override
     public void onBackPressed() {
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        requestQueueHandler.login(new Response.Listener<Integer>() {
+            @Override
+            public void onResponse(Integer response) {
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
     }
 
     /**

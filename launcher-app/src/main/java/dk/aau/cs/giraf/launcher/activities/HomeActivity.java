@@ -108,9 +108,11 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     private void checkSettingsAndUseThem(final User user) {
         if (user != null) {
             if (user.getSettings() != null) {
+                Log.e("Launcher","Settings is not null");
                 GrayScaleHelper.setGrayScaleForActivityByUser(this, user);
                 setAppGridSizeValues(user);
             } else {
+                Log.e("Launcher","Settings is null");
                 final Settings settings = new Settings(false, 4, 5, new ArrayList<Application>());
                 handler.resourceRequest(settings, new Response.Listener<Settings>() {
                     @Override
@@ -159,6 +161,10 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                 });
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
     }
 
     /**
