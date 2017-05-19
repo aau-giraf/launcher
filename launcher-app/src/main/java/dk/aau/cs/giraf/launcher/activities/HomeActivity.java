@@ -29,6 +29,7 @@ import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInter
 import dk.aau.cs.giraf.librest.requests.GetRequest;
 import dk.aau.cs.giraf.librest.requests.LoginRequest;
 import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
+import dk.aau.cs.giraf.librest.requests.ResourceRequest;
 import dk.aau.cs.giraf.models.core.Application;
 import dk.aau.cs.giraf.models.core.Settings;
 import dk.aau.cs.giraf.models.core.User;
@@ -104,14 +105,15 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         EasyTracker.getInstance(this).activityStart(this);
     }
 
+    //ToDo fix when rest people know what they do
     private void checkSettingsAndUseThem(final User user) {
-        if (user != null) {
+        /*if (user != null) {
             if (user.getSettings() != null) {
                 GrayScaleHelper.setGrayScaleForActivityByUser(this, user);
                 setAppGridSizeValues(user);
             } else {
                 user.setSettings(new Settings(false, 4, 5, new ArrayList<Application>()));
-                handler.put(user, new Response.Listener<User>() {
+                handler.(user, new Response.Listener<User>() {
                     @Override
                     public void onResponse(User response) {
                         if (response.getSettings() != null) {
@@ -157,7 +159,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                     }
                 });
             }
-        }
+        }*/
     }
 
     /**
@@ -240,8 +242,6 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
             @Override
             public void onClick(View v) {
                 logoutDialog.cancel();
-                Object n = null;
-                n.toString();
             }
         });
         logoutDialog.show();
