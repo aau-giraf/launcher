@@ -123,8 +123,8 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
             Log.e(Constants.ERROR_TAG, "App list is null");
         }
         if (includeAddAppIcon && !currentUser.isRole(Role.Citizen)) {
-            Application tmpApp = new Application(context.getResources().getString(R.string.add_app_text), "",
-                Constants.ADD_APP_ICON_FAKE_PACKAGE_NAME);
+            Application tmpApp = new Application(context.getResources().getString(R.string.add_app_text),
+                Constants.ADD_APP_ICON_FAKE_PACKAGE_NAME, "");
             AppInfo tmpInfo = new AppInfo(tmpApp);
             tmpInfo.setIconImage(context.getResources().getDrawable(R.drawable.ic_apps));
 

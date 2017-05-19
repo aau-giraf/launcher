@@ -11,6 +11,7 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Vibrator;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -144,10 +145,7 @@ public class AppViewCreationUtility {
                     appInfo = ((AppImageView) view).appInfo;
 
                     if (appInfo.getPackage().isEmpty()) {
-                        if (!currentUser.isRole(Role.Citizen)) {
-                            Constants.offlineNotify.show(((FragmentActivity) context).getSupportFragmentManager(),
-                                "DIALOG_TAG");
-                        }
+                        Log.e("Launcher","Empty package for app");
                     } else if (appInfo.getPackage().equals(Constants.ADD_APP_ICON_FAKE_PACKAGE_NAME)) {
                         Intent intent = new Intent(context, SettingsActivity.class);
                         intent.putExtra(Constants.ENTER_ADD_APP_MANAGER_BOOL, true);

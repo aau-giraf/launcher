@@ -18,6 +18,7 @@ import dk.aau.cs.giraf.launcher.widgets.GridPreviewView;
 import dk.aau.cs.giraf.librest.requests.*;
 import dk.aau.cs.giraf.models.core.Settings;
 import dk.aau.cs.giraf.models.core.User;
+import dk.aau.cs.giraf.utilities.GrayScaleHelper;
 import dk.aau.cs.giraf.utilities.IntentConstants;
 
 /**
@@ -118,7 +119,7 @@ public class SettingsLauncher extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 currentUser.getSettings().setUseGrayScale(isChecked);
-
+                GrayScaleHelper.setGrayScaleForActivity(getActivity(),isChecked);
                 handler.resourceRequest(currentUser.getSettings(), new Response.Listener<Settings>() {
                     @Override
                     public void onResponse(Settings response) {

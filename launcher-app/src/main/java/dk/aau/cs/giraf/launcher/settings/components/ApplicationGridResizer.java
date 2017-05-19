@@ -37,7 +37,11 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
      * @return The column size.
      */
     public static int getGridColumnSize(User currentUser) {
-        return currentUser.getSettings().getAppsGridSizeColumns();
+        if(currentUser.getSettings().getAppsGridSizeColumns() > 4) {
+            return currentUser.getSettings().getAppsGridSizeColumns();
+        }else{
+            return  4;
+        }
     }
 
     /**
@@ -46,7 +50,11 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
      * @return The row size.
      */
     public static int getGridRowSize(User currentUser) {
-        return currentUser.getSettings().getAppsGridSizeRows();
+        if(currentUser.getSettings().getAppsGridSizeRows() > 3) {
+            return currentUser.getSettings().getAppsGridSizeRows();
+        } else{
+            return 3;
+        }
     }
 
     private int seekerBarMaxValue = 7; // Max value for the seeking bar in units

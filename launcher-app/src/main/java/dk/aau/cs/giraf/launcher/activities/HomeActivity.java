@@ -20,11 +20,10 @@ import com.viewpagerindicator.CirclePageIndicator;
 import dk.aau.cs.giraf.activity.GirafActivity;
 import dk.aau.cs.giraf.gui.*;
 import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.launcher.helper.Constants;
-import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
-import dk.aau.cs.giraf.launcher.helper.LoadApplicationTask;
+import dk.aau.cs.giraf.launcher.helper.*;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
+import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
 import dk.aau.cs.giraf.librest.requests.GetRequest;
 import dk.aau.cs.giraf.librest.requests.LoginRequest;
@@ -42,6 +41,7 @@ import dk.aau.cs.giraf.utilities.IntentConstants;
 import dk.aau.cs.giraf.utilities.NetworkUtilities;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -334,6 +334,9 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
 
                 appViewPager.setAdapter(new AppsFragmentAdapter(response, getSupportFragmentManager(),
                     currentLoadedApps, rowsSize, columnsSize));
+                // Reload applications (Some applications might have been (un)installed)
+                // it is here because it needs an adapter which is not set before this
+                reloadApplications();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -357,6 +360,9 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
 
                                 appViewPager.setAdapter(new AppsFragmentAdapter(response, getSupportFragmentManager(),
                                     currentLoadedApps, rowsSize, columnsSize));
+                                // Reload applications (Some applications might have been (un)installed)
+                                // it is here because it needs an adapter which is not set before this
+                                reloadApplications();
                             }
                         }, null);
                     }
@@ -463,12 +469,15 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     }
 
     private void startLoadApplicationTask(final List<Application> newApps) {
-        if (AppInfo.isAppListsDifferent(currentLoadedApps, newApps)) {
+        if (AppInfo.isAppListsDifferent(currentLoadedApps, newApps) || (currentLoadedApps == null && newApps.isEmpty() )) {
             // run this on UI thread since UI might need to get updated
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    loadApplications((Application[]) newApps.toArray());
+
+                    Application[] appArray = new Application[newApps.size()];
+                    newApps.toArray(appArray);
+                    loadApplications(appArray);
                 }
             });
         }
@@ -496,9 +505,6 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         offlineModeFeedback();
         super.onResume();
         checkSettingsAndUseThem(currentUser);
-
-        // Reload applications (Some applications might have been (un)installed)
-        reloadApplications();
 
         if (widgetUpdater != null) {
             widgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_START);
@@ -691,44 +697,40 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         return !NetworkUtilities.isNetworkAvailable(this);
     }
 
-    //ToDo login, and get the new user.
     @Override
     public void onProfileSelected(final int input, final User profile) {
 
         if (input == CHANGE_USER_SELECTOR_DIALOG) {
-            handler.login(profile,
-                    new Response.Listener<Integer>() {
-                        @Override
-                        public void onResponse(Integer Response) {
-                            handler.get(User.class,
-                                    new Response.Listener<User>() {
-                                        @Override
-                                        public void onResponse(User response) {
-                                            currentUser = response;
+            handler.login(profile, new Response.Listener<Integer>() {
+                    @Override
+                    public void onResponse(Integer Response) {
+                        handler.get(User.class, new Response.Listener<User>() {
+                            @Override
+                            public void onResponse(User response) {
+                                currentUser = response;
 
-                                            // Reload the widgets in the left side of the screen
-                                            loadWidgets();
-                                            // Reload the application container, as a new user has been selected.
-                                            reloadApplications();
-                                        }
-                                    }, new Response.ErrorListener() {
-                                        @Override
-                                        public void onErrorResponse(VolleyError error) {
-                                            if (error.networkResponse.statusCode == 401) {
-                                                LauncherUtility.showErrorDialog(HomeActivity.this, R.string.home_activity_you_do_not_have_access_to_this );
-                                            } else {
-                                                LauncherUtility.logoutWithDialog(HomeActivity.this);
-                                            }
-                                        }
-                                    });
-                        }
+                                // Reload the widgets in the left side of the screen
+                                loadWidgets();
+                                // Reload the application container, as a new user has been selected.
+                                reloadApplications();
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                if (error.networkResponse.statusCode == 401) {
+                                    LauncherUtility.showErrorDialog(HomeActivity.this, R.string.home_activity_you_do_not_have_access_to_this);
+                                } else {
+                                    LauncherUtility.logoutWithDialog(HomeActivity.this);
+                                }
+                            }
+                        });
                     }
-                    , new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            LauncherUtility.logoutWithDialog(HomeActivity.this);
-                        }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        LauncherUtility.logoutWithDialog(HomeActivity.this);
                     }
+                }
             );
         }
     }
@@ -938,11 +940,6 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
          */
         @Override
         protected ArrayList<AppInfo> doInBackground(Application... applications) {
-            List<Application> apps = new ArrayList<Application>();
-            //apps.addAll(currentUser.getSettings()
-            //.getAppsUserCanAccess()); //ToDo find out if this is needed because it is bad
-            applications = apps.toArray(applications);
-
             return super.doInBackground(applications);
         }
 
