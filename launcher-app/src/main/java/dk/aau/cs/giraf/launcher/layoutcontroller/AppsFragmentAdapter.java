@@ -36,8 +36,17 @@ public class AppsFragmentAdapter extends FragmentStatePagerAdapter {
         super(fm);
         this.currentUser = user;
         this.appInfoList = appInfoList;
-        this.rowSize = rowSize;
-        this.columnSize = columnSize;
+        if(rowSize > 3) {
+            this.rowSize = rowSize;
+        }else{
+            this.rowSize = 3;
+        }
+        if(columnSize > 4){
+            this.columnSize = columnSize;
+        }else{
+            this.columnSize = 4;
+        }
+
     }
 
     @Override

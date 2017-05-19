@@ -105,18 +105,17 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         EasyTracker.getInstance(this).activityStart(this);
     }
 
-    //ToDo fix when rest people know what they do
     private void checkSettingsAndUseThem(final User user) {
-        /*if (user != null) {
+        if (user != null) {
             if (user.getSettings() != null) {
                 GrayScaleHelper.setGrayScaleForActivityByUser(this, user);
                 setAppGridSizeValues(user);
             } else {
-                user.setSettings(new Settings(false, 4, 5, new ArrayList<Application>()));
-                handler.(user, new Response.Listener<User>() {
+                final Settings settings = new Settings(false, 4, 5, new ArrayList<Application>());
+                handler.resourceRequest(settings, new Response.Listener<Settings>() {
                     @Override
-                    public void onResponse(User response) {
-                        if (response.getSettings() != null) {
+                    public void onResponse(Settings response) {
+                        if (response != null) {
                             GrayScaleHelper.setGrayScaleForActivityByUser(HomeActivity.this, user);
                             setAppGridSizeValues(user);
                         } else {
@@ -130,20 +129,20 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                             handler.login(user, new Response.Listener<Integer>() {
                                 @Override
                                 public void onResponse(Integer response) {
-                                    handler.put(user, new Response.Listener<User>() {
+                                    handler.resourceRequest(settings, new Response.Listener<Settings>() {
                                         @Override
-                                        public void onResponse(User response) {
-                                            GrayScaleHelper.setGrayScaleForActivityByUser(HomeActivity.this, user);
-                                            setAppGridSizeValues(user);
+                                        public void onResponse(Settings response) {
+                                            if (response != null) {
+                                                GrayScaleHelper.setGrayScaleForActivityByUser(HomeActivity.this, user);
+                                                setAppGridSizeValues(user);
+                                            } else {
+                                                Log.e("Launcher", "settings is null");
+                                            }
                                         }
                                     }, new Response.ErrorListener() {
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
-                                            if (error.networkResponse.statusCode == 401) {
-                                                LauncherUtility.showErrorDialog(HomeActivity.this, R.string.home_activity_you_do_not_have_access_to_this );
-                                            } else {
-                                                LauncherUtility.logoutWithDialog(HomeActivity.this);
-                                            }
+                                            LauncherUtility.logoutWithDialog(HomeActivity.this);
                                         }
                                     });
                                 }
@@ -159,7 +158,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                     }
                 });
             }
-        }*/
+        }
     }
 
     /**
@@ -200,7 +199,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
                                             if (error.networkResponse.statusCode == 401) {
-                                                LauncherUtility.showErrorDialog(HomeActivity.this, R.string.home_activity_you_do_not_have_access_to_this );
+                                                LauncherUtility.showErrorDialog(HomeActivity.this, R.string.home_activity_you_do_not_have_access_to_this);
                                             } else {
                                                 LauncherUtility.logoutWithDialog(HomeActivity.this);
                                             }
@@ -277,7 +276,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
                                             if (error.networkResponse.statusCode == 401) {
-                                                LauncherUtility.showErrorDialog(HomeActivity.this, R.string.home_activity_you_do_not_have_access_to_this );
+                                                LauncherUtility.showErrorDialog(HomeActivity.this, R.string.home_activity_you_do_not_have_access_to_this);
                                             } else {
                                                 LauncherUtility.logoutWithDialog(HomeActivity.this);
                                             }
@@ -412,7 +411,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
      * Finds out if the current loaded apps and the app list is different and updates the UI.
      */
     private void appsChangedScan() {
-        GetRequest<User> userGetRequest = new GetRequest<User>( User.class, new Response.Listener<User>() {
+        GetRequest<User> userGetRequest = new GetRequest<User>(User.class, new Response.Listener<User>() {
             @Override
             public void onResponse(User response) {
                 List<Application> apps = new ArrayList<Application>();
@@ -428,7 +427,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                     LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
                         @Override
                         public void onResponse(Integer response) {
-                            GetRequest<User> userGetRequest = new GetRequest<User>( User.class, new Response.Listener<User>() {
+                            GetRequest<User> userGetRequest = new GetRequest<User>(User.class, new Response.Listener<User>() {
                                 @Override
                                 public void onResponse(User response) {
                                     List<Application> apps = new ArrayList<Application>();
@@ -441,7 +440,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
                                     if (error.networkResponse.statusCode == 401) {
-                                        LauncherUtility.showErrorDialog(HomeActivity.this, R.string.home_activity_you_do_not_have_access_to_this );
+                                        LauncherUtility.showErrorDialog(HomeActivity.this, R.string.home_activity_you_do_not_have_access_to_this);
                                     } else {
                                         LauncherUtility.logoutWithDialog(HomeActivity.this);
                                     }
@@ -649,7 +648,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
                                             if (error.networkResponse.statusCode == 401) {
-                                                LauncherUtility.showErrorDialog(HomeActivity.this, R.string.home_activity_you_do_not_have_access_to_this );
+                                                LauncherUtility.showErrorDialog(HomeActivity.this, R.string.home_activity_you_do_not_have_access_to_this);
                                             } else {
                                                 LauncherUtility.logoutWithDialog(HomeActivity.this);
                                             }
@@ -916,7 +915,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         protected ArrayList<AppInfo> doInBackground(Application... applications) {
             List<Application> apps = new ArrayList<Application>();
             //apps.addAll(currentUser.getSettings()
-                //.getAppsUserCanAccess()); //ToDo find out if this is needed because it is bad
+            //.getAppsUserCanAccess()); //ToDo find out if this is needed because it is bad
             applications = apps.toArray(applications);
 
             return super.doInBackground(applications);

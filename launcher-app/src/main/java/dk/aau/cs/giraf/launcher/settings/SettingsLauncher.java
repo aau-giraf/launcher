@@ -15,10 +15,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.widgets.GridPreviewView;
-import dk.aau.cs.giraf.librest.requests.GetRequest;
-import dk.aau.cs.giraf.librest.requests.LoginRequest;
-import dk.aau.cs.giraf.librest.requests.PutRequest;
-import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
+import dk.aau.cs.giraf.librest.requests.*;
+import dk.aau.cs.giraf.models.core.Settings;
 import dk.aau.cs.giraf.models.core.User;
 import dk.aau.cs.giraf.utilities.IntentConstants;
 
@@ -32,6 +30,7 @@ public class SettingsLauncher extends Fragment {
     private Switch grayScale;
     private GridPreviewView previewView;
     private User currentUser;
+    private RequestQueueHandler handler;
     private RequestQueue queue;
 
 
@@ -59,7 +58,8 @@ public class SettingsLauncher extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        queue = RequestQueueHandler.getInstance(getActivity().getApplicationContext()).getRequestQueue();
+        handler = RequestQueueHandler.getInstance(getActivity().getApplicationContext());
+        queue = handler.getRequestQueue();
         final Bundle arguments = getArguments();
         if (arguments != null) {
             currentUser = (User) arguments.getSerializable(USER_IDENTIFICATION);
@@ -118,21 +118,22 @@ public class SettingsLauncher extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 currentUser.getSettings().setUseGrayScale(isChecked);
-                final PutRequest<User> userPutRequest = new PutRequest<User>(currentUser, new Response.Listener<User>() {
+
+                handler.resourceRequest(currentUser.getSettings(), new Response.Listener<Settings>() {
                     @Override
-                    public void onResponse(User response) {
-                        Log.i("Launcher", "Put user request success for SettingsLauncher");
+                    public void onResponse(Settings response) {
+                        Log.i("Launcher", "Put user settings request success for SettingsLauncher");
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
+                        handler.login(currentUser, new Response.Listener<Integer>() {
                             @Override
                             public void onResponse(Integer response) {
-                                PutRequest<User> userPutRequest1 = new PutRequest<User>(currentUser, new Response.Listener<User>() {
+                                handler.resourceRequest(currentUser.getSettings(), new Response.Listener<Settings>() {
                                     @Override
-                                    public void onResponse(User response) {
-                                        Log.i("Launcher", "Put user request success for SettingsLauncher");
+                                    public void onResponse(Settings response) {
+                                        Log.i("Launcher", "Put user settings request success for SettingsLauncher");
                                     }
                                 }, new Response.ErrorListener() {
                                     @Override
@@ -140,7 +141,6 @@ public class SettingsLauncher extends Fragment {
                                         Log.e("Launcher", "Put user request failed for SettingsLauncher");
                                     }
                                 });
-                                queue.add(userPutRequest1);
                             }
                         }, new Response.ErrorListener() {
                             @Override
@@ -148,10 +148,8 @@ public class SettingsLauncher extends Fragment {
                                 Log.e("Launcher", "Put user request failed for SettingsLauncher");
                             }
                         });
-                        queue.add(loginRequest);
                     }
                 });
-                queue.add(userPutRequest);
             }
         });
         previewView = (GridPreviewView) view.findViewById(R.id.example_grid_layout);
@@ -181,21 +179,21 @@ public class SettingsLauncher extends Fragment {
                 previewView.setRowSize(seekBar.getProgress());
                 previewView.setColumnSize(seekBar.getProgress()+1);
                 previewView.invalidate();
-                final PutRequest<User> userPutRequest = new PutRequest<User>(currentUser, new Response.Listener<User>() {
+                handler.resourceRequest(currentUser.getSettings(), new Response.Listener<Settings>() {
                     @Override
-                    public void onResponse(User response) {
-                        Log.i("Launcher", "Put user request success for SettingsLauncher");
+                    public void onResponse(Settings response) {
+                        Log.i("Launcher", "Put user settings request success for SettingsLauncher");
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
+                        handler.login(currentUser, new Response.Listener<Integer>() {
                             @Override
                             public void onResponse(Integer response) {
-                                PutRequest<User> userPutRequest1 = new PutRequest<User>(currentUser, new Response.Listener<User>() {
+                                handler.resourceRequest(currentUser.getSettings(), new Response.Listener<Settings>() {
                                     @Override
-                                    public void onResponse(User response) {
-                                        Log.i("Launcher", "Put user request success for SettingsLauncher");
+                                    public void onResponse(Settings response) {
+                                        Log.i("Launcher", "Put user settings request success for SettingsLauncher");
                                     }
                                 }, new Response.ErrorListener() {
                                     @Override
@@ -203,7 +201,6 @@ public class SettingsLauncher extends Fragment {
                                         Log.e("Launcher", "Put user request failed for SettingsLauncher");
                                     }
                                 });
-                                queue.add(userPutRequest1);
                             }
                         }, new Response.ErrorListener() {
                             @Override
@@ -211,10 +208,8 @@ public class SettingsLauncher extends Fragment {
                                 Log.e("Launcher", "Put user request failed for SettingsLauncher");
                             }
                         });
-                        queue.add(loginRequest);
                     }
                 });
-                queue.add(userPutRequest);
             }
         });
 

@@ -98,8 +98,8 @@ dependencies {
     compile 'com.jakewharton:disklrucache:2.0.2'
     compile 'com.android.volley:volley:1.0.0'
     compile 'com.google.code.gson:gson:2.8.0'
-    compile group: 'dk.aau.cs.giraf', name: 'giraf-component-lib', version: '1.0.15'
-    compile group: 'dk.aau.cs.giraf', name: 'rest-api-client-lib', version: '1.1.25'
+    compile group: 'dk.aau.cs.giraf', name: 'giraf-component-lib', version: '1.0.16'
+    compile group: 'dk.aau.cs.giraf', name: 'rest-api-client-lib', version: '1.1.29'
     compile group: 'dk.aau.cs.giraf', name: 'rest-models', version: '1.1.26'
     compile(group: 'dk.aau.cs.giraf', name: 'showcaseview-lib', version: 'latest.integration', changing: true, ext: 'aar')
 }
