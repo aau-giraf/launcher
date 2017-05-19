@@ -602,7 +602,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
         final GirafButton settingsButton = (GirafButton) findViewById(R.id.settings_button);
         final GirafButton changeUserButton = (GirafButton) findViewById(R.id.change_user_button);
         // Check if the user is a guardian
-        if (user.isRole(Role.Guardian) || user.isRole(Role.SuperUser) || user.getGuardianOf() != null) {
+        if (user.isRole(Role.Guardian) || user.isRole(Role.SuperUser)) {
             settingsButton.setVisibility(View.VISIBLE);
             changeUserButton.setVisibility(View.VISIBLE);
         } else { // The user had citizen permissions
