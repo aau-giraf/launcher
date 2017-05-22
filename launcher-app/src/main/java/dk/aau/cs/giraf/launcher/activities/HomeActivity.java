@@ -60,7 +60,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     private LoadHomeActivityApplicationTask loadHomeActivityApplicationTask;
     private boolean appObserverReceiverRegistered = false;
     private ArrayList<AppInfo> currentLoadedApps;
-
+    private BroadcastReceiver broadcastReceiver;
     private GWidgetUpdater widgetUpdater;
 
     // Used to implement help functionality (ShowcaseView)
@@ -402,7 +402,7 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
     private void startObservingApps() {
         //Makes sure this Receiver is only registered once
         if (!appObserverReceiverRegistered) {
-            BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+            broadcastReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
                     appsChangedScan();
@@ -480,7 +480,10 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-
+                    //ToDo remove the hardcoded lines just below, this is just to show it can launch stuff
+                    newApps.add(new Application("Ugeplan","dk.aau.cs.giraf.ugeplan","dk.aau.cs.giraf.ugeplan.MainActivity"));
+                    newApps.add(new Application("Slither.io","air.com.hypah.io.slither","air.com.hypah.io.slither.AppEntry"));
+                    newApps.add(new Application("Browser","com.uc.browser.hd",""));
                     Application[] appArray = new Application[newApps.size()];
                     newApps.toArray(appArray);
                     loadApplications(appArray);
@@ -545,7 +548,6 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
 
     /**
      * Stops the timer looking for updates in the set of available apps.
-     * ToDo Find out if this code is still needed
      *
      * @see HomeActivity#startObservingApps()
      */
@@ -555,6 +557,10 @@ public class HomeActivity extends GirafActivity implements AppsFragmentInterface
 
         if (widgetUpdater != null) {
             widgetUpdater.sendEmptyMessage(GWidgetUpdater.MSG_STOP);
+        }
+        if(appObserverReceiverRegistered) {
+            appObserverReceiverRegistered = false;
+            unregisterReceiver(broadcastReceiver);
         }
 
         // Cancel any loading task still running

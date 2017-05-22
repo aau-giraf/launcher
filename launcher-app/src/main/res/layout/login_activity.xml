@@ -40,7 +40,6 @@
                 android:ems="10"
                 android:id="@+id/username_textbox"
                 android:clickable="false"
-                android:text="Graatand"
                 android:background="@drawable/text_box" />
     </LinearLayout>
 
@@ -65,7 +64,6 @@
                 android:ems="10"
                 android:id="@+id/password_textbox"
                 android:clickable="false"
-                android:text="password"
                 android:background="@drawable/text_box" />
 
     </LinearLayout>

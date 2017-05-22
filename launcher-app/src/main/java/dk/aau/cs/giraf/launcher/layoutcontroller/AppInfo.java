@@ -5,6 +5,7 @@ import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
+import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.models.core.Application;
 
@@ -162,10 +163,13 @@ public class AppInfo extends Application implements Parcelable {
                 if (app.activityInfo.name.equals(this.getActivity())) {
                     icon = app.loadIcon(context.getPackageManager());
                     break;
+                } else{
+                    icon = context.getResources().getDrawable(R.drawable.ic_giraf);
                 }
             }
         }
         else{
+            //ToDo change this icon to a more nice giraf like icon
             icon = context.getResources().getDrawable(dk.aau.cs.giraf.gui.R.drawable.icon_synchronize);
         }
 

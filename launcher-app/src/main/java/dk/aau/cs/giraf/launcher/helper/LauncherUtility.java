@@ -1,6 +1,7 @@
 package dk.aau.cs.giraf.launcher.helper;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -136,11 +137,15 @@ public abstract class LauncherUtility {
      */
     public static void secureStartActivity(Context context, Intent intent) {
         //If the activity exists, start it. Otherwise throw an exception.
-        if (intent.resolveActivity(context.getPackageManager()) != null) {
+        if (ApplicationControlUtility.isAppFromIntentOnDevice(intent, context)) {
             /* We catch a general exception as we do not know the why the launched application crashes. */
             try {
                 context.startActivity(intent);
             } catch (Exception e) {
+                Log.e("Launcher","Could not start activity " + intent.getComponent());
+                Toast toast = Toast.makeText(context,
+                    context.getString(R.string.activity_not_found_msg), Toast.LENGTH_SHORT);
+                toast.show();
                 return;
             }
         } else {
@@ -148,9 +153,8 @@ public abstract class LauncherUtility {
             Toast toast = Toast.makeText(context,
                 context.getString(R.string.activity_not_found_msg), Toast.LENGTH_SHORT);
             toast.show();
-            Intent storeIntent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("market://details?id="+intent.getPackage()));
-            context.startActivity(intent);
+            Intent storeIntent = new Intent(Intent.ACTION_VIEW,Uri.parse("market://details?id=" + intent.getComponent().getPackageName()));
+            context.startActivity(storeIntent);
             Log.e(Constants.ERROR_TAG, "App could not be started");
         }
     }

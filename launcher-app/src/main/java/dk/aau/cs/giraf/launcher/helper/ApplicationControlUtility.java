@@ -37,6 +37,21 @@ public class ApplicationControlUtility {
     }
 
     /**
+     * Returns true or false is the app which intent is passed to the method is in on the device.
+     * @param intent the app intent.
+     * @param context the context.
+     * @return true if the app exist or false if not.
+     */
+    public static boolean isAppFromIntentOnDevice(Intent intent, Context context){
+            try {
+                context.getPackageManager().getPackageInfo(intent.getComponent().getPackageName(), 0);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+    }
+
+    /**
      * Finds all GIRAF apps installed on the device.
      *
      * @param context Context of the current activity.
@@ -89,7 +104,6 @@ public class ApplicationControlUtility {
         for (ResolveInfo app : allApps) {
             String appActivityName = app.activityInfo.name;
             String appPackageName = app.activityInfo.packageName;
-
             if (appPackageName.contains(ANDROID_FILTER))
                 continue;
 
