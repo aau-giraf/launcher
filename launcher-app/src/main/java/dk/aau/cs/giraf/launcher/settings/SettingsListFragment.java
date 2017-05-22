@@ -3,6 +3,7 @@ package dk.aau.cs.giraf.launcher.settings;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,15 +11,17 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import dk.aau.cs.giraf.dblib.controllers.ProfileController;
-import dk.aau.cs.giraf.dblib.models.Profile;
-import dk.aau.cs.giraf.gui.GirafPictogramItemView;
+import dk.aau.cs.giraf.gui.GirafUserItemView;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.SettingsActivity;
 import dk.aau.cs.giraf.launcher.helper.Constants;
+import dk.aau.cs.giraf.models.core.User;
+import dk.aau.cs.giraf.utilities.IntentConstants;
 
 import java.util.ArrayList;
+
+//import dk.aau.cs.giraf.dblib.controllers.ProfileController;
+//import dk.aau.cs.giraf.dblib.models.Profile;
 
 /**
  * This fragment contains all of the elements on the left side of SettingsActivity.
@@ -78,7 +81,7 @@ public class SettingsListFragment extends Fragment {
          *
          * @param profile The selected profile.
          */
-        public void setCurrentUser(Profile profile);
+        public void setCurrentUser(User profile);
     }
 
     /**
@@ -98,22 +101,11 @@ public class SettingsListFragment extends Fragment {
 
         settingsListView = (ListView) view.findViewById(R.id.settingsListView);
 
-        final GirafPictogramItemView mProfileButton = (GirafPictogramItemView)
+        final GirafUserItemView mProfileButton = (GirafUserItemView)
             view.findViewById(R.id.profile_widget_settings);
 
-        ProfileController profileController = new ProfileController(getActivity());
+        User currentUser = (User) getActivity().getIntent().getExtras().getSerializable(IntentConstants.CURRENT_USER);
 
-        final long childId = getActivity().getIntent().getLongExtra(Constants.CHILD_ID, -1);
-
-        Profile currentUser;
-
-        // The childId is -1 meaning that no childs are available
-        if (childId == -1) {
-            currentUser = profileController.getById(getActivity().getIntent()
-                .getLongExtra(Constants.GUARDIAN_ID, -1));
-        } else { // A child is found - set it as active and add its profile selector
-            currentUser = profileController.getById(childId);
-        }
         // Notify about the current user
         callback.setCurrentUser(currentUser);
 
@@ -127,7 +119,7 @@ public class SettingsListFragment extends Fragment {
 
         //Load the correct profile picture for the choosen profile
         mProfileButton.setImageModel(currentUser, this.getResources().getDrawable(R.drawable.no_profile_pic));
-        mProfileButton.setTitle(currentUser.getName());
+        mProfileButton.setTitle(currentUser.getScreenName());
 
         return view;
     }

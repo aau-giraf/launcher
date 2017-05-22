@@ -10,12 +10,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
-import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.launcher.R;
-import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
-import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 import dk.aau.cs.giraf.launcher.widgets.GridPreviewView;
+import dk.aau.cs.giraf.models.core.User;
 
 /**
  * Custom preference class for the launcher settings. This preference provides two seeking bars and an
@@ -35,31 +32,29 @@ public class ApplicationGridResizer extends Preference implements SeekBar.OnSeek
     private static final int DEFAULT_COLUMNS_VALUE = 5;
 
     /**
-     *  Gets the grid column size.
-     * @param context the context
+     *  Gets the grid column size. Use it in a get request only.
      * @param currentUser the currentUser
-     * @return The column size saved in the shared preference for the current user
+     * @return The column size.
      */
-    public static int getGridColumnSize(final Context context, final Profile currentUser) {
-
-        final SharedPreferences pref = SettingsUtility.getLauncherSettings(context,
-            LauncherUtility.getSharedPreferenceUser(currentUser));
-
-        return pref.getInt(ApplicationGridResizer.COLUMNS_SIZE_PREFERENCE_TAG, DEFAULT_COLUMNS_VALUE);
+    public static int getGridColumnSize(User currentUser) {
+        if(currentUser.getSettings().getAppsGridSizeColumns() > 4) {
+            return currentUser.getSettings().getAppsGridSizeColumns();
+        }else{
+            return  4;
+        }
     }
 
     /**
-     *  Gets the grid row size.
-     * @param context the contex
+     *  Gets the grid row size. Use it in a get request only.
      * @param currentUser the current user
-     * @return The row size saved in the shared preference for the current user
+     * @return The row size.
      */
-    public static int getGridRowSize(final Context context, final Profile currentUser) {
-
-        final SharedPreferences pref = SettingsUtility.getLauncherSettings(context,
-            LauncherUtility.getSharedPreferenceUser(currentUser));
-
-        return pref.getInt(ApplicationGridResizer.ROWS_SIZE_PREFERENCE_TAG, DEFAULT_ROWS_VALUE);
+    public static int getGridRowSize(User currentUser) {
+        if(currentUser.getSettings().getAppsGridSizeRows() > 3) {
+            return currentUser.getSettings().getAppsGridSizeRows();
+        } else{
+            return 3;
+        }
     }
 
     private int seekerBarMaxValue = 7; // Max value for the seeking bar in units

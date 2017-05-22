@@ -14,7 +14,7 @@
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
-        <dk.aau.cs.giraf.gui.GirafPictogramItemView
+        <dk.aau.cs.giraf.gui.GirafUserItemView
                 android:id="@+id/profile_widget"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -46,6 +46,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="@dimen/sidebar_item_spacing"
+                            android:onClick="onChangeUserButtonClick"
                             app:icon="@drawable/icon_give_tablet"/>
 
                     <dk.aau.cs.giraf.gui.GirafButton
@@ -53,6 +54,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="@dimen/sidebar_item_spacing"
+                            android:onClick="onLogoutButtonClick"
                             app:icon="@drawable/icon_logout"/>
                 </LinearLayout>
 
@@ -68,6 +70,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/sidebar_item_spacing"
+                            android:onClick="onHelpButtonClick"
                             app:icon="@drawable/icon_help"/>
 
                     <dk.aau.cs.giraf.gui.GirafButton
@@ -75,6 +78,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/sidebar_item_spacing"
+                            android:onClick="onSettingsButtonClick"
                             app:icon="@drawable/icon_settings"/>
                 </LinearLayout>
             </LinearLayout>

@@ -4,15 +4,16 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.viewpagerindicator.CirclePageIndicator;
-import dk.aau.cs.giraf.dblib.models.Application;
-import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.ApplicationControlUtility;
 import dk.aau.cs.giraf.launcher.helper.Constants;
@@ -22,12 +23,14 @@ import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
 import dk.aau.cs.giraf.launcher.widgets.AppImageView;
+import dk.aau.cs.giraf.librest.requests.GetRequest;
+import dk.aau.cs.giraf.librest.requests.LoginRequest;
+import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
+import dk.aau.cs.giraf.models.core.Application;
+import dk.aau.cs.giraf.models.core.Settings;
+import dk.aau.cs.giraf.models.core.User;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 
 
@@ -41,6 +44,9 @@ public class AndroidFragment extends AppContainerFragment {
     private Set<String> selectedApps;
     private ArrayList<AppInfo> appInfos;
     private LoadAndroidApplicationTask loadApplicationsTask;
+    private RequestQueue queue;
+    private Settings settings;
+    private RequestQueueHandler handler;
 
     /**
      * Because we are dealing with a Fragment, OnCreateView is where most of the variables are set.
@@ -53,29 +59,28 @@ public class AndroidFragment extends AppContainerFragment {
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        final View view = super.onCreateView(inflater, container, savedInstanceState);
+        handler = RequestQueueHandler.getInstance(getActivity().getApplicationContext());
+        queue = handler.getRequestQueue();
+        onCreateViewResponce(view,currentUser);
+        return view;
+    }
 
-        View view = super.onCreateView(inflater, container, savedInstanceState);
-
+    private void onCreateViewResponce(View view, User user) {
         appView = (ViewPager) view.findViewById(R.id.appsViewPager);
-
-        preferences = LauncherUtility.getSharedPreferencesForCurrentUser(getActivity(), currentUser);
-        selectedApps = preferences.getStringSet(getString(R.string.selected_android_apps_key), new HashSet<String>());
-
-        final int rowsSize = ApplicationGridResizer.getGridRowSize(getActivity(), currentUser);
-        final int columnsSize = ApplicationGridResizer.getGridColumnSize(getActivity(), currentUser);
+        final int rowsSize = ApplicationGridResizer.getGridRowSize(currentUser);
+        final int columnsSize = ApplicationGridResizer.getGridColumnSize(currentUser);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
 
-            appView.setAdapter(new AppsFragmentAdapter(getChildFragmentManager(), appInfos, rowsSize, columnsSize));
+            appView.setAdapter(new AppsFragmentAdapter(user, getChildFragmentManager(), appInfos, rowsSize, columnsSize));
         } else {
 
-            appView.setAdapter(new AppsFragmentAdapter(getFragmentManager(), appInfos, rowsSize, columnsSize));
+            appView.setAdapter(new AppsFragmentAdapter(user ,getFragmentManager(), appInfos, rowsSize, columnsSize));
         }
 
         CirclePageIndicator titleIndicator = (CirclePageIndicator) view.findViewById(R.id.pageIndicator);
         titleIndicator.setViewPager(appView);
-
-        return view;
     }
 
     /**
@@ -113,6 +118,57 @@ public class AndroidFragment extends AppContainerFragment {
         if (loadApplicationsTask != null) {
             loadApplicationsTask.cancel(true);
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        //ToDo make this work, because we get a stack overflow from rest, the code should work, but rest thinks not
+        /*GetRequest<User> getRequest = new GetRequest<User>( User.class, new Response.Listener<User>() {
+            @Override
+            public void onResponse(User response) {
+                User localUser = response;
+                final Settings settings = response.getSettings();
+                settings.setAppsUserCanAccess(AndroidFragment.this.settings.getAppsUserCanAccess());
+                handler.resourceRequest(settings, new Response.Listener<Settings>() {
+                    @Override
+                    public void onResponse(Settings response) {
+                        Log.i("Launcher", "Put user settings request success for GirafFragment");
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        handler.login(currentUser, new Response.Listener<Integer>() {
+                            @Override
+                            public void onResponse(Integer response) {
+                                handler.resourceRequest(settings, new Response.Listener<Settings>() {
+                                    @Override
+                                    public void onResponse(Settings response) {
+                                        Log.i("Launcher", "Put user settings request success for GirafFragment");
+                                    }
+                                }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        Log.e("Launcher", "Put user request failed for GirafFragment");
+                                    }
+                                });
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.e("Launcher", "Put user request failed for GirafFragment");
+                            }
+                        });
+                    }
+                });
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Launcer", "Could not get user for GirafFragment");
+            }
+        });
+        queue.add(getRequest);*/
     }
 
     /**
@@ -157,32 +213,26 @@ public class AndroidFragment extends AppContainerFragment {
                 synchronized (AndroidFragment.this) {
                     AppImageView appImageView = (AppImageView) view;
                     appImageView.toggle();
-
-                    if (selectedApps == null)
-                        selectedApps = new HashSet<String>();
-
-                    AppInfo app = appImageView.appInfo;
-                    String activityName = app.getActivity();
-
-                    /** If the user had previously selected the app, removed it from the list of selected apps
-                     * otherwise add it to the list of selected apps.*/
-                    if (selectedApps.contains(activityName)) {
-                        selectedApps.remove(activityName);
-                        Log.d(Constants.ERROR_TAG, "Removed '" + activityName + "' to list: " + selectedApps.size());
+                    if (userCanAccesApp(appImageView.appInfo.getApp(), currentUser)) {
+                        if (settings.getAppsUserCanAccess().contains(appImageView.appInfo.getApp())) {
+                            List<Application> applicationCollection = settings.getAppsUserCanAccess();
+                            applicationCollection.remove(appImageView.appInfo.getApp());
+                            settings.setAppsUserCanAccess(applicationCollection);
+                        }
                     } else {
-                        selectedApps.add(activityName);
-                        Log.d(Constants.ERROR_TAG, "Added '" + activityName + "' to list: " + selectedApps.size());
+                        List<Application> applicationCollection = settings.getAppsUserCanAccess();
+                        applicationCollection.add(appImageView.appInfo.getApp());
+                        settings.setAppsUserCanAccess(applicationCollection);
                     }
-
-                    final SharedPreferences.Editor editor = preferences.edit();
-                    // Remove to ensure that the new set is written to file.
-                    editor.remove(getString(R.string.selected_android_apps_key)).commit();
-                    editor.putStringSet(getString(R.string.selected_android_apps_key), selectedApps);
-                    editor.apply();
                 }
             }
         };
     }
+
+    private boolean userCanAccesApp(Application app, User user) {
+        return user.getSettings().getAppsUserCanAccess().contains(app);
+    }
+
 
     /**
      * Starts a timer that looks for updates in the set of available applications every 5 seconds.
@@ -220,10 +270,10 @@ public class AndroidFragment extends AppContainerFragment {
          * @param onClickListener the onClickListener that each created app should have.
          *                        In this case we feed it the global variable listener
          */
-        public LoadAndroidApplicationTask(Context context, Profile currentUser, Profile guardian,
+        public LoadAndroidApplicationTask(Context context, User currentUser, User guardian,
                                           ViewPager appsViewPager, View.OnClickListener onClickListener)
         {
-            super(context, currentUser, guardian, appsViewPager, onClickListener);
+            super(context, currentUser, appsViewPager, onClickListener);
         }
 
         /**

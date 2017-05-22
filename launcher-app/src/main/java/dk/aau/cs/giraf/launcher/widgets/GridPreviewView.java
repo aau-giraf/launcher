@@ -14,8 +14,8 @@ import android.view.View;
 public class GridPreviewView extends View {
     private Paint paint;
 
-    private int rowSize;
-    private int columnSize;
+    private int rowSize = 3;
+    private int columnSize = 4;
 
     public GridPreviewView(Context context) {
         super(context);
@@ -50,7 +50,12 @@ public class GridPreviewView extends View {
      * @param rowSize the row size of the grid
      */
     public void setRowSize(final int rowSize) {
-        this.rowSize = rowSize;
+        if(rowSize > 3) {
+            this.rowSize = rowSize;
+        }
+        else{
+            this.rowSize = 3;
+        }
     }
 
     /**
@@ -60,7 +65,12 @@ public class GridPreviewView extends View {
      * @param columnSize the column size of the grid
      */
     public void setColumnSize(final int columnSize) {
-        this.columnSize = columnSize;
+        if(columnSize > 4) {
+            this.columnSize = columnSize;
+        }
+        else{
+            this.columnSize = 4;
+        }
     }
 
     /**

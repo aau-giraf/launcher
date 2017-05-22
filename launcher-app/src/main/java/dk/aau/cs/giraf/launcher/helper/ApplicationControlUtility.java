@@ -4,11 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-
-import dk.aau.cs.giraf.dblib.Helper;
-import dk.aau.cs.giraf.dblib.models.Application;
-import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.models.core.Application;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,112 +20,61 @@ public class ApplicationControlUtility {
 
     private static final String ANDROID_FILTER = "dk.aau.cs.giraf";
 
+
     /**
-     * Gets the GIRAF apps that are usable by the given user,
-     * relative to their settings and the system they're logged in on.
-     * @param context Context of the current activity.
-     * @param user    The user to find apps_container for.
-     * @return List of apps that are usable by this user on this device.
+     * Returns true or false is the app is in on the device.
+     * @param app the app.
+     * @param context the context.
+     * @return true if the app exist or false if not.
      */
-    public static List<Application> getAvailableGirafAppsForUser(Context context, Profile user) {
-        Helper helper = LauncherUtility.getOasisHelper(context);
-
-        List<Application> userApps = helper.applicationHelper.getApplicationsByProfile(user);
-        List<Application> deviceApps = getGirafAppsOnDeviceAsApplicationList(context);
-
-        if (userApps.isEmpty() || deviceApps.isEmpty()) {
-            return new ArrayList<Application>();
+    public static boolean isAppOnDevice(Application app, Context context){
+        try {
+            context.getPackageManager().getPackageInfo(app.getPackage(), 0);
+            return true;
+        } catch (PackageManager.NameNotFoundException e){
+            return  false;
         }
-
-        // Remove from the list, all apps that are not installed on the device and exclude the launcher itself.
-        for (int i = 0; i < userApps.size(); i++) {
-            if (!doesApplicationListContainApp(deviceApps, userApps.get(i)) ||
-                userApps.get(i).getPackage().equals("dk.aau.cs.giraf.launcher"))
-            {
-                userApps.remove(i);
-                i--;
-            }
-        }
-
-        return userApps;
     }
 
     /**
-     * Finds all GIRAF apps installed on the device that are also registered in the database.
-     *
-     * @param context Context of the current activity.
-     * @return List of apps available for use on the device.
+     * Returns true or false is the app which intent is passed to the method is in on the device.
+     * @param intent the app intent.
+     * @param context the context.
+     * @return true if the app exist or false if not.
      */
-    private static List<Application> getGirafAppsOnDeviceAsApplicationList(Context context) {
-        Helper helper = LauncherUtility.getOasisHelper(context);
-
-        List<Application> dbApps = helper.applicationHelper.getApplications();
-        List<ResolveInfo> deviceApps = getGirafAppsOnDeviceAsResolveInfoList(context);
-
-        if (dbApps.isEmpty() || deviceApps.isEmpty()) {
-            return new ArrayList<Application>();
-        }
-
-        for (int i = 0; i < dbApps.size(); i++) {
-            if (!doesResolveInfoListContainApp(deviceApps, dbApps.get(i))) {
-                dbApps.remove(i);
-                i--;
+    public static boolean isAppFromIntentOnDevice(Intent intent, Context context){
+            try {
+                context.getPackageManager().getPackageInfo(intent.getComponent().getPackageName(), 0);
+                return true;
+            } catch (Exception e) {
+                return false;
             }
-        }
-
-        return dbApps;
     }
 
     /**
-     * Finds all GIRAF apps installed on the device that are also registered in the database, EXCEPT Launcher.
-     *
-     * @param context Context of the current activity.
-     * @return List of apps available for use on the device.
-     */
-    public static List<Application> getGirafAppsOnDeviceButLauncherAsApplicationList(Context context) {
-        Helper helper = LauncherUtility.getOasisHelper(context);
-
-        List<Application> dbApps = helper.applicationHelper.getApplications();
-        List<ResolveInfo> deviceApps = getGirafAppsOnDeviceAsResolveInfoList(context);
-
-        if (dbApps.isEmpty() || deviceApps.isEmpty()) {
-            return new ArrayList<Application>();
-        }
-
-        for (int i = 0; i < dbApps.size(); i++) {
-            if (!doesResolveInfoListContainApp(deviceApps, dbApps.get(i)) ||
-                dbApps.get(i).getPackage().equals(context.getString(R.string.launcher_namespace)))
-            {
-                dbApps.remove(i);
-                i--;
-            }
-        }
-
-        return dbApps;
-    }
-
-    /**
-     * Finds all GIRAF apps (as ResolveInfos) installed on the device.
+     * Finds all GIRAF apps installed on the device.
      *
      * @param context Context of the current activity.
      * @return List of GIRAF apps.
      */
-    private static List<ResolveInfo> getGirafAppsOnDeviceAsResolveInfoList(Context context) {
+    public static List<Application> getGirafAppsButLauncherOnDevice(Context context) {
         List<ResolveInfo> systemApps = getAllAppsOnDeviceAsResolveInfoList(context);
-
+        List<Application> applications = new ArrayList<Application>();
         if (systemApps.isEmpty()) {
-            return systemApps;
+            return applications;
         }
-
-        // Remove all non-GIRAF apps from the list of apps in the system.
-        for (int i = 0; i < systemApps.size(); i++) {
-            if (!systemApps.get(i).toString().toLowerCase().contains(context.getString(R.string.giraf_namespace))) {
-                systemApps.remove(i);
-                i--;
+        String girafNameSpace = context.getString(R.string.giraf_namespace);
+        String girafLauncherNameSpace = context.getString(R.string.launcher_namespace);
+        for(ResolveInfo info : systemApps) {
+            String infoString = info.toString().toLowerCase();
+            if(infoString.contains(girafNameSpace) && !infoString.contains(girafLauncherNameSpace)){
+                String appActivityName = info.activityInfo.name;
+                String appPackageName = info.activityInfo.packageName;
+                String appName = info.activityInfo.loadLabel(context.getPackageManager()).toString();
+                applications.add(new Application(appName, appPackageName, appActivityName));
             }
         }
-
-        return systemApps;
+        return applications;
     }
 
     /**
@@ -158,57 +104,16 @@ public class ApplicationControlUtility {
         for (ResolveInfo app : allApps) {
             String appActivityName = app.activityInfo.name;
             String appPackageName = app.activityInfo.packageName;
-
             if (appPackageName.contains(ANDROID_FILTER))
                 continue;
 
 
-            Application application = new Application();
-            application.setPackage(appPackageName);
-            application.setActivity(appActivityName);
-            application.setName(app.activityInfo.loadLabel(packageManager).toString());
-            application.setId(app.hashCode());
+            Application application = new Application(
+                app.activityInfo.loadLabel(packageManager).toString(),appPackageName,appActivityName);
+            application.setId(app.hashCode()); //Todo find out if the id is something that is handled by us or the database
             result.add(application);
         }
         return result;
-    }
-
-    /**
-     * Checks whether a list of GIRAF apps installed on the system contains a specified app.
-     *
-     * @param systemApps List of apps (as ResolveInfos) to check.
-     * @param app        The app to check for.
-     * @return True if the app is contained in the list; otherwise false.
-     */
-    private static boolean doesResolveInfoListContainApp(List<ResolveInfo> systemApps, Application app) {
-        String packageName = app.getPackage();
-
-        for (ResolveInfo sysApp : systemApps) {
-            if (sysApp.activityInfo.packageName.equals(packageName)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Checks whether a list of apps installed on the system contains a specified app.
-     *
-     * @param systemApps List of apps (as Apps) to check.
-     * @param app        The app to check for.
-     * @return True if the app is contained in the list; otherwise false.
-     */
-    private static boolean doesApplicationListContainApp(List<Application> systemApps, Application app) {
-        String packageName = app.getPackage();
-
-        for (Application sysApp : systemApps) {
-            if (sysApp.getPackage().equals(packageName)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -228,11 +133,9 @@ public class ApplicationControlUtility {
                 String appActivityName = app.activityInfo.name;
                 String appPackageName = app.activityInfo.packageName;
                 if (appActivityName.equals(activityName)) {
-                    Application application = new Application();
-                    application.setPackage(appPackageName);
-                    application.setActivity(appActivityName);
-                    application.setName(app.activityInfo.loadLabel(packageManager).toString());
-                    application.setId(app.hashCode());
+                    Application application = new Application(
+                        app.activityInfo.loadLabel(packageManager).toString(),appPackageName,appActivityName);
+                    application.setId(app.hashCode());//Todo find out if the id is something that is handled by us or the database
                     selectedApps.add(application);
 
                     continue outerloop;

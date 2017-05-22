@@ -35,6 +35,7 @@ public final class Constants {
      * Key for inserting and retrieving current child in Intents.
      */
     public static final String CHILD_ID = "currentChildID";
+
     /**
      * If no child is selected -1.
      */

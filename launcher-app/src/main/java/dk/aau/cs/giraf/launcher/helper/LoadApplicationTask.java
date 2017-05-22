@@ -2,10 +2,7 @@ package dk.aau.cs.giraf.launcher.helper;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -13,13 +10,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
-
-import dk.aau.cs.giraf.dblib.models.Application;
-import dk.aau.cs.giraf.dblib.models.Profile;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppsFragmentAdapter;
 import dk.aau.cs.giraf.launcher.settings.components.ApplicationGridResizer;
+import dk.aau.cs.giraf.librest.requests.GetRequest;
+import dk.aau.cs.giraf.librest.requests.LoginRequest;
+import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
+import dk.aau.cs.giraf.models.core.Application;
+import dk.aau.cs.giraf.models.core.User;
+import dk.aau.cs.giraf.models.core.authentication.Role;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,12 +38,10 @@ import java.util.Collections;
  */
 public abstract class LoadApplicationTask extends AsyncTask<Application, View, ArrayList<AppInfo>> {
 
-    protected Profile currentUser;
-    protected final Profile guardian;
+    protected User currentUser;
     protected final Context context;
     protected final ViewPager appsViewPager;
     protected final View.OnClickListener onClickListener;
-    protected boolean offlineMode = false;
     protected boolean includeAddAppIcon = false;
 
     protected ProgressBar progressbar;
@@ -51,17 +52,15 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
      * @param context         The context for the current activity
      * @param currentUser     The user of the current activity. If set to null, the user will be
      *                        found based on the context
-     * @param guardian        The guardian of the current user.
      * @param appsViewPager   The layout that the AppImageViews should be put into
      * @param onClickListener The onClickListener attached to each AppImageView.
      *                        These vary depending on the purpose of the layout they are loaded into.
      */
-    public LoadApplicationTask(final Context context, final Profile currentUser, final Profile guardian,
+    public LoadApplicationTask(final Context context, final User currentUser,
                                final ViewPager appsViewPager, final View.OnClickListener onClickListener)
     {
         this.context = context;
         this.currentUser = currentUser;
-        this.guardian = guardian;
         this.appsViewPager = appsViewPager;
         this.onClickListener = onClickListener;
     }
@@ -73,23 +72,18 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
      * @param context           The context for the current activity
      * @param currentUser       The user of the current activity. If set to null,
      *                          the user will be found based on the context
-     * @param guardian          The guardian of the current user.
      * @param appsViewPager     The layout that the AppImageViews should be put into
      * @param onClickListener   The onClickListener attached to each AppImageView.
      *                          These vary depending on the purpose of the layout they are loaded into.
-     * @param offlineMode       Indicate if the launcher is in offline mode
      * @param includeAddAppIcon Indicate if the addAppIcon should be shown with the apps
      */
     public LoadApplicationTask(final Context context,
-                               final Profile currentUser,
-                               final Profile guardian,
+                               final User currentUser,
                                final ViewPager appsViewPager,
                                final View.OnClickListener onClickListener,
-                               final boolean offlineMode,
                                final boolean includeAddAppIcon)
     {
-        this(context, currentUser, guardian, appsViewPager, onClickListener);
-        this.offlineMode = offlineMode;
+        this(context, currentUser, appsViewPager, onClickListener);
         this.includeAddAppIcon = includeAddAppIcon;
     }
 
@@ -121,38 +115,16 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
         ArrayList<AppInfo> appInfoList = new ArrayList<>();
         // Only creates AppImageViews if there actually are applications to generate
         if (applications != null && applications.length != 0) {
-            // If the current user is null, find the user based on the context
-            if (currentUser == null) {
-                currentUser = LauncherUtility.getCurrentUser(context);
-            }
             // update the HashMap with information of the apps being generated and sort it
             appInfoList = AppViewCreationUtility.updateAppInfoList(context, applications);
-            //If the launcher is in offline mode, some application should not be available
-            if (offlineMode) {
-                for (AppInfo a : appInfoList) {
-                    if (Constants.OFFLINE_INCAPABLE_APPS.contains(a.getPackage())) {
-                        Drawable [] layers = new Drawable[2];
-                        layers[0] = a.getIconImage().mutate();
-                        layers[0].setAlpha(context.getResources().getInteger(R.integer.giraf_disabled_app_alpha));
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            layers[1] = context.getDrawable(R.drawable.icon_redcross);
-                        } else {
-                            layers[1] = context.getResources().getDrawable(R.drawable.icon_redcross);
-                        }
-                        a.setIconImage(new LayerDrawable(layers));
-                        //Hack which makes the application unlaunchable -- queue evil 4chan laugh
-                        a.setPackage("");
-                    }
-                }
-            }
             Collections.sort(appInfoList, new AppComparator(context));
         } else {
             // show no apps available message
             Log.e(Constants.ERROR_TAG, "App list is null");
         }
-        if (includeAddAppIcon && currentUser.getRole() != Profile.Roles.CHILD ) {
-            Application tmpApp = new Application(context.getResources().getString(R.string.add_app_text), "",
-                Constants.ADD_APP_ICON_FAKE_PACKAGE_NAME, "", "");
+        if (includeAddAppIcon && !currentUser.isRole(Role.Citizen)) {
+            Application tmpApp = new Application(context.getResources().getString(R.string.add_app_text),
+                Constants.ADD_APP_ICON_FAKE_PACKAGE_NAME, "");
             AppInfo tmpInfo = new AppInfo(tmpApp);
             tmpInfo.setIconImage(context.getResources().getDrawable(R.drawable.ic_apps));
 
@@ -170,22 +142,20 @@ public abstract class LoadApplicationTask extends AsyncTask<Application, View, A
      * @param appInfoList List of appInfor
      */
     @Override
-    protected void onPostExecute(ArrayList<AppInfo> appInfoList) {
-
-
+    protected void onPostExecute(final ArrayList<AppInfo> appInfoList) {
         progressbar.setVisibility(View.INVISIBLE);
-
-        final int rowsSize = ApplicationGridResizer.getGridRowSize(this.context, currentUser);
-        final int columnsSize = ApplicationGridResizer.getGridColumnSize(this.context, currentUser);
-
         if (appInfoList != null && appInfoList.size() > 0) {
             changeVisibilityOfNoAppsMessage(View.GONE);
         } else {
             changeVisibilityOfNoAppsMessage(View.VISIBLE);
         }
-
-        ((AppsFragmentAdapter) this.appsViewPager.getAdapter()).swapApps(appInfoList, rowsSize, columnsSize);
-
+        if(appInfoList == null){
+            Log.e("Test","null");
+        }
+        final AppsFragmentAdapter adapter = (AppsFragmentAdapter) this.appsViewPager.getAdapter();
+        final int rowsSize = ApplicationGridResizer.getGridRowSize(currentUser);
+        final int columnsSize = ApplicationGridResizer.getGridColumnSize(currentUser);
+        adapter.swapApps(appInfoList, rowsSize, columnsSize);
     }
 
     public android.support.v4.app.FragmentManager getFragmentMangerForAppsFragmentAdapter() {

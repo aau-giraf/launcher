@@ -2,7 +2,6 @@ package dk.aau.cs.giraf.launcher.widgets;
 
 import android.content.Context;
 import android.widget.ImageView;
-
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
 

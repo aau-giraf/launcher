@@ -16,33 +16,38 @@ import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+
 import dk.aau.cs.giraf.activity.GirafActivity;
-import dk.aau.cs.giraf.dblib.Helper;
-import dk.aau.cs.giraf.dblib.controllers.ProfileController;
-import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.gui.GirafButton;
-import dk.aau.cs.giraf.gui.GirafPictogramItemView;
 import dk.aau.cs.giraf.gui.GirafProfileSelectorDialog;
+import dk.aau.cs.giraf.gui.GirafUserItemView;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.helper.Constants;
 import dk.aau.cs.giraf.launcher.helper.LauncherUtility;
 import dk.aau.cs.giraf.launcher.settings.*;
-import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AndroidFragment;
-import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppContainerFragment;
-import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppManagementFragment;
-import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.AppsFragmentInterface;
-import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.GirafFragment;
+import dk.aau.cs.giraf.launcher.settings.settingsappmanagement.*;
+import dk.aau.cs.giraf.launcher.widgets.SeekBarWithNumericScale;
+import dk.aau.cs.giraf.librest.requests.GetRequest;
+import dk.aau.cs.giraf.librest.requests.LoginRequest;
+import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
+import dk.aau.cs.giraf.models.core.User;
+import dk.aau.cs.giraf.models.core.authentication.Role;
 import dk.aau.cs.giraf.showcaseview.ShowcaseManager;
 import dk.aau.cs.giraf.showcaseview.ShowcaseView;
 import dk.aau.cs.giraf.showcaseview.targets.Target;
 import dk.aau.cs.giraf.showcaseview.targets.ViewTarget;
 import dk.aau.cs.giraf.utilities.GrayScaleHelper;
+import dk.aau.cs.giraf.utilities.IntentConstants;
 
 import java.util.ArrayList;
 
@@ -51,11 +56,12 @@ import java.util.ArrayList;
  * other setting-related activities.
  */
 public class SettingsActivity extends GirafActivity
-    implements SettingsListFragment.SettingsListFragmentListener,
-    GirafProfileSelectorDialog.OnSingleProfileSelectedListener,
-    AppsFragmentInterface, ShowcaseManager.ShowcaseCapable
-{
+        implements SettingsListFragment.SettingsListFragmentListener,
+        GirafProfileSelectorDialog.OnSingleProfileSelectedListener,
+        AppsFragmentInterface, ShowcaseManager.ShowcaseCapable {
 
+    private RequestQueue queue;
+    private RequestQueueHandler handler;
     private static final String IS_FIRST_RUN_KEY = "IS_FIRST_RUN_KEY_SETTINGS_ACTIVITY";
 
     private static final int CHANGE_USER_SELECTOR_DIALOG = 100;
@@ -66,8 +72,8 @@ public class SettingsActivity extends GirafActivity
     private FragmentManager fragmentManager;
     private android.support.v4.app.FragmentManager supportFragmentManager;
 
-    private Profile currentUser = null;
-    private Profile loggedInGuardian;
+    private User currentUser;
+
 
     private ListView settingsListView;
     private SettingsListAdapter settingsListAdapter;
@@ -96,7 +102,6 @@ public class SettingsActivity extends GirafActivity
      */
     private static final String SETTINGS_INTENT = ".SETTINGSACTIVITY";
 
-
     /**
      * The onCreate method must be overridden as usual, and initialized most of the variables needed by the Activity.
      * In particular, because te SettingsActivity mostly handles Fragments, it initializes the FragmentManager and
@@ -109,7 +114,10 @@ public class SettingsActivity extends GirafActivity
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.settings_activity);
-
+        queue = RequestQueueHandler.getInstance(this.getApplicationContext()).getRequestQueue();
+        handler = RequestQueueHandler.getInstance(this.getApplicationContext());
+        currentUser = (User) getIntent().getExtras().getSerializable(IntentConstants.CURRENT_USER);
+        GrayScaleHelper.setGrayScaleForActivityByUser(this, currentUser);
         settingsListView = (ListView) findViewById(R.id.settingsListView);
 
         settingsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -139,7 +147,7 @@ public class SettingsActivity extends GirafActivity
                     } catch (ActivityNotFoundException e) {
                         // Handle exception if the intended activity can not be started.
                         Toast.makeText(parent.getContext(),
-                            R.string.settings_activity_not_found_msg, Toast.LENGTH_SHORT).show();
+                                R.string.settings_activity_not_found_msg, Toast.LENGTH_SHORT).show();
                     } finally {
                         // Notify adapter to redraw views since we want to reset the visual style
                         // of the selected since its state should not be preserved (= reset selected item
@@ -147,28 +155,12 @@ public class SettingsActivity extends GirafActivity
                         settingsListAdapter.notifyDataSetChanged();
                     }
                 }
-                SharedPreferences prefs = SettingsUtility.getLauncherSettings(view.getContext(),
-                    LauncherUtility.getSharedPreferenceUser(currentUser));
-                GrayScaleHelper.setGrayScaleForActivity(SettingsActivity.this, prefs.getBoolean(
-                    getString(R.string.toggle_gray_scale_preference_key),false));
             }
         });
 
-        final GirafPictogramItemView mProfileButton =
-            (GirafPictogramItemView) findViewById(R.id.profile_widget_settings);
+        final GirafUserItemView mProfileButton =
+                (GirafUserItemView) findViewById(R.id.profile_widget_settings);
 
-        ProfileController profileController = new ProfileController(this);
-
-        final long childId = this.getIntent().getLongExtra(Constants.CHILD_ID, -1);
-
-        Profile currentUser;
-
-        // The childIdNew is -1 meaning that no childs are available
-        if (childId == -1) {
-            currentUser = profileController.getById(this.getIntent().getLongExtra(Constants.GUARDIAN_ID, -1));
-        } else { // A child is found - set it as active and add its profile selector
-            currentUser = profileController.getById(childId);
-        }
         // Notify about the current user
         setCurrentUser(currentUser);
 
@@ -181,37 +173,32 @@ public class SettingsActivity extends GirafActivity
 
         //Load the correct profile picture for the choosen profile
         mProfileButton.setImageModel(currentUser, this.getResources().getDrawable(R.drawable.no_profile_pic));
-        mProfileButton.setTitle(currentUser.getName());
-
-        final Helper helper = LauncherUtility.getOasisHelper(this);
+        mProfileButton.setTitle(currentUser.getScreenName());
 
         final long childIdNew = getIntent().getExtras().getLong(Constants.CHILD_ID);
         final long guardianId = getIntent().getExtras().getLong(Constants.GUARDIAN_ID);
 
-        loggedInGuardian = helper.profilesHelper.getById(guardianId);
-
-        if (childIdNew != Constants.NO_CHILD_SELECTED_ID) {
-            currentUser = helper.profilesHelper.getById(childIdNew);
-        } else {
-            currentUser = helper.profilesHelper.getById(guardianId);
-        }
-
         // Change the title of the action bar to include the name of the current user
         if (currentUser != null) {
-            this.setActionBarTitle(getString(R.string.settingsFor) + currentUser.getName());
+            if (currentUser.getScreenName() != null) {
+                this.setActionBarTitle(getString(R.string.settingsFor) + currentUser.getScreenName());
+            } else {
+                this.setActionBarTitle(getString(R.string.settingsFor) + currentUser.getUsername());
+            }
         }
 
+        //ToDo make button click inside request
         final GirafButton changeUserButton = new GirafButton(this, this.getResources()
-            .getDrawable(R.drawable.icon_change_user));
+                .getDrawable(R.drawable.icon_change_user));
         changeUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 GirafProfileSelectorDialog changeUser = GirafProfileSelectorDialog.newInstance(SettingsActivity.this,
-                    loggedInGuardian.getId(), false, false, getString(R.string.settings_choose_citizen),
-                    CHANGE_USER_SELECTOR_DIALOG);
+                        currentUser, false, getString(R.string.settings_choose_citizen),
+                        CHANGE_USER_SELECTOR_DIALOG);
                 changeUser.show(getSupportFragmentManager(), "" + CHANGE_USER_SELECTOR_DIALOG);
             }
+
         });
 
         addGirafButtonToActionBar(changeUserButton, LEFT);
@@ -245,7 +232,7 @@ public class SettingsActivity extends GirafActivity
             } else {
                 // Load the fragment just selected into view
                 supportFragmentManager.beginTransaction().add(R.id.settingsContainer,
-                    item.getSupportFragment()).commit();
+                        item.getSupportFragment()).commit();
             }
         }
 
@@ -261,8 +248,6 @@ public class SettingsActivity extends GirafActivity
      * This function gets the elements that should be added to the list of items in the left side
      * Firstly, it gets the settings for Launcher itself, along with the "Apps" menu,
      * where users select or deselect apps.
-     * Finally, gets the currently installed apps that have settings to be shown in SettingsActivity.
-     * Currently, these apps are only "Cars" (Stemmespillet) and "Zebra" (Sekvens).
      *
      * @return an Array consisting of the SettingsListitems that should be put into the left scrollview.
      */
@@ -272,13 +257,13 @@ public class SettingsActivity extends GirafActivity
 
         // Launcher
         addApplicationByPackageName("dk.aau.cs.giraf.launcher",
-            SettingsLauncher.newInstance(LauncherUtility.getSharedPreferenceUser(currentUser)),
-            getString(R.string.settings_tablist_general));
+                SettingsLauncher.newInstance(currentUser),
+                getString(R.string.settings_tablist_general));
 
         // Application management
         addApplicationByTitle(getString(R.string.settings_tablist_applications),
-            new AppManagementFragment(),
-            getResources().getDrawable(R.drawable.icon_applications));
+                new AppManagementFragment(),
+                getResources().getDrawable(R.drawable.icon_applications));
 
 
         // Get intent for Native Android Settings
@@ -288,25 +273,16 @@ public class SettingsActivity extends GirafActivity
         androidSettingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         addApplicationByTitle(getResources().getString(R.string.settings_tablist_tablet),
-            androidSettingsIntent, getResources().getDrawable(R.drawable.icon_android));
+                androidSettingsIntent, getResources().getDrawable(R.drawable.icon_android));
 
         // Launcher
         addApplicationByPackageName("dk.aau.cs.giraf.launcher",
-            AboutFragment.newInstance(),
-            getString(R.string.about_giraf_tab_title));
+                AboutFragment.newInstance(),
+                getString(R.string.about_giraf_tab_title));
 
         // Return all applications
         return appList;
     }
-
-    @Override
-    public void onUserInteraction() {
-        SharedPreferences prefs = SettingsUtility.getLauncherSettings(this,
-            LauncherUtility.getSharedPreferenceUser(currentUser));
-        GrayScaleHelper.setGrayScaleForActivity(this, prefs.getBoolean(
-            getString(R.string.toggle_gray_scale_preference_key),false));
-    }
-
 
     /**
      * Add settings to be shown internally in Settings App.
@@ -348,7 +324,7 @@ public class SettingsActivity extends GirafActivity
             // TODO: This a quick fix to show the correct icon in the list.
             // TODO: This is however alright since the sidebar is not used for any other apps
             final Drawable appIcon = this.getResources()
-                .getDrawable(R.drawable.icon_giraf_no_background); //pm.getApplicationIcon(appInfo);
+                    .getDrawable(R.drawable.icon_giraf_no_background); //pm.getApplicationIcon(appInfo);
 
             // Create the item
             final FragmentSettingsListItem item = new FragmentSettingsListItem(title, appIcon, fragment);
@@ -366,8 +342,7 @@ public class SettingsActivity extends GirafActivity
      * @param icon     Custom icon to add to list entry.
      */
     private void addApplicationByTitle(final String title,
-                                       final android.support.v4.app.Fragment fragment, final Drawable icon)
-    {
+                                       final android.support.v4.app.Fragment fragment, final Drawable icon) {
         // Create the new item
         final FragmentSettingsListItem item = new FragmentSettingsListItem(title, icon, fragment);
 
@@ -404,7 +379,7 @@ public class SettingsActivity extends GirafActivity
         if (mActiveFragment == null || !mActiveFragment.equals(fragment)) {
 
             final android.support.v4.app.Fragment mActiveSupportFragment =
-                supportFragmentManager.findFragmentById(R.id.settingsContainer);
+                    supportFragmentManager.findFragmentById(R.id.settingsContainer);
 
             if (mActiveSupportFragment != null) {
                 android.support.v4.app.FragmentTransaction ft = supportFragmentManager.beginTransaction();
@@ -429,7 +404,7 @@ public class SettingsActivity extends GirafActivity
     public void setActiveFragment(final android.support.v4.app.Fragment fragment) {
 
         final android.support.v4.app.Fragment mActiveSupportFragment =
-            supportFragmentManager.findFragmentById(R.id.settingsContainer);
+                supportFragmentManager.findFragmentById(R.id.settingsContainer);
 
         // Only add new transaction if the user clicked a non-active fragment
         if (mActiveSupportFragment == null || !mActiveSupportFragment.equals(fragment)) {
@@ -459,16 +434,54 @@ public class SettingsActivity extends GirafActivity
         // Get the intent of SettingsActivity
         final Intent intent = SettingsActivity.this.getIntent();
 
-        if (currentUser.getRole() == Profile.Roles.CHILD) { // A child profile has been selected, pass id
-            intent.putExtra(Constants.CHILD_ID, currentUser.getId());
-        } else { // We are a guardian, do not add a child
-            intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
-        }
-        // Stop activity before restarting
-        SettingsActivity.this.finish();
+        GetRequest<User> userGetRequest = new GetRequest<User>(User.class, new Response.Listener<User>() {
+            @Override
+            public void onResponse(User response) {
+                intent.putExtra(IntentConstants.CURRENT_USER, currentUser);
+                // Stop activity before restarting
+                SettingsActivity.this.finish();
 
-        // Start activity again to reload contents
-        startActivity(intent);
+                // Start activity again to reload contents
+                startActivity(intent);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (error.networkResponse.statusCode == 401) {
+                    LoginRequest loginRequest = new LoginRequest(currentUser, new Response.Listener<Integer>() {
+                        @Override
+                        public void onResponse(Integer response) {
+                            GetRequest<User> userGetRequest = new GetRequest<User>(User.class, new Response.Listener<User>() {
+                                @Override
+                                public void onResponse(User response) {
+                                    intent.putExtra(IntentConstants.CURRENT_USER, response);
+                                    // Stop activity before restarting
+                                    SettingsActivity.this.finish();
+
+                                    // Start activity again to reload contents
+                                    startActivity(intent);
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    LauncherUtility.logoutWithDialog(SettingsActivity.this);
+                                }
+                            });
+                            queue.add(userGetRequest);
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            LauncherUtility.logoutWithDialog(SettingsActivity.this);
+                        }
+                    });
+                    queue.add(loginRequest);
+                } else {
+                    LauncherUtility.logoutWithDialog(SettingsActivity.this);
+                }
+            }
+        });
+        queue.add(userGetRequest);
     }
 
     /**
@@ -477,7 +490,7 @@ public class SettingsActivity extends GirafActivity
      * @param profile The selected profile.
      */
     @Override
-    public void setCurrentUser(Profile profile) {
+    public void setCurrentUser(User profile) {
         currentUser = profile;
     }
 
@@ -486,29 +499,50 @@ public class SettingsActivity extends GirafActivity
      *
      * @return profile of the current user
      */
-    public Profile getCurrentUser() {
+
+    public User getCurrentUser() {
         return currentUser;
     }
 
-    /**
-     * Get the current logged in guardian.
-     *
-     * @return profile of the logged in guardian
-     */
-    @Override
-    public Profile getLoggedInGuardian() {
-        return loggedInGuardian;
-    }
 
     @Override
-    public void onProfileSelected(final int input, final Profile profile) {
+    public void onProfileSelected(final int input, final User profile) {
         if (input == CHANGE_USER_SELECTOR_DIALOG) {
+            handler.login(profile,
+                    new Response.Listener<Integer>() {
+                        @Override
+                        public void onResponse(Integer Response) {
+                            handler.get(User.class,
+                                    new Response.Listener<User>() {
+                                        @Override
+                                        public void onResponse(User response) {
+                                            currentUser = response;
 
-            // Notify that a profile selection has been made
-            setCurrentUser(profile);
+                                            // Notify that a profile selection has been made
+                                            setCurrentUser(profile);
 
-            // Reload activity to reflect different user settings
-            reloadActivity();
+                                            // Reload activity to reflect different user settings
+                                            reloadActivity();
+                                        }
+                                    }, new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            if (error.networkResponse.statusCode == 401) {
+                                                LauncherUtility.showErrorDialog(SettingsActivity.this, R.string.home_activity_you_do_not_have_access_to_this);
+                                            } else {
+                                                LauncherUtility.logoutWithDialog(SettingsActivity.this);
+                                            }
+                                        }
+                                    });
+                        }
+                    }
+                    , new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            LauncherUtility.logoutWithDialog(SettingsActivity.this);
+                        }
+                    }
+            );
         }
     }
 
@@ -516,48 +550,40 @@ public class SettingsActivity extends GirafActivity
     protected void onResume() {
         super.onResume();
 
+        currentUser = (User) getIntent().getExtras().getSerializable(IntentConstants.CURRENT_USER);
+        GrayScaleHelper.setGrayScaleForActivityByUser(this, currentUser);
         // Check if this is the first run of the app
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         this.isFirstRun = prefs.getBoolean(IS_FIRST_RUN_KEY, true);
 
-        /*if (isFirstRun) {
-            showShowcase();
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean(IS_FIRST_RUN_KEY, false);
-            editor.commit();
-        }*/
-
         // If it is the first run display ShowcaseView
         if (isFirstRun) {
             settingsListView.getViewTreeObserver().addOnGlobalLayoutListener(globalLayoutListener =
-                new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
+                    new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
 
-                        showShowcase();
-                        SharedPreferences.Editor editor = prefs.edit();
-                        editor.putBoolean(IS_FIRST_RUN_KEY, false);
-                        editor.commit();
+                            showShowcase();
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putBoolean(IS_FIRST_RUN_KEY, false);
+                            editor.commit();
 
-                        synchronized (SettingsActivity.this) {
+                            synchronized (SettingsActivity.this) {
 
-                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                                settingsListView.getViewTreeObserver()
-                                    .removeGlobalOnLayoutListener(globalLayoutListener);
-                            } else {
-                                settingsListView.getViewTreeObserver()
-                                    .removeOnGlobalLayoutListener(globalLayoutListener);
+                                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                                    settingsListView.getViewTreeObserver()
+                                            .removeGlobalOnLayoutListener(globalLayoutListener);
+                                } else {
+                                    settingsListView.getViewTreeObserver()
+                                            .removeOnGlobalLayoutListener(globalLayoutListener);
+                                }
+
+                                globalLayoutListener = null;
                             }
-
-                            globalLayoutListener = null;
                         }
-                    }
-                });
+                    });
         }
-        SharedPreferences pref = SettingsUtility.getLauncherSettings(this,
-            LauncherUtility.getSharedPreferenceUser(currentUser));
-        GrayScaleHelper.setGrayScaleForActivity(this, pref.getBoolean(
-            getString(R.string.toggle_gray_scale_preference_key),false));
+
     }
 
     @Override
@@ -586,7 +612,7 @@ public class SettingsActivity extends GirafActivity
 
         // Create a relative location for the next button
         final RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         final int margin = ((Number) (getResources().getDisplayMetrics().density * 24)).intValue();
@@ -736,7 +762,7 @@ public class SettingsActivity extends GirafActivity
         });
 
         final android.support.v4.app.Fragment currentSupportSettingsContent =
-            supportFragmentManager.findFragmentById(R.id.settingsContainer);
+                supportFragmentManager.findFragmentById(R.id.settingsContainer);
 
         if (currentSupportSettingsContent != null && currentSupportSettingsContent instanceof AppContainerFragment) {
 
@@ -746,12 +772,12 @@ public class SettingsActivity extends GirafActivity
 
                     // Find the currently active content fragment
                     final Fragment currentNormalSettingsContent =
-                        fragmentManager.findFragmentById(R.id.settingsContainer);
+                            fragmentManager.findFragmentById(R.id.settingsContainer);
 
                     final View noAppsMessageView = currentSupportSettingsContent.getView()
-                        .findViewById(R.id.noAppsMessage);
+                            .findViewById(R.id.noAppsMessage);
                     final View appsViewPager = currentSupportSettingsContent.getView()
-                        .findViewById(R.id.appsViewPager);
+                            .findViewById(R.id.appsViewPager);
 
                     final Target noAppsMessageTarget = new ViewTarget(noAppsMessageView, 1.1f);
                     final Target appsViewPagerTarget = new ViewTarget(appsViewPager, 1.4f);
@@ -831,4 +857,10 @@ public class SettingsActivity extends GirafActivity
             showShowcase();
         }
     }
+
+    @Override
+    public User getUser() {
+        return currentUser;
+    }
+
 }

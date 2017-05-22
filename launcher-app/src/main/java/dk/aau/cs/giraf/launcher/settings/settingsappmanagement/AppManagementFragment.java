@@ -9,8 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import dk.aau.cs.giraf.launcher.R;
+import dk.aau.cs.giraf.librest.requests.RequestQueueHandler;
+import dk.aau.cs.giraf.models.core.User;
 
 /**
  * This is fragment that is loaded into the container of the SettingsActivity.
@@ -27,6 +30,7 @@ public class AppManagementFragment extends android.support.v4.app.Fragment {
     private static final String MARKET_SEARCH_WEB_URI = "http://play.google.com/store/search?q=pub:";
     //TODO: Remember to change our publisher name when Giraf has been published on Google Play
     private static final String PUBLISHER_NAME = "Giraf Autism Apps";
+    private RequestQueueHandler handler;
 
     /** The FragmentManager is used to manage whcih fragments are current in the FragmentContainer.*/
     /** The girafFragment and the androidFragment are the fragments to be inflated into the container.*/
@@ -80,7 +84,20 @@ public class AppManagementFragment extends android.support.v4.app.Fragment {
         /** Choose the GIRAF pane and set the GIRAF button when the fragment has loaded.*/
         //fragmentContainer = girafFragment;
         focusButton(girafAppsButton);
-        replaceFragment(new GirafFragment());
+        handler = RequestQueueHandler.getInstance(getActivity().getApplicationContext());
+        handler.get(User.class, new Response.Listener<User>() {
+            @Override
+            public void onResponse(User response) {
+                GirafFragment fragment = new GirafFragment();
+                fragment.setCurrentUser(response);
+                replaceFragment(fragment);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
 
         return view;
     }
@@ -92,8 +109,21 @@ public class AppManagementFragment extends android.support.v4.app.Fragment {
         /** inflate the girafFragment when the girafAppsButton is pressed*/
         girafAppsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                replaceFragment(new GirafFragment());
-                focusButton(girafAppsButton);
+                handler = RequestQueueHandler.getInstance(getActivity().getApplicationContext());
+                handler.get(User.class, new Response.Listener<User>() {
+                    @Override
+                    public void onResponse(User response) {
+                        GirafFragment fragment = new GirafFragment();
+                        fragment.setCurrentUser(response);
+                        replaceFragment(fragment);
+                        focusButton(girafAppsButton);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
             }
         });
 
@@ -102,8 +132,21 @@ public class AppManagementFragment extends android.support.v4.app.Fragment {
          */
         androidAppsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                replaceFragment(new AndroidFragment());
-                focusButton(androidAppsButton);
+                handler = RequestQueueHandler.getInstance(getActivity().getApplicationContext());
+                handler.get(User.class, new Response.Listener<User>() {
+                    @Override
+                    public void onResponse(User response) {
+                        AndroidFragment fragment = new AndroidFragment();
+                        fragment.setCurrentUser(response);
+                        replaceFragment(fragment);
+                        focusButton(androidAppsButton);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
             }
         });
 

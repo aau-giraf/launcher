@@ -6,4 +6,7 @@
     <color name="default_camera_border_color">#FFDD9639</color>
     <color name="wrong_qr_camera_border_color">#FFFF0000</color>
     <color name="success_qr_camera_border_color">#FF3AAA35</color>
+    <color name="text_box_color">#FFE6BD</color>
+    <color name="login_button">#ff9d00</color>
+    <color name="login_button_pressed">#af6c00</color>
 </resources>

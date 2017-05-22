@@ -3,32 +3,30 @@ package dk.aau.cs.giraf.launcher.helper;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
+import android.net.Uri;
 import android.os.Vibrator;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.GridLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import dk.aau.cs.giraf.dblib.models.Application;
-import dk.aau.cs.giraf.dblib.models.Profile;
+import android.widget.*;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.activities.SettingsActivity;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
-import dk.aau.cs.giraf.launcher.settings.SettingsUtility;
 import dk.aau.cs.giraf.launcher.widgets.AppImageView;
+import dk.aau.cs.giraf.models.core.Application;
+import dk.aau.cs.giraf.models.core.User;
+import dk.aau.cs.giraf.models.core.authentication.Role;
+import dk.aau.cs.giraf.utilities.IntentConstants;
 
 import java.util.ArrayList;
 
@@ -100,8 +98,7 @@ public class AppViewCreationUtility {
      */
     public static AppImageView createAppImageView(
         final Context context,
-        final Profile currentUser,
-        final Profile guardian,
+        final User currentUser,
         final AppInfo appInfo,
         GridLayout targetLayout,
         View.OnClickListener listener)
@@ -146,43 +143,52 @@ public class AppViewCreationUtility {
                     appInfo = ((AppImageView) view).appInfo;
 
                     if (appInfo.getPackage().isEmpty()) {
-                        if (currentUser.getRole() != Profile.Roles.CHILD) {
-                            Constants.offlineNotify.show(((FragmentActivity) context).getSupportFragmentManager(),
-                                "DIALOG_TAG");
-                        }
+                        Log.e("Launcher","Empty package for app");
                     } else if (appInfo.getPackage().equals(Constants.ADD_APP_ICON_FAKE_PACKAGE_NAME)) {
                         Intent intent = new Intent(context, SettingsActivity.class);
                         intent.putExtra(Constants.ENTER_ADD_APP_MANAGER_BOOL, true);
-                        intent.putExtra(Constants.GUARDIAN_ID, guardian.getId());
-                        if (currentUser.getRole() == Profile.Roles.GUARDIAN)
-                            intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
-                        else {
-                            intent.putExtra(Constants.CHILD_ID, currentUser.getId());
-                        }
+                        intent.putExtra(IntentConstants.CURRENT_USER, currentUser);
+                        Log.e("Launcher","Fake app start");
                         LauncherUtility.secureStartActivity(view.getContext(), intent);
                     } else {
-                        Intent intent = new Intent(Intent.ACTION_MAIN);
-                        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                        if(appInfo.getActivity() != null && !appInfo.getActivity().isEmpty()) {
+                            Intent intent = new Intent(Intent.ACTION_MAIN);
+                            intent.addCategory(Intent.CATEGORY_LAUNCHER);
 
-                        intent.setComponent(new ComponentName(appInfo.getPackage(), appInfo.getActivity()));
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                            intent.setComponent(new ComponentName(appInfo.getPackage(), appInfo.getActivity()));
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 
-                        if (currentUser.getRole() == Profile.Roles.CHILD) {
-                            intent.putExtra(Constants.CHILD_ID, currentUser.getId());
+                            intent.putExtra(IntentConstants.CURRENT_USER, currentUser);
+                            intent.putExtra(Constants.APP_COLOR, appInfo.getBgColor());
+                            intent.putExtra(Constants.APP_PACKAGE_NAME, appInfo.getPackage());
+                            intent.putExtra(Constants.APP_ACTIVITY_NAME, appInfo.getActivity());
+                            intent.putExtra(Constants.STARTED_BY, Constants.LAUNCHER_TAG);
+                            // Verify the intent will resolve to at least one activity
+                            Log.e("Launcher", "App start");
+                            LauncherUtility.secureStartActivity(view.getContext(), intent);
                         } else {
-                            intent.putExtra(Constants.CHILD_ID, Constants.NO_CHILD_SELECTED_ID);
+                            Intent intent = context.getPackageManager().getLaunchIntentForPackage(appInfo.getPackage());
+                            if(intent!= null) {
+                                intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+
+                                intent.putExtra(IntentConstants.CURRENT_USER, currentUser);
+                                intent.putExtra(Constants.APP_COLOR, appInfo.getBgColor());
+                                intent.putExtra(Constants.APP_PACKAGE_NAME, appInfo.getPackage());
+                                intent.putExtra(Constants.APP_ACTIVITY_NAME, appInfo.getActivity());
+                                intent.putExtra(Constants.STARTED_BY, Constants.LAUNCHER_TAG);
+
+                                Log.e("Launcher", "App start using only the package name");
+                                LauncherUtility.secureStartActivity(view.getContext(), intent);
+                            } else{
+                                Toast toast = Toast.makeText(context,
+                                    context.getString(R.string.activity_not_found_msg), Toast.LENGTH_SHORT);
+                                toast.show();
+                                Intent storeIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appInfo.getPackage()));
+                                context.startActivity(storeIntent);
+                                Log.e("Launcher","Could not find a intent for package "+ appInfo.getPackage());
+                            }
                         }
-                        intent.putExtra(Constants.GUARDIAN_ID, guardian.getId());
-                        intent.putExtra(Constants.APP_COLOR, appInfo.getBgColor());
-                        intent.putExtra(Constants.APP_PACKAGE_NAME, appInfo.getPackage());
-                        intent.putExtra(Constants.APP_ACTIVITY_NAME, appInfo.getActivity());
-                        intent.putExtra(Constants.STARTED_BY, Constants.LAUNCHER_TAG);
-                        SharedPreferences prefs = SettingsUtility.getLauncherSettings(view.getContext(),
-                            LauncherUtility.getSharedPreferenceUser(currentUser));
-                        intent.putExtra(Constants.SHOULD_BE_GRAYSCALE, prefs.getBoolean(
-                            view.getContext().getString(R.string.toggle_gray_scale_preference_key), false) );
-                        // Verify the intent will resolve to at least one activity
-                        LauncherUtility.secureStartActivity(view.getContext(), intent);
                     }
                 }
             });

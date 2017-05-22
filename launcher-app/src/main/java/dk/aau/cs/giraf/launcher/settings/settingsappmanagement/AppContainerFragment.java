@@ -8,11 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-
-import dk.aau.cs.giraf.dblib.models.Application;
-import dk.aau.cs.giraf.dblib.models.Profile;
 import dk.aau.cs.giraf.launcher.R;
 import dk.aau.cs.giraf.launcher.layoutcontroller.AppInfo;
+import dk.aau.cs.giraf.models.core.Application;
+import dk.aau.cs.giraf.models.core.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +26,7 @@ import java.util.List;
 public abstract class AppContainerFragment extends Fragment {
     // Callback to containing Activity implementing the SettingsListFragmentListener interface
     protected AppsFragmentInterface callback;
-    protected Profile currentUser;
+    protected User currentUser;
     protected ArrayList<AppInfo> loadedApps;
 
     // This needs to be initialized in the subclasses
@@ -50,8 +49,6 @@ public abstract class AppContainerFragment extends Fragment {
         if (appView == null) {
             view = inflater.inflate(R.layout.settings_appmanagement_appcontainer,
                     container, false);
-
-            currentUser = callback.getCurrentUser();
         } else {
             view = appView.getRootView();
         }
@@ -70,7 +67,13 @@ public abstract class AppContainerFragment extends Fragment {
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (!haveAppsBeenAdded && appView.getViewTreeObserver() != null) {
+
+        //Added because we somehow got a null value on appView
+        /*if(appView == null){
+            appView = (ViewPager) view.findViewById(R.id.appsViewPager);
+        }*/
+
+        if (!haveAppsBeenAdded && appView != null && appView.getViewTreeObserver() != null) {
             appView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 
                 @Override
@@ -109,6 +112,10 @@ public abstract class AppContainerFragment extends Fragment {
     abstract void loadApplications();
 
     abstract void setListeners();
+
+    public void setCurrentUser(User user){
+        currentUser = user;
+    }
 
     /**
      * Returns the listerne for the views onClick listener.
