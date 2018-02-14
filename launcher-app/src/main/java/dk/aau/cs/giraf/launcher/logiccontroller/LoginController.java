@@ -65,7 +65,7 @@ public class LoginController {
 
                                         }
                                     });
-                                    gui.showDialogWithMessage(gui.getString(R.string.error_try_agian));
+                                    gui.showDialogWithMessage(gui.getString(R.string.error_try_again));
                                 }
                             }
                         });
@@ -84,7 +84,7 @@ public class LoginController {
                         } else {
                             //The server is for some reason unavailable
                             Log.e("Launcher Network", "Error code "+  error.networkResponse.statusCode +" on login request");
-                            gui.showDialogWithMessage(gui.getString(R.string.error_try_agian));
+                            gui.showDialogWithMessage(gui.getString(R.string.error_try_again));
                         }
                     }
                     else{
@@ -94,7 +94,7 @@ public class LoginController {
                         else{
                             Log.e("Launcher Network", "Error was null");
                         }
-                        gui.showDialogWithMessage(gui.getString(R.string.error_try_agian));
+                        gui.showDialogWithMessage(gui.getString(R.string.error_try_again));
                     }
                 }
             }
