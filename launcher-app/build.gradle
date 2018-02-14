@@ -11,8 +11,8 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.1'
-        classpath 'com.github.triplet.gradle:play-publisher:1.1.4'
+        classpath 'com.android.tools.build:gradle:3.0.0'
+        classpath 'com.github.triplet.gradle:play-publisher:1.2.0'
     }
 }
 // Always download latest snapshot
@@ -36,7 +36,7 @@ repositories {
 }
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.3'
+    buildToolsVersion '26.0.2'
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 25
