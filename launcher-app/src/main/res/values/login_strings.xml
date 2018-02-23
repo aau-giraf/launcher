@@ -16,8 +16,9 @@
     <string name="password">Kodeord</string>
     <string name="login">Log Ind</string>
     <string name="error_login">Fejl</string>
-    <string name="error_username_password">Brugernavn eller adgangskode er forkert.</string>
-    <string name="error_try_agian">Prøv igen senere</string>
+    <string name="error_username_password">Dit brugernavn eller adgangskode er forkert.</string>
+    <string name="error_try_agian">Prøv igen senere.</string>
     <string name="error_you_must_log_in_again">Du er nødt til at logge ind igen.</string>
+    <string name="error_bad_syntax">Du har indtastet noget ugyldigt.</string>
 
 </resources>
