@@ -81,7 +81,13 @@ public class LoginController {
                             //The username and/or password are incorrect
                             Log.e("Launcher Network", "Error code 401 on login request");
                             gui.showDialogWithMessage(gui.getString(R.string.error_username_password));
-                        } else {
+                        }
+                        else if (errorCode == 400) {
+                            //Bad syntax sent to the server (aka blank password or username)
+                            Log.e("Launcher Network","Error code 400 on login request");
+                            gui.showDialogWithMessage(gui.getString(R.string.error_bad_syntax));
+                        }
+                        else {
                             //The server is for some reason unavailable
                             Log.e("Launcher Network", "Error code "+  error.networkResponse.statusCode +" on login request");
                             gui.showDialogWithMessage(gui.getString(R.string.error_try_again));
